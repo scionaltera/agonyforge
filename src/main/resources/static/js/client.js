@@ -1,5 +1,8 @@
 let socket = null;
 let stompClient = null;
+const commandHistory = [];
+const commandHistoryMax = 50;
+let commandHistoryIndex = -1;
 
 $(document).ready(function() {
     $("form").submit(function(event) {
@@ -9,6 +12,41 @@ $(document).ready(function() {
     });
 
     connect();
+});
+
+$(document).keydown(function(event) {
+    if (event.which === 9) { // don't tab away from input
+        event.preventDefault();
+        return false;
+    }
+});
+
+$(document).keyup(function(event) {
+    const inputBox = $("form input");
+
+    if (event.which === 38) { // up arrow - command history prev
+        commandHistoryIndex++;
+
+        if (commandHistoryIndex >= commandHistory.length) {
+            commandHistoryIndex = commandHistory.length - 1;
+        }
+
+        if (commandHistoryIndex >= 0) {
+            inputBox.val(commandHistory[commandHistoryIndex]);
+        }
+    } else if (event.which === 40) { // down arrow - command history next
+        commandHistoryIndex--;
+
+        if (commandHistoryIndex < 0) {
+            commandHistoryIndex = -1;
+        }
+
+        if (commandHistoryIndex >= 0) {
+            inputBox.val(commandHistory[commandHistoryIndex]);
+        } else {
+            inputBox.val("");
+        }
+    }
 });
 
 function connect() {
@@ -31,6 +69,13 @@ function connect() {
 
 function sendInput() {
     let inputBox = $("form input");
+
+    commandHistoryIndex = -1;
+    commandHistory.unshift(inputBox.val());
+
+    if (commandHistory.length > commandHistoryMax) {
+        commandHistory.pop();
+    }
 
     $("#output-list").find("li:last-child").append("<span class='yellow'> " + htmlEscape(inputBox.val()).replace(/\s/g, '&nbsp;') + "</span>");
 
