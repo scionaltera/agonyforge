@@ -1,0 +1,10 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: #0d1117;
+    color: #ccc;
+    font-family: 'Inconsolata', monospace;
+    font-weight: 400;
+}

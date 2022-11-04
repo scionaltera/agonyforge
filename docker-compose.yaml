@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  mud:
+    image: scionaltera/mud:latest
+    tty: true
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    env_file:
+      - mud.env
+
+  localstack:
+    image: localstack/localstack:1.2
+    ports:
+      - "127.0.0.1:4566:4566"           # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559" # External services
+    environment:
+      - DEBUG=${DEBUG-}
+      - PERSISTENCE=${PERSISTENCE-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./build/volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  activemq:
+    image: symptoma/activemq:5.17.1-envvars
+    ports:
+      - "127.0.0.1:61613:61613"
+      - "127.0.0.1:8161:8161"
+    environment:
+      ACTIVEMQ_WEBCONSOLE_USE_DEFAULT_ADDRESS: "false"
+
+      # user with access to web UI
+      ACTIVEMQ_WEBADMIN_USERNAME: admin
+      ACTIVEMQ_WEBADMIN_PASSWORD: admin
+
+      # user with access to broker
+      ACTIVEMQ_USERNAME: mud
+      ACTIVEMQ_PASSWORD: mud
