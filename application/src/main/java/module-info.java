@@ -10,4 +10,8 @@ module com.agonyforge.mud.modules.application {
     requires spring.messaging;
     requires reactor.netty.core;
     requires org.slf4j;
+    requires spring.security.config;
+    requires spring.security.core;
+    requires com.hazelcast.core;
+    requires spring.session.hazelcast;
 }
