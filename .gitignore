@@ -1,5 +1,5 @@
 mud.env
-HELP.md
+SCION.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
