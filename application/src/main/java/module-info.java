@@ -9,4 +9,5 @@ module com.agonyforge.mud.modules.application {
     requires spring.session.core;
     requires spring.messaging;
     requires reactor.netty.core;
+    requires org.slf4j;
 }

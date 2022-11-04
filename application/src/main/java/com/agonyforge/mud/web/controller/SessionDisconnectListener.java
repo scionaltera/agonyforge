@@ -9,6 +9,8 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Map;
 
+import static com.agonyforge.mud.config.RemoteIpHandshakeInterceptor.SESSION_REMOTE_IP_KEY;
+
 @Component
 public class SessionDisconnectListener implements ApplicationListener<SessionDisconnectEvent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionDisconnectListener.class);
@@ -17,14 +19,12 @@ public class SessionDisconnectListener implements ApplicationListener<SessionDis
     public void onApplicationEvent(SessionDisconnectEvent event) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
+        String remoteIp = attributes == null ? "(unknown IP)" : (String)attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "(unknown IP)");
+        String username = headerAccessor.getUser() == null ? "(unknown user)" : headerAccessor.getUser().getName();
 
-        if (attributes == null) {
-            LOGGER.error("Unable to read session attributes from message!");
-            return;
-        }
-
-        LOGGER.info("Lost connection {} {}",
-            headerAccessor.getUser().getName(),
-            headerAccessor.getSessionId());
+        LOGGER.info("Lost connection: {} {} {}",
+            remoteIp,
+            headerAccessor.getSessionId(),
+            username);
     }
 }

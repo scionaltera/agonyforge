@@ -24,14 +24,12 @@ public class WebSocketController {
     public Output onSubscribe(Principal principal, Message<byte[]> message) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
+        String remoteIp = attributes == null ? "(unknown IP)" : (String)attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "(unknown IP)");
 
-        LOGGER.info("New connection {} {}",
-            principal.getName(),
-            headerAccessor.getSessionId());
-
-        if (attributes != null) {
-            LOGGER.info("Remote IP: {}", attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "unknown"));
-        }
+        LOGGER.info("New connection: {} {} {}",
+            remoteIp,
+            headerAccessor.getSessionId(),
+            principal.getName());
 
         return new Output("Welcome!");
     }
