@@ -1,5 +1,6 @@
 let socket = null;
 let stompClient = null;
+const scrollBackLength = 1000;
 const commandHistory = [];
 const commandHistoryMax = 50;
 let commandHistoryIndex = -1;
@@ -68,7 +69,7 @@ function connect() {
 }
 
 function sendInput() {
-    let inputBox = $("form input");
+    const inputBox = $("form input");
 
     commandHistoryIndex = -1;
     commandHistory.unshift(inputBox.val());
@@ -84,8 +85,8 @@ function sendInput() {
 }
 
 function showOutput(message) {
-    let outputBox = $("#output-box");
-    let outputList = $("#output-list");
+    const outputBox = $("#output-box");
+    const outputList = $("#output-list");
 
     for (let i = 0; i < message.length; i++) {
         if ("" === message[i]) {
@@ -94,6 +95,17 @@ function showOutput(message) {
             outputList.append("<li>" + replaceColors(message[i]) + "</li>");
         }
     }
+
+    // scroll to bottom
+    outputBox.prop("scrollTop", outputBox.prop("scrollHeight"));
+
+    // cut off the top output when it gets too big
+    const scrollBackOverflow = outputList.find("li").length - scrollBackLength;
+
+    if (scrollBackOverflow > 0) {
+        outputList.find("li").slice(0, scrollBackOverflow).remove();
+    }
+
 }
 
 function replaceColors(message) {
