@@ -1,9 +1,14 @@
 let socket = null;
 let stompClient = null;
+
 const scrollBackLength = 1000;
+
 const commandHistory = [];
 const commandHistoryMax = 50;
 let commandHistoryIndex = -1;
+
+let reconnectDelay = 2;
+let isReconnecting = false;
 
 $(document).ready(function() {
     $("form").submit(function(event) {
@@ -57,13 +62,34 @@ function connect() {
         {},
         function(frame) {
             console.log('Connected: ' + frame);
+            showOutput(["[green]Connected to server."]);
+            reconnectDelay = 2;
+
             stompClient.subscribe('/user/queue/output', function(message) {
                 let msg = JSON.parse(message.body);
-
-                console.log(`Output: ${msg.output}`);
                 showOutput(msg.output);
             },
             {});
+        },
+        function() {
+            const delay = Math.random() * reconnectDelay;
+
+            if (!isReconnecting) {
+                console.log('Disconnected.');
+                showOutput([`[red]Disconnected from server. Reconnecting in ${delay.toFixed(0)} seconds.`]);
+
+                isReconnecting = true;
+
+                setTimeout(function() {
+                    showOutput(["[dyellow]Reconnecting to server..."]);
+
+                    isReconnecting = false;
+
+                    this.connect();
+                }, delay * 1000);
+            }
+
+            reconnectDelay = Math.min(reconnectDelay * 2, 120);
         }
     );
 }
