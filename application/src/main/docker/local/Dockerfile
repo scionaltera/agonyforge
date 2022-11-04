@@ -1,7 +1,7 @@
 FROM amazoncorretto:11-alpine-jdk
 MAINTAINER Scion Altera <scion@agonyforge.com>
 EXPOSE 8080
-COPY mud-*.jar /opt/app/mud.jar
+COPY application-*.jar /opt/app/mud.jar
 WORKDIR /opt/app
 CMD ["/usr/bin/java", \
 "--add-modules", "java.se", \
@@ -13,5 +13,3 @@ CMD ["/usr/bin/java", \
 "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED", \
 "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", \
  "-jar", "mud.jar"]
-
-# "--add-opens", "jdk.management/com.ibm.lang.management.internal=ALL-UNNAMED", \
