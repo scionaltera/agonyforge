@@ -1,5 +1,6 @@
 package com.agonyforge.mud.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.config.StompBrokerRelayRegistration;
@@ -13,15 +14,12 @@ import org.springframework.session.web.socket.config.annotation.AbstractSessionW
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-
-import javax.inject.Inject;
-
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> {
     private final ActiveMqBrokerProperties brokerProperties;
 
-    @Inject
+    @Autowired
     public WebSocketBrokerConfiguration(ActiveMqBrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
     }

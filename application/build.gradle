@@ -1,5 +1,5 @@
 plugins {
-//    id 'info.solidsoft.pitest' version '1.9.0'
+    id 'info.solidsoft.pitest' version '1.9.0'
     id 'org.owasp.dependencycheck' version '7.3.0'
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
@@ -15,12 +15,11 @@ repositories {
     mavenCentral()
 }
 
-//configurations.maybeCreate("pitest")
-//
+configurations.maybeCreate("pitest")
+
 dependencies {
-//    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
-//
-    implementation 'javax.inject:javax.inject:1'
+    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
+
     implementation 'com.hazelcast:hazelcast:5.2.0'
     implementation 'io.projectreactor.netty:reactor-netty:1.0.24'
 
@@ -62,12 +61,12 @@ bootJar {
         )
     }
 }
-//
-//pitest {
-//    coverageThreshold = 70
-//    mutationThreshold = 70
-//    timestampedReports = false
-//}
+
+pitest {
+    coverageThreshold = 70
+    mutationThreshold = 70
+    timestampedReports = false
+}
 
 docker {
     name "scionaltera/mud"
@@ -76,5 +75,5 @@ docker {
 }
 
 build.dependsOn tasks.docker
-//tasks.pitest.mustRunAfter test
-//check.dependsOn tasks.pitest, dependencyCheckAnalyze
+tasks.pitest.mustRunAfter test
+check.dependsOn tasks.pitest, dependencyCheckAnalyze
