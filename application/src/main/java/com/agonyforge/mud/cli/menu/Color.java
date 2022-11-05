@@ -19,7 +19,7 @@ public enum Color {
     DMAGENTA("dmagenta"),
     MAGENTA("magenta");
 
-    private String value;
+    private final String value;
 
     Color(String value) {
         this.value = value;
