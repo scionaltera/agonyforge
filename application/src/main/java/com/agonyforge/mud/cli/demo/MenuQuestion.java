@@ -30,6 +30,19 @@ public class MenuQuestion implements Question {
 
     @Override
     public Response answer(Input input) {
-        return new Response(new EchoQuestion(), new Output(input.getInput() + " it is, then."));
+        Output output = new Output();
+        Question next = new EchoQuestion();
+
+        switch (input.getInput().toUpperCase()) {
+            case "F": output.append("Bar!"); break;
+            case "B": output.append("Baz!"); break;
+            case "C": output.append("I'm the only sane one around here."); break;
+            case "Z": output.append("Royale with cheese."); break;
+            case "P": output.append("Rico Suave!"); break;
+            default:
+                output.append("Please choose one of the menu options.");
+                next = this;
+        }
+        return new Response(next, output);
     }
 }
