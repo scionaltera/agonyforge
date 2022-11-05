@@ -54,12 +54,12 @@ public class WebSocketController {
         attributes.put(CURRENT_QUESTION_KEY, initialQuestion);
 
         return new Output("Welcome!")
-            .append(initialQuestion.prompt());
+            .append(initialQuestion.prompt(principal));
     }
 
     @MessageMapping("/input")
     @SendToUser(value = "/queue/output", broadcast = false)
-    public Output onInput(Input input, @Headers Map<String, Object> headers) {
+    public Output onInput(Principal principal, Input input, @Headers Map<String, Object> headers) {
         Map<String, Object> attributes = SimpMessageHeaderAccessor.getSessionAttributes(headers);
 
         if (attributes == null) {
@@ -68,7 +68,7 @@ public class WebSocketController {
         }
 
         Question currentQuestion = (Question)attributes.get(CURRENT_QUESTION_KEY);
-        Response response = currentQuestion.answer(input);
+        Response response = currentQuestion.answer(principal, input);
         Question nextQuestion = response.getNext();
         Output output = new Output();
 
@@ -76,7 +76,7 @@ public class WebSocketController {
         response.getFeedback().ifPresent(output::append);
 
         // append the prompt from the next question
-        output.append(nextQuestion.prompt());
+        output.append(nextQuestion.prompt(principal));
 
         // store the next question in the session
         attributes.put(CURRENT_QUESTION_KEY, nextQuestion);
