@@ -3,6 +3,7 @@ package com.agonyforge.mud.web.controller;
 import com.agonyforge.mud.cli.demo.EchoQuestion;
 import com.agonyforge.mud.cli.Question;
 import com.agonyforge.mud.cli.Response;
+import com.agonyforge.mud.cli.demo.MenuQuestion;
 import com.agonyforge.mud.web.model.Input;
 import com.agonyforge.mud.web.model.Output;
 import org.slf4j.Logger;
@@ -25,7 +26,8 @@ public class WebSocketController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
-    private final Question initialQuestion = new EchoQuestion();
+//    private final Question initialQuestion = new EchoQuestion();
+    private final Question initialQuestion = new MenuQuestion();
 
     @SubscribeMapping("/queue/output")
     public Output onSubscribe(Principal principal, @Headers Map<String, Object> headers) {
