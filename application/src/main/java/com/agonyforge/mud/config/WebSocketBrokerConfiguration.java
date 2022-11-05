@@ -60,6 +60,9 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
         }
     }
 
+    // TODO to add custom headers to outbound messages
+    // https://stackoverflow.com/questions/42166472/how-to-add-custom-headers-to-stomp-created-message-in-spring-boot-application
+
     private TcpOperations<byte[]> createSslTcpClient() {
         StompDecoder decoder = new StompDecoder();
         ReactorNettyCodec<byte[]> codec = new StompReactorNettyCodec(decoder);

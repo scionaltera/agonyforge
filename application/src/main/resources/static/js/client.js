@@ -10,6 +10,10 @@ let commandHistoryIndex = -1;
 let reconnectDelay = 2;
 let isReconnecting = false;
 
+const faviconDefault = '/img/favicon.ico';
+const faviconNotify = '/img/favicon-green.ico';
+let ownMessage = false;
+
 $(document).ready(function() {
     $("form").submit(function(event) {
         sendInput();
@@ -68,6 +72,12 @@ function connect() {
             stompClient.subscribe('/user/queue/output', function(message) {
                 let msg = JSON.parse(message.body);
                 showOutput(msg.output);
+
+                if (ownMessage) {
+                    ownMessage = false;
+                } else {
+                    setFavicon(faviconNotify);
+                }
             },
             {});
         },
@@ -108,6 +118,9 @@ function sendInput() {
 
     stompClient.send("/app/input", JSON.stringify({'input': inputBox.val()}));
     inputBox.val('');
+
+    setFavicon(faviconDefault);
+    ownMessage = true;
 }
 
 function showOutput(message) {
@@ -146,4 +159,14 @@ function htmlEscape(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/\//g, '&#x2F;');
+}
+
+function setFavicon(filename) {
+    let link = $("link[rel='icon']");
+
+    if (!link) {
+        link = $("head").append(`<link rel='icon' href='${filename}'`);
+    }
+
+    link.attr("href", filename);
 }
