@@ -9,11 +9,19 @@ import com.agonyforge.mud.cli.menu.demo.DemoMenuPrompt;
 import com.agonyforge.mud.cli.menu.demo.DemoMenuTitle;
 import com.agonyforge.mud.web.model.Input;
 import com.agonyforge.mud.web.model.Output;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MenuQuestion implements Question {
     private final DemoMenuPane menuPane = new DemoMenuPane();
+    private final Question nextQuestion;
 
-    public MenuQuestion() {
+    @Autowired
+    public MenuQuestion(@Qualifier("echoQuestion") Question nextQuestion) {
+        this.nextQuestion = nextQuestion;
+
         menuPane.setTitle(new DemoMenuTitle("Demo Menu"));
         menuPane.getItems().add(new DemoMenuItem("F", "Foo"));
         menuPane.getItems().add(new DemoMenuItem("B", "Bar"));
@@ -31,7 +39,7 @@ public class MenuQuestion implements Question {
     @Override
     public Response answer(Input input) {
         Output output = new Output();
-        Question next = new EchoQuestion();
+        Question next = nextQuestion;
 
         switch (input.getInput().toUpperCase()) {
             case "F": output.append("Bar!"); break;

@@ -1,13 +1,13 @@
 package com.agonyforge.mud.web.controller;
 
-import com.agonyforge.mud.cli.demo.EchoQuestion;
 import com.agonyforge.mud.cli.Question;
 import com.agonyforge.mud.cli.Response;
-import com.agonyforge.mud.cli.demo.MenuQuestion;
 import com.agonyforge.mud.web.model.Input;
 import com.agonyforge.mud.web.model.Output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -26,8 +26,13 @@ public class WebSocketController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
-//    private final Question initialQuestion = new EchoQuestion();
-    private final Question initialQuestion = new MenuQuestion();
+
+    private final Question initialQuestion;
+
+    @Autowired
+    public WebSocketController(@Qualifier("menuQuestion") Question initialQuestion) {
+        this.initialQuestion = initialQuestion;
+    }
 
     @SubscribeMapping("/queue/output")
     public Output onSubscribe(Principal principal, @Headers Map<String, Object> headers) {

@@ -4,7 +4,9 @@ import com.agonyforge.mud.cli.Question;
 import com.agonyforge.mud.cli.Response;
 import com.agonyforge.mud.web.model.Input;
 import com.agonyforge.mud.web.model.Output;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EchoQuestion implements Question {
     @Override
     public Output prompt() {
