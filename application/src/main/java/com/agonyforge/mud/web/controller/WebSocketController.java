@@ -4,7 +4,7 @@ import com.agonyforge.mud.web.model.Input;
 import com.agonyforge.mud.web.model.Output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -21,24 +21,35 @@ public class WebSocketController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
     @SubscribeMapping("/queue/output")
-    public Output onSubscribe(Principal principal, Message<byte[]> message) {
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
-        Map<String, Object> attributes = headerAccessor.getSessionAttributes();
-        String remoteIp = attributes == null ? "(unknown IP)" : (String)attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "(unknown IP)");
+    public Output onSubscribe(Principal principal, @Headers Map<String, Object> headers) {
+        Map<String, Object> attributes = SimpMessageHeaderAccessor.getSessionAttributes(headers);
+        String remoteIp = attributes == null ? "(no IP)" : (String)attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "(no IP)");
+        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
 
         LOGGER.info("New connection: {} {} {}",
             remoteIp,
-            headerAccessor.getSessionId(),
+            sessionId,
             principal.getName());
+
+        // TODO Show greeting.
+        // TODO Select initial state, bust a prompt.
 
         return new Output("Welcome!");
     }
 
     @MessageMapping("/input")
     @SendToUser(value = "/queue/output", broadcast = false)
-    public Output onInput(Input input, Message<byte[]> message) {
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
-        Map<String, Object> attributes = headerAccessor.getSessionAttributes();
+    public Output onInput(Input input, @Headers Map<String, Object> headers) {
+        /*
+         * The phases here should work like this:
+         *
+         * 0) Set initial state; ask a question. (in onSubscribe)
+         * 1) Process the response.
+         * 2) Optionally produce some output. (e.g. an error message)
+         * 3) Move to the next state.
+         * 4) Ask a question. (i.e. a prompt or a menu)
+         * 5) GOTO 1
+         */
 
         String payload = input.getInput();
 
