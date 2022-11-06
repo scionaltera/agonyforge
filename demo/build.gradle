@@ -1,0 +1,74 @@
+plugins {
+    id 'info.solidsoft.pitest' version '1.9.0'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.palantir.docker' version '0.34.0'
+    id 'java'
+}
+
+group = 'com.agonyforge'
+version = '0.0.2'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+configurations.maybeCreate("pitest")
+
+dependencies {
+    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
+
+    implementation project(":core")
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.session:spring-session-core'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    enabled = false // don't build the non-repackaged jar
+}
+
+bootJar {
+    manifest {
+        attributes(
+            'Implementation-Title': jar.getArchiveBaseName().get(),
+            'Implementation-Version': getArchiveVersion()
+        )
+    }
+}
+
+pitest {
+    coverageThreshold = 70
+    mutationThreshold = 70
+    timestampedReports = false
+
+    targetClasses = [
+        "com.agonyforge.mud.demo.*"
+    ]
+
+    excludedMethods = [
+        "hashCode",
+        "equals"
+    ]
+}
+
+docker {
+    name "scionaltera/mud"
+    dockerfile file('src/main/docker/local/Dockerfile')
+    files bootJar.outputs
+}
+
+build.dependsOn tasks.docker
+tasks.pitest.mustRunAfter test
+check.dependsOn tasks.pitest
