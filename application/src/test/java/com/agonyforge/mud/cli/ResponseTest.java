@@ -29,7 +29,7 @@ public class ResponseTest {
         Response uut = new Response(question, output);
 
         assertEquals(question, uut.getNext());
-        assertEquals(output, uut.getFeedback().get());
+        assertEquals(output, uut.getFeedback().orElseThrow());
     }
 
 

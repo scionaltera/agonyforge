@@ -1,12 +1,13 @@
 package com.agonyforge.mud.web.controller;
 
-import com.agonyforge.mud.cli.demo.EchoQuestion;
 import com.agonyforge.mud.cli.Question;
 import com.agonyforge.mud.cli.Response;
 import com.agonyforge.mud.web.model.Input;
 import com.agonyforge.mud.web.model.Output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -25,7 +26,13 @@ public class WebSocketController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
-    private final Question initialQuestion = new EchoQuestion();
+
+    private final Question initialQuestion;
+
+    @Autowired
+    public WebSocketController(@Qualifier("menuQuestion") Question initialQuestion) {
+        this.initialQuestion = initialQuestion;
+    }
 
     @SubscribeMapping("/queue/output")
     public Output onSubscribe(Principal principal, @Headers Map<String, Object> headers) {
@@ -47,12 +54,12 @@ public class WebSocketController {
         attributes.put(CURRENT_QUESTION_KEY, initialQuestion);
 
         return new Output("Welcome!")
-            .append(initialQuestion.prompt());
+            .append(initialQuestion.prompt(principal));
     }
 
     @MessageMapping("/input")
     @SendToUser(value = "/queue/output", broadcast = false)
-    public Output onInput(Input input, @Headers Map<String, Object> headers) {
+    public Output onInput(Principal principal, Input input, @Headers Map<String, Object> headers) {
         Map<String, Object> attributes = SimpMessageHeaderAccessor.getSessionAttributes(headers);
 
         if (attributes == null) {
@@ -61,7 +68,7 @@ public class WebSocketController {
         }
 
         Question currentQuestion = (Question)attributes.get(CURRENT_QUESTION_KEY);
-        Response response = currentQuestion.answer(input);
+        Response response = currentQuestion.answer(principal, input);
         Question nextQuestion = response.getNext();
         Output output = new Output();
 
@@ -69,7 +76,7 @@ public class WebSocketController {
         response.getFeedback().ifPresent(output::append);
 
         // append the prompt from the next question
-        output.append(nextQuestion.prompt());
+        output.append(nextQuestion.prompt(principal));
 
         // store the next question in the session
         attributes.put(CURRENT_QUESTION_KEY, nextQuestion);
