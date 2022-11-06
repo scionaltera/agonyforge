@@ -10,7 +10,6 @@ import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -23,12 +22,11 @@ import java.util.Map;
 @Component
 public class MenuQuestion implements Question {
     private final DemoMenuPane menuPane = new DemoMenuPane();
-    private final Question nextQuestion;
     private final FindByIndexNameSessionRepository<Session> sessionRepository;
+    private Question nextQuestion = null;
 
     @Autowired
-    public MenuQuestion(@Qualifier("echoQuestion") Question nextQuestion, FindByIndexNameSessionRepository<Session> sessionRepository) {
-        this.nextQuestion = nextQuestion;
+    public MenuQuestion(FindByIndexNameSessionRepository<Session> sessionRepository) {
         this.sessionRepository = sessionRepository;
 
         assert this.sessionRepository != null;
@@ -41,6 +39,10 @@ public class MenuQuestion implements Question {
         menuPane.getItems().add(new DemoMenuItem("Z", "Zed's Dead, Baby"));
         menuPane.getItems().add(new DemoMenuItem("P", "Puerto Rico"));
         menuPane.setPrompt(new DemoMenuPrompt());
+    }
+
+    public void setNextQuestion(Question nextQuestion) {
+        this.nextQuestion = nextQuestion;
     }
 
     @Override

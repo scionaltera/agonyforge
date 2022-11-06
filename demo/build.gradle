@@ -61,6 +61,10 @@ pitest {
         "hashCode",
         "equals"
     ]
+
+    excludedClasses = [
+        "com.agonyforge.mud.demo.config.*"
+    ]
 }
 
 docker {

@@ -1,3 +1,9 @@
-task deleteBuildDir(type:Delete) {
-    delete "build"
+plugins {
+    id 'java'
 }
+
+task deleteLocalstackVolume(type:Delete) {
+    delete "volume"
+}
+
+clean.dependsOn deleteLocalstackVolume

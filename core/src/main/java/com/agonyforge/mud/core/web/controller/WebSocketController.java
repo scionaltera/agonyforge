@@ -30,7 +30,7 @@ public class WebSocketController {
     private final Question initialQuestion;
 
     @Autowired
-    public WebSocketController(@Qualifier("menuQuestion") Question initialQuestion) {
+    public WebSocketController(@Qualifier("initialQuestion") Question initialQuestion) {
         this.initialQuestion = initialQuestion;
     }
 

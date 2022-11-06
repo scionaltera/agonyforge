@@ -52,7 +52,9 @@ public class MenuQuestionTest {
 
     @Test
     void testPrompt() {
-        MenuQuestion uut = new MenuQuestion(question, sessionRepository);
+        MenuQuestion uut = new MenuQuestion(sessionRepository);
+        uut.setNextQuestion(question);
+
         Output result = uut.prompt(principal);
 
         assertEquals(10, result.getOutput().size());
@@ -71,7 +73,9 @@ public class MenuQuestionTest {
 
     @Test
     void testAnswerSNoSession() {
-        MenuQuestion uut = new MenuQuestion(question, sessionRepository);
+        MenuQuestion uut = new MenuQuestion(sessionRepository);
+        uut.setNextQuestion(question);
+
         Input input = new Input("S");
         Response result = uut.answer(principal, input);
 
@@ -93,7 +97,9 @@ public class MenuQuestionTest {
         when(session.getAttributeOrDefault(eq("MENU.DEMO"), eq(1))).thenReturn(9000);
         when(sessionRepository.findByPrincipalName(any())).thenReturn(Map.of("foo", session));
 
-        MenuQuestion uut = new MenuQuestion(question, sessionRepository);
+        MenuQuestion uut = new MenuQuestion(sessionRepository);
+        uut.setNextQuestion(question);
+
         Input input = new Input("S");
         Response result = uut.answer(principal, input);
 
@@ -117,7 +123,9 @@ public class MenuQuestionTest {
         "P,Rico Suave!"
     })
     void testAnswers(String letter, String expected) {
-        MenuQuestion uut = new MenuQuestion(question, sessionRepository);
+        MenuQuestion uut = new MenuQuestion(sessionRepository);
+        uut.setNextQuestion(question);
+
         Input input = new Input(letter);
         Response result = uut.answer(principal, input);
 
@@ -132,7 +140,9 @@ public class MenuQuestionTest {
 
     @Test
     void testAnswerInvalid() {
-        MenuQuestion uut = new MenuQuestion(question, sessionRepository);
+        MenuQuestion uut = new MenuQuestion(sessionRepository);
+        uut.setNextQuestion(question);
+
         Input input = new Input("A");
         Response result = uut.answer(principal, input);
 
