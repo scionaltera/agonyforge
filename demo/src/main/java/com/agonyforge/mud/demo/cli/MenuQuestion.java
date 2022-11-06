@@ -9,23 +9,19 @@ import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
-import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 import java.util.Map;
 
-@Component
 public class MenuQuestion implements Question {
     private final DemoMenuPane menuPane = new DemoMenuPane();
     private final FindByIndexNameSessionRepository<Session> sessionRepository;
     private Question nextQuestion = null;
 
-    @Autowired
     public MenuQuestion(FindByIndexNameSessionRepository<Session> sessionRepository) {
         this.sessionRepository = sessionRepository;
 
