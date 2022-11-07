@@ -12,7 +12,12 @@ import static org.springframework.web.socket.server.support.HttpSessionHandshake
 /*
  * Hacky workaround for https://github.com/spring-projects/spring-session/issues/561
  *
- * "SPRING.SESSION.ID" comes from
+ * Basically the HTTP Session ID is stored in the WebSocket Session under SPRING_SESSION_ID_ATTR_NAME
+ * but something looks for it under SPRING.SESSION.ID instead. It throws an NPE in the logs
+ * whenever someone connects. This interceptor simply copies the value into the missing key to
+ * prevent the NPE and enable whatever is using it there to work. Yay!
+ *
+ * The "SPRING.SESSION.ID" constant comes from
  * org.springframework.session.web.socket.server.SessionRepositoryMessageInterceptor.SPRING_SESSION_ID_ATTR_NAME
  * which is private, so I can't import it here.
  */
