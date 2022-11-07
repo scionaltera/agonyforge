@@ -14,6 +14,9 @@ const faviconDefault = '/img/favicon.ico';
 const faviconNotify = '/img/favicon-green.ico';
 let ownMessage = false;
 
+// https://www.iana.org/assignments/websocket/websocket.xhtml
+const clientWsErrorCodes = [2000]; // we should ask user to refresh
+
 $(document).ready(function() {
     $("form").submit(function(event) {
         sendInput();
@@ -64,7 +67,7 @@ function connect() {
     stompClient = webstomp.over(socket, { heartbeat: false, protocols: ['v12.stomp']});
     stompClient.connect(
         {},
-        function(frame) {
+        function(frame) { // connectCallback
             console.log('Connected: ' + frame);
             showOutput(["[green]Connected to server."]);
             reconnectDelay = 2;
@@ -81,12 +84,29 @@ function connect() {
             },
             {});
         },
-        function() {
+        function(event) { // errorCallback
+            console.log(`Connection error: ${event.code} => ${event.reason}`);
+
+            if (clientWsErrorCodes.includes(event.code)) {
+                if (event.reason) {
+                    showOutput([`[red]Disconnected from server: ${event.reason}`]);
+                } else {
+                    showOutput(['[red]Disconnected from server.']);
+                }
+                showOutput(['[red]Please refresh your browser to log in again.']);
+                return;
+            } else {
+                if (event.reason) {
+                    showOutput([`[red]The server reported an error: ${event.reason}`]);
+                } else {
+                    showOutput(['[red]Disconnected from server.']);
+                }
+            }
+
             const delay = Math.random() * reconnectDelay;
 
             if (!isReconnecting) {
-                console.log('Disconnected.');
-                showOutput([`[red]Disconnected from server. Reconnecting in ${delay.toFixed(0)} seconds.`]);
+                showOutput([`[dyellow]Reconnecting in ${delay.toFixed(0)} seconds.`]);
 
                 isReconnecting = true;
 
