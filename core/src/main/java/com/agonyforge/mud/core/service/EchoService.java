@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 
+/*
+ * TODO Not writing tests for this one yet because it's very likely to change.
+ */
 @Component
 public class EchoService {
     private final SimpMessagingTemplate simpMessagingTemplate;

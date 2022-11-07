@@ -2,6 +2,7 @@ package com.agonyforge.mud.core.web.controller;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.InMemoryUserRepository;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.web.controller.WebSocketController.CURRENT_QUESTION_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.messaging.simp.SimpMessageHeaderAccessor.SESSION_ATTRIBUTES;
 
@@ -32,6 +35,9 @@ public class WebSocketControllerTest {
 
     @Mock
     private Response response;
+
+    @Mock
+    private InMemoryUserRepository userRepository;
 
     private Map<String, Object> headers;
 
@@ -50,24 +56,28 @@ public class WebSocketControllerTest {
     void testSubscribe() {
         when(question.prompt(any())).thenReturn(new Output("", "[default]> "));
 
-        WebSocketController uut = new WebSocketController(question);
+        WebSocketController uut = new WebSocketController(question, userRepository);
         Output result = uut.onSubscribe(principal, headers);
 
         assertEquals(3, result.getOutput().size());
         assertEquals("Welcome!", result.getOutput().get(0));
         assertEquals("", result.getOutput().get(1));
         assertEquals("[default]> ", result.getOutput().get(2));
+
+        verify(userRepository).getWsSessionNames();
     }
 
     @Test
     void testSubscribeMissingAttributes() {
         headers.remove(SESSION_ATTRIBUTES);
 
-        WebSocketController uut = new WebSocketController(question);
+        WebSocketController uut = new WebSocketController(question, userRepository);
         Output result = uut.onSubscribe(principal, headers);
 
         assertEquals(1, result.getOutput().size());
         assertEquals("[red]Oops! Something went wrong. Please try refreshing your browser.", result.getOutput().get(0));
+
+        verify(userRepository, never()).getWsSessionNames();
     }
 
     @Test
@@ -78,7 +88,7 @@ public class WebSocketControllerTest {
         when(question.prompt(any())).thenReturn(new Output("", "[default]> "));
 
         Input input = new Input("Hello!");
-        WebSocketController uut = new WebSocketController(question);
+        WebSocketController uut = new WebSocketController(question, userRepository);
         Output result = uut.onInput(principal, input, headers);
 
         assertEquals(3, result.getOutput().size());
@@ -92,7 +102,7 @@ public class WebSocketControllerTest {
         headers.remove(SESSION_ATTRIBUTES);
 
         Input input = new Input("Hello!");
-        WebSocketController uut = new WebSocketController(question);
+        WebSocketController uut = new WebSocketController(question, userRepository);
         Output result = uut.onInput(principal, input, headers);
 
         assertEquals(1, result.getOutput().size());
