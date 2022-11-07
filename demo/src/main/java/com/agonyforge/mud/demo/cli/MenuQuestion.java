@@ -9,26 +9,15 @@ import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
 
 import java.security.Principal;
-import java.util.Map;
 
 public class MenuQuestion implements Question {
     private final DemoMenuPane menuPane = new DemoMenuPane();
-    private final FindByIndexNameSessionRepository<Session> sessionRepository;
     private Question nextQuestion = null;
 
-    public MenuQuestion(FindByIndexNameSessionRepository<Session> sessionRepository) {
-        this.sessionRepository = sessionRepository;
-
-        assert this.sessionRepository != null;
-
+    public MenuQuestion() {
         menuPane.setTitle(new DemoMenuTitle("Demo Menu"));
-        menuPane.getItems().add(new DemoMenuItem("S", "Session ID"));
         menuPane.getItems().add(new DemoMenuItem("F", "Foo"));
         menuPane.getItems().add(new DemoMenuItem("B", "Bar"));
         menuPane.getItems().add(new DemoMenuItem("C", "Crazy Town"));
@@ -52,10 +41,6 @@ public class MenuQuestion implements Question {
         Question next = nextQuestion;
 
         switch (input.getInput().toUpperCase()) {
-            case "S":
-                output.append(listSessions(sessionRepository.findByPrincipalName(principal.getName())));
-                next = this;
-                break;
             case "F": output.append("Bar!"); break;
             case "B": output.append("Baz!"); break;
             case "C": output.append("I'm the only sane one around here."); break;
@@ -66,23 +51,5 @@ public class MenuQuestion implements Question {
                 next = this;
         }
         return new Response(next, output);
-    }
-
-    private Output listSessions(Map<String, Session> sessions) {
-        Output output = new Output();
-
-        output.append("Your sessions:");
-        sessions.keySet().forEach(key -> {
-            Session session = sessions.get(key);
-            SecurityContext ctx = session.getAttribute("SPRING_SECURITY_CONTEXT");
-            WebAuthenticationDetails details = (WebAuthenticationDetails) ctx.getAuthentication().getDetails();
-
-            int count = session.getAttributeOrDefault("MENU.DEMO", 1);
-            session.setAttribute("MENU.DEMO", count + 1);
-
-            output.append(key + " @ " + details.getRemoteAddress() + " (" + count + " times)");
-        });
-
-        return output;
     }
 }

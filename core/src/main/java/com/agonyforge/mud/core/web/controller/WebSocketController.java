@@ -2,6 +2,7 @@ package com.agonyforge.mud.core.web.controller;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.InMemoryUserRepository;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import org.slf4j.Logger;
@@ -26,12 +27,14 @@ public class WebSocketController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
-
     private final Question initialQuestion;
+    private final InMemoryUserRepository userRepository;
 
     @Autowired
-    public WebSocketController(@Qualifier("initialQuestion") Question initialQuestion) {
+    public WebSocketController(@Qualifier("initialQuestion") Question initialQuestion,
+                               InMemoryUserRepository userRepository) {
         this.initialQuestion = initialQuestion;
+        this.userRepository = userRepository;
     }
 
     @SubscribeMapping("/queue/output")
@@ -44,13 +47,14 @@ public class WebSocketController {
         }
 
         String remoteIp = (String)attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "(no IP)");
-        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
+        String wsSessionName = SimpMessageHeaderAccessor.getSessionId(headers);
 
         LOGGER.info("New connection: {} {} {}",
             remoteIp,
-            sessionId,
+            wsSessionName,
             principal.getName());
 
+        userRepository.getWsSessionNames().add(principal.getName());
         attributes.put(CURRENT_QUESTION_KEY, initialQuestion);
 
         return new Output("Welcome!")

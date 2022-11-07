@@ -33,6 +33,7 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
         httpSessionHandshakeInterceptor.setCopyAllAttributes(true);
         registry
             .addEndpoint("/mud")
+            .setHandshakeHandler(new SessionIdHandshakeHandler())
             .withSockJS()
             .setInterceptors(
                 httpSessionHandshakeInterceptor,

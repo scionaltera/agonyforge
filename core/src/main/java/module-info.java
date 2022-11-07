@@ -2,6 +2,7 @@ module com.agonyforge.mud.core {
     exports com.agonyforge.mud.core.cli;
     exports com.agonyforge.mud.core.cli.menu;
     exports com.agonyforge.mud.core.web.model;
+    exports com.agonyforge.mud.core.service;
     requires spring.beans;
     requires spring.boot;
     requires spring.context;
@@ -17,4 +18,5 @@ module com.agonyforge.mud.core {
     requires spring.security.core;
     requires com.hazelcast.core;
     requires spring.session.hazelcast;
+    requires spring.security.oauth2.core;
 }
