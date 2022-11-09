@@ -3,7 +3,7 @@ package com.agonyforge.mud.demo.cli;
 import com.agonyforge.mud.core.cli.AbstractQuestion;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
-import com.agonyforge.mud.core.cli.menu.Color;
+import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;

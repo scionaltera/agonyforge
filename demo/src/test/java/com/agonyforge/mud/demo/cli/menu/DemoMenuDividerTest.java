@@ -1,6 +1,6 @@
 package com.agonyforge.mud.demo.cli.menu;
 
-import com.agonyforge.mud.core.cli.menu.Color;
+import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.stream.Stream;
 
-import static com.agonyforge.mud.core.cli.menu.Color.BLUE;
-import static com.agonyforge.mud.core.cli.menu.Color.RED;
+import static com.agonyforge.mud.core.cli.Color.BLUE;
+import static com.agonyforge.mud.core.cli.Color.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)

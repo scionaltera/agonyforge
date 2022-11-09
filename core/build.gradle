@@ -77,7 +77,7 @@ pitest {
 
     excludedClasses = [
         "com.agonyforge.mud.core.config.*",
-        "com.agonyforge.mud.core.cli.menu.*"
+        "com.agonyforge.mud.core.*.Abstract*"
     ]
 }
 

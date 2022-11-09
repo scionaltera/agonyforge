@@ -1,4 +1,4 @@
-package com.agonyforge.mud.core.cli.menu;
+package com.agonyforge.mud.core.cli;
 
 public enum Color {
     DEFAULT("default"),

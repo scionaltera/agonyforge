@@ -62,7 +62,8 @@ public class EchoService {
                 .forEach(session -> {
                     Principal stompPrincipal = new StompPrincipal(principal.getName());
                     Output messageWithPrompt = appendPrompt(stompPrincipal, session, message);
-                    MessageHeaders messageHeaders = buildMessageHeaders(session);
+                    String wsSessionId = session.getAttribute(WS_SESSION_ID);
+                    MessageHeaders messageHeaders = buildMessageHeaders(wsSessionId);
 
                     simpMessagingTemplate.convertAndSendToUser(
                         stompPrincipal.getName(),
@@ -91,14 +92,12 @@ public class EchoService {
      * Does the same thing as setting broadcast = false in the @SendToUser annotation. Without this
      * it would broadcast to every connection from the same Principal.
      *
-     * @param session The HTTP Session of the target user.
+     * @param wsSessionId WebSocket session ID.
      * @return A MessageHeaders designed to limit the message to only the specified session ID.
      */
-    private MessageHeaders buildMessageHeaders(Session session) {
-        String wsSessionId = session.getAttribute(WS_SESSION_ID);
+    private MessageHeaders buildMessageHeaders(String wsSessionId) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
         headerAccessor.setSessionId(wsSessionId);
-        headerAccessor.setLeaveMutable(true);
         return headerAccessor.getMessageHeaders();
     }
 }
