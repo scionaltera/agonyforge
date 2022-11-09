@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 @EnableWebSecurity
@@ -29,10 +30,18 @@ public class WebSecurityConfiguration {
                 .loginPage("/")
                 .defaultSuccessUrl("/play"))
             .sessionManagement()
+            .invalidSessionUrl("/")
             .maximumSessions(1)
+            .maxSessionsPreventsLogin(true)
+            .expiredUrl("/play")
             .sessionRegistry(sessionRegistry());
 
         return http.build();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 
     @Bean

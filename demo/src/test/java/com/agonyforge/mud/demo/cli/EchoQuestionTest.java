@@ -33,7 +33,7 @@ public class EchoQuestionTest {
         assertEquals("", output.getOutput().get(0));
         assertEquals("[default]> ", output.getOutput().get(1));
 
-        verify(echoService, never()).echo(any(), any());
+        verify(echoService, never()).echoToAll(any(), any());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class EchoQuestionTest {
         assertEquals(1, responseOut.getOutput().size());
         assertEquals("[default]What would you like to say?", responseOut.getOutput().get(0));
 
-        verify(echoService, never()).echo(any(), any());
+        verify(echoService, never()).echoToAll(any(), any());
     }
 
     @Test
@@ -59,6 +59,6 @@ public class EchoQuestionTest {
         assertEquals(1, responseOut.getOutput().size());
         assertEquals("[cyan]You say, 'test[cyan]'", responseOut.getOutput().get(0));
 
-        verify(echoService).echo(eq(principal), any(Output.class));
+        verify(echoService).echoToAll(eq(principal), any(Output.class));
     }
 }

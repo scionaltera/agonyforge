@@ -51,9 +51,9 @@ public class SessionConfiguration {
     public SessionRepositoryCustomizer<Hazelcast4IndexedSessionRepository> customize() {
         return (sessionRepository) -> {
             sessionRepository.setFlushMode(FlushMode.IMMEDIATE);
-            sessionRepository.setSaveMode(SaveMode.ALWAYS);
+            sessionRepository.setSaveMode(SaveMode.ON_SET_ATTRIBUTE);
             sessionRepository.setSessionMapName(DEFAULT_SESSION_MAP_NAME);
-            sessionRepository.setDefaultMaxInactiveInterval(900);
+            sessionRepository.setDefaultMaxInactiveInterval(86400); // 24 hours
         };
     }
 }
