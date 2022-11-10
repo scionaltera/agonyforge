@@ -7,5 +7,6 @@ module com.agonyforge.mud.demo {
     requires spring.security.web;
     requires spring.session.core;
     requires com.agonyforge.mud.core;
+    requires org.slf4j;
     exports com.agonyforge.mud.demo;
 }

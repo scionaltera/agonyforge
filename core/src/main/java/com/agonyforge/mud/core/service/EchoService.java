@@ -84,7 +84,7 @@ public class EchoService {
     private Output appendPrompt(Principal stompPrincipal, Session session, Output message) {
         Question question = applicationContext.getBean(session.getAttribute(CURRENT_QUESTION_KEY), Question.class);
 
-        return new Output(message).append(question.prompt(stompPrincipal, null));
+        return new Output(message).append(question.prompt(stompPrincipal, session));
     }
 
     /**

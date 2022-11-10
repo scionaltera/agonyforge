@@ -11,10 +11,10 @@ import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
 import org.springframework.context.ApplicationContext;
+import org.springframework.session.Session;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
-import java.util.Map;
 
 @Component
 public class MenuQuestion extends AbstractQuestion {
@@ -40,12 +40,12 @@ public class MenuQuestion extends AbstractQuestion {
     }
 
     @Override
-    public Output prompt(Principal principal, Map<String, Object> stompSession) {
+    public Output prompt(Principal principal, Session httpSession) {
         return menuPane.render(Color.CYAN, Color.DCYAN);
     }
 
     @Override
-    public Response answer(Principal principal, Map<String, Object> stompSession, Input input) {
+    public Response answer(Principal principal, Session httpSession, Input input) {
         Output output = new Output();
         Question next = applicationContext.getBean(nextQuestion, Question.class);
 
