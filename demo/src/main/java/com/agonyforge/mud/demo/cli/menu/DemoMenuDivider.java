@@ -1,10 +1,10 @@
 package com.agonyforge.mud.demo.cli.menu;
 
 import com.agonyforge.mud.core.cli.menu.AbstractMenuDivider;
-import com.agonyforge.mud.core.cli.menu.Color;
+import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
 
-import static com.agonyforge.mud.core.cli.menu.Color.GREEN;
+import static com.agonyforge.mud.core.cli.Color.GREEN;
 
 public class DemoMenuDivider extends AbstractMenuDivider {
     public DemoMenuDivider(int length) {

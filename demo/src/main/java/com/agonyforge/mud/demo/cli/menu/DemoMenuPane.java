@@ -1,7 +1,7 @@
 package com.agonyforge.mud.demo.cli.menu;
 
 import com.agonyforge.mud.core.cli.menu.AbstractMenuPane;
-import com.agonyforge.mud.core.cli.menu.Color;
+import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
 
 public class DemoMenuPane extends AbstractMenuPane {

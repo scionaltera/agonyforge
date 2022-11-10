@@ -1,11 +1,11 @@
 package com.agonyforge.mud.demo.cli.menu;
 
 import com.agonyforge.mud.core.cli.menu.AbstractMenuPrompt;
-import com.agonyforge.mud.core.cli.menu.Color;
+import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
 
-import static com.agonyforge.mud.core.cli.menu.Color.GREEN;
-import static com.agonyforge.mud.core.cli.menu.Color.YELLOW;
+import static com.agonyforge.mud.core.cli.Color.GREEN;
+import static com.agonyforge.mud.core.cli.Color.YELLOW;
 
 public class DemoMenuPrompt extends AbstractMenuPrompt {
     @Override

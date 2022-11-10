@@ -10,26 +10,39 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MenuQuestionTest {
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Mock
     private Principal principal;
 
     @Mock
     private Question question;
 
+    @Mock
+    private Question nextQuestion;
+
+    private final Map<String, Object> attributes = new HashMap<>();
+
     @Test
     void testPrompt() {
-        MenuQuestion uut = new MenuQuestion();
-        uut.setNextQuestion(question);
+        MenuQuestion uut = new MenuQuestion(applicationContext);
+        uut.setNextQuestion("testQuestion");
 
-        Output result = uut.prompt(principal);
+        Output result = uut.prompt(principal, attributes);
 
         assertEquals(9, result.getOutput().size());
         assertEquals("[dcyan]*************", result.getOutput().get(0));
@@ -53,11 +66,13 @@ public class MenuQuestionTest {
         "P,Rico Suave!"
     })
     void testAnswers(String letter, String expected) {
-        MenuQuestion uut = new MenuQuestion();
-        uut.setNextQuestion(question);
+        when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
+
+        MenuQuestion uut = new MenuQuestion(applicationContext);
+        uut.setNextQuestion("testQuestion");
 
         Input input = new Input(letter);
-        Response result = uut.answer(principal, input);
+        Response result = uut.answer(principal, attributes, input);
 
         assertEquals(question, result.getNext());
 
@@ -68,11 +83,11 @@ public class MenuQuestionTest {
 
     @Test
     void testAnswerInvalid() {
-        MenuQuestion uut = new MenuQuestion();
-        uut.setNextQuestion(question);
+        MenuQuestion uut = new MenuQuestion(applicationContext);
+        uut.setNextQuestion("testQuestion");
 
         Input input = new Input("A");
-        Response result = uut.answer(principal, input);
+        Response result = uut.answer(principal, attributes, input);
 
         assertEquals(uut, result.getNext());
 

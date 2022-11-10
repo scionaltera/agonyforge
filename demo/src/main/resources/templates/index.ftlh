@@ -12,11 +12,12 @@
         <section class="col-12">
             <@secure "ROLE_USER">
             <p>You are authenticated.</p>
-            <a href="<@spring.url '/logout' />">Log Out</a>
+            <p><a href="<@spring.url '/play' />">Play</a></p>
+            <p><a href="<@spring.url '/logout' />">Log Out</a></p>
             </@secure>
             <@anonymous "ROLE_USER">
             <p>You are anonymous.</p>
-            <a href="<@spring.url '/oauth2/authorization/cognito' />">Log In</a>
+            <p><a href="<@spring.url '/oauth2/authorization/cognito' />">Log In</a></p>
             </@anonymous>
         </section>
     </section>

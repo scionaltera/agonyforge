@@ -11,5 +11,5 @@ CMD ["/usr/bin/java", \
 "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED", \
 "--add-opens", "java.management/sun.management=ALL-UNNAMED", \
 "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED", \
-"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", \
+"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", \
  "-jar", "mud.jar"]

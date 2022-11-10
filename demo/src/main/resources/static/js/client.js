@@ -15,7 +15,7 @@ const faviconNotify = '/img/favicon-green.ico';
 let ownMessage = false;
 
 // https://www.iana.org/assignments/websocket/websocket.xhtml
-const clientWsErrorCodes = [2000]; // we should ask user to refresh
+const clientWsErrorCodes = [1008, 2000]; // we should ask user to refresh
 
 $(document).ready(function() {
     $("form").submit(function(event) {

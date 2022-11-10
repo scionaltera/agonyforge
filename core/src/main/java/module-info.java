@@ -19,4 +19,5 @@ module com.agonyforge.mud.core {
     requires com.hazelcast.core;
     requires spring.session.hazelcast;
     requires spring.security.oauth2.core;
+    requires spring.security.oauth2.client;
 }
