@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cognito User Pool for Agony Forge MUD
+Parameters:
+  CognitoCertificateArn:
+    Type: String
+    Description: The ARN for the ACM certificate used by the Cognito User Pool.
+  CognitoCustomDomain:
+    Type: String
+    Description: The custom domain name to use in Cognito.
+  OAuthCallbackURLs:
+    Type: String
+    Description: Comma separated list of callback URLs.
+  DefaultRedirectURI:
+    Type: String
+    Description: Default URI to redirect to.
+  LogoutURLs:
+    Type: String
+    Description: Comma separated list of logout URLs.
+  SecretName:
+    Type: String
+    Description: Name of client secret in Secrets Manager.
+  AwsClientId:
+    Type: String
+    Description: LoginWithAmazon client ID in Secrets Manager.
+  AwsClientSecret:
+    Type: String
+    Description: LoginWithAmazon client secret in Secrets Manager.
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AliasAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      UserPoolName: mud-pool
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      CustomDomainConfig:
+        CertificateArn: !Ref CognitoCertificateArn
+      Domain: !Ref CognitoCustomDomain
+      UserPoolId:
+        Ref: CognitoUserPool
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - CognitoAmazonIdentityProvider
+    Properties:
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - phone
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      CallbackURLs: !Split [",", !Ref OAuthCallbackURLs]
+      ClientName: MudClient
+      DefaultRedirectURI: !Ref DefaultRedirectURI
+      ExplicitAuthFlows:
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: true
+      LogoutURLs: !Split [",", !Ref LogoutURLs]
+      PreventUserExistenceErrors: ENABLED
+      SupportedIdentityProviders:
+        - LoginWithAmazon
+      UserPoolId:
+        Ref: CognitoUserPool
+  CognitoAmazonIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      AttributeMapping:
+        username: user_id
+        email: email
+        given_name: name
+      ProviderDetails:
+        client_id: !Sub "{{resolve:secretsmanager:${SecretName}:SecretString:${AwsClientId}}}"
+        client_secret: !Sub "{{resolve:secretsmanager:${SecretName}:SecretString:${AwsClientSecret}}}"
+        authorize_scopes: profile
+      ProviderName: LoginWithAmazon
+      ProviderType: LoginWithAmazon
+      UserPoolId:
+        Ref: CognitoUserPool

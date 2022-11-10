@@ -10,19 +10,13 @@ services:
     env_file:
       - mud.env
 
-  localstack:
-    image: localstack/localstack:1.2
-    ports:
-      - "127.0.0.1:4566:4566"           # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559" # External services
-    environment:
-      - DEBUG=${DEBUG-}
-      - PERSISTENCE=${PERSISTENCE-}
-      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
-      - DOCKER_HOST=unix:///var/run/docker.sock
+  dynamodb:
+    image: amazon/dynamodb-local
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./volume:/home/dynamodblocal/data
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/"
 
   activemq:
     image: symptoma/activemq:5.17.1-envvars
