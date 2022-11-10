@@ -22,7 +22,6 @@ import static com.agonyforge.mud.core.web.controller.WebSocketController.CURRENT
 import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -66,7 +65,7 @@ public class WebSocketControllerTest {
     @Test
     void testSubscribe() {
         when(sessionRepository.findById(eq("sessionId"))).thenReturn(session);
-        when(question.prompt(any(Principal.class), anyMap())).thenReturn(new Output("", "[default]> "));
+        when(question.prompt(any(Principal.class), any(Session.class))).thenReturn(new Output("", "[default]> "));
         when(question.getBeanName()).thenReturn("testQuestion");
 
         WebSocketController uut = new WebSocketController(applicationContext, sessionRepository, question);
@@ -101,8 +100,8 @@ public class WebSocketControllerTest {
         when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
         when(response.getNext()).thenReturn(question);
         when(response.getFeedback()).thenReturn(Optional.of(new Output("[cyan]You say, 'Hello![cyan]'")));
-        when(question.answer(any(Principal.class), anyMap(), any(Input.class))).thenReturn(response);
-        when(question.prompt(any(Principal.class), anyMap())).thenReturn(new Output("", "[default]> "));
+        when(question.answer(any(Principal.class), any(Session.class), any(Input.class))).thenReturn(response);
+        when(question.prompt(any(Principal.class), any(Session.class))).thenReturn(new Output("", "[default]> "));
         when(question.getBeanName()).thenReturn("nextQuestion");
 
         Input input = new Input("Hello!");

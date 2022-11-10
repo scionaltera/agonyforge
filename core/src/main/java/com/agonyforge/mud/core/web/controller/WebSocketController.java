@@ -68,7 +68,7 @@ public class WebSocketController {
             principal.getName());
 
         return new Output("Welcome!")
-            .append(initialQuestion.prompt(principal, attributes));
+            .append(initialQuestion.prompt(principal, httpSession));
     }
 
     @MessageMapping("/input")
@@ -84,7 +84,7 @@ public class WebSocketController {
         Session httpSession = sessionRepository.findById((String) attributes.get(HTTP_SESSION_ID_ATTR_NAME));
         Question currentQuestion = applicationContext.getBean(httpSession.getAttribute(CURRENT_QUESTION_KEY), Question.class);
 
-        Response response = currentQuestion.answer(principal, attributes, input);
+        Response response = currentQuestion.answer(principal, httpSession, input);
         Question nextQuestion = response.getNext();
         Output output = new Output();
 
@@ -92,7 +92,7 @@ public class WebSocketController {
         response.getFeedback().ifPresent(output::append);
 
         // append the prompt from the next question
-        output.append(nextQuestion.prompt(principal, attributes));
+        output.append(nextQuestion.prompt(principal, httpSession));
 
         // store the next question in the session
         httpSession.setAttribute(CURRENT_QUESTION_KEY, nextQuestion.getBeanName());

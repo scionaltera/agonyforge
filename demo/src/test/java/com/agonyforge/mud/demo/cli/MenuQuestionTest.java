@@ -11,11 +11,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.springframework.session.Session;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,16 +32,14 @@ public class MenuQuestionTest {
     private Question question;
 
     @Mock
-    private Question nextQuestion;
-
-    private final Map<String, Object> attributes = new HashMap<>();
+    private Session session;
 
     @Test
     void testPrompt() {
         MenuQuestion uut = new MenuQuestion(applicationContext);
         uut.setNextQuestion("testQuestion");
 
-        Output result = uut.prompt(principal, attributes);
+        Output result = uut.prompt(principal, session);
 
         assertEquals(9, result.getOutput().size());
         assertEquals("[dcyan]*************", result.getOutput().get(0));
@@ -72,7 +69,7 @@ public class MenuQuestionTest {
         uut.setNextQuestion("testQuestion");
 
         Input input = new Input(letter);
-        Response result = uut.answer(principal, attributes, input);
+        Response result = uut.answer(principal, session, input);
 
         assertEquals(question, result.getNext());
 
@@ -87,7 +84,7 @@ public class MenuQuestionTest {
         uut.setNextQuestion("testQuestion");
 
         Input input = new Input("A");
-        Response result = uut.answer(principal, attributes, input);
+        Response result = uut.answer(principal, session, input);
 
         assertEquals(uut, result.getNext());
 
