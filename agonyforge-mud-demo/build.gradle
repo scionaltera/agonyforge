@@ -19,7 +19,7 @@ configurations.maybeCreate("pitest")
 dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
-    implementation project(":core")
+    implementation project(":agonyforge-mud-core")
 
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -43,7 +43,7 @@ jar {
 bootJar {
     manifest {
         attributes(
-            'Implementation-Title': jar.getArchiveBaseName().get(),
+            'Implementation-Title': 'Agony Forge',
             'Implementation-Version': getArchiveVersion()
         )
     }
@@ -69,7 +69,7 @@ pitest {
 }
 
 docker {
-    name "scionaltera/mud"
+    name "scionaltera/agonyforge-mud-demo"
     dockerfile file('src/main/docker/local/Dockerfile')
     files bootJar.outputs
 }

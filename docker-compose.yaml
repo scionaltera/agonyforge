@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mud:
-    image: scionaltera/mud:latest
+    image: scionaltera/agonyforge-mud-demo:latest
     tty: true
     ports:
       - "8080:8080"
