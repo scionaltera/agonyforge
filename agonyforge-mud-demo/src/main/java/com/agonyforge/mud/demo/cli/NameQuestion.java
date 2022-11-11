@@ -29,7 +29,7 @@ public class NameQuestion extends AbstractQuestion {
 
     @Override
     public Output prompt(Principal principal, Session httpSession) {
-        return new Output("By what name do you wish to be known? ");
+        return new Output("[default]By what name do you wish to be known? ");
     }
 
     @Override
@@ -38,7 +38,7 @@ public class NameQuestion extends AbstractQuestion {
             return new Response(this, new Output("[red]Names need to be at least two letters in length."));
         } else if (input.getInput().length() > 12) {
             return new Response(this, new Output("[red]Names need to be 12 or fewer letters in length."));
-        } else if (input.getInput().matches("[^A-Za-z]+")) {
+        } else if (!input.getInput().matches("[A-Za-z]+")) {
             return new Response(this, new Output("[red]Names may only have letters in them."));
         }
 

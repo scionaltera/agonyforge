@@ -7,7 +7,6 @@
         <title>The Agony Forge</title>
     </#if>
     <link rel="icon" href="<@spring.url '/img/favicon.ico'/>">
-    <link rel="stylesheet" href="<@spring.url 'https://fonts.googleapis.com/css?family=Inconsolata'/>">
     <link rel="stylesheet" href="<@spring.url '/webjars/bootstrap/css/bootstrap.min.css'/>">
     <link rel="stylesheet" href="<@spring.url '/css/style.css'/>">
     <#if styles??>

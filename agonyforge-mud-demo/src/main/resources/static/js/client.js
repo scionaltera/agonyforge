@@ -134,7 +134,7 @@ function sendInput() {
         commandHistory.pop();
     }
 
-    $("#output-list").find("li:last-child").append("<span class='yellow'> " + htmlEscape(inputBox.val()).replace(/\s/g, '&nbsp;') + "</span>");
+    $("#output-list").find("li:last-child").append("<pre class='yellow'>" + htmlEscape(inputBox.val()) + "</pre>");
 
     stompClient.send("/app/input", JSON.stringify({'input': inputBox.val()}));
     inputBox.val('');
@@ -151,7 +151,7 @@ function showOutput(message) {
         if ("" === message[i]) {
             outputList.append("<li>&nbsp;</li>");
         } else {
-            outputList.append("<li>" + replaceColors(message[i]) + "</li>");
+            outputList.append("<li><pre>" + replaceColors(message[i]) + "</pre></li>");
         }
     }
 
@@ -167,8 +167,29 @@ function showOutput(message) {
 
 }
 
+const colors = [
+    new RegExp('\\[(default)]', 'g'),
+    new RegExp('\\[(black)]', 'g'),
+    new RegExp('\\[(dblack)]', 'g'),
+    new RegExp('\\[(white)]', 'g'),
+    new RegExp('\\[(dwhite)]', 'g'),
+    new RegExp('\\[(red)]', 'g'),
+    new RegExp('\\[(dred)]', 'g'),
+    new RegExp('\\[(yellow)]', 'g'),
+    new RegExp('\\[(dyellow)]', 'g'),
+    new RegExp('\\[(green)]', 'g'),
+    new RegExp('\\[(dgreen)]', 'g'),
+    new RegExp('\\[(cyan)]', 'g'),
+    new RegExp('\\[(dcyan)]', 'g'),
+    new RegExp('\\[(blue)]', 'g'),
+    new RegExp('\\[(dblue)]', 'g'),
+    new RegExp('\\[(magenta)]', 'g'),
+    new RegExp('\\[(dmagenta)]', 'g')
+];
+
 function replaceColors(message) {
-    return String(message).replace(/\[(\w+)]/g, "<span class='$1'>");
+    colors.forEach(color => message = message.replace(color, `<span class='$1'>`));
+    return message;
 }
 
 function htmlEscape(str) {

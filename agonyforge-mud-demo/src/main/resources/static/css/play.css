@@ -1,6 +1,4 @@
 #output-box {
-    font-family: 'Inconsolata', monospace;
-    font-size: small;
     position: absolute;
     top: 5px;
     left: 5px;
@@ -16,22 +14,26 @@
     bottom: 0;
     list-style: none;
     padding-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
+    margin: 0;
+}
+
+pre {
+    display: inline;
+    margin: 0;
 }
 
 #input-box {
-    color: black;
     position: absolute;
+    color: black;
     bottom: 5px;
     left: 0;
     right: 0;
 }
 
 #input {
+    position: relative;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    position: relative;
     display: block;
 }
