@@ -97,7 +97,7 @@ function connect() {
                 return;
             } else {
                 if (event.reason) {
-                    showOutput([`[red]The server reported an error: ${event.reason}`]);
+                    showOutput([`[red]Encountered an error: ${event.reason}`]);
                 } else {
                     showOutput(['[red]Disconnected from server.']);
                 }
@@ -106,7 +106,7 @@ function connect() {
             const delay = Math.random() * reconnectDelay;
 
             if (!isReconnecting) {
-                showOutput([`[dyellow]Reconnecting in ${delay.toFixed(0)} seconds.`]);
+                showOutput([`[dred]Waiting for ${delay.toFixed(0)} seconds.`]);
 
                 isReconnecting = true;
 
