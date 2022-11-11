@@ -1,0 +1,12 @@
+
+[white] ▄▄▄        ▄████  [red]▒[white]█████   ███▄    █[red]▓[white]██   ██[red]▓     [white]█████[red]▒▒[white]█████   ██▀███    ▄████ [red]▓[white]█████
+[red]▒[white]████▄     ██[red]▒ [white]▀█[red]▒▒[white]██[red]▒  [white]██[red]▒ [white]██ ▀█   █ [red]▒[white]██  ██[red]▒   ▓[white]██   [red]▒▒[white]██[red]▒  [white]██[red]▒▓[white]██ [red]▒ [white]██[red]▒ [white]██[red]▒ [white]▀█[red]▒▓[white]█   ▀
+[red]▒[white]██  ▀█▄  [red]▒[white]██[dred]░[white]▄▄▄[dred]░[red]▒[white]██[dred]░  [white]██[red]▒▓[white]██  ▀█ ██[red]▒ ▒[white]██ [white]██[dred]░   [red]▒[white]████ [dred]░[red]▒[white]██[dred]░  [white]██[red]▒▓[white]██ [dred]░[white]▄█ [red]▒▒[white]██[dred]░[white]▄▄▄[dred]░[red]▒[white]███
+[dred]░[white]██▄▄▄▄██ [dred]░[red]▓[white]█  ██[red]▓▒[white]██   ██[dred]░[red]▓[white]██[red]▒  [white]▐▌██[red]▒ [dred]░ [white]▐██[red]▓[dred]░   ░[red]▓[white]█[red]▒  [dred]░[red]▒[white]██   ██[dred]░[red]▒[white]██▀▀█▄  [dred]░[red]▓[white]█  ██[red]▓▒▓[white]█  ▄
+[red] ▓[white]█   [red]▓[white]██[red]▒[dred]░[red]▒▓[white]███▀[red]▒[dred]░ [white]████[red]▓▒[dred]░[red]▒[white]██[dred]░   [red]▓[white]██[dred]░ ░ [white]██[red]▒▓[dred]░   ░[red]▒[white]█[dred]░   ░ [white]████[red]▓▒[dred]░░[white]██[red]▓ ▒[white]██[red]▒[dred]░[red]▒▓[white]███▀[red]▒[dred]░[red]▒[white]████[red]▒
+[red] ▒▒   ▓▒[white]█[dred]░ ░[red]▒   ▒ [dred]░ [red]▒[dred]░[red]▒[dred]░[red]▒[dred]░ ░ [red]▒[dred]░   [red]▒ ▒   [white]██[red]▒▒▒     ▒ [dred]░   ░ [red]▒[dred]░[red]▒[dred]░[red]▒[dred]░ ░ [red]▒▓ [dred]░[red]▒▓[dred]░ ░[red]▒   ▒ [dred]░░ [red]▒[dred]░ ░
+[red]  ▒   ▒▒ [dred]░  ░   ░   ░ [red]▒ ▒[dred]░ ░ ░░   ░ [red]▒[dred]░[red]▓[white]██ [dred]░[red]▒[dred]░     ░       ░ [red]▒ ▒[dred]░   ░[red]▒ [dred]░ [red]▒[dred]░  ░   ░  ░ ░  ░
+[dred]  ░   [red]▒   [dred]░ ░   ░ ░ ░ ░ [red]▒     [dred]░   ░ ░ [red]▒ ▒ [dred]░░      ░ ░   ░ ░ ░ [red]▒    [dred]░░   ░ ░ ░   ░    ░
+[dred]      ░  ░      ░     ░ ░           ░ ░ ░                   ░ ░     ░           ░    ░  ░
+[dred]                                      ░ ░
+

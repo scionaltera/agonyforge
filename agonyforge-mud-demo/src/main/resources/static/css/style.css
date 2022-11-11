@@ -5,6 +5,12 @@ html, body {
 body {
     background-color: #0d1117;
     color: #ccc;
-    font-family: 'Inconsolata', monospace;
-    font-weight: 400;
+    font-family: var(--bs-font-monospace);
+    font-size: 13px;
+    line-height: 13px;
+}
+
+pre {
+    font-size: 13px;
+    line-height: 13px;
 }

@@ -29,7 +29,7 @@ public class NameQuestion extends AbstractQuestion {
 
     @Override
     public Output prompt(Principal principal, Session httpSession) {
-        return new Output("By what name do you wish to be known? ");
+        return new Output("[default]By what name do you wish to be known? ");
     }
 
     @Override

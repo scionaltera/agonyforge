@@ -1,5 +1,6 @@
 package com.agonyforge.mud.core.web.controller;
 
+import com.agonyforge.mud.core.cli.OutputLoader;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
@@ -19,6 +20,7 @@ import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
@@ -35,6 +37,7 @@ public class WebSocketController {
     private final ApplicationContext applicationContext;
     private final SessionRepository<Session> sessionRepository;
     private final Question initialQuestion;
+    private Output greeting;
 
     @Autowired
     public WebSocketController(ApplicationContext applicationContext,
@@ -43,6 +46,13 @@ public class WebSocketController {
         this.applicationContext = applicationContext;
         this.sessionRepository = sessionRepository;
         this.initialQuestion = initialQuestion;
+
+        try {
+            greeting = OutputLoader.loadTextFile("greeting.txt");
+        } catch (IOException e) {
+            LOGGER.warn("No greeting.txt found in classpath.");
+            greeting = new Output("Welcome!");
+        }
     }
 
     @SubscribeMapping("/queue/output")
@@ -67,8 +77,7 @@ public class WebSocketController {
             wsSessionName,
             principal.getName());
 
-        return new Output("Welcome!")
-            .append(initialQuestion.prompt(principal, httpSession));
+        return greeting.append(initialQuestion.prompt(principal, httpSession));
     }
 
     @MessageMapping("/input")
