@@ -19,6 +19,7 @@ dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
     implementation project(":agonyforge-mud-core")
+    implementation project(":agonyforge-mud-models-dynamodb")
 
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation 'org.springframework.boot:spring-boot-starter-security'

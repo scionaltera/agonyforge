@@ -1,0 +1,71 @@
+plugins {
+    id 'info.solidsoft.pitest' version '1.9.0'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+}
+
+group 'com.agonyforge'
+version '0.0.4'
+
+repositories {
+    mavenCentral()
+}
+
+configurations.maybeCreate("pitest")
+
+dependencies {
+    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
+
+    implementation platform('software.amazon.awssdk:bom:2.18.15')
+    implementation group: 'software.amazon.awssdk', name: 'dynamodb'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': "Agony Forge DynamoDB",
+            'Implementation-Version': getArchiveVersion()
+        )
+    }
+}
+
+bootJar {
+    enabled = false // don't build the spring boot jar
+}
+
+pitest {
+    coverageThreshold = 70
+    mutationThreshold = 70
+    timestampedReports = false
+
+    targetClasses = [
+        "com.agonyforge.mud.dynamodb.*"
+    ]
+
+    excludedMethods = [
+        "hashCode",
+        "equals"
+    ]
+
+    excludedClasses = [
+        "com.agonyforge.mud.dynamodb.config.*",
+        "com.agonyforge.mud.dynamodb.*.Abstract*"
+    ]
+}
+
+tasks.pitest.mustRunAfter test
+check.dependsOn tasks.pitest
