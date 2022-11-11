@@ -2,9 +2,6 @@ plugins {
     id 'java'
 }
 
-group = 'com.agonyforge'
-version = '0.0.3'
-
 task deleteLocalstackVolume(type:Delete) {
     delete "volume"
 }
