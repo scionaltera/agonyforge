@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.agonyforge.mud.core")
+@ComponentScan("com.agonyforge.mud.models.dynamodb")
 @ComponentScan("com.agonyforge.mud.demo")
 public class MudApplication {
 	public static void main(String[] args) {

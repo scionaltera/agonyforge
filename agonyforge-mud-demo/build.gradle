@@ -23,6 +23,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-oauth2-core'
     implementation 'org.springframework.session:spring-session-core'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
