@@ -12,11 +12,11 @@ public final class Constants {
 
     public static final String KEY_MODIFIED = "lastModified";
 
-    public static final String TYPE_DATA = "DATA";
-    public static final String TYPE_USER = "USER";
-
     public static final String SORT_DATA = "DATA";
+    public static final String SORT_SESSION = "SESSION#";
+
+    public static final String TYPE_USER = "USER";
+    public static final String TYPE_SESSION = "SESSION";
 
     public static final String DB_USER = "USER#";
-    public static final String DB_SESSION = "SESSION#";
 }
