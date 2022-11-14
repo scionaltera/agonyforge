@@ -61,10 +61,6 @@ public class UserRepository extends AbstractRepository<User> {
                 return Optional.empty();
             }
 
-            if (response.items().size() > 1) {
-                LOGGER.warn("Multiple items returned for {}, returning first one", principalName);
-            }
-
             User item = newInstance();
             List<Map<String, AttributeValue>> items = response.items();
 
