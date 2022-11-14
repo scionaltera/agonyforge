@@ -2,15 +2,17 @@ plugins {
     id 'info.solidsoft.pitest' version '1.9.0'
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'com.palantir.docker' version '0.34.0'
     id 'java'
 }
 
-group = 'com.agonyforge'
-version = '0.0.4'
+group 'com.agonyforge'
+version '0.0.4'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release'
+    }
 }
 
 configurations.maybeCreate("pitest")
@@ -18,19 +20,17 @@ configurations.maybeCreate("pitest")
 dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
-    implementation project(":agonyforge-mud-core")
-    implementation project(":agonyforge-mud-models-dynamodb")
+    implementation platform('software.amazon.awssdk:bom:2.18.15')
+    implementation 'software.amazon.awssdk:dynamodb'
 
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.security:spring-security-oauth2-core'
-    implementation 'org.springframework.session:spring-session-core'
-
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testImplementation 'uk.org.webcompere:system-stubs-jupiter:2.0.1'
+    testImplementation 'com.amazonaws:DynamoDBLocal:1.16.0'
 }
 
 java {
@@ -39,20 +39,39 @@ java {
     }
 }
 
+task copyNativeLibs(type: Copy) {
+    from (configurations.testRuntimeClasspath) {
+        include "*.dylib"
+        include "*.so"
+        include "*.dll"
+    }
+    into 'build/libs'
+}
+
 test {
     useJUnitPlatform()
+
+    doFirst {
+        systemProperty "java.library.path", 'build/libs'
+    }
 }
 
 jar {
-    enabled = false // don't build the non-repackaged jar
+    manifest {
+        attributes(
+            'Implementation-Title': "Agony Forge DynamoDB",
+            'Implementation-Version': getArchiveVersion()
+        )
+    }
 }
 
 bootJar {
-    manifest {
-        attributes(
-            'Implementation-Title': 'Agony Forge',
-            'Implementation-Version': getArchiveVersion()
-        )
+    enabled = false // don't build the spring boot jar
+}
+
+tasks.pitest {
+    doFirst {
+        systemProperty "java.library.path", 'build/libs'
     }
 }
 
@@ -62,7 +81,7 @@ pitest {
     timestampedReports = false
 
     targetClasses = [
-        "com.agonyforge.mud.demo.*"
+        "com.agonyforge.mud.models.dynamodb.*"
     ]
 
     excludedMethods = [
@@ -71,16 +90,11 @@ pitest {
     ]
 
     excludedClasses = [
-        "com.agonyforge.mud.demo.config.*"
+        "com.agonyforge.mud.models.dynamodb.config.*",
+        "com.agonyforge.mud.models.dynamodb.*.Abstract*"
     ]
 }
 
-docker {
-    name "scionaltera/agonyforge-mud-demo"
-    dockerfile file('src/main/docker/local/Dockerfile')
-    files bootJar.outputs
-}
-
-build.dependsOn tasks.docker
+test.dependsOn tasks.copyNativeLibs
 tasks.pitest.mustRunAfter test
 check.dependsOn tasks.pitest

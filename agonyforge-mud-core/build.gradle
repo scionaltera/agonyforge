@@ -6,8 +6,7 @@ plugins {
 }
 
 group = 'com.agonyforge'
-version = '0.0.3'
-sourceCompatibility = '11'
+version = '0.0.4'
 
 repositories {
     mavenCentral()
@@ -42,6 +41,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 test {
