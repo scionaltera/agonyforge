@@ -16,7 +16,7 @@ services:
       - ./volume:/home/dynamodblocal/data
     ports:
       - "8000:8000"
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
 
   activemq:
     image: symptoma/activemq:5.17.1-envvars

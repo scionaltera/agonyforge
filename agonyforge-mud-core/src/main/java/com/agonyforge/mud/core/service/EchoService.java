@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 
-import static com.agonyforge.mud.core.web.controller.WebSocketController.CURRENT_QUESTION_KEY;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 
 /*
@@ -82,7 +82,7 @@ public class EchoService {
      * @return An Output with a prompt appended to it.
      */
     private Output appendPrompt(Principal stompPrincipal, Session session, Output message) {
-        Question question = applicationContext.getBean(session.getAttribute(CURRENT_QUESTION_KEY), Question.class);
+        Question question = applicationContext.getBean(session.getAttribute(MUD_QUESTION), Question.class);
 
         return new Output(message).append(question.prompt(stompPrincipal, session));
     }

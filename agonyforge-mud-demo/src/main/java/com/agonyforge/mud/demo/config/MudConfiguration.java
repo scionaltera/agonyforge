@@ -11,7 +11,7 @@ public class MudConfiguration {
     private final Question initialQuestion;
 
     @Autowired
-    public MudConfiguration(@Qualifier("nameQuestion") Question initialQuestion) {
+    public MudConfiguration(@Qualifier("characterMenuQuestion") Question initialQuestion) {
         this.initialQuestion = initialQuestion;
     }
 

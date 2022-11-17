@@ -1,7 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
-import com.agonyforge.mud.models.dynamodb.impl.User;
+import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,30 +18,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 
 @Repository
-public class UserRepository extends AbstractRepository<User> {
-    public static final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
+public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
+    public static final Logger LOGGER = LoggerFactory.getLogger(MudCharacterRepository.class);
 
     @Autowired
-    public UserRepository(DynamoDbClient dynamoDbClient, DynamoDbConfig.TableNames tableNames) {
-        super(dynamoDbClient, tableNames, User.class);
+    public MudCharacterRepository(DynamoDbClient dynamoDbClient,
+                                  DynamoDbConfig.TableNames tableNames) {
+        super(dynamoDbClient, tableNames, MudCharacter.class);
     }
 
     @Override
-    public User newInstance() {
-        return new User();
+    public MudCharacter newInstance() {
+        return new MudCharacter();
     }
 
-    public Optional<User> getByPrincipal(String principalName) {
+    public Optional<MudCharacter> getById(UUID id) {
         Map<String, Condition> filter = new HashMap<>();
 
         filter.put("pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(DB_USER + principalName).build())
+            .attributeValueList(AttributeValue.builder().s(DB_PC + id).build())
             .build());
         filter.put("sk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
@@ -57,11 +61,11 @@ public class UserRepository extends AbstractRepository<User> {
             QueryResponse response = dynamoDbClient.query(request);
 
             if (!response.hasItems() || response.items().size() <= 0) {
-                LOGGER.warn("No users returned for {}", principalName);
+                LOGGER.warn("No players returned for {}", id);
                 return Optional.empty();
             }
 
-            User item = newInstance();
+            MudCharacter item = newInstance();
             List<Map<String, AttributeValue>> items = response.items();
 
             item.thaw(items.get(0));
@@ -72,5 +76,37 @@ public class UserRepository extends AbstractRepository<User> {
         }
 
         return Optional.empty();
+    }
+
+    public List<MudCharacter> getByUser(String user) {
+        Map<String, Condition> filter = new HashMap<>();
+
+        filter.put("gsi2pk", Condition.builder()
+            .comparisonOperator(ComparisonOperator.EQ)
+            .attributeValueList(AttributeValue.builder().s(DB_USER + user).build())
+            .build());
+
+        QueryRequest request = QueryRequest.builder()
+            .tableName(tableNames.getTableName())
+            .indexName(tableNames.getGsi2())
+            .keyConditions(filter)
+            .build();
+
+        try {
+            QueryResponse response = dynamoDbClient.query(request);
+
+            return response.items()
+                .stream()
+                .map(item -> {
+                    MudCharacter ch = newInstance();
+                    ch.thaw(item);
+                    return ch;
+                })
+                .collect(Collectors.toList());
+        } catch (DynamoDbException e) {
+            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+        }
+
+        return List.of();
     }
 }

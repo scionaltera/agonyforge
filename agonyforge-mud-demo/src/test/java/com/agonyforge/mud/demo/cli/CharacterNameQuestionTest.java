@@ -4,25 +4,30 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.session.Session;
 
 import java.security.Principal;
 
-import static com.agonyforge.mud.demo.cli.NameQuestion.NAME_KEY;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class NameQuestionTest {
+public class CharacterNameQuestionTest {
     @Mock
     private Principal principal;
 
@@ -32,9 +37,15 @@ public class NameQuestionTest {
     @Mock
     private Question question;
 
+    @Mock
+    private MudCharacterRepository characterRepository;
+
+    @Captor
+    private ArgumentCaptor<MudCharacter> characterCaptor;
+
     @Test
     void testPrompt() {
-        NameQuestion uut = new NameQuestion(question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
         Output result = uut.prompt(principal, session);
 
         assertEquals(1, result.getOutput().size());
@@ -51,7 +62,9 @@ public class NameQuestionTest {
         "SCION"
     })
     void testAnswer(String userInput) {
-        NameQuestion uut = new NameQuestion(question);
+        when(principal.getName()).thenReturn("principal");
+
+        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
         Input input = new Input(userInput);
         Response result = uut.answer(principal, session, input);
         Output output = result.getFeedback().orElseThrow();
@@ -61,7 +74,15 @@ public class NameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals(String.format("[default]Hello, [white]%s[default]!", userInput), output.getOutput().get(0));
 
-        verify(session).setAttribute(eq(NAME_KEY), eq(input.getInput()));
+        verify(characterRepository).save(characterCaptor.capture());
+
+        MudCharacter ch = characterCaptor.getValue();
+
+        assertNotNull(ch.getId());
+        assertEquals(principal.getName(), ch.getUser());
+        assertEquals(userInput, ch.getName());
+
+        verify(session).setAttribute(eq(MUD_CHARACTER), eq(ch.getId()));
     }
 
     @ParameterizedTest
@@ -70,7 +91,7 @@ public class NameQuestionTest {
         "S"
     })
     void testAnswerTooShort(String userInput) {
-        NameQuestion uut = new NameQuestion(question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
         Input input = new Input(userInput);
         Response result = uut.answer(principal, session, input);
         Output output = result.getFeedback().orElseThrow();
@@ -85,7 +106,7 @@ public class NameQuestionTest {
 
     @Test
     void testAnswerTooLong() {
-        NameQuestion uut = new NameQuestion(question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
         Input input = new Input("S".repeat(13));
         Response result = uut.answer(principal, session, input);
         Output output = result.getFeedback().orElseThrow();
@@ -104,7 +125,7 @@ public class NameQuestionTest {
         "Sc1on"
     })
     void testAnswerInvalidLetters(String userInput) {
-        NameQuestion uut = new NameQuestion(question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
         Response result = uut.answer(principal, session, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
@@ -112,6 +133,21 @@ public class NameQuestionTest {
 
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]Names may only have letters in them.", output.getOutput().get(0));
+
+        verifyNoInteractions(session);
+    }
+
+    @Test
+    void testAnswerNoCaps() {
+        String userInput = "scion";
+        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        Response result = uut.answer(principal, session, new Input(userInput));
+        Output output = result.getFeedback().orElseThrow();
+
+        assertEquals(uut, result.getNext());
+
+        assertEquals(1, output.getOutput().size());
+        assertEquals("[red]Names must begin with a capital letter.", output.getOutput().get(0));
 
         verifyNoInteractions(session);
     }

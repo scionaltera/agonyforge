@@ -1,5 +1,6 @@
 module mud.agonyforge.mud.dynamodb {
     exports com.agonyforge.mud.models.dynamodb;
+    exports com.agonyforge.mud.models.dynamodb.config;
     exports com.agonyforge.mud.models.dynamodb.repository;
     exports com.agonyforge.mud.models.dynamodb.impl;
     requires org.slf4j;
@@ -7,4 +8,5 @@ module mud.agonyforge.mud.dynamodb {
     requires spring.context;
     requires software.amazon.awssdk.regions;
     requires spring.beans;
+    requires spring.boot;
 }

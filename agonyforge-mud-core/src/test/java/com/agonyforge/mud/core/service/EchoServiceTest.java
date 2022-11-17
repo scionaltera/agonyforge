@@ -24,10 +24,9 @@ import org.springframework.session.Session;
 import java.security.Principal;
 import java.util.List;
 
-import static com.agonyforge.mud.core.web.controller.WebSocketController.CURRENT_QUESTION_KEY;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -95,13 +94,13 @@ public class EchoServiceTest {
 
         lenient().when(senderOidc.getName()).thenReturn("Alice");
         when(senderSessionInfo.getSessionId()).thenReturn(senderHttpSessionId);
-        lenient().when(senderHttpSession.getAttribute(eq(CURRENT_QUESTION_KEY))).thenReturn("currentQuestion");
+        lenient().when(senderHttpSession.getAttribute(eq(MUD_QUESTION))).thenReturn("currentQuestion");
         lenient().when(senderHttpSession.getAttribute(eq(WS_SESSION_ID))).thenReturn(senderWsSessionId);
         when(senderHttpSession.getId()).thenReturn(senderHttpSessionId);
 
         when(targetOidc.getName()).thenReturn("Bob");
         when(targetSessionInfo.getSessionId()).thenReturn(targetHttpSessionId);
-        when(targetHttpSession.getAttribute(eq(CURRENT_QUESTION_KEY))).thenReturn("currentQuestion");
+        when(targetHttpSession.getAttribute(eq(MUD_QUESTION))).thenReturn("currentQuestion");
         when(targetHttpSession.getAttribute(eq(WS_SESSION_ID))).thenReturn(targetWsSessionId);
         when(targetHttpSession.getId()).thenReturn(targetHttpSessionId);
 
