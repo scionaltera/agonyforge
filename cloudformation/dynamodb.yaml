@@ -13,8 +13,12 @@ Resources:
           AttributeType: S
         - AttributeName: sk
           AttributeType: S
-        - AttributeName: type
+        - AttributeName: gsipk1
           AttributeType: S
+        - AttributeName: gsipk2
+          AttributeType: S
+        - AttributeName: ttl
+          AttributeType: N
       KeySchema:
         - AttributeName: pk
           KeyType: HASH
@@ -23,17 +27,23 @@ Resources:
       GlobalSecondaryIndexes:
         - IndexName: gsi1
           KeySchema:
-            - AttributeName: sk
+            - AttributeName: gsipk1
               KeyType: HASH
-            - AttributeName: type
+            - AttributeName: pk
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+        - IndexName: gsi2
+          KeySchema:
+            - AttributeName: gsipk2
+              KeyType: HASH
+            - AttributeName: pk
+              KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       SSESpecification:
         SSEEnabled: 'True'
       TableName:
         Ref: TableName
       TimeToLiveSpecification:
-        AttributeName: TTL
+        AttributeName: ttl
         Enabled: true
