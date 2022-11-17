@@ -12,9 +12,9 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
 import java.net.URI;
 
 @Configuration
-@ConfigurationProperties(prefix = "com.agonyforge.mud.dynamo")
-public class DynamoDbConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbConfig.class);
+@ConfigurationProperties(prefix = "mud.dynamo")
+public class DynamoDbProperties {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbProperties.class);
 
     private String endpoint;
     private String region;

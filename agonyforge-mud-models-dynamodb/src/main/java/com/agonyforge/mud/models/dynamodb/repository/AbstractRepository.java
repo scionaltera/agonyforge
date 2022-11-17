@@ -1,7 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
-import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -26,11 +26,11 @@ public abstract class AbstractRepository<T extends Persistent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRepository.class);
 
     protected final DynamoDbClient dynamoDbClient;
-    protected final DynamoDbConfig.TableNames tableNames;
+    protected final DynamoDbProperties.TableNames tableNames;
     protected final Class<T> klass;
 
     public AbstractRepository(DynamoDbClient dynamoDbClient,
-                              DynamoDbConfig.TableNames tableNames,
+                              DynamoDbProperties.TableNames tableNames,
                               Class<T> klass) {
         this.dynamoDbClient = dynamoDbClient;
         this.tableNames = tableNames;

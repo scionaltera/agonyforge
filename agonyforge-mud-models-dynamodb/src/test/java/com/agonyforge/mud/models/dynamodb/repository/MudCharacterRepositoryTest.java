@@ -1,7 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.DynamoDbInitializer;
-import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MudCharacterRepositoryTest {
     @Mock
-    private DynamoDbConfig.TableNames tableNames;
+    private DynamoDbProperties.TableNames tableNames;
 
     private static DynamoDbClient dynamoDbClient;
 

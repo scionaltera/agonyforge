@@ -1,6 +1,6 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
-import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.agonyforge.mud.models.dynamodb.impl.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class UserRepository extends AbstractRepository<User> {
     public static final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
 
     @Autowired
-    public UserRepository(DynamoDbClient dynamoDbClient, DynamoDbConfig.TableNames tableNames) {
+    public UserRepository(DynamoDbClient dynamoDbClient, DynamoDbProperties.TableNames tableNames) {
         super(dynamoDbClient, tableNames, User.class);
     }
 

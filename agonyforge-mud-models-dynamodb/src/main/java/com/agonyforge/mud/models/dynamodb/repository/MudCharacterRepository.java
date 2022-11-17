@@ -1,6 +1,6 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
-import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
 
     @Autowired
     public MudCharacterRepository(DynamoDbClient dynamoDbClient,
-                                  DynamoDbConfig.TableNames tableNames) {
+                                  DynamoDbProperties.TableNames tableNames) {
         super(dynamoDbClient, tableNames, MudCharacter.class);
     }
 
