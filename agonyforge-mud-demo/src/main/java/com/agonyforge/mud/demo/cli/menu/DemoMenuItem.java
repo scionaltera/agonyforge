@@ -8,8 +8,15 @@ import static com.agonyforge.mud.core.cli.Color.GREEN;
 import static com.agonyforge.mud.core.cli.Color.YELLOW;
 
 public class DemoMenuItem extends AbstractMenuItem {
+    private Object item;
+
     public DemoMenuItem(String key, String description) {
         super(key, description);
+    }
+
+    public DemoMenuItem(String key, String description, Object item) {
+        super(key, description);
+        this.item = item;
     }
 
     @Override
@@ -21,5 +28,9 @@ public class DemoMenuItem extends AbstractMenuItem {
         menu.append(primary + getKey() + secondary + ") " + primary + getDescription());
 
         return menu;
+    }
+
+    public Object getItem() {
+        return item;
     }
 }

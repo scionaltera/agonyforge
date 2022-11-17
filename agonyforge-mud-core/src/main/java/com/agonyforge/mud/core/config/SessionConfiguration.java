@@ -27,6 +27,9 @@ import static org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepo
 @Configuration
 @EnableHazelcastHttpSession
 public class SessionConfiguration {
+    public static final String MUD_QUESTION = "MUD.QUESTION";
+    public static final String MUD_CHARACTER = "MUD.CHARACTER";
+
     @Bean
     @SpringSessionHazelcastInstance
     public HazelcastInstance hazelcastInstance() {

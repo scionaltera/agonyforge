@@ -16,8 +16,9 @@ public class DemoMenuPromptTest {
         DemoMenuPrompt uut = new DemoMenuPrompt();
         Output result = uut.render(BLUE, RED);
 
-        assertEquals(1, result.getOutput().size());
-        assertEquals("[blue]Please [red]make your selection[blue]: ", result.getOutput().get(0));
+        assertEquals(2, result.getOutput().size());
+        assertEquals("", result.getOutput().get(0));
+        assertEquals("[red]Please [blue]make your selection[red]: ", result.getOutput().get(1));
     }
 
     @Test
@@ -25,8 +26,9 @@ public class DemoMenuPromptTest {
         DemoMenuPrompt uut = new DemoMenuPrompt();
         Output result = uut.render();
 
-        assertEquals(1, result.getOutput().size());
-        assertEquals("[yellow]Please [green]make your selection[yellow]: ", result.getOutput().get(0));
+        assertEquals(2, result.getOutput().size());
+        assertEquals("", result.getOutput().get(0));
+        assertEquals("[green]Please [yellow]make your selection[green]: ", result.getOutput().get(1));
     }
 
     @Test
@@ -34,7 +36,8 @@ public class DemoMenuPromptTest {
         DemoMenuPrompt uut = new DemoMenuPrompt();
         Output result = uut.render(BLUE);
 
-        assertEquals(1, result.getOutput().size());
-        assertEquals("[blue]Please [green]make your selection[blue]: ", result.getOutput().get(0));
+        assertEquals(2, result.getOutput().size());
+        assertEquals("", result.getOutput().get(0));
+        assertEquals("[green]Please [blue]make your selection[green]: ", result.getOutput().get(1));
     }
 }

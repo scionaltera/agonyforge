@@ -41,16 +41,18 @@ public class MenuQuestionTest {
 
         Output result = uut.prompt(principal, session);
 
-        assertEquals(9, result.getOutput().size());
-        assertEquals("[dcyan]*************", result.getOutput().get(0));
-        assertEquals("[dcyan]* [cyan]    Demo Menu    [dcyan] *", result.getOutput().get(1));
-        assertEquals("[dcyan]*************", result.getOutput().get(2));
-        assertEquals("[cyan]F[dcyan]) [cyan]Foo", result.getOutput().get(3));
-        assertEquals("[cyan]B[dcyan]) [cyan]Bar", result.getOutput().get(4));
-        assertEquals("[cyan]C[dcyan]) [cyan]Crazy Town", result.getOutput().get(5));
-        assertEquals("[cyan]Z[dcyan]) [cyan]Zed's Dead, Baby", result.getOutput().get(6));
-        assertEquals("[cyan]P[dcyan]) [cyan]Puerto Rico", result.getOutput().get(7));
-        assertEquals("[cyan]Please [dcyan]make your selection[cyan]: ", result.getOutput().get(8));
+        assertEquals(11, result.getOutput().size());
+        assertEquals("", result.getOutput().get(0));
+        assertEquals("[dcyan]***************", result.getOutput().get(1));
+        assertEquals("[dcyan]* [cyan] Demo Menu [dcyan] *", result.getOutput().get(2));
+        assertEquals("[dcyan]***************", result.getOutput().get(3));
+        assertEquals("[cyan]F[dcyan]) [cyan]Foo", result.getOutput().get(4));
+        assertEquals("[cyan]B[dcyan]) [cyan]Bar", result.getOutput().get(5));
+        assertEquals("[cyan]C[dcyan]) [cyan]Crazy Town", result.getOutput().get(6));
+        assertEquals("[cyan]Z[dcyan]) [cyan]Zed's Dead, Baby", result.getOutput().get(7));
+        assertEquals("[cyan]P[dcyan]) [cyan]Puerto Rico", result.getOutput().get(8));
+        assertEquals("", result.getOutput().get(9));
+        assertEquals("[dcyan]Please [cyan]make your selection[dcyan]: ", result.getOutput().get(10));
 
     }
 

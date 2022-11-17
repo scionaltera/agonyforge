@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.agonyforge.mud.core.web.controller.WebSocketController.CURRENT_QUESTION_KEY;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +58,7 @@ public class WebSocketControllerTest {
         headers = new HashMap<>();
 
         attributes.put(HTTP_SESSION_ID_ATTR_NAME, "sessionId");
-        attributes.put(CURRENT_QUESTION_KEY, "testQuestion");
+        attributes.put(MUD_QUESTION, "testQuestion");
         headers.put(SESSION_ATTRIBUTES, attributes);
     }
 
@@ -76,7 +76,7 @@ public class WebSocketControllerTest {
         assertEquals("", result.getOutput().get(1));
         assertEquals("[default]> ", result.getOutput().get(2));
 
-        verify(session).setAttribute(eq(CURRENT_QUESTION_KEY), eq("testQuestion"));
+        verify(session).setAttribute(eq(MUD_QUESTION), eq("testQuestion"));
         verify(session).setAttribute(eq(WS_SESSION_ID), eq(null));
     }
 
@@ -96,7 +96,7 @@ public class WebSocketControllerTest {
     @Test
     void testInput() {
         when(sessionRepository.findById(eq("sessionId"))).thenReturn(session);
-        when(session.getAttribute(eq(CURRENT_QUESTION_KEY))).thenReturn("testQuestion");
+        when(session.getAttribute(eq(MUD_QUESTION))).thenReturn("testQuestion");
         when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
         when(response.getNext()).thenReturn(question);
         when(response.getFeedback()).thenReturn(Optional.of(new Output("[cyan]You say, 'Hello![cyan]'")));
@@ -113,7 +113,7 @@ public class WebSocketControllerTest {
         assertEquals("", result.getOutput().get(1));
         assertEquals("[default]> ", result.getOutput().get(2));
 
-        verify(session).setAttribute(eq(CURRENT_QUESTION_KEY), eq("nextQuestion"));
+        verify(session).setAttribute(eq(MUD_QUESTION), eq("nextQuestion"));
     }
 
     @Test

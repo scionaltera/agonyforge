@@ -1,6 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.DYNAMO_TABLE_NAME;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.ISO_8601;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.KEY_MODIFIED;
 
@@ -26,10 +26,14 @@ public abstract class AbstractRepository<T extends Persistent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRepository.class);
 
     protected final DynamoDbClient dynamoDbClient;
+    protected final DynamoDbConfig.TableNames tableNames;
     protected final Class<T> klass;
 
-    public AbstractRepository(DynamoDbClient dynamoDbClient, Class<T> klass) {
+    public AbstractRepository(DynamoDbClient dynamoDbClient,
+                              DynamoDbConfig.TableNames tableNames,
+                              Class<T> klass) {
         this.dynamoDbClient = dynamoDbClient;
+        this.tableNames = tableNames;
         this.klass = klass;
     }
 
@@ -50,7 +54,7 @@ public abstract class AbstractRepository<T extends Persistent> {
                 .collect(Collectors.toList());
             Map<String, List<WriteRequest>> operations = new HashMap<>();
 
-            operations.put(DYNAMO_TABLE_NAME, writeRequests);
+            operations.put(tableNames.getTableName(), writeRequests);
 
             BatchWriteItemRequest batch = BatchWriteItemRequest
                 .builder()
@@ -69,7 +73,7 @@ public abstract class AbstractRepository<T extends Persistent> {
     public void save(T item) {
         Map<String, AttributeValue> map = enrichItem(item.freeze());
         PutItemRequest request = PutItemRequest.builder()
-            .tableName(DYNAMO_TABLE_NAME)
+            .tableName(tableNames.getTableName())
             .item(map)
             .build();
 
@@ -84,7 +88,7 @@ public abstract class AbstractRepository<T extends Persistent> {
         Map<String, AttributeValue> map = enrichItem(item.freeze());
         DeleteItemRequest request = DeleteItemRequest
             .builder()
-            .tableName(DYNAMO_TABLE_NAME)
+            .tableName(tableNames.getTableName())
             .key(Map.of(
                 "pk", map.get("pk"),
                 "sk", map.get("sk")))

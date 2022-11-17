@@ -29,7 +29,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
-    testImplementation 'uk.org.webcompere:system-stubs-jupiter:2.0.1'
     testImplementation 'com.amazonaws:DynamoDBLocal:1.16.0'
 }
 

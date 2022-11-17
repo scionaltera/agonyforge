@@ -1,5 +1,7 @@
 package com.agonyforge.mud.demo.cli;
 
+import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.agonyforge.mud.core.cli.AbstractQuestion;
@@ -13,17 +15,21 @@ import org.springframework.session.Session;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.UUID;
+
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class NameQuestion extends AbstractQuestion {
-    public static final String NAME_KEY = "MUD.NAME";
+public class CharacterNameQuestion extends AbstractQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterNameQuestion.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NameQuestion.class);
-
+    private final MudCharacterRepository characterRepository;
     private final Question nextQuestion;
 
     @Autowired
-    public NameQuestion(@Qualifier("echoQuestion") Question nextQuestion) {
+    public CharacterNameQuestion(MudCharacterRepository characterRepository,
+                                 @Qualifier("echoQuestion") Question nextQuestion) {
+        this.characterRepository = characterRepository;
         this.nextQuestion = nextQuestion;
     }
 
@@ -40,12 +46,21 @@ public class NameQuestion extends AbstractQuestion {
             return new Response(this, new Output("[red]Names need to be 12 or fewer letters in length."));
         } else if (!input.getInput().matches("[A-Za-z]+")) {
             return new Response(this, new Output("[red]Names may only have letters in them."));
+        } else if (!input.getInput().matches("[A-Z][A-Za-z]+")) {
+            return new Response(this, new Output("[red]Names must begin with a capital letter."));
         }
 
-        httpSession.setAttribute(NAME_KEY, input.getInput());
+        MudCharacter ch = new MudCharacter();
 
-        LOGGER.info("{} is now known as {}", principal.getName(), input.getInput());
+        ch.setId(UUID.randomUUID());
+        ch.setUser(principal.getName());
+        ch.setName(input.getInput());
 
-        return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", input.getInput())));
+        characterRepository.save(ch);
+        httpSession.setAttribute(MUD_CHARACTER, ch.getId());
+
+        LOGGER.info("{} is now known as {}", principal.getName(), ch.getName());
+
+        return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", ch.getName())));
     }
 }

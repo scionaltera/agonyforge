@@ -1,10 +1,11 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
 import com.agonyforge.mud.models.dynamodb.impl.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
@@ -19,15 +20,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.DYNAMO_TABLE_NAME;
 
-@Component
+@Repository
 public class UserSessionRepository extends AbstractRepository<UserSession> {
     public static final Logger LOGGER = LoggerFactory.getLogger(UserSessionRepository.class);
 
     @Autowired
-    public UserSessionRepository(DynamoDbClient dynamoDbClient) {
-        super(dynamoDbClient, UserSession.class);
+    public UserSessionRepository(DynamoDbClient dynamoDbClient, DynamoDbConfig.TableNames tableNames) {
+        super(dynamoDbClient, tableNames, UserSession.class);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class UserSessionRepository extends AbstractRepository<UserSession> {
             .build());
 
         QueryRequest request = QueryRequest.builder()
-            .tableName(DYNAMO_TABLE_NAME)
+            .tableName(tableNames.getTableName())
             .keyConditions(filter)
             .build();
 

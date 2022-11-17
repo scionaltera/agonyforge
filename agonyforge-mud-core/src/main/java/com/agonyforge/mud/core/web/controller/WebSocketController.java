@@ -25,11 +25,11 @@ import java.security.Principal;
 import java.util.Map;
 
 import static com.agonyforge.mud.core.config.RemoteIpHandshakeInterceptor.SESSION_REMOTE_IP_KEY;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
 @Controller
 public class WebSocketController {
-    public static final String CURRENT_QUESTION_KEY = "MUD.QUESTION";
     public static final String WS_SESSION_ID = "WS.SESSION.ID";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
@@ -68,7 +68,7 @@ public class WebSocketController {
         String wsSessionName = SimpMessageHeaderAccessor.getSessionId(headers);
         Session httpSession = sessionRepository.findById((String) attributes.get(HTTP_SESSION_ID_ATTR_NAME));
 
-        httpSession.setAttribute(CURRENT_QUESTION_KEY, initialQuestion.getBeanName());
+        httpSession.setAttribute(MUD_QUESTION, initialQuestion.getBeanName());
         httpSession.setAttribute(WS_SESSION_ID, wsSessionName);
 
         LOGGER.info("New connection: {} {} {} {}",
@@ -91,7 +91,7 @@ public class WebSocketController {
         }
 
         Session httpSession = sessionRepository.findById((String) attributes.get(HTTP_SESSION_ID_ATTR_NAME));
-        Question currentQuestion = applicationContext.getBean(httpSession.getAttribute(CURRENT_QUESTION_KEY), Question.class);
+        Question currentQuestion = applicationContext.getBean(httpSession.getAttribute(MUD_QUESTION), Question.class);
 
         Response response = currentQuestion.answer(principal, httpSession, input);
         Question nextQuestion = response.getNext();
@@ -104,7 +104,7 @@ public class WebSocketController {
         output.append(nextQuestion.prompt(principal, httpSession));
 
         // store the next question in the session
-        httpSession.setAttribute(CURRENT_QUESTION_KEY, nextQuestion.getBeanName());
+        httpSession.setAttribute(MUD_QUESTION, nextQuestion.getBeanName());
 
         return output;
     }

@@ -2,7 +2,7 @@ package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.DynamoDbInitializer;
 import com.agonyforge.mud.models.dynamodb.config.DynamoDbConfig;
-import com.agonyforge.mud.models.dynamodb.impl.UserSession;
+import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import org.junit.jupiter.api.AfterAll;
@@ -18,19 +18,21 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserSessionRepositoryTest {
+public class MudCharacterRepositoryTest {
+    @Mock
+    private DynamoDbConfig.TableNames tableNames;
 
     private static DynamoDbClient dynamoDbClient;
 
     private static DynamoDBProxyServer server;
-
-    @Mock
-    private DynamoDbConfig.TableNames tableNames;
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -56,33 +58,61 @@ public class UserSessionRepositoryTest {
     }
 
     @Test
-    void testGetByPrincipal() {
+    void testGetById() {
         when(tableNames.getTableName()).thenReturn("agonyforge");
 
-        UserSessionRepository uut = new UserSessionRepository(dynamoDbClient, tableNames);
-        UserSession session = new UserSession();
+        MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
+        MudCharacter ch = new MudCharacter();
+        UUID uuid = UUID.randomUUID();
+        String user = UUID.randomUUID().toString();
 
-        session.setPrincipalName("principal");
-        session.setRemoteIpAddress("999.888.777.666");
+        ch.setId(uuid);
+        ch.setUser(user);
+        ch.setName("Scion");
 
-        uut.save(session);
+        uut.save(ch);
 
-        List<UserSession> results = uut.getByPrincipal("principal");
+        Optional<MudCharacter> resultOptional = uut.getById(uuid);
+        MudCharacter result = resultOptional.orElseThrow();
 
-        assertEquals(1, results.size());
-
-        UserSession result = results.get(0);
-
-        assertEquals(session.getPrincipalName(), result.getPrincipalName());
-        assertEquals(session.getRemoteIpAddress(), result.getRemoteIpAddress());
+        assertEquals(ch.getId(), result.getId());
+        assertEquals(ch.getUser(), result.getUser());
+        assertEquals(ch.getName(), result.getName());
     }
 
     @Test
-    void testGetByPrincipalNotFound() {
+    void testGetByIdEmpty() {
         when(tableNames.getTableName()).thenReturn("agonyforge");
 
-        UserSessionRepository uut = new UserSessionRepository(dynamoDbClient, tableNames);
-        List<UserSession> results = uut.getByPrincipal("noSuchUser");
-        assertEquals(0, results.size());
+        MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
+        UUID uuid = UUID.randomUUID();
+
+        Optional<MudCharacter> resultOptional = uut.getById(uuid);
+        assertTrue(resultOptional.isEmpty());
+    }
+
+    @Test
+    void testGetByUser() {
+        when(tableNames.getTableName()).thenReturn("agonyforge");
+        when(tableNames.getGsi2()).thenReturn("gsi2");
+
+        MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
+        MudCharacter ch = new MudCharacter();
+        UUID uuid = UUID.randomUUID();
+        String user = UUID.randomUUID().toString();
+
+        ch.setId(uuid);
+        ch.setUser(user);
+        ch.setName("Scion");
+
+        uut.save(ch);
+
+        List<MudCharacter> results = uut.getByUser(user);
+        MudCharacter result = results.get(0);
+
+        assertEquals(1, results.size());
+        assertEquals(ch.getId(), result.getId());
+        assertEquals(ch.getUser(), result.getUser());
+        assertEquals(ch.getName(), result.getName());
     }
 }

@@ -17,11 +17,11 @@ public class DemoMenuTitle extends AbstractMenuTitle {
         Output menu = new Output();
         Color primary = colors.length > 0 ? colors[0] : YELLOW;
         Color secondary = colors.length > 1 ? colors[1] : GREEN;
-        DemoMenuDivider divider = new DemoMenuDivider(getTitle().length() + 4);
+        DemoMenuDivider divider = new DemoMenuDivider(getTitle().length() + 6);
 
-        int padding = getTitle().length() / 2; // naive attempt to center it
+        menu.append("");
         menu.append(divider.render(colors));
-        menu.append(secondary + "* " + primary + " ".repeat(padding) + getTitle() + " ".repeat(padding) + secondary + " *");
+        menu.append(secondary + "* " + primary + " " + getTitle() + " " + secondary + " *");
         menu.append(divider.render(colors));
 
         return menu;

@@ -3,6 +3,8 @@ module com.agonyforge.mud.core {
     exports com.agonyforge.mud.core.cli.menu;
     exports com.agonyforge.mud.core.web.model;
     exports com.agonyforge.mud.core.service;
+    exports com.agonyforge.mud.core.web.controller;
+    exports com.agonyforge.mud.core.config;
     requires spring.beans;
     requires spring.boot;
     requires spring.context;
