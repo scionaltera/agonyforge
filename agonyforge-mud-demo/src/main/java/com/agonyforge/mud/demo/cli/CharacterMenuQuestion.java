@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
@@ -12,7 +13,6 @@ import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -34,15 +34,15 @@ public class CharacterMenuQuestion extends DemoQuestion {
     }
 
     @Override
-    public Output prompt(Principal principal, Session session) {
-        populateMenuItems(principal);
+    public Output prompt(WebSocketContext wsContext) {
+        populateMenuItems(wsContext.getPrincipal());
 
         return menuPane.render(Color.WHITE, Color.BLACK);
     }
 
     @Override
-    public Response answer(Principal principal, Session session, Input input) {
-        populateMenuItems(principal);
+    public Response answer(WebSocketContext wsContext, Input input) {
+        populateMenuItems(wsContext.getPrincipal());
 
         String nextQuestion = "characterMenuQuestion";
         Output output = new Output();
@@ -59,7 +59,7 @@ public class CharacterMenuQuestion extends DemoQuestion {
             nextQuestion = "characterNameQuestion";
         } else {
             DemoMenuItem item = itemOptional.get();
-            session.setAttribute(MUD_CHARACTER, item.getItem());
+            wsContext.getAttributes().put(MUD_CHARACTER, item.getItem());
             nextQuestion = "characterViewQuestion";
         }
 

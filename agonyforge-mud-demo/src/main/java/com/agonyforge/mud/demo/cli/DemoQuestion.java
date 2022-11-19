@@ -3,12 +3,12 @@ package com.agonyforge.mud.demo.cli;
 import com.agonyforge.mud.core.cli.AbstractQuestion;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -32,8 +32,8 @@ public abstract class DemoQuestion extends AbstractQuestion {
         return applicationContext.getBean(name, Question.class);
     }
 
-    protected Optional<MudCharacter> getCharacter(Session httpSession, Output output) {
-        UUID chId = httpSession.getAttribute(MUD_CHARACTER);
+    protected Optional<MudCharacter> getCharacter(WebSocketContext wsContext, Output output) {
+        UUID chId = (UUID) wsContext.getAttributes().get(MUD_CHARACTER);
         Optional<MudCharacter> chOptional = characterRepository.getById(chId);
 
         if (chOptional.isEmpty()) {

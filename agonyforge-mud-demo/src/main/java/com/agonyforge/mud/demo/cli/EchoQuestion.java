@@ -4,14 +4,13 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -27,9 +26,9 @@ public class EchoQuestion extends DemoQuestion {
     }
 
     @Override
-    public Output prompt(Principal principal, Session session) {
+    public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        Optional<MudCharacter> chOptional = getCharacter(session, output);
+        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
             output.append("", String.format("[green]%s[default]> ", chOptional.get().getName()));
@@ -41,19 +40,19 @@ public class EchoQuestion extends DemoQuestion {
     }
 
     @Override
-    public Response answer(Principal principal, Session session, Input input) {
+    public Response answer(WebSocketContext wsContext, Input input) {
         if (input.getInput().isBlank()) {
             return new Response(this, new Output("[default]What would you like to say?"));
         }
 
         Output output = new Output();
-        Optional<MudCharacter> chOptional = getCharacter(session, output);
+        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
             MudCharacter ch = chOptional.get();
 
             output.append("[cyan]You say, '" + input.getInput() + "[cyan]'");
-            echoService.echoToAll(principal, new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), input.getInput())));
+            echoService.echoToAll(wsContext, new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), input.getInput())));
             return new Response(this, output);
         }
 

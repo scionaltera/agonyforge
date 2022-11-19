@@ -1,7 +1,10 @@
 package com.agonyforge.mud.core.config;
 
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.config.StompBrokerRelayRegistration;
 import org.springframework.messaging.simp.stomp.StompDecoder;
@@ -24,6 +27,11 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
         this.brokerProperties = brokerProperties;
     }
 
+    @Bean
+    protected SessionAttributeService getSessionAttributeService() {
+        return new SessionAttributeService();
+    }
+
     @Override
     protected void configureStompEndpoints(StompEndpointRegistry registry) {
         HttpSessionHandshakeInterceptor httpSessionHandshakeInterceptor = new HttpSessionHandshakeInterceptor();
@@ -31,6 +39,7 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
         httpSessionHandshakeInterceptor.setCreateSession(true);
         httpSessionHandshakeInterceptor.setCopyHttpSessionId(true);
         httpSessionHandshakeInterceptor.setCopyAllAttributes(true);
+
         registry
             .addEndpoint("/mud")
             .setHandshakeHandler(new SessionIdUpdatingHandshakeHandler())
@@ -39,6 +48,11 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
                 httpSessionHandshakeInterceptor,
                 new SessionIdCopyingHandshakeInterceptor(),
                 new RemoteIpHandshakeInterceptor());
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(getSessionAttributeService());
     }
 
     @Override
