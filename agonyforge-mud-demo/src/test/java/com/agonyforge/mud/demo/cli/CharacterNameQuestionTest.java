@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.session.Session;
 
 import java.security.Principal;
@@ -38,6 +39,9 @@ public class CharacterNameQuestionTest {
     private Question question;
 
     @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Captor
@@ -45,7 +49,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testPrompt() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Output result = uut.prompt(principal, session);
 
         assertEquals(1, result.getOutput().size());
@@ -64,7 +68,7 @@ public class CharacterNameQuestionTest {
     void testAnswer(String userInput) {
         when(principal.getName()).thenReturn("principal");
 
-        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Input input = new Input(userInput);
         Response result = uut.answer(principal, session, input);
         Output output = result.getFeedback().orElseThrow();
@@ -91,7 +95,7 @@ public class CharacterNameQuestionTest {
         "S"
     })
     void testAnswerTooShort(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Input input = new Input(userInput);
         Response result = uut.answer(principal, session, input);
         Output output = result.getFeedback().orElseThrow();
@@ -106,7 +110,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testAnswerTooLong() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Input input = new Input("S".repeat(13));
         Response result = uut.answer(principal, session, input);
         Output output = result.getFeedback().orElseThrow();
@@ -125,7 +129,7 @@ public class CharacterNameQuestionTest {
         "Sc1on"
     })
     void testAnswerInvalidLetters(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Response result = uut.answer(principal, session, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
@@ -140,7 +144,7 @@ public class CharacterNameQuestionTest {
     @Test
     void testAnswerNoCaps() {
         String userInput = "scion";
-        CharacterNameQuestion uut = new CharacterNameQuestion(characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Response result = uut.answer(principal, session, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 

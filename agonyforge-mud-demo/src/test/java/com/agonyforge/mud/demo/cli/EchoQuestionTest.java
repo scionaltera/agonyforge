@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.session.Session;
 
 import java.security.Principal;
@@ -33,6 +34,9 @@ public class EchoQuestionTest {
     private EchoService echoService;
 
     @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -47,9 +51,10 @@ public class EchoQuestionTest {
         when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
 
-        EchoQuestion uut = new EchoQuestion(echoService, characterRepository);
+        EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
         Output output = uut.prompt(principal, session);
 
+        assertEquals(2, output.getOutput().size());
         assertEquals("", output.getOutput().get(0));
         assertEquals("[green]null[default]> ", output.getOutput().get(1));
 
@@ -58,11 +63,13 @@ public class EchoQuestionTest {
 
     @Test
     void testPromptNoCharacter() {
-        EchoQuestion uut = new EchoQuestion(echoService, characterRepository);
+        EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
         Output output = uut.prompt(principal, session);
 
-        assertEquals("", output.getOutput().get(0));
-        assertEquals("[default]> ", output.getOutput().get(1));
+        assertEquals(3, output.getOutput().size());
+        assertEquals("[red]Unable to find your character! The error has been reported.", output.getOutput().get(0));
+        assertEquals("", output.getOutput().get(1));
+        assertEquals("[default]> ", output.getOutput().get(2));
 
         verify(echoService, never()).echoToAll(any(), any());
     }
@@ -70,7 +77,7 @@ public class EchoQuestionTest {
     @Test
     void testAnswerBlank() {
         Input input = new Input("");
-        EchoQuestion uut = new EchoQuestion(echoService, characterRepository);
+        EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
         Response response = uut.answer(principal, session, input);
         Output responseOut = response.getFeedback().orElseThrow();
 
@@ -83,12 +90,12 @@ public class EchoQuestionTest {
     @Test
     void testAnswerNoCharacter() {
         Input input = new Input("test");
-        EchoQuestion uut = new EchoQuestion(echoService, characterRepository);
+        EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
         Response response = uut.answer(principal, session, input);
         Output responseOut = response.getFeedback().orElseThrow();
 
         assertEquals(1, responseOut.getOutput().size());
-        assertEquals("[red]Unable to fetch your character from the database!", responseOut.getOutput().get(0));
+        assertEquals("[red]Unable to find your character! The error has been reported.", responseOut.getOutput().get(0));
 
         verify(echoService, never()).echoToAll(any(), any());
     }
@@ -100,7 +107,7 @@ public class EchoQuestionTest {
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
 
         Input input = new Input("test");
-        EchoQuestion uut = new EchoQuestion(echoService, characterRepository);
+        EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
         Response response = uut.answer(principal, session, input);
         Output responseOut = response.getFeedback().orElseThrow();
 

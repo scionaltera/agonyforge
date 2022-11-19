@@ -1,7 +1,7 @@
 package com.agonyforge.mud.demo.cli;
 
+import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
-import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
@@ -15,15 +15,11 @@ import java.security.Principal;
 import java.util.Optional;
 
 @Component
-public class EchoQuestion extends DemoQuestion {
-    private final EchoService echoService;
-
+public class CharacterDeleteQuestion extends DemoQuestion {
     @Autowired
-    public EchoQuestion(EchoService echoService,
-                        ApplicationContext applicationContext,
-                        MudCharacterRepository characterRepository) {
+    public CharacterDeleteQuestion(ApplicationContext applicationContext,
+                                   MudCharacterRepository characterRepository) {
         super(applicationContext, characterRepository);
-        this.echoService = echoService;
     }
 
     @Override
@@ -31,32 +27,29 @@ public class EchoQuestion extends DemoQuestion {
         Output output = new Output();
         Optional<MudCharacter> chOptional = getCharacter(session, output);
 
-        if (chOptional.isPresent()) {
-            output.append("", String.format("[green]%s[default]> ", chOptional.get().getName()));
-        } else {
-            output.append("", "[default]> ");
-        }
-
-        return output;
+        return chOptional.map(mudCharacter -> new Output(
+            String.format(
+                "[red]Are you SURE you want to delete %s? [white][y/N][red]: ",
+                mudCharacter.getName())))
+            .orElse(output);
     }
 
     @Override
     public Response answer(Principal principal, Session session, Input input) {
-        if (input.getInput().isBlank()) {
-            return new Response(this, new Output("[default]What would you like to say?"));
-        }
-
         Output output = new Output();
+        Question next = this;
         Optional<MudCharacter> chOptional = getCharacter(session, output);
 
         if (chOptional.isPresent()) {
-            MudCharacter ch = chOptional.get();
-
-            output.append("[cyan]You say, '" + input.getInput() + "[cyan]'");
-            echoService.echoToAll(principal, new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), input.getInput())));
-            return new Response(this, output);
+            if ("Y".equalsIgnoreCase(input.getInput())) {
+                getCharacterRepository().delete(chOptional.get());
+                output.append("[red]Your character has been deleted.");
+                next = getQuestion("characterMenuQuestion");
+            } else {
+                output.append("[green]Ok! Your character is safe!");
+            }
         }
 
-        return new Response(this, output);
+        return new Response(next, output);
     }
 }

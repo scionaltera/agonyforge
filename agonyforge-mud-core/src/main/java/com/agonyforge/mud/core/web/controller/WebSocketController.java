@@ -73,8 +73,8 @@ public class WebSocketController {
 
         LOGGER.info("New connection: {} {} {} {}",
             remoteIp,
-            httpSession.getId(),
             wsSessionName,
+            httpSession.getId(),
             principal.getName());
 
         return greeting.append(initialQuestion.prompt(principal, httpSession));
@@ -91,8 +91,22 @@ public class WebSocketController {
         }
 
         Session httpSession = sessionRepository.findById((String) attributes.get(HTTP_SESSION_ID_ATTR_NAME));
-        Question currentQuestion = applicationContext.getBean(httpSession.getAttribute(MUD_QUESTION), Question.class);
+        String questionName = httpSession.getAttribute(MUD_QUESTION);
 
+        // this was happening when a Question overrode getBeanName() and returned null
+        // that removed the attribute from the session and things crashed here
+        // I'm gonna leave this in to catch and diagnose similar future errors
+        if (questionName == null) {
+            LOGGER.error("{}'s MUD_QUESTION attribute was null! Resetting to initialQuestion!", httpSession.getId());
+            LOGGER.error("Session attributes were:");
+
+            attributes.keySet()
+                .forEach(name -> LOGGER.error("{} -> {}", name, attributes.get(name)));
+
+            questionName = initialQuestion.getBeanName();
+        }
+
+        Question currentQuestion = applicationContext.getBean(questionName, Question.class);
         Response response = currentQuestion.answer(principal, httpSession, input);
         Question nextQuestion = response.getNext();
         Output output = new Output();

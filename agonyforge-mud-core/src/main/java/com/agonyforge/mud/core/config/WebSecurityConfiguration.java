@@ -33,7 +33,7 @@ public class WebSecurityConfiguration {
             .invalidSessionUrl("/")
             .maximumSessions(1)
             .maxSessionsPreventsLogin(true)
-            .expiredUrl("/play")
+            .expiredUrl("/")
             .sessionRegistry(sessionRegistry());
 
         return http.build();
