@@ -10,4 +10,5 @@ module com.agonyforge.mud.demo {
     requires org.slf4j;
     requires mud.agonyforge.mud.dynamodb;
     requires spring.security.oauth2.core;
+    requires spring.messaging;
 }

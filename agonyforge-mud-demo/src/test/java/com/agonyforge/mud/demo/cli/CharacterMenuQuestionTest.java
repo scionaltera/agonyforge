@@ -16,6 +16,7 @@ import org.springframework.session.Session;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
@@ -148,12 +149,14 @@ public class CharacterMenuQuestionTest {
     @Test
     void testAnswerExisting() {
         String principalName = "principal";
+        UUID characterId = UUID.randomUUID();
         String characterName = "Scion";
 
         when(principal.getName()).thenReturn(principalName);
+        when(mudCharacter.getId()).thenReturn(characterId);
         when(mudCharacter.getName()).thenReturn(characterName);
         when(characterRepository.getByUser(eq(principalName))).thenReturn(List.of(mudCharacter));
-        when(applicationContext.getBean(eq("echoQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("characterViewQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
@@ -162,6 +165,6 @@ public class CharacterMenuQuestionTest {
         Response result = uut.answer(principal, session, new Input("1"));
 
         assertEquals(question, result.getNext());
-        verify(session).setAttribute(eq(MUD_CHARACTER), eq(characterName));
+        verify(session).setAttribute(eq(MUD_CHARACTER), eq(characterId));
     }
 }

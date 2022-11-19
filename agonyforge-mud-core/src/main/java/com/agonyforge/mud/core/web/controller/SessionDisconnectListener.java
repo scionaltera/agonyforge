@@ -26,8 +26,8 @@ public class SessionDisconnectListener implements ApplicationListener<SessionDis
 
         LOGGER.info("Lost connection: {} {} {} {}",
             remoteIp,
-            httpSessionId,
             headerAccessor.getSessionId(),
+            httpSessionId,
             username);
     }
 }

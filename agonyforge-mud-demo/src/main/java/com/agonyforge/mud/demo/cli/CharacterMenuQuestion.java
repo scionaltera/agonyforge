@@ -1,6 +1,5 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.core.cli.AbstractQuestion;
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
@@ -22,30 +21,27 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class CharacterMenuQuestion extends AbstractQuestion {
+public class CharacterMenuQuestion extends DemoQuestion {
     private final DemoMenuPane menuPane = new DemoMenuPane();
-    private final ApplicationContext applicationContext;
-    private final MudCharacterRepository characterRepository;
 
     @Autowired
     public CharacterMenuQuestion(ApplicationContext applicationContext,
                                  MudCharacterRepository characterRepository) {
-        this.applicationContext = applicationContext;
-        this.characterRepository = characterRepository;
+        super(applicationContext, characterRepository);
 
         menuPane.setTitle(new DemoMenuTitle("Your Characters"));
         menuPane.setPrompt(new DemoMenuPrompt());
     }
 
     @Override
-    public Output prompt(Principal principal, Session httpSession) {
+    public Output prompt(Principal principal, Session session) {
         populateMenuItems(principal);
 
         return menuPane.render(Color.WHITE, Color.BLACK);
     }
 
     @Override
-    public Response answer(Principal principal, Session httpSession, Input input) {
+    public Response answer(Principal principal, Session session, Input input) {
         populateMenuItems(principal);
 
         String nextQuestion = "characterMenuQuestion";
@@ -63,12 +59,11 @@ public class CharacterMenuQuestion extends AbstractQuestion {
             nextQuestion = "characterNameQuestion";
         } else {
             DemoMenuItem item = itemOptional.get();
-            httpSession.setAttribute(MUD_CHARACTER, item.getItem());
-            // TODO go into a character view before entering the game
-            nextQuestion = "echoQuestion";
+            session.setAttribute(MUD_CHARACTER, item.getItem());
+            nextQuestion = "characterViewQuestion";
         }
 
-        Question next = applicationContext.getBean(nextQuestion, Question.class);
+        Question next = getQuestion(nextQuestion);
 
         return new Response(next, output);
     }
@@ -77,10 +72,10 @@ public class CharacterMenuQuestion extends AbstractQuestion {
         menuPane.getItems().clear();
         menuPane.getItems().add(new DemoMenuItem("N", "New Character"));
 
-        characterRepository.getByUser(principal.getName())
+        getCharacterRepository().getByUser(principal.getName())
             .forEach(ch -> menuPane.getItems().add(new DemoMenuItem(
                 Integer.toString(menuPane.getItems().size()),
                 ch.getName(),
-                ch.getName())));
+                ch.getId())));
     }
 }

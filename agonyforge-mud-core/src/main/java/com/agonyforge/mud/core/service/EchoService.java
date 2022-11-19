@@ -20,9 +20,6 @@ import java.security.Principal;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 
-/*
- * TODO Not writing tests for this one yet because it's very likely to change.
- */
 @Component
 public class EchoService {
     private final ApplicationContext applicationContext;
