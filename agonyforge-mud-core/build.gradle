@@ -20,12 +20,6 @@ dependencies {
     implementation 'com.hazelcast:hazelcast:5.2.0'
     implementation 'io.projectreactor.netty:reactor-netty:1.1.0'
 
-    implementation 'org.webjars:webjars-locator:0.46'
-    implementation 'org.webjars:bootstrap:5.2.2'
-    implementation 'org.webjars:jquery:3.6.1'
-    implementation 'org.webjars.npm:webstomp-client:1.2.6'
-    implementation 'org.webjars.npm:sockjs-client:1.6.1'
-
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
