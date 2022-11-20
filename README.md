@@ -18,7 +18,9 @@ $ docker-compose up
 # go to http://localhost:8080 to see the MUD!
 ```
 
-After it matures a little, we are excited to get it [online](https://agonyforge.com) and let people play it there.
+After it matures a little, I am excited to get it [online](https://agonyforge.com) and let people play it there.
 ## Optional Modules
 As the demo MUD is built up, other optional modules will also become available. The first is a DynamoDB based persistence layer for storing characters, rooms, and other game data. The optional modules will provide additional functionality but the core module will not depend on them, similar to the way you can pick and choose which modules to use in Spring Boot.
 
+## History
+Agony Forge is not an old project, having just started in November 2022, but it has a long history. I've been writing code for over 20 years, and I've been working on 100% from-scratch MUD codebases for nearly that long. After many years of writing and rewriting due to changing technologies and changing ideas, it occurred to me that separating the framework from the game was the best path forward. That way the different games I'd like to write could all share the same foundation, and your game could too.
