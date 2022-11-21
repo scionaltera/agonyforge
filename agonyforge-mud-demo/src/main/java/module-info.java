@@ -11,4 +11,5 @@ module com.agonyforge.mud.demo {
     requires mud.agonyforge.mud.dynamodb;
     requires spring.security.oauth2.core;
     requires spring.messaging;
+    requires spring.websocket;
 }

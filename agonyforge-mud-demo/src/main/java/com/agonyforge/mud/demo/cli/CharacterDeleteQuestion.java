@@ -43,10 +43,11 @@ public class CharacterDeleteQuestion extends DemoQuestion {
             if ("Y".equalsIgnoreCase(input.getInput())) {
                 getCharacterRepository().delete(chOptional.get());
                 output.append("[red]Your character has been deleted.");
-                next = getQuestion("characterMenuQuestion");
             } else {
                 output.append("[green]Ok! Your character is safe!");
             }
+
+            next = getQuestion("characterMenuQuestion");
         }
 
         return new Response(next, output);

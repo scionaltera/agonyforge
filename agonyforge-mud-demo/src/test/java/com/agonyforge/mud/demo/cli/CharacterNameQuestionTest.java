@@ -18,12 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -51,7 +49,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testPrompt() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
         Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
@@ -68,13 +66,11 @@ public class CharacterNameQuestionTest {
         "SCION"
     })
     void testAnswer(String userInput) {
-        Map<String, Object> attributes = new HashMap<>();
-
+        when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
-        when(webSocketContext.getAttributes()).thenReturn(attributes);
 
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
         Input input = new Input(userInput);
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -91,8 +87,6 @@ public class CharacterNameQuestionTest {
         assertNotNull(ch.getId());
         assertEquals(principal.getName(), ch.getUser());
         assertEquals(userInput, ch.getName());
-
-        assertEquals(ch.getId(), attributes.get(MUD_CHARACTER));
     }
 
     @ParameterizedTest
@@ -101,7 +95,7 @@ public class CharacterNameQuestionTest {
         "S"
     })
     void testAnswerTooShort(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
         Input input = new Input(userInput);
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -116,7 +110,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testAnswerTooLong() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
         Input input = new Input("S".repeat(13));
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -135,7 +129,7 @@ public class CharacterNameQuestionTest {
         "Sc1on"
     })
     void testAnswerInvalidLetters(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
         Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
@@ -150,7 +144,7 @@ public class CharacterNameQuestionTest {
     @Test
     void testAnswerNoCaps() {
         String userInput = "scion";
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
         Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 

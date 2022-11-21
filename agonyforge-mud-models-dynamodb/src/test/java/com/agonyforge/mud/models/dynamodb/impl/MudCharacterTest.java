@@ -7,9 +7,32 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class MudCharacterTest {
+    @Test
+    void testBuildInstance() {
+        MudCharacter proto = new MudCharacter();
+
+        proto.setUser("principal");
+        proto.setId(UUID.randomUUID());
+        proto.setName("Scion");
+
+        MudCharacter instance = proto.buildInstance();
+
+        assertTrue(proto.isPrototype());
+        assertFalse(instance.isPrototype());
+
+        assertThrows(IllegalStateException.class, instance::getUser);
+        assertEquals(proto.getId(), instance.getId());
+        assertEquals(proto.getName(), instance.getName());
+
+        assertThrows(IllegalStateException.class, instance::buildInstance);
+    }
+
     @Test
     void testId() {
         MudCharacter uut = new MudCharacter();

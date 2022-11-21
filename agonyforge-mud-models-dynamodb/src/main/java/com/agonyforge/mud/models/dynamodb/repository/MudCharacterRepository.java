@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_INSTANCE;
 
 @Repository
 public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
@@ -40,17 +41,25 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
         return new MudCharacter();
     }
 
-    public Optional<MudCharacter> getById(UUID id) {
+    public Optional<MudCharacter> getById(UUID id, boolean prototype) {
         Map<String, Condition> filter = new HashMap<>();
 
         filter.put("pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
             .attributeValueList(AttributeValue.builder().s(DB_PC + id).build())
             .build());
-        filter.put("sk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(SORT_DATA).build())
-            .build());
+
+        if (prototype) {
+            filter.put("sk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(SORT_DATA).build())
+                .build());
+        } else {
+            filter.put("sk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(SORT_INSTANCE).build())
+                .build());
+        }
 
         QueryRequest request = QueryRequest.builder()
             .tableName(tableNames.getTableName())
