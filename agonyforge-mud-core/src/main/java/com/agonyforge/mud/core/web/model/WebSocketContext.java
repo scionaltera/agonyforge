@@ -44,7 +44,7 @@ public class WebSocketContext {
         }
 
         if (errors.size() > 0) {
-            throw new IllegalStateException(String.join(",", errors));
+            throw new IllegalStateException(String.join(", ", errors));
         }
     }
 

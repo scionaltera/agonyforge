@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.session.Session;
 
-import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,9 +37,6 @@ public class CharacterViewQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private Principal principal;
-
-    @Mock
     private Session session;
 
     @Mock
@@ -46,17 +45,23 @@ public class CharacterViewQuestionTest {
     @Mock
     private Question question;
 
+    @Mock
+    private WebSocketContext wsContext;
+
     @Test
     void testPrompt() {
         UUID chId = UUID.randomUUID();
         String characterName = "Scion";
+        Map<String, Object> attributes = new HashMap<>();
 
-        when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
+        attributes.put(MUD_CHARACTER, chId);
+
+        when(wsContext.getAttributes()).thenReturn(attributes);
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(characterName);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
-        Output result = uut.prompt(principal, session);
+        Output result = uut.prompt(wsContext);
 
         assertEquals(6, result.getOutput().size());
         assertTrue(result.getOutput().get(0).contains("Character Sheet"));
@@ -72,7 +77,7 @@ public class CharacterViewQuestionTest {
         when(characterRepository.getById(any())).thenReturn(Optional.empty());
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
-        Output result = uut.prompt(principal, session);
+        Output result = uut.prompt(wsContext);
 
         assertTrue(result.getOutput().get(0).contains("[red]"));
         assertTrue(result.getOutput().get(0).contains("error has been reported"));
@@ -83,7 +88,7 @@ public class CharacterViewQuestionTest {
         when(applicationContext.getBean(eq("echoQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
-        Response result = uut.answer(principal, session, new Input("p"));
+        Response result = uut.answer(wsContext, new Input("p"));
 
         assertEquals(question, result.getNext());
     }
@@ -93,7 +98,7 @@ public class CharacterViewQuestionTest {
         when(applicationContext.getBean(eq("characterDeleteQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
-        Response result = uut.answer(principal, session, new Input("d"));
+        Response result = uut.answer(wsContext, new Input("d"));
 
         assertEquals(question, result.getNext());
 
@@ -103,7 +108,7 @@ public class CharacterViewQuestionTest {
     @Test
     void testAnswerUnknown() {
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
-        Response result = uut.answer(principal, session, new Input("x"));
+        Response result = uut.answer(wsContext, new Input("x"));
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(uut, result.getNext());

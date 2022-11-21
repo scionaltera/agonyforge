@@ -27,7 +27,7 @@ public class SessionAttributeService implements ChannelInterceptor {
     private final Map<String, Map<String, Object>> allSessionAttributes = new HashMap<>();
 
     public Map<String, Object> getSessionAttributes(String sessionId) {
-        return allSessionAttributes.get(sessionId);
+        return allSessionAttributes.getOrDefault(sessionId, new HashMap<>());
     }
 
     @Override

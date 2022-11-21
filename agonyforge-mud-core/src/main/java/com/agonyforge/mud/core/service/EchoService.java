@@ -3,6 +3,8 @@ package com.agonyforge.mud.core.service;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.MessageHeaders;
@@ -18,6 +20,8 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 
 @Component
 public class EchoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EchoService.class);
+
     private final ApplicationContext applicationContext;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final SimpUserRegistry simpUserRegistry;

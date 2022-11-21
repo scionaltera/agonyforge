@@ -2,7 +2,7 @@ package com.agonyforge.mud.core.service;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import org.junit.jupiter.api.BeforeEach;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -13,25 +13,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.session.SessionInformation;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
+import org.springframework.messaging.simp.user.SimpSession;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
-import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,34 +39,31 @@ public class EchoServiceTest {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Mock
-    private FindByIndexNameSessionRepository<Session> sessionRepository;
+    private SimpUserRegistry simpUserRegistry;
 
     @Mock
-    private SessionRegistry sessionRegistry;
+    private SessionAttributeService sessionAttributeService;
 
     @Mock
-    private OAuth2AuthenticationToken senderPrincipal;
+    private SimpUser sender;
 
     @Mock
-    private WebAuthenticationDetails details;
+    private SimpSession senderSession;
 
     @Mock
-    private DefaultOidcUser senderOidc;
+    private Principal senderPrincipal;
 
     @Mock
-    private SessionInformation senderSessionInfo;
+    private SimpUser target;
 
     @Mock
-    private Session senderHttpSession;
+    private SimpSession targetSession;
 
     @Mock
-    private DefaultOidcUser targetOidc;
+    private Principal targetPrincipal;
 
     @Mock
-    private SessionInformation targetSessionInfo;
-
-    @Mock
-    private Session targetHttpSession;
+    private WebSocketContext wsContext;
 
     @Mock
     private Question question;
@@ -80,50 +71,43 @@ public class EchoServiceTest {
     @Captor
     private ArgumentCaptor<MessageHeaders> headersCaptor;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private final String senderWsSessionId = "ijklmnop";
-    private final String targetWsSessionId = "abcdefgh";
+    private final String senderSessionId = "senderSessionId";
+    private final String targetSessionId = "targetSessionId";
 
-    @BeforeEach
-    void setUp() {
-        String senderHttpSessionId = "senderHttpSessionId";
-        String targetHttpSessionId = "targetHttpSessionId";
+    void setUpTwoPrincipals() {
+        Map<String, Object> attributes = Map.of(
+            MUD_QUESTION, "testQuestion"
+        );
 
-        when(senderPrincipal.getDetails()).thenReturn(details);
-        when(details.getSessionId()).thenReturn(senderHttpSessionId);
+        when(wsContext.getSessionId()).thenReturn(senderSessionId);
 
-        lenient().when(senderOidc.getName()).thenReturn("Alice");
-        when(senderSessionInfo.getSessionId()).thenReturn(senderHttpSessionId);
-        lenient().when(senderHttpSession.getAttribute(eq(MUD_QUESTION))).thenReturn("currentQuestion");
-        lenient().when(senderHttpSession.getAttribute(eq(WS_SESSION_ID))).thenReturn(senderWsSessionId);
-        when(senderHttpSession.getId()).thenReturn(senderHttpSessionId);
+        when(sender.getSessions()).thenReturn(Set.of(senderSession));
+        when(senderSession.getId()).thenReturn(senderSessionId);
 
-        when(targetOidc.getName()).thenReturn("Bob");
-        when(targetSessionInfo.getSessionId()).thenReturn(targetHttpSessionId);
-        when(targetHttpSession.getAttribute(eq(MUD_QUESTION))).thenReturn("currentQuestion");
-        when(targetHttpSession.getAttribute(eq(WS_SESSION_ID))).thenReturn(targetWsSessionId);
-        when(targetHttpSession.getId()).thenReturn(targetHttpSessionId);
+        when(target.getSessions()).thenReturn(Set.of(targetSession));
+        when(target.getPrincipal()).thenReturn(targetPrincipal);
+        when(targetPrincipal.getName()).thenReturn("Bob");
+        when(targetSession.getId()).thenReturn(targetSessionId);
+        when(targetSession.getUser()).thenReturn(target);
 
-        when(sessionRegistry.getAllPrincipals()).thenReturn(List.of(senderOidc, targetOidc));
-        when(sessionRegistry.getAllSessions(eq(senderOidc), anyBoolean())).thenReturn(List.of(senderSessionInfo));
-        when(sessionRegistry.getAllSessions(eq(targetOidc), anyBoolean())).thenReturn(List.of(targetSessionInfo));
+        when(sessionAttributeService.getSessionAttributes(eq(targetSessionId))).thenReturn(attributes);
 
-        when(sessionRepository.findById(eq(senderHttpSessionId))).thenReturn(senderHttpSession);
-        when(sessionRepository.findById(eq(targetHttpSessionId))).thenReturn(targetHttpSession);
-
-        when(applicationContext.getBean(eq("currentQuestion"), eq(Question.class))).thenReturn(question);
-        when(question.prompt(any(Principal.class), any())).thenReturn(new Output("", "[default]> "));
+        when(simpUserRegistry.getUsers()).thenReturn(Set.of(sender, target));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
     }
 
     @Test
     void testEchoToAll() {
+        setUpTwoPrincipals();
+
         EchoService uut = new EchoService(
             applicationContext,
             simpMessagingTemplate,
-            sessionRepository,
-            sessionRegistry);
+            simpUserRegistry,
+            sessionAttributeService);
 
-        uut.echoToAll(senderPrincipal, new Output("Testy McTestface"));
+        uut.echoToAll(wsContext, new Output("Testy McTestface"));
 
         verify(simpMessagingTemplate, times(1)).convertAndSendToUser(
             eq("Bob"),
@@ -132,7 +116,57 @@ public class EchoServiceTest {
             headersCaptor.capture());
 
         MessageHeaders headers = headersCaptor.getValue();
-        assertEquals(targetWsSessionId, headers.get(SimpMessageHeaderAccessor.SESSION_ID_HEADER));
+        assertEquals(targetSessionId, headers.get(SimpMessageHeaderAccessor.SESSION_ID_HEADER));
+
+        verify(simpMessagingTemplate, times(1)).convertAndSendToUser(
+            anyString(),
+            anyString(),
+            any(Output.class),
+            any(MessageHeaders.class));
+    }
+
+    void setUpSamePrincipal() {
+        Map<String, Object> attributes = Map.of(
+            MUD_QUESTION, "testQuestion"
+        );
+
+        when(wsContext.getSessionId()).thenReturn(senderSessionId);
+
+        when(sender.getSessions()).thenReturn(Set.of(senderSession, targetSession));
+        when(sender.getPrincipal()).thenReturn(senderPrincipal);
+        when(senderPrincipal.getName()).thenReturn("Alice");
+        when(senderSession.getId()).thenReturn(senderSessionId);
+
+        when(targetSession.getId()).thenReturn(targetSessionId);
+        when(targetSession.getUser()).thenReturn(sender);
+
+        when(sessionAttributeService.getSessionAttributes(eq(targetSessionId))).thenReturn(attributes);
+
+        when(simpUserRegistry.getUsers()).thenReturn(Set.of(sender));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
+    }
+
+    @Test
+    void testEchoToAllSamePrincipal() {
+        setUpSamePrincipal();
+
+        EchoService uut = new EchoService(
+            applicationContext,
+            simpMessagingTemplate,
+            simpUserRegistry,
+            sessionAttributeService);
+
+        uut.echoToAll(wsContext, new Output("Testy McTestface"));
+
+        verify(simpMessagingTemplate, times(1)).convertAndSendToUser(
+            eq("Alice"),
+            eq("/queue/output"),
+            eq(new Output("Testy McTestface", "", "[default]> ")),
+            headersCaptor.capture());
+
+        MessageHeaders headers = headersCaptor.getValue();
+        assertEquals(targetSessionId, headers.get(SimpMessageHeaderAccessor.SESSION_ID_HEADER));
 
         verify(simpMessagingTemplate, times(1)).convertAndSendToUser(
             anyString(),
