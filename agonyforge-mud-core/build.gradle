@@ -17,7 +17,7 @@ configurations.maybeCreate("pitest")
 dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
-    implementation 'com.hazelcast:hazelcast:5.2.0'
+    implementation 'com.hazelcast:hazelcast:5.2.1'
     implementation 'io.projectreactor.netty:reactor-netty:1.1.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
