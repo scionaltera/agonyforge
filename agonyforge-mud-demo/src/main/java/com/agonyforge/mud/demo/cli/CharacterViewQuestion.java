@@ -7,6 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import java.util.Optional;
 
 @Component
 public class CharacterViewQuestion extends DemoQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
+
     @Autowired
     public CharacterViewQuestion(ApplicationContext applicationContext,
                                  MudCharacterRepository characterRepository) {
@@ -45,7 +49,20 @@ public class CharacterViewQuestion extends DemoQuestion {
         Question next = this;
 
         if ("P".equalsIgnoreCase(input.getInput())) {
-            next = getQuestion("echoQuestion");
+            Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
+
+            if (chOptional.isPresent()) {
+                MudCharacter chPrototype = chOptional.get();
+                MudCharacter ch = chPrototype.buildInstance();
+
+                // TODO set location on ch
+
+                getCharacterRepository().save(ch);
+
+                LOGGER.info("{} has entered the game.", ch.getName());
+
+                next = getQuestion("echoQuestion");
+            }
         } else if ("D".equalsIgnoreCase(input.getInput())) {
             next = getQuestion("characterDeleteQuestion");
         } else if ("B".equalsIgnoreCase(input.getInput())) {

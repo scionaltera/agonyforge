@@ -9,10 +9,11 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -38,16 +40,19 @@ public class CharacterViewQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private Session session;
+    private MudCharacter ch;
 
     @Mock
-    private MudCharacter ch;
+    private MudCharacter chInstance;
 
     @Mock
     private Question question;
 
     @Mock
     private WebSocketContext wsContext;
+
+    @Captor
+    private ArgumentCaptor<MudCharacter> characterCaptor;
 
     @Test
     void testPrompt() {
@@ -87,11 +92,25 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testAnswerPlay() {
+        UUID chId = UUID.randomUUID();
+        Map<String, Object> attributes = new HashMap<>();
+
+        attributes.put(MUD_CHARACTER, chId);
+
+        when(wsContext.getAttributes()).thenReturn(attributes);
+        when(chInstance.isPrototype()).thenReturn(false);
+        when(ch.buildInstance()).thenReturn(chInstance);
+        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("echoQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
         Response result = uut.answer(wsContext, new Input("p"));
 
+        verify(characterRepository).save(characterCaptor.capture());
+
+        MudCharacter instance = characterCaptor.getValue();
+
+        assertFalse(instance.isPrototype());
         assertEquals(question, result.getNext());
     }
 

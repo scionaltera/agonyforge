@@ -49,7 +49,7 @@ public class EchoQuestionTest {
             MUD_CHARACTER, chId
         ));
 
-        when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
         Output output = uut.prompt(wsContext);
@@ -106,7 +106,7 @@ public class EchoQuestionTest {
         when(wsContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
         Input input = new Input("test");
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);

@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +59,7 @@ public class MudCharacterRepositoryTest {
     }
 
     @Test
-    void testGetById() {
+    void testGetByIdPrototype() {
         when(tableNames.getTableName()).thenReturn("agonyforge");
 
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
@@ -72,12 +73,39 @@ public class MudCharacterRepositoryTest {
 
         uut.save(ch);
 
-        Optional<MudCharacter> resultOptional = uut.getById(uuid);
+        Optional<MudCharacter> resultOptional = uut.getById(uuid, true);
         MudCharacter result = resultOptional.orElseThrow();
 
         assertEquals(ch.getId(), result.getId());
         assertEquals(ch.getUser(), result.getUser());
         assertEquals(ch.getName(), result.getName());
+        assertEquals(ch.isPrototype(), result.isPrototype());
+    }
+
+    @Test
+    void testGetByIdInstance() {
+        when(tableNames.getTableName()).thenReturn("agonyforge");
+
+        MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
+        MudCharacter ch = new MudCharacter();
+        UUID uuid = UUID.randomUUID();
+        String user = UUID.randomUUID().toString();
+
+        ch.setId(uuid);
+        ch.setUser(user);
+        ch.setName("Scion");
+
+        MudCharacter chInstance = ch.buildInstance();
+
+        uut.saveAll(List.of(ch, chInstance));
+
+        Optional<MudCharacter> resultOptional = uut.getById(uuid, false);
+        MudCharacter result = resultOptional.orElseThrow();
+
+        assertEquals(ch.getId(), result.getId());
+        assertThrows(IllegalStateException.class, result::getUser);
+        assertEquals(ch.getName(), result.getName());
+        assertEquals(chInstance.isPrototype(), result.isPrototype());
     }
 
     @Test
@@ -87,7 +115,7 @@ public class MudCharacterRepositoryTest {
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
         UUID uuid = UUID.randomUUID();
 
-        Optional<MudCharacter> resultOptional = uut.getById(uuid);
+        Optional<MudCharacter> resultOptional = uut.getById(uuid, true);
         assertTrue(resultOptional.isEmpty());
     }
 
@@ -105,14 +133,18 @@ public class MudCharacterRepositoryTest {
         ch.setUser(user);
         ch.setName("Scion");
 
-        uut.save(ch);
+        MudCharacter chInstance = ch.buildInstance();
+
+        uut.saveAll(List.of(ch, chInstance));
 
         List<MudCharacter> results = uut.getByUser(user);
         MudCharacter result = results.get(0);
 
         assertEquals(1, results.size());
+
         assertEquals(ch.getId(), result.getId());
         assertEquals(ch.getUser(), result.getUser());
         assertEquals(ch.getName(), result.getName());
+        assertEquals(ch.isPrototype(), result.isPrototype());
     }
 }

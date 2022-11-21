@@ -10,27 +10,20 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-
 @Component
 public class CharacterNameQuestion extends DemoQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterNameQuestion.class);
 
-    private final Question nextQuestion;
-
     @Autowired
     public CharacterNameQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository,
-                                 @Qualifier("echoQuestion") Question nextQuestion) {
+                                 MudCharacterRepository characterRepository) {
         super(applicationContext, characterRepository);
-        this.nextQuestion = nextQuestion;
     }
 
     @Override
@@ -58,9 +51,7 @@ public class CharacterNameQuestion extends DemoQuestion {
 
         getCharacterRepository().save(ch);
 
-        wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
-
-        LOGGER.info("{} is now known as {}", wsContext.getSessionId(), ch.getName());
+        Question nextQuestion = getQuestion("characterMenuQuestion");
 
         return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", ch.getName())));
     }
