@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
@@ -11,9 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 
-import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,28 +34,25 @@ public class CharacterDeleteQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private Principal principal;
-
-    @Mock
-    private Session session;
-
-    @Mock
     private MudCharacter ch;
 
     @Mock
-    private Question question;
+    private WebSocketContext webSocketContext;
 
     @Test
     void testPrompt() {
         UUID chId = UUID.randomUUID();
         String chName = "Scion";
+        Map<String, Object> attributes = new HashMap<>();
 
-        when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
+        attributes.put(MUD_CHARACTER, chId);
+
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(chName);
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
-        Output result = uut.prompt(principal, session);
+        Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
         assertTrue(result.getOutput().get(0).contains("[red]"));
@@ -66,12 +63,15 @@ public class CharacterDeleteQuestionTest {
     @Test
     void testPromptNoCharacter() {
         UUID chId = UUID.randomUUID();
+        Map<String, Object> attributes = new HashMap<>();
 
-        when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
+        attributes.put(MUD_CHARACTER, chId);
+
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(characterRepository.getById(any())).thenReturn(Optional.empty());
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
-        Output result = uut.prompt(principal, session);
+        Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
         assertTrue(result.getOutput().get(0).contains("[red]"));
@@ -81,12 +81,15 @@ public class CharacterDeleteQuestionTest {
     @Test
     void testAnswerYes() {
         UUID chId = UUID.randomUUID();
+        Map<String, Object> attributes = new HashMap<>();
 
-        when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
+        attributes.put(MUD_CHARACTER, chId);
+
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
-        Response result = uut.answer(principal, session, new Input("y"));
+        Response result = uut.answer(webSocketContext, new Input("y"));
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(1, output.getOutput().size());

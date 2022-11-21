@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
-import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Map;
 
 import static com.agonyforge.mud.core.config.RemoteIpHandshakeInterceptor.SESSION_REMOTE_IP_KEY;
@@ -35,16 +32,13 @@ public class WebSocketController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
     private final ApplicationContext applicationContext;
-    private final SessionRepository<Session> sessionRepository;
     private final Question initialQuestion;
     private Output greeting;
 
     @Autowired
     public WebSocketController(ApplicationContext applicationContext,
-                               FindByIndexNameSessionRepository<Session> sessionRepository,
                                @Qualifier("initialQuestion") Question initialQuestion) {
         this.applicationContext = applicationContext;
-        this.sessionRepository = sessionRepository;
         this.initialQuestion = initialQuestion;
 
         try {
@@ -56,58 +50,46 @@ public class WebSocketController {
     }
 
     @SubscribeMapping("/queue/output")
-    public Output onSubscribe(Principal principal, @Headers Map<String, Object> headers) {
-        Map<String, Object> attributes = SimpMessageHeaderAccessor.getSessionAttributes(headers);
+    public Output onSubscribe(@Headers Map<String, Object> headers) {
+        WebSocketContext wsContext;
 
-        if (attributes == null) {
-            LOGGER.error("No headers on subscribe message!");
-            return new Output("[red]Oops! Something went wrong. Please try refreshing your browser.");
+        try {
+            wsContext = WebSocketContext.build(headers);
+        } catch (IllegalStateException e) {
+            LOGGER.error("Error building WebSocketContext: {}", e.getMessage());
+            return new Output("[red]Oops! Something went wrong. The error has been reported. Please try again.");
         }
 
-        String remoteIp = (String)attributes.getOrDefault(SESSION_REMOTE_IP_KEY, "(no IP)");
-        String wsSessionName = SimpMessageHeaderAccessor.getSessionId(headers);
-        Session httpSession = sessionRepository.findById((String) attributes.get(HTTP_SESSION_ID_ATTR_NAME));
+        String remoteIp = (String) wsContext.getAttributes().getOrDefault(SESSION_REMOTE_IP_KEY, "(no IP)");
+        String httpSessionId = (String) wsContext.getAttributes().getOrDefault(HTTP_SESSION_ID_ATTR_NAME, "(no HTTP session)");
+        String wsSessionId = SimpMessageHeaderAccessor.getSessionId(headers);
 
-        httpSession.setAttribute(MUD_QUESTION, initialQuestion.getBeanName());
-        httpSession.setAttribute(WS_SESSION_ID, wsSessionName);
+        wsContext.getAttributes().put(MUD_QUESTION, initialQuestion.getBeanName());
 
         LOGGER.info("New connection: {} {} {} {}",
             remoteIp,
-            wsSessionName,
-            httpSession.getId(),
-            principal.getName());
+            wsSessionId,
+            httpSessionId,
+            wsContext.getPrincipal().getName());
 
-        return greeting.append(initialQuestion.prompt(principal, httpSession));
+        return greeting.append(initialQuestion.prompt(wsContext));
     }
 
     @MessageMapping("/input")
     @SendToUser(value = "/queue/output", broadcast = false)
-    public Output onInput(Principal principal, Input input, @Headers Map<String, Object> headers) {
-        Map<String, Object> attributes = SimpMessageHeaderAccessor.getSessionAttributes(headers);
+    public Output onInput(@Headers Map<String, Object> headers, Input input) {
+        WebSocketContext wsContext;
 
-        if (attributes == null) {
-            LOGGER.error("No headers on input message!");
-            return new Output("[red]Oops! Something went wrong. Please try again.");
+        try {
+            wsContext = WebSocketContext.build(headers);
+        } catch (IllegalStateException e) {
+            LOGGER.error("Error building WebSocketContext: {}", e.getMessage());
+            return new Output("[red]Oops! Something went wrong. The error has been reported. Please try again.");
         }
 
-        Session httpSession = sessionRepository.findById((String) attributes.get(HTTP_SESSION_ID_ATTR_NAME));
-        String questionName = httpSession.getAttribute(MUD_QUESTION);
-
-        // this was happening when a Question overrode getBeanName() and returned null
-        // that removed the attribute from the session and things crashed here
-        // I'm gonna leave this in to catch and diagnose similar future errors
-        if (questionName == null) {
-            LOGGER.error("{}'s MUD_QUESTION attribute was null! Resetting to initialQuestion!", httpSession.getId());
-            LOGGER.error("Session attributes were:");
-
-            attributes.keySet()
-                .forEach(name -> LOGGER.error("{} -> {}", name, attributes.get(name)));
-
-            questionName = initialQuestion.getBeanName();
-        }
-
+        String questionName = (String) wsContext.getAttributes().get(MUD_QUESTION);
         Question currentQuestion = applicationContext.getBean(questionName, Question.class);
-        Response response = currentQuestion.answer(principal, httpSession, input);
+        Response response = currentQuestion.answer(wsContext, input);
         Question nextQuestion = response.getNext();
         Output output = new Output();
 
@@ -115,10 +97,10 @@ public class WebSocketController {
         response.getFeedback().ifPresent(output::append);
 
         // append the prompt from the next question
-        output.append(nextQuestion.prompt(principal, httpSession));
+        output.append(nextQuestion.prompt(wsContext));
 
         // store the next question in the session
-        httpSession.setAttribute(MUD_QUESTION, nextQuestion.getBeanName());
+        wsContext.getAttributes().put(MUD_QUESTION, nextQuestion.getBeanName());
 
         return output;
     }

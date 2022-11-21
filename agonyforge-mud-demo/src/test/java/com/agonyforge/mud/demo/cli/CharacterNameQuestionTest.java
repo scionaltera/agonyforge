@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
@@ -15,14 +16,15 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -33,9 +35,6 @@ public class CharacterNameQuestionTest {
     private Principal principal;
 
     @Mock
-    private Session session;
-
-    @Mock
     private Question question;
 
     @Mock
@@ -44,18 +43,21 @@ public class CharacterNameQuestionTest {
     @Mock
     private MudCharacterRepository characterRepository;
 
+    @Mock
+    private WebSocketContext webSocketContext;
+
     @Captor
     private ArgumentCaptor<MudCharacter> characterCaptor;
 
     @Test
     void testPrompt() {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
-        Output result = uut.prompt(principal, session);
+        Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
         assertEquals("[default]By what name do you wish to be known? ", result.getOutput().get(0));
 
-        verifyNoInteractions(session);
+        verifyNoInteractions(webSocketContext);
     }
 
     @ParameterizedTest
@@ -66,11 +68,15 @@ public class CharacterNameQuestionTest {
         "SCION"
     })
     void testAnswer(String userInput) {
+        Map<String, Object> attributes = new HashMap<>();
+
         when(principal.getName()).thenReturn("principal");
+        when(webSocketContext.getPrincipal()).thenReturn(principal);
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
 
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Input input = new Input(userInput);
-        Response result = uut.answer(principal, session, input);
+        Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(question, result.getNext());
@@ -86,7 +92,7 @@ public class CharacterNameQuestionTest {
         assertEquals(principal.getName(), ch.getUser());
         assertEquals(userInput, ch.getName());
 
-        verify(session).setAttribute(eq(MUD_CHARACTER), eq(ch.getId()));
+        assertEquals(ch.getId(), attributes.get(MUD_CHARACTER));
     }
 
     @ParameterizedTest
@@ -97,7 +103,7 @@ public class CharacterNameQuestionTest {
     void testAnswerTooShort(String userInput) {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Input input = new Input(userInput);
-        Response result = uut.answer(principal, session, input);
+        Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(uut, result.getNext());
@@ -105,14 +111,14 @@ public class CharacterNameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]Names need to be at least two letters in length.", output.getOutput().get(0));
 
-        verifyNoInteractions(session);
+        verify(webSocketContext, never()).getAttributes();
     }
 
     @Test
     void testAnswerTooLong() {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
         Input input = new Input("S".repeat(13));
-        Response result = uut.answer(principal, session, input);
+        Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(uut, result.getNext());
@@ -120,7 +126,7 @@ public class CharacterNameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]Names need to be 12 or fewer letters in length.", output.getOutput().get(0));
 
-        verifyNoInteractions(session);
+        verify(webSocketContext, never()).getAttributes();
     }
 
     @ParameterizedTest
@@ -130,7 +136,7 @@ public class CharacterNameQuestionTest {
     })
     void testAnswerInvalidLetters(String userInput) {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
-        Response result = uut.answer(principal, session, new Input(userInput));
+        Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(uut, result.getNext());
@@ -138,14 +144,14 @@ public class CharacterNameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]Names may only have letters in them.", output.getOutput().get(0));
 
-        verifyNoInteractions(session);
+        verify(webSocketContext, never()).getAttributes();
     }
 
     @Test
     void testAnswerNoCaps() {
         String userInput = "scion";
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, question);
-        Response result = uut.answer(principal, session, new Input(userInput));
+        Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
         assertEquals(uut, result.getNext());
@@ -153,6 +159,6 @@ public class CharacterNameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]Names must begin with a capital letter.", output.getOutput().get(0));
 
-        verifyNoInteractions(session);
+        verify(webSocketContext, never()).getAttributes();
     }
 }

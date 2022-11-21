@@ -4,14 +4,13 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -23,9 +22,9 @@ public class CharacterDeleteQuestion extends DemoQuestion {
     }
 
     @Override
-    public Output prompt(Principal principal, Session session) {
+    public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        Optional<MudCharacter> chOptional = getCharacter(session, output);
+        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         return chOptional.map(mudCharacter -> new Output(
             String.format(
@@ -35,10 +34,10 @@ public class CharacterDeleteQuestion extends DemoQuestion {
     }
 
     @Override
-    public Response answer(Principal principal, Session session, Input input) {
+    public Response answer(WebSocketContext wsContext, Input input) {
         Output output = new Output();
         Question next = this;
-        Optional<MudCharacter> chOptional = getCharacter(session, output);
+        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
             if ("Y".equalsIgnoreCase(input.getInput())) {

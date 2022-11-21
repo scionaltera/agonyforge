@@ -36,14 +36,14 @@ public class UserSessionRepositoryTest {
     static void setUp() throws Exception {
         dynamoDbClient = DynamoDbClient
             .builder()
-            .endpointOverride(new URI("http://localhost:8000"))
+            .endpointOverride(new URI("http://localhost:8010"))
             .region(Region.US_WEST_2)
             .credentialsProvider(
                 StaticCredentialsProvider.create(
                     AwsBasicCredentials.create("x", "x")))
             .build();
 
-        server = ServerRunner.createServerFromCommandLineArgs(new String[] { "-inMemory", "-port", "8000" });
+        server = ServerRunner.createServerFromCommandLineArgs(new String[] { "-inMemory", "-port", "8010" });
         server.start();
 
         // create tables and stuff

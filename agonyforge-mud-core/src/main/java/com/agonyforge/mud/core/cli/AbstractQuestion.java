@@ -2,19 +2,17 @@ package com.agonyforge.mud.core.cli;
 
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.session.Session;
-
-import java.security.Principal;
 
 public abstract class AbstractQuestion implements Question, BeanNameAware {
     private String beanName;
 
     @Override
-    public abstract Output prompt(Principal principal, Session httpSession);
+    public abstract Output prompt(WebSocketContext wsContext);
 
     @Override
-    public abstract Response answer(Principal principal, Session httpSession, Input input);
+    public abstract Response answer(WebSocketContext webSocketContext, Input input);
 
     @Override
     public String getBeanName() {

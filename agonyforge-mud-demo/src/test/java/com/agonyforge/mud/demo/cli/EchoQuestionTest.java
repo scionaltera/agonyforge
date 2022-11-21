@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
@@ -11,9 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.Session;
 
-import java.security.Principal;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,9 +28,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class EchoQuestionTest {
     @Mock
-    private Principal principal;
-
-    @Mock
     private EchoService echoService;
 
     @Mock
@@ -43,16 +40,19 @@ public class EchoQuestionTest {
     private MudCharacter ch;
 
     @Mock
-    private Session session;
+    private WebSocketContext wsContext;
 
     @Test
     void testPrompt() {
         UUID chId = UUID.randomUUID();
-        when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
+        when(wsContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
 
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
-        Output output = uut.prompt(principal, session);
+        Output output = uut.prompt(wsContext);
 
         assertEquals(2, output.getOutput().size());
         assertEquals("", output.getOutput().get(0));
@@ -64,7 +64,7 @@ public class EchoQuestionTest {
     @Test
     void testPromptNoCharacter() {
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
-        Output output = uut.prompt(principal, session);
+        Output output = uut.prompt(wsContext);
 
         assertEquals(3, output.getOutput().size());
         assertEquals("[red]Unable to find your character! The error has been reported.", output.getOutput().get(0));
@@ -78,7 +78,7 @@ public class EchoQuestionTest {
     void testAnswerBlank() {
         Input input = new Input("");
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
-        Response response = uut.answer(principal, session, input);
+        Response response = uut.answer(wsContext, input);
         Output responseOut = response.getFeedback().orElseThrow();
 
         assertEquals(1, responseOut.getOutput().size());
@@ -91,7 +91,7 @@ public class EchoQuestionTest {
     void testAnswerNoCharacter() {
         Input input = new Input("test");
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
-        Response response = uut.answer(principal, session, input);
+        Response response = uut.answer(wsContext, input);
         Output responseOut = response.getFeedback().orElseThrow();
 
         assertEquals(1, responseOut.getOutput().size());
@@ -103,17 +103,19 @@ public class EchoQuestionTest {
     @Test
     void testAnswer() {
         UUID chId = UUID.randomUUID();
-        when(session.getAttribute(eq(MUD_CHARACTER))).thenReturn(chId);
+        when(wsContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
         when(characterRepository.getById(eq(chId))).thenReturn(Optional.of(ch));
 
         Input input = new Input("test");
         EchoQuestion uut = new EchoQuestion(echoService, applicationContext, characterRepository);
-        Response response = uut.answer(principal, session, input);
+        Response response = uut.answer(wsContext, input);
         Output responseOut = response.getFeedback().orElseThrow();
 
         assertEquals(1, responseOut.getOutput().size());
         assertEquals("[cyan]You say, 'test[cyan]'", responseOut.getOutput().get(0));
 
-        verify(echoService).echoToAll(eq(principal), any(Output.class));
+        verify(echoService).echoToAll(eq(wsContext), any(Output.class));
     }
 }

@@ -2,86 +2,80 @@ package com.agonyforge.mud.core.service;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.Map;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
-import static com.agonyforge.mud.core.web.controller.WebSocketController.WS_SESSION_ID;
 
 @Component
 public class EchoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EchoService.class);
+
     private final ApplicationContext applicationContext;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final FindByIndexNameSessionRepository<Session> sessionRepository;
-    private final SessionRegistry sessionRegistry;
+    private final SimpUserRegistry simpUserRegistry;
+    private final SessionAttributeService sessionAttributeService;
 
     @Autowired
     public EchoService(ApplicationContext applicationContext,
                        SimpMessagingTemplate simpMessagingTemplate,
-                       FindByIndexNameSessionRepository<Session> sessionRepository,
-                       SessionRegistry sessionRegistry) {
+                       SimpUserRegistry simpUserRegistry,
+                       SessionAttributeService sessionAttributeService) {
         this.applicationContext = applicationContext;
         this.simpMessagingTemplate = simpMessagingTemplate;
-        this.sessionRepository = sessionRepository;
-        this.sessionRegistry = sessionRegistry;
+        this.simpUserRegistry = simpUserRegistry;
+        this.sessionAttributeService = sessionAttributeService;
     }
 
     /**
      * Low level method to send a message to everyone except the sender.
      *
-     * @param senderPrincipal The Principal representing the sender of the message.
+     * @param wsContext The WebSocketContext for the sender.
      * @param message The message to be sent.
      */
-    public void echoToAll(Principal senderPrincipal, Output message) {
-        OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) senderPrincipal;
-        WebAuthenticationDetails details = (WebAuthenticationDetails) token.getDetails();
-        String senderSessionId = details.getSessionId();
-
-        sessionRegistry.getAllPrincipals()
-            .stream()
-            .map(principal -> (DefaultOidcUser) principal)
-            .forEach(principal -> sessionRegistry.getAllSessions(principal, false)
+    public void echoToAll(WebSocketContext wsContext, Output message) {
+        simpUserRegistry.getUsers()
                 .stream()
-                .map(sessionInfo -> sessionRepository.findById(sessionInfo.getSessionId()))
-                .filter(session -> !senderSessionId.equals(session.getId()))
-                .forEach(session -> {
-                    Principal stompPrincipal = new StompPrincipal(principal.getName());
-                    Output messageWithPrompt = appendPrompt(stompPrincipal, session, message);
-                    String wsSessionId = session.getAttribute(WS_SESSION_ID);
-                    MessageHeaders messageHeaders = buildMessageHeaders(wsSessionId);
+                .flatMap(simpUser -> simpUser.getSessions().stream())
+                .filter(simpSession -> !simpSession.getId().equals(wsContext.getSessionId()))
+                .forEach(simpSession -> {
+                    Principal targetPrincipal = simpSession.getUser().getPrincipal();
+                    Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(simpSession.getId());
+                    WebSocketContext targetWsContext = WebSocketContext.build(targetPrincipal, simpSession.getId(), attributes);
+
+                    Output messageWithPrompt = appendPrompt(targetWsContext, message);
+                    MessageHeaders messageHeaders = buildMessageHeaders(simpSession.getId());
 
                     simpMessagingTemplate.convertAndSendToUser(
-                        stompPrincipal.getName(),
+                        targetWsContext.getPrincipal().getName(),
                         "/queue/output",
                         messageWithPrompt,
                         messageHeaders);
-                }));
+                });
     }
 
     /**
      * Look up the target user's current Question and use it to build the correct prompt for them.
      *
-     * @param stompPrincipal A Principal containing the WS session ID of the target user.
-     * @param session The HTTP Session of the target user.
+     * @param wsContext The WebSocketContext for the target.
      * @param message The message to send.
      * @return An Output with a prompt appended to it.
      */
-    private Output appendPrompt(Principal stompPrincipal, Session session, Output message) {
-        Question question = applicationContext.getBean(session.getAttribute(MUD_QUESTION), Question.class);
+    private Output appendPrompt(WebSocketContext wsContext, Output message) {
+        Question question = applicationContext.getBean((String) wsContext.getAttributes().get(MUD_QUESTION), Question.class);
 
-        return new Output(message).append(question.prompt(stompPrincipal, session));
+        return new Output(message).append(question.prompt(wsContext));
     }
 
     /**
