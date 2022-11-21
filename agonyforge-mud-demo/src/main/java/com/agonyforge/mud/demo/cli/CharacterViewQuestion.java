@@ -30,9 +30,10 @@ public class CharacterViewQuestion extends DemoQuestion {
             output.append("[dcyan]Character Sheet");
             output.append(String.format("[default]Name: [cyan]%s", chOptional.get().getName()));
             output.append("");
-            output.append("[green]P[dwhite]) Play as this character");
-            output.append("[red]D[dwhite]) Delete this character");
-            output.append("[dwhite]Please [white]make your selection[dwhite]: ");
+            output.append("[green]P[black]) Play as this character");
+            output.append("[red]D[black]) Delete this character");
+            output.append("[dwhite]B[black]) Go back");
+            output.append("[black]Please [white]make your selection[black]: ");
         }
 
         return output;
@@ -47,6 +48,8 @@ public class CharacterViewQuestion extends DemoQuestion {
             next = getQuestion("echoQuestion");
         } else if ("D".equalsIgnoreCase(input.getInput())) {
             next = getQuestion("characterDeleteQuestion");
+        } else if ("B".equalsIgnoreCase(input.getInput())) {
+            next = getQuestion("characterMenuQuestion");
         } else {
             output.append("[red]Unknown selection. Please try again.");
         }
