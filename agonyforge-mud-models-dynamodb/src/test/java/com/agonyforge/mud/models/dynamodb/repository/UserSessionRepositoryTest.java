@@ -1,59 +1,22 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
-import com.agonyforge.mud.models.dynamodb.DynamoDbInitializer;
 import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.agonyforge.mud.models.dynamodb.impl.UserSession;
-import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
-import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserSessionRepositoryTest {
-
-    private static DynamoDbClient dynamoDbClient;
-
-    private static DynamoDBProxyServer server;
+public class UserSessionRepositoryTest extends DynamoDbLocalInitializingTest {
 
     @Mock
     private DynamoDbProperties.TableNames tableNames;
-
-    @BeforeAll
-    static void setUp() throws Exception {
-        dynamoDbClient = DynamoDbClient
-            .builder()
-            .endpointOverride(new URI("http://localhost:8010"))
-            .region(Region.US_WEST_2)
-            .credentialsProvider(
-                StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create("x", "x")))
-            .build();
-
-        server = ServerRunner.createServerFromCommandLineArgs(new String[] { "-inMemory", "-port", "8010" });
-        server.start();
-
-        // create tables and stuff
-        new DynamoDbInitializer(dynamoDbClient).initialize();
-    }
-
-    @AfterAll
-    static void tearDown() throws Exception {
-        server.stop();
-    }
 
     @Test
     void testGetByPrincipal() {
