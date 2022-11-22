@@ -84,7 +84,7 @@ pitest {
 
 docker {
     name "scionaltera/agonyforge-mud-demo"
-    dockerfile file('src/main/docker/local/Dockerfile')
+    dockerfile file('src/main/docker/Dockerfile.local')
     files bootJar.outputs
 }
 
