@@ -91,7 +91,6 @@ pitest {
     coverageThreshold = 70
     mutationThreshold = 70
     timestampedReports = false
-    verbose = true
 
     targetClasses = [
         "com.agonyforge.mud.models.dynamodb.*"
