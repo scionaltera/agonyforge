@@ -10,11 +10,10 @@ The second module is a demo MUD to demonstrate the framework's capabilities and 
 $ git clone git@github.com:scionaltera/agonyforge.git
 $ cd agonyforge
 $ cp mud.EXAMPLE.env mud.env
-# set up a Cognito User Pool in AWS
+# set up a Cognito User Pool in AWS (can't be done locally: see cloudformation/cognito.yaml)
 # edit mud.env in your favorite editor
 $ ./gradlew clean build
 $ docker-compose up
-# create the DynamoDB table in DynamoDbLocal
 # go to http://localhost:8080 to see the MUD!
 ```
 
