@@ -10,27 +10,28 @@ env:
 phases:
   install:
     runtime-versions:
-      docker: 18
+      docker: 20
     commands:
       - chmod +x ./gradlew
-    pre_build:
-      commands:
-        - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-        - export PROJECT_VERSION=v`egrep "^version" agonyforge-mud-demo/build.gradle | cut -f2 -d\'`
-        - echo "Project version is ${PROJECT_VERSION}"
-    build:
-      commands:
-        - docker build -t scionaltera/agonyforge-mud-demo:latest -f agonyforge-mud-demo/src/main/docker/Dockerfile.codebuild .
-    post_build:
-      commands:
-        - docker tag scionaltera/agonyforge-mud-demo:latest scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
-        - |
-          if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
-            if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then                
-              docker push ghcr.io/scionaltera/agonyforge-mud-demo:latest
-            fi              
-            docker push ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
-          fi
-        - printf '[{"name":"agonyforge","imageUri":"%s"}]' scionaltera/agonyforge:${PROJECT_VERSION} > imagedefinitions.json
+  pre_build:
+    commands:
+      - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
+      - echo ${GITHUB_PASSWORD} | docker login ghcr.io -u ${GITHUB_USERNAME} --password-stdin
+      - export PROJECT_VERSION=v`egrep "^version" agonyforge-mud-demo/build.gradle | cut -f2 -d\'`
+      - echo "Project version is ${PROJECT_VERSION}"
+  build:
+    commands:
+      - docker build -t scionaltera/agonyforge-mud-demo:latest -f agonyforge-mud-demo/src/main/docker/Dockerfile.codebuild .
+  post_build:
+    commands:
+      - docker tag scionaltera/agonyforge-mud-demo:latest scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+      - |
+        if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
+          if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then                
+            docker push ghcr.io/scionaltera/agonyforge-mud-demo:latest
+          fi              
+          docker push ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+        fi
+      - printf '[{"name":"agonyforge","imageUri":"%s"}]' scionaltera/agonyforge:${PROJECT_VERSION} > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
