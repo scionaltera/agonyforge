@@ -1,7 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
-import com.agonyforge.mud.models.dynamodb.impl.User;;
+import com.agonyforge.mud.models.dynamodb.impl.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
