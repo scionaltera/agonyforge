@@ -32,6 +32,3 @@ phases:
           fi              
           docker push ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
         fi
-      - printf '[{"name":"agonyforge","imageUri":"%s"}]' scionaltera/agonyforge:${PROJECT_VERSION} > imagedefinitions.json
-artifacts:
-  files: imagedefinitions.json
