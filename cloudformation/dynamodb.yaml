@@ -8,14 +8,16 @@ Resources:
   DynamoMainTable:
     Type: AWS::DynamoDB::Table
     Properties:
+      TableName:
+        Ref: TableName
       AttributeDefinitions:
         - AttributeName: pk
           AttributeType: S
         - AttributeName: sk
           AttributeType: S
-        - AttributeName: gsipk1
+        - AttributeName: gsi1pk
           AttributeType: S
-        - AttributeName: gsipk2
+        - AttributeName: gsi2pk
           AttributeType: S
         - AttributeName: ttl
           AttributeType: N
@@ -24,10 +26,13 @@ Resources:
           KeyType: HASH
         - AttributeName: sk
           KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
       GlobalSecondaryIndexes:
         - IndexName: gsi1
           KeySchema:
-            - AttributeName: gsipk1
+            - AttributeName: gsi1pk
               KeyType: HASH
             - AttributeName: pk
               KeyType: RANGE
@@ -35,15 +40,10 @@ Resources:
             ProjectionType: ALL
         - IndexName: gsi2
           KeySchema:
-            - AttributeName: gsipk2
+            - AttributeName: gsi2pk
               KeyType: HASH
             - AttributeName: pk
               KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       SSESpecification:
         SSEEnabled: 'True'
-      TableName:
-        Ref: TableName
-      TimeToLiveSpecification:
-        AttributeName: ttl
-        Enabled: true
