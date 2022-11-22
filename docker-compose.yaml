@@ -18,6 +18,26 @@ services:
       - "8000:8000"
     command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
 
+  # credit to https://aws.plainenglish.io/run-aws-dynamodb-locally-2788ad73c4db for this one
+  aws-cli:
+    image: amazon/aws-cli
+    depends_on:
+      - dynamodb
+    environment:
+      AWS_ACCESS_KEY_ID: x
+      AWS_SECRET_ACCESS_KEY: x
+      AWS_REGION: us-west-2
+      AWS_ENDPOINT: "--endpoint-url http://dynamodb:8000"
+    entrypoint: /bin/sh -c
+    volumes:
+      - './agonyforge-mud-models-dynamodb/src/main/bash:/init-scripts'
+    command: >
+      '
+      for script_name in /init-scripts/*.sh; do
+        sh $$script_name
+      done
+      '
+
   activemq:
     image: symptoma/activemq:5.17.1-envvars
     ports:
