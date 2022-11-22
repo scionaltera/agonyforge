@@ -1,4 +1,4 @@
-module mud.agonyforge.mud.dynamodb {
+module com.agonyforge.mud.models.dynamodb {
     exports com.agonyforge.mud.models.dynamodb;
     exports com.agonyforge.mud.models.dynamodb.config;
     exports com.agonyforge.mud.models.dynamodb.repository;

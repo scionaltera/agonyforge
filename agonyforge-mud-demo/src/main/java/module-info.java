@@ -8,7 +8,7 @@ module com.agonyforge.mud.demo {
     requires spring.session.core;
     requires com.agonyforge.mud.core;
     requires org.slf4j;
-    requires mud.agonyforge.mud.dynamodb;
+    requires com.agonyforge.mud.models.dynamodb;
     requires spring.security.oauth2.core;
     requires spring.messaging;
     requires spring.websocket;
