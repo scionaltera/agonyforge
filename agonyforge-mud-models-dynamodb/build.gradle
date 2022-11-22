@@ -49,17 +49,6 @@ task copyNativeLibs(type: Copy) {
 
 test {
     useJUnitPlatform()
-
-    if (project.hasProperty('excludeFragileTests')) {
-        // seems to run fine outside of Docker
-        // but sqlite4java crashes the JVM in the Alpine container
-        // and fixing this one seems like way too much work
-        // so does refactoring the tests
-        // see https://github.com/localstack/localstack/issues/2619
-        // see https://github.com/GrapheneOS/AttestationServer/issues/45
-        // see https://github.com/GrapheneOS/sqlite4java <-- this might fix it but I'd have to build it myself and I don't want to
-        exclude 'com/agonyforge/mud/models/dynamodb/repository/**'
-    }
 }
 
 jar {
@@ -105,13 +94,6 @@ pitest {
         "com.agonyforge.mud.models.dynamodb.config.*",
         "com.agonyforge.mud.models.dynamodb.*.Abstract*"
     ]
-
-    if (project.hasProperty('excludeFragileTests')) {
-        coverageThreshold = 0
-        mutationThreshold = 0
-        excludedClasses.add("com.agonyforge.mud.models.dynamodb.repository.*")
-        excludedTestClasses = ["com.agonyforge.mud.models.dynamodb.repository.*"]
-    }
 }
 
 test.dependsOn tasks.copyNativeLibs

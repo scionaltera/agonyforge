@@ -1,10 +1,10 @@
-FROM amazoncorretto:11-alpine-jdk as build
+# sqlite4java crashes in the alpine image so we build this JAR in Amazon Linux instead
+FROM amazoncorretto:11-al2-jdk as build
 MAINTAINER Scion Altera <scion@agonyforge.com>
 WORKDIR /opt/build
 COPY . /opt/build
 RUN cd /opt/build \
-    && apk add --no-cache bash \
-    && ./gradlew --console=plain -PexcludeFragileTests clean build -x docker
+    && ./gradlew --console=plain clean build -x docker
 
 FROM amazoncorretto:11-alpine-jdk
 MAINTAINER Scion Altera <scion@agonyforge.com>
