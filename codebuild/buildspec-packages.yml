@@ -15,7 +15,9 @@ phases:
     commands:
       - export CORE_VERSION=v`egrep "^version" agonyforge-mud-core/build.gradle | cut -f2 -d\'`
       - export MODELS_DYNAMODB_VERSION=v`egrep "^version" agonyforge-mud-models-dynamodb/build.gradle | cut -f2 -d\'`
+      - export BRANCH_TAG=`echo ${CODEBUILD_SOURCE_VERSION} | sed 's|/|-|g'`
       - echo "Codebuild initiator is ${CODEBUILD_INITIATOR}"
+      - echo "Branch is ${BRANCH_TAG}"
       - echo "Core version is ${CORE_VERSION}"
       - echo "Models DynamoDB version is ${MODELS_DYNAMODB_VERSION}"
   build:

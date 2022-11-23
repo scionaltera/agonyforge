@@ -114,7 +114,7 @@ publishing {
     }
 
     publications {
-        gpr(MavenPublication) {
+        gprModelsDynamoDb(MavenPublication) {
             from(components.java)
         }
     }
