@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   parameter-store:
-#    DOCKER_HUB_USERNAME: "docker-hub-username"
-#    DOCKER_HUB_PASSWORD: "docker-hub-password"
+    DOCKER_HUB_USERNAME: "docker-hub-username"
+    DOCKER_HUB_PASSWORD: "docker-hub-password"
     GITHUB_USERNAME: "agonyforge-github-packages-username"
     GITHUB_TOKEN: "agonyforge-github-packages-token"
 
@@ -13,6 +13,8 @@ phases:
       - chmod +x ./gradlew
   pre_build:
     commands:
+      - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
+      - docker login ghcr.io -u ${GITHUB_USERNAME} -p ${GITHUB_TOKEN}
       - export PROJECT_VERSION=v`egrep "^version" agonyforge-mud-demo/build.gradle | cut -f2 -d\'`
       - echo "Project version is ${PROJECT_VERSION}"
   build:
@@ -21,8 +23,6 @@ phases:
   post_build:
     commands:
       - docker tag scionaltera/agonyforge-mud-demo:latest scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
-#      - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-      - docker login ghcr.io -u ${GITHUB_USERNAME} -p ${GITHUB_TOKEN}
       - |
         if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
           if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then                
