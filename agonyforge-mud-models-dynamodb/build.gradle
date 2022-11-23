@@ -18,10 +18,15 @@ repositories {
 
 configurations.maybeCreate("pitest")
 
+dependencyManagement {
+    imports {
+        mavenBom 'software.amazon.awssdk:bom:2.18.21'
+    }
+}
+
 dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
-    implementation platform('software.amazon.awssdk:bom:2.18.21')
     implementation 'software.amazon.awssdk:dynamodb'
 
     implementation 'org.springframework.boot:spring-boot-starter'
@@ -114,8 +119,8 @@ publishing {
     }
 
     publications {
-        gprModelsDynamoDb(MavenPublication) {
-            from(components.java)
+        gpr(MavenPublication) {
+            artifact jar
         }
     }
 }
