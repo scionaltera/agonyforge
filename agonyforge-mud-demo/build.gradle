@@ -15,6 +15,12 @@ repositories {
 
 configurations.maybeCreate("pitest")
 
+dependencyManagement {
+    imports {
+        mavenBom 'software.amazon.awssdk:bom:2.18.21'
+    }
+}
+
 dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
