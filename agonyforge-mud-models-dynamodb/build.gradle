@@ -3,10 +3,11 @@ plugins {
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id 'maven-publish'
 }
 
 group 'com.agonyforge'
-version '0.0.5'
+version '0.0.5-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -17,10 +18,15 @@ repositories {
 
 configurations.maybeCreate("pitest")
 
+dependencyManagement {
+    imports {
+        mavenBom 'software.amazon.awssdk:bom:2.18.21'
+    }
+}
+
 dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
 
-    implementation platform('software.amazon.awssdk:bom:2.18.21')
     implementation 'software.amazon.awssdk:dynamodb'
 
     implementation 'org.springframework.boot:spring-boot-starter'
@@ -49,10 +55,6 @@ task copyNativeLibs(type: Copy) {
 
 test {
     useJUnitPlatform()
-
-    doFirst {
-        systemProperty "java.library.path", 'build/libs'
-    }
 }
 
 jar {
@@ -66,6 +68,12 @@ jar {
 
 bootJar {
     enabled = false // don't build the spring boot jar
+}
+
+tasks.test {
+    doFirst {
+        systemProperty "java.library.path", 'build/libs'
+    }
 }
 
 tasks.pitest {
@@ -97,3 +105,22 @@ pitest {
 test.dependsOn tasks.copyNativeLibs
 tasks.pitest.mustRunAfter test
 check.dependsOn tasks.pitest
+
+publishing {
+    repositories {
+        maven {
+            name = "agonyforge-mud-models-dynamodb"
+            url = uri("https://maven.pkg.github.com/scionaltera/agonyforge")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        gpr(MavenPublication) {
+            artifact jar
+        }
+    }
+}

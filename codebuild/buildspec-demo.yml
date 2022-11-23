@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  parameter-store:
+    DOCKER_HUB_USERNAME: "docker-hub-username"
+    DOCKER_HUB_PASSWORD: "docker-hub-password"
+    GITHUB_USERNAME: "agonyforge-github-packages-username"
+    GITHUB_TOKEN: "agonyforge-github-packages-token"
+
+phases:
+  install:
+    commands:
+      - chmod +x ./gradlew
+  pre_build:
+    commands:
+      - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
+      - docker login ghcr.io -u ${GITHUB_USERNAME} -p ${GITHUB_TOKEN}
+      - export PROJECT_VERSION=v`egrep "^version" agonyforge-mud-demo/build.gradle | cut -f2 -d\'`
+      - export BRANCH_TAG=`echo ${CODEBUILD_SOURCE_VERSION} | sed 's|/|-|g'`
+      - echo "Codebuild initiator is ${CODEBUILD_INITIATOR}"
+      - echo "Branch is ${BRANCH_TAG}"
+      - echo "Project version is ${PROJECT_VERSION}"
+  build:
+    commands:
+      - docker build -t scionaltera/agonyforge-mud-demo:latest -f agonyforge-mud-demo/src/main/docker/Dockerfile.codebuild .
+  post_build:
+    commands:
+      - |
+        if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
+          if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then                
+            docker tag scionaltera/agonyforge-mud-demo:latest ghcr.io/scionaltera/agonyforge-mud-demo:latest            
+            
+            docker push ghcr.io/scionaltera/agonyforge-mud-demo:latest
+          fi              
+          docker tag scionaltera/agonyforge-mud-demo:latest scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+          docker tag scionaltera/agonyforge-mud-demo:latest ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+          
+          docker push ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+        fi

@@ -3,10 +3,11 @@ plugins {
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id 'maven-publish'
 }
 
 group = 'com.agonyforge'
-version = '0.0.5'
+version = '0.0.5-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -29,8 +30,6 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-client'
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     implementation 'org.springframework.session:spring-session-hazelcast'
-
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -82,3 +81,22 @@ pitest {
 
 tasks.pitest.mustRunAfter test
 check.dependsOn tasks.pitest
+
+publishing {
+    repositories {
+        maven {
+            name = "agonyforge-mud-core"
+            url = uri("https://maven.pkg.github.com/scionaltera/agonyforge")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        gpr(MavenPublication) {
+            artifact jar
+        }
+    }
+}
