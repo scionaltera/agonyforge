@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id 'maven-publish'
 }
 
 group 'com.agonyforge'
@@ -99,3 +100,22 @@ pitest {
 test.dependsOn tasks.copyNativeLibs
 tasks.pitest.mustRunAfter test
 check.dependsOn tasks.pitest
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHub Packages Agony Forge"
+            url = uri("https://maven.pkg.github.com/scionaltera/agonyforge")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}

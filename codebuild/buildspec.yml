@@ -1,0 +1,9 @@
+version: 0.2
+
+batch:
+  build-list:
+    - identifier: demo
+      buildspec: codebuild/buildspec-demo.yml
+    - identifier: packages
+      buildspec: codebuild/buildspec-packages.yml
+
