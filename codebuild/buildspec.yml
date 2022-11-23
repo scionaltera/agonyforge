@@ -4,6 +4,7 @@ batch:
   build-list:
     - identifier: demo
       buildspec: codebuild/buildspec-demo.yml
+      env:
+        privileged-mode: true
     - identifier: packages
       buildspec: codebuild/buildspec-packages.yml
-
