@@ -26,9 +26,7 @@ phases:
   post_build:
     commands:
       - |
-        if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
-          if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then                
-            ./gradlew :agonyforge-mud-core:publish
-            ./gradlew :agonyforge-mud-models-dynamodb:publish
-          fi              
+        if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then                
+          ./gradlew :agonyforge-mud-core:publish
+          ./gradlew :agonyforge-mud-models-dynamodb:publish
         fi
