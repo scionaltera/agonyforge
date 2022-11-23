@@ -1,3 +1,6 @@
+# I'm going to keep this around for now, but it's not being used. Batch builds in AWS CodeBuild seem
+# pretty sketchy still. I think I can get the same functionality with parallel build steps in CodePipeline.
+
 version: 0.2
 
 batch:

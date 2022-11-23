@@ -16,6 +16,7 @@ phases:
       - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
       - docker login ghcr.io -u ${GITHUB_USERNAME} -p ${GITHUB_TOKEN}
       - export PROJECT_VERSION=v`egrep "^version" agonyforge-mud-demo/build.gradle | cut -f2 -d\'`
+      - echo "Codebuild initiator is ${CODEBUILD_INITIATOR}"
       - echo "Project version is ${PROJECT_VERSION}"
   build:
     commands:

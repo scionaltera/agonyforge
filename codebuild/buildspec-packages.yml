@@ -15,13 +15,14 @@ phases:
     commands:
       - export CORE_VERSION=v`egrep "^version" agonyforge-mud-core/build.gradle | cut -f2 -d\'`
       - export MODELS_DYNAMODB_VERSION=v`egrep "^version" agonyforge-mud-models-dynamodb/build.gradle | cut -f2 -d\'`
+      - echo "Codebuild initiator is ${CODEBUILD_INITIATOR}"
       - echo "Core version is ${CORE_VERSION}"
       - echo "Models DynamoDB version is ${MODELS_DYNAMODB_VERSION}"
   build:
     commands:
       - ./gradlew clean
       - ./gradlew :agonyforge-mud-core:build -x docker
-      - ./gradlew :agonyforge-mud-models-dymamodb:build -x docker
+      - ./gradlew :agonyforge-mud-models-dynamodb:build -x docker
   post_build:
     commands:
       - |
