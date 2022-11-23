@@ -87,7 +87,7 @@ check.dependsOn tasks.pitest
 publishing {
     repositories {
         maven {
-            name = "GitHub Packages Agony Forge"
+            name = "agony-forge-mud-core"
             url = uri("https://maven.pkg.github.com/scionaltera/agonyforge")
             credentials {
                 username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
