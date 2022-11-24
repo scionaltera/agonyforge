@@ -12,4 +12,5 @@ module com.agonyforge.mud.demo {
     requires spring.security.oauth2.core;
     requires spring.messaging;
     requires spring.websocket;
+    requires java.annotation;
 }

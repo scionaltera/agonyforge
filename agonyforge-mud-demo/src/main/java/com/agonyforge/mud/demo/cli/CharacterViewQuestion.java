@@ -61,7 +61,7 @@ public class CharacterViewQuestion extends DemoQuestion {
 
                 LOGGER.info("{} has entered the game.", ch.getName());
 
-                next = getQuestion("echoQuestion");
+                next = getQuestion("commandQuestion");
             }
         } else if ("D".equalsIgnoreCase(input.getInput())) {
             next = getQuestion("characterDeleteQuestion");

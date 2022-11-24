@@ -1,11 +1,14 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.DynamoDbInitializer;
+import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -15,13 +18,19 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import java.net.ServerSocket;
 import java.net.URI;
 
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public abstract class DynamoDbLocalInitializingTest {
     protected static DynamoDbClient dynamoDbClient;
     protected static DynamoDBProxyServer server;
 
+    @Mock
+    protected DynamoDbProperties.TableNames tableNames;
+
     @BeforeAll
-    static void setUp() throws Exception {
+    static void setUpAll() throws Exception {
         String port;
 
         try (ServerSocket serverSocket = new ServerSocket(0)) {
@@ -45,7 +54,14 @@ public abstract class DynamoDbLocalInitializingTest {
     }
 
     @AfterAll
-    static void tearDown() throws Exception {
+    static void tearDownAll() throws Exception {
         server.stop();
+    }
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(tableNames.getTableName()).thenReturn("agonyforge");
+        lenient().when(tableNames.getGsi1()).thenReturn("gsi1");
+        lenient().when(tableNames.getGsi2()).thenReturn("gsi2");
     }
 }
