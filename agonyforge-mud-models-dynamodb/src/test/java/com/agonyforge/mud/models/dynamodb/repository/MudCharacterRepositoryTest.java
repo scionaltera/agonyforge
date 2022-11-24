@@ -1,10 +1,8 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
-import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -14,17 +12,11 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
-    @Mock
-    private DynamoDbProperties.TableNames tableNames;
-
     @Test
     void testGetByIdPrototype() {
-        when(tableNames.getTableName()).thenReturn("agonyforge");
-
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
         MudCharacter ch = new MudCharacter();
         UUID uuid = UUID.randomUUID();
@@ -47,8 +39,6 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
     @Test
     void testGetByIdInstance() {
-        when(tableNames.getTableName()).thenReturn("agonyforge");
-
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
         MudCharacter ch = new MudCharacter();
         UUID uuid = UUID.randomUUID();
@@ -73,8 +63,6 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
     @Test
     void testGetByIdEmpty() {
-        when(tableNames.getTableName()).thenReturn("agonyforge");
-
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
         UUID uuid = UUID.randomUUID();
 
@@ -84,9 +72,6 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
     @Test
     void testGetByUser() {
-        when(tableNames.getTableName()).thenReturn("agonyforge");
-        when(tableNames.getGsi2()).thenReturn("gsi2");
-
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
         MudCharacter ch = new MudCharacter();
         UUID uuid = UUID.randomUUID();

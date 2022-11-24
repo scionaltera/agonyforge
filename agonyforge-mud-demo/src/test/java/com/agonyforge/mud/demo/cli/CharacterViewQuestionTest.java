@@ -101,7 +101,7 @@ public class CharacterViewQuestionTest {
         when(chInstance.isPrototype()).thenReturn(false);
         when(ch.buildInstance()).thenReturn(chInstance);
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
-        when(applicationContext.getBean(eq("echoQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository);
         Response result = uut.answer(wsContext, new Input("p"));

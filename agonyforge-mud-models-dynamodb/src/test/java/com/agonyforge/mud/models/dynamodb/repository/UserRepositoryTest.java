@@ -1,10 +1,8 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
-import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import com.agonyforge.mud.models.dynamodb.impl.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.NoSuchElementException;
@@ -12,17 +10,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserRepositoryTest extends DynamoDbLocalInitializingTest {
-    @Mock
-    private DynamoDbProperties.TableNames tableNames;
-
     @Test
     void testGetByPrincipal() {
-        when(tableNames.getTableName()).thenReturn("agonyforge");
-
         UserRepository uut = new UserRepository(dynamoDbClient, tableNames);
         User user = new User();
 
@@ -42,8 +34,6 @@ public class UserRepositoryTest extends DynamoDbLocalInitializingTest {
 
     @Test
     void testGetByPrincipalNotFound() {
-        when(tableNames.getTableName()).thenReturn("agonyforge");
-
         UserRepository uut = new UserRepository(dynamoDbClient, tableNames);
         Optional<User> resultOptional = uut.getByPrincipal("noSuchUser");
         assertThrows(NoSuchElementException.class, resultOptional::orElseThrow);
