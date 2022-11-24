@@ -57,11 +57,11 @@ public class SayCommand implements Command {
     private String stripFirstWord(String input) {
         int space = input.indexOf(' ');
 
-        if (space == -1 || space >= input.length() - 1) {
+        if (space == -1) {
             return "";
         }
 
-        return input.substring(space + 1);
+        return input.substring(space + 1).stripLeading();
     }
 
     private Optional<MudCharacter> getCharacter(WebSocketContext webSocketContext, Output output) {

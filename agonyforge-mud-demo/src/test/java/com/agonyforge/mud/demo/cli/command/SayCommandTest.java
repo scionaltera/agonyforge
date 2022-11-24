@@ -23,6 +23,7 @@ import java.util.UUID;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -45,21 +46,33 @@ public class SayCommandTest {
     @Mock
     private Question question;
 
-    @Test
-    void testExecute() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "say test",
+        "say  test",
+        "say   test",
+        "say test ",
+        "say test test",
+        "say test test test"
+    })
+    void testExecute(String val) {
+        String match = val.substring(4).stripLeading();
         UUID chId = UUID.randomUUID();
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
-        Input input = new Input("say test");
+        Input input = new Input(val);
         Output output = new Output();
         SayCommand uut = new SayCommand(characterRepository, echoService);
         Question response = uut.execute(question, webSocketContext, input, output);
 
         assertEquals(question, response);
+        assertEquals(1, output.getOutput().size());
+        assertEquals("[cyan]You say, '" + match + "[cyan]'", output.getOutput().get(0));
 
+        verify(characterRepository).getById(eq(chId), anyBoolean());
         verify(echoService).echoToAll(eq(webSocketContext), any(Output.class));
     }
 
@@ -80,15 +93,24 @@ public class SayCommandTest {
         verify(echoService, never()).echoToAll(eq(webSocketContext), any(Output.class));
     }
 
-    @Test
-    void testExecuteNoMessage() {
-        Input input = new Input("say");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "say",
+        "say ",
+        "say  ",
+        "say\t"
+    })
+    void testExecuteNoMessage(String val) {
+        Input input = new Input(val);
         Output output = new Output();
         SayCommand uut = new SayCommand(characterRepository, echoService);
         Question response = uut.execute(question, webSocketContext, input, output);
 
         assertEquals(question, response);
+        assertEquals(1, output.getOutput().size());
+        assertEquals("[default]What would you like to say?", output.getOutput().get(0));
 
+        verify(characterRepository, never()).getById(any(UUID.class), anyBoolean());
         verify(echoService, never()).echoToAll(any(WebSocketContext.class), any(Output.class));
     }
 }
