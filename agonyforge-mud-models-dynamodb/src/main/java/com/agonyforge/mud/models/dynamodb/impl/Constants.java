@@ -14,6 +14,7 @@ public class Constants {
     public static final String DB_USER = "USER#";
     public static final String DB_PC = "PC#";
     public static final String DB_ZONE = "ZONE#";
+    public static final String DB_ROOM = "ROOM#";
 
     public static final String SORT_DATA = "DATA";
     public static final String SORT_SESSION = "SESSION#";
@@ -25,4 +26,5 @@ public class Constants {
     public static final String TYPE_PC = "PC";
     public static final String TYPE_COMMAND = "COMMAND";
     public static final String TYPE_ZONE = "ZONE";
+    public static final String TYPE_ROOM = "ROOM";
 }
