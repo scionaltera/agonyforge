@@ -98,7 +98,6 @@ public class CharacterViewQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(chInstance.isPrototype()).thenReturn(false);
         when(ch.buildInstance()).thenReturn(chInstance);
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
@@ -110,7 +109,8 @@ public class CharacterViewQuestionTest {
 
         MudCharacter instance = characterCaptor.getValue();
 
-        assertFalse(instance.isPrototype());
+        verify(instance).setRoomId(eq(1L));
+
         assertEquals(question, result.getNext());
     }
 

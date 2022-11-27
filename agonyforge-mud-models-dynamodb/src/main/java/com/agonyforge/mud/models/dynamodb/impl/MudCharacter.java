@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_INSTANCE;
@@ -16,6 +17,7 @@ import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 public class MudCharacter implements Persistent {
     private UUID id;
     private String user;
+    private Long roomId;
     private String name;
     private boolean isPrototype = true;
 
@@ -32,7 +34,7 @@ public class MudCharacter implements Persistent {
             map.put("gsi2pk", AttributeValue.builder().s(DB_USER + getUser()).build());
         } else {
             map.put("sk", AttributeValue.builder().s(SORT_INSTANCE).build());
-            // TODO gsi2pk for instance will be its location
+            map.put("gsi2pk", AttributeValue.builder().s(DB_ROOM + getRoomId()).build());
         }
 
         data.put("name", AttributeValue.builder().s(getName()).build());
@@ -47,6 +49,7 @@ public class MudCharacter implements Persistent {
 
         if (SORT_INSTANCE.equals(item.get("sk").s())) {
             setPrototype(false);
+            setRoomId(Long.valueOf(item.get("gsi2pk").s().substring(DB_ROOM.length())));
         } else {
             setUser(item.get("gsi2pk").s().substring(DB_USER.length()));
         }
@@ -87,6 +90,18 @@ public class MudCharacter implements Persistent {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public Long getRoomId() {
+        if (isPrototype()) {
+            throw new IllegalStateException("room ID is not available on prototype");
+        }
+
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
     public String getName() {

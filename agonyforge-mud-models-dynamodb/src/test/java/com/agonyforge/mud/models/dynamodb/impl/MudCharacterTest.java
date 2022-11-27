@@ -23,13 +23,16 @@ public class MudCharacterTest {
 
         MudCharacter instance = proto.buildInstance();
 
+        instance.setRoomId(1L);
+
         assertTrue(proto.isPrototype());
+        assertThrows(IllegalStateException.class, proto::getRoomId);
+
         assertFalse(instance.isPrototype());
-
-        assertThrows(IllegalStateException.class, instance::getUser);
         assertEquals(proto.getId(), instance.getId());
+        assertEquals(1L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
-
+        assertThrows(IllegalStateException.class, instance::getUser);
         assertThrows(IllegalStateException.class, instance::buildInstance);
     }
 
@@ -46,11 +49,27 @@ public class MudCharacterTest {
     @Test
     void testUser() {
         MudCharacter uut = new MudCharacter();
+        MudCharacter uutInst;
         String user = "user";
 
         uut.setUser(user);
+        uutInst = uut.buildInstance();
 
         assertEquals(user, uut.getUser());
+        assertThrows(IllegalStateException.class, uutInst::getUser);
+    }
+
+    @Test
+    void testRoomId() {
+        MudCharacter uut = new MudCharacter();
+        MudCharacter uutInst;
+        Long roomId = 1L;
+
+        uutInst = uut.buildInstance();
+        uutInst.setRoomId(roomId);
+
+        assertThrows(IllegalStateException.class, uut::getRoomId);
+        assertEquals(roomId, uutInst.getRoomId());
     }
 
     @Test

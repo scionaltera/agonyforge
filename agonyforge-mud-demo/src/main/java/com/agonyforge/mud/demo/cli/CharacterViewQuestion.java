@@ -55,7 +55,7 @@ public class CharacterViewQuestion extends DemoQuestion {
                 MudCharacter chPrototype = chOptional.get();
                 MudCharacter ch = chPrototype.buildInstance();
 
-                // TODO set location on ch
+                ch.setRoomId(1L); // TODO configurable start room
 
                 getCharacterRepository().save(ch);
 

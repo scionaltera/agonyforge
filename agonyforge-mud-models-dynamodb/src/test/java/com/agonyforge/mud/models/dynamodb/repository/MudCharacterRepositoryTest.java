@@ -36,6 +36,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
         assertEquals(ch.getId(), result.getId());
         assertEquals(ch.getUser(), result.getUser());
+        assertThrows(IllegalStateException.class, result::getRoomId);
         assertEquals(ch.getName(), result.getName());
         assertEquals(ch.isPrototype(), result.isPrototype());
     }
@@ -53,6 +54,8 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
         MudCharacter chInstance = ch.buildInstance();
 
+        chInstance.setRoomId(1L);
+
         uut.saveAll(List.of(ch, chInstance));
 
         Optional<MudCharacter> resultOptional = uut.getById(uuid, false);
@@ -60,6 +63,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
         assertEquals(ch.getId(), result.getId());
         assertThrows(IllegalStateException.class, result::getUser);
+        assertEquals(chInstance.getRoomId(), result.getRoomId());
         assertEquals(ch.getName(), result.getName());
         assertEquals(chInstance.isPrototype(), result.isPrototype());
     }
@@ -112,6 +116,8 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         ch.setName(name);
 
         MudCharacter chInstance = ch.buildInstance();
+
+        chInstance.setRoomId(1L);
 
         uut.saveAll(List.of(ch, chInstance));
 
