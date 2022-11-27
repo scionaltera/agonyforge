@@ -7,10 +7,14 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 import java.util.Date;
@@ -38,6 +42,38 @@ public abstract class AbstractRepository<T extends Persistent> {
     }
 
     public abstract T newInstance();
+
+    public List<T> getByType(String type) {
+        Map<String, Condition> filter = new HashMap<>();
+
+        filter.put("gsi1pk", Condition.builder()
+            .comparisonOperator(ComparisonOperator.EQ)
+            .attributeValueList(AttributeValue.builder().s(type).build())
+            .build());
+
+        QueryRequest request = QueryRequest.builder()
+            .tableName(tableNames.getTableName())
+            .indexName(tableNames.getGsi1())
+            .keyConditions(filter)
+            .build();
+
+        try {
+            QueryResponse response = dynamoDbClient.query(request);
+
+            return response.items()
+                .stream()
+                .map(item -> {
+                    T thing = newInstance();
+                    thing.thaw(item);
+                    return thing;
+                })
+                .collect(Collectors.toList());
+        } catch (DynamoDbException e) {
+            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+        }
+
+        return List.of();
+    }
 
     public void saveAll(List<T> items) {
         for (int i = 0; i < items.size(); i += 25) {

@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -94,5 +96,36 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         assertEquals(ch.getUser(), result.getUser());
         assertEquals(ch.getName(), result.getName());
         assertEquals(ch.isPrototype(), result.isPrototype());
+    }
+
+    @Test
+    void testGetByType() {
+        MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
+        MudCharacter ch = new MudCharacter();
+        UUID uuid = UUID.randomUUID();
+        String user = UUID.randomUUID().toString();
+        String name = "Scion";
+
+        ch.setId(uuid);
+        ch.setUser(user);
+        ch.setName(name);
+
+        MudCharacter chInstance = ch.buildInstance();
+
+        uut.saveAll(List.of(ch, chInstance));
+
+        List<MudCharacter> results = uut.getByType(TYPE_PC);
+        MudCharacter result1 = results.get(0);
+        MudCharacter result2 = results.get(1);
+
+        assertEquals(ch.getId(), result1.getId());
+        assertEquals(ch.getUser(), result1.getUser());
+        assertEquals(ch.getName(), result1.getName());
+        assertTrue(result1.isPrototype());
+
+        assertEquals(ch.getId(), result2.getId());
+        assertThrows(IllegalStateException.class, result2::getUser);
+        assertEquals(ch.getName(), result2.getName());
+        assertFalse(result2.isPrototype());
     }
 }
