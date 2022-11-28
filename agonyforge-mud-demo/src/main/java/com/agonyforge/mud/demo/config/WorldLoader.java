@@ -37,10 +37,10 @@ public class WorldLoader {
             zoneRepository.save(zone);
         }
 
-        if (roomRepository.getById(1L).isEmpty()) {
+        if (roomRepository.getById(100L).isEmpty()) {
             MudRoom room = new MudRoom();
 
-            room.setId(1L);
+            room.setId(100L);
             room.setZoneId(1L);
             room.setName("Default Room");
             room.setDescription("This room was automatically generated.");

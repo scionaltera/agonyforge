@@ -17,14 +17,14 @@ public class MudRoomRepositoryTest extends DynamoDbLocalInitializingTest {
         MudRoomRepository uut = new MudRoomRepository(dynamoDbClient, tableNames);
         MudRoom room = new MudRoom();
 
-        room.setId(1L);
+        room.setId(100L);
         room.setZoneId(1L);
         room.setName("Test Room");
         room.setDescription("This is a room.");
 
         uut.save(room);
 
-        Optional<MudRoom> resultOptional = uut.getById(1L);
+        Optional<MudRoom> resultOptional = uut.getById(100L);
         MudRoom result = resultOptional.orElseThrow();
 
         assertEquals(room.getId(), result.getId());
@@ -36,7 +36,7 @@ public class MudRoomRepositoryTest extends DynamoDbLocalInitializingTest {
     @Test
     void testGetByIdNotFound() {
         MudRoomRepository uut = new MudRoomRepository(dynamoDbClient, tableNames);
-        Optional<MudRoom> resultOptional = uut.getById(1L);
+        Optional<MudRoom> resultOptional = uut.getById(100L);
 
         assertTrue(resultOptional.isEmpty());
     }

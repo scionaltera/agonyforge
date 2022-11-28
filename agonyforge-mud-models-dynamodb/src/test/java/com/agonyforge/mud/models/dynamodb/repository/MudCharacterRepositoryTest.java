@@ -55,7 +55,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
         MudCharacter chInstance = ch.buildInstance();
 
-        chInstance.setRoomId(1L);
+        chInstance.setRoomId(100L);
         chInstance.setWebSocketSession("webSocketSession");
 
         uut.saveAll(List.of(ch, chInstance));
@@ -94,7 +94,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
         MudCharacter chInstance = ch.buildInstance();
 
-        chInstance.setRoomId(1L);
+        chInstance.setRoomId(100L);
         chInstance.setWebSocketSession("webSocketSession");
 
         uut.saveAll(List.of(ch, chInstance));
@@ -111,6 +111,47 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
     }
 
     @Test
+    void testGetByRoom() {
+        MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
+        MudCharacter ch = new MudCharacter();
+        MudCharacter ch2 = new MudCharacter();
+        UUID uuid = UUID.randomUUID();
+        String user = UUID.randomUUID().toString();
+        UUID uuid2 = UUID.randomUUID();
+        String user2 = UUID.randomUUID().toString();
+
+        ch.setId(uuid);
+        ch.setUser(user);
+        ch.setName("Scion");
+
+        ch2.setId(uuid2);
+        ch2.setUser(user2);
+        ch2.setName("Spook");
+
+        MudCharacter chInstance1 = ch.buildInstance();
+
+        chInstance1.setRoomId(100L);
+        chInstance1.setWebSocketSession("webSocketSession1");
+
+        MudCharacter chInstance2 = ch2.buildInstance();
+
+        chInstance2.setRoomId(101L);
+        chInstance2.setWebSocketSession("webSocketSession2");
+
+        uut.saveAll(List.of(ch, ch2, chInstance1, chInstance2));
+
+        List<MudCharacter> results = uut.getByRoom(100L);
+        MudCharacter result = results.get(0);
+
+        assertEquals(1, results.size());
+
+        assertEquals(chInstance1.getId(), result.getId());
+        assertEquals(chInstance1.getUser(), result.getUser());
+        assertEquals(chInstance1.getName(), result.getName());
+        assertEquals(chInstance1.isPrototype(), result.isPrototype());
+    }
+
+    @Test
     void testGetByType() {
         MudCharacterRepository uut = new MudCharacterRepository(dynamoDbClient, tableNames);
         MudCharacter ch = new MudCharacter();
@@ -124,7 +165,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
 
         MudCharacter chInstance = ch.buildInstance();
 
-        chInstance.setRoomId(1L);
+        chInstance.setRoomId(100L);
         chInstance.setWebSocketSession("webSocketSession");
 
         uut.saveAll(List.of(ch, chInstance));

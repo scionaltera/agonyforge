@@ -110,7 +110,7 @@ public class CharacterViewQuestionTest {
 
         MudCharacter instance = characterCaptor.getValue();
 
-        verify(instance).setRoomId(eq(1L));
+        verify(instance).setRoomId(eq(100L));
         verify(instance).setWebSocketSession(eq(wsSessionId));
 
         assertEquals(question, result.getNext());

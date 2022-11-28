@@ -1,11 +1,10 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.cli.Response;
-import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +22,7 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SayCommandTest {
     @Mock
-    private EchoService echoService;
+    private CommService commService;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -62,10 +61,11 @@ public class SayCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
+        when(ch.getRoomId()).thenReturn(100L);
 
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, echoService);
+        SayCommand uut = new SayCommand(characterRepository, commService);
         Question response = uut.execute(question, webSocketContext, input, output);
 
         assertEquals(question, response);
@@ -73,7 +73,7 @@ public class SayCommandTest {
         assertEquals("[cyan]You say, '" + match + "[cyan]'", output.getOutput().get(0));
 
         verify(characterRepository).getById(eq(chId), anyBoolean());
-        verify(echoService).echoToAll(eq(webSocketContext), any(Output.class));
+        verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));
     }
 
     @Test
@@ -85,12 +85,12 @@ public class SayCommandTest {
 
         Input input = new Input("say test");
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, echoService);
+        SayCommand uut = new SayCommand(characterRepository, commService);
         Question response = uut.execute(question, webSocketContext, input, output);
 
         assertEquals(question, response);
 
-        verify(echoService, never()).echoToAll(eq(webSocketContext), any(Output.class));
+        verify(commService, never()).sendToRoom(eq(webSocketContext), anyLong(), any(Output.class));
     }
 
     @ParameterizedTest
@@ -103,7 +103,7 @@ public class SayCommandTest {
     void testExecuteNoMessage(String val) {
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, echoService);
+        SayCommand uut = new SayCommand(characterRepository, commService);
         Question response = uut.execute(question, webSocketContext, input, output);
 
         assertEquals(question, response);
@@ -111,6 +111,6 @@ public class SayCommandTest {
         assertEquals("[default]What would you like to say?", output.getOutput().get(0));
 
         verify(characterRepository, never()).getById(any(UUID.class), anyBoolean());
-        verify(echoService, never()).echoToAll(any(WebSocketContext.class), any(Output.class));
+        verify(commService, never()).sendToRoom(any(WebSocketContext.class), anyLong(), any(Output.class));
     }
 }

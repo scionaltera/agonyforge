@@ -23,14 +23,14 @@ public class MudCharacterTest {
 
         MudCharacter instance = proto.buildInstance();
 
-        instance.setRoomId(1L);
+        instance.setRoomId(100L);
 
         assertTrue(proto.isPrototype());
         assertThrows(IllegalStateException.class, proto::getRoomId);
 
         assertFalse(instance.isPrototype());
         assertEquals(proto.getId(), instance.getId());
-        assertEquals(1L, instance.getRoomId());
+        assertEquals(100L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
         assertEquals(proto.getUser(), instance.getUser());
         assertThrows(IllegalStateException.class, instance::buildInstance);
@@ -69,7 +69,7 @@ public class MudCharacterTest {
         uut.setUser(user);
         uutInst = uut.buildInstance();
 
-        uutInst.setRoomId(1L);
+        uutInst.setRoomId(100L);
         uutInst.setWebSocketSession(webSocketSession);
 
         assertThrows(IllegalStateException.class, uut::getWebSocketSession);
@@ -80,7 +80,7 @@ public class MudCharacterTest {
     void testRoomId() {
         MudCharacter uut = new MudCharacter();
         MudCharacter uutInst;
-        Long roomId = 1L;
+        Long roomId = 100L;
 
         uutInst = uut.buildInstance();
         uutInst.setRoomId(roomId);

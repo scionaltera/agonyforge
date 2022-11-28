@@ -1,10 +1,10 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.slf4j.Logger;
@@ -21,13 +21,13 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 public class SayCommand implements Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(SayCommand.class);
     private final MudCharacterRepository characterRepository;
-    private final EchoService echoService;
+    private final CommService commService;
 
     @Autowired
     public SayCommand(MudCharacterRepository characterRepository,
-                      EchoService echoService) {
+                      CommService commService) {
         this.characterRepository = characterRepository;
-        this.echoService = echoService;
+        this.commService = commService;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class SayCommand implements Command {
             MudCharacter ch = chOptional.get();
 
             output.append("[cyan]You say, '" + message + "[cyan]'");
-            echoService.echoToAll(webSocketContext, new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), message)));
+            commService.sendToRoom(webSocketContext, ch.getRoomId(), new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), message)));
         }
 
         return question;
@@ -66,7 +66,7 @@ public class SayCommand implements Command {
 
     private Optional<MudCharacter> getCharacter(WebSocketContext webSocketContext, Output output) {
         UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, true);
+        Optional<MudCharacter> chOptional = characterRepository.getById(chId, false);
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
