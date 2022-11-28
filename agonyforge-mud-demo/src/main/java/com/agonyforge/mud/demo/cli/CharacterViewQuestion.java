@@ -56,6 +56,7 @@ public class CharacterViewQuestion extends DemoQuestion {
                 MudCharacter ch = chPrototype.buildInstance();
 
                 ch.setRoomId(1L); // TODO configurable start room
+                ch.setWebSocketSession(wsContext.getSessionId());
 
                 getCharacterRepository().save(ch);
 

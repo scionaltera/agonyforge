@@ -17,6 +17,7 @@ import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 public class MudCharacter implements Persistent {
     private UUID id;
     private String user;
+    private String webSocketSession;
     private Long roomId;
     private String name;
     private boolean isPrototype = true;
@@ -38,6 +39,12 @@ public class MudCharacter implements Persistent {
         }
 
         data.put("name", AttributeValue.builder().s(getName()).build());
+        data.put("principal", AttributeValue.builder().s(getUser()).build());
+
+        if (!isPrototype()) {
+            data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
+        }
+
         map.put("data", AttributeValue.builder().m(data).build());
 
         return map;
@@ -50,12 +57,12 @@ public class MudCharacter implements Persistent {
         if (SORT_INSTANCE.equals(item.get("sk").s())) {
             setPrototype(false);
             setRoomId(Long.valueOf(item.get("gsi2pk").s().substring(DB_ROOM.length())));
-        } else {
-            setUser(item.get("gsi2pk").s().substring(DB_USER.length()));
         }
 
         Map<String, AttributeValue> data = item.get("data").m();
         setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
+        setUser(data.getOrDefault("principal", AttributeValue.builder().nul(true).build()).s());
+        setWebSocketSession(data.getOrDefault("webSocketSession", AttributeValue.builder().nul(true).build()).s());
     }
 
     public MudCharacter buildInstance() {
@@ -67,6 +74,7 @@ public class MudCharacter implements Persistent {
 
         instance.setPrototype(false);
         instance.setId(getId());
+        instance.setUser(getUser());
         instance.setName(getName());
 
         return instance;
@@ -81,15 +89,23 @@ public class MudCharacter implements Persistent {
     }
 
     public String getUser() {
-        if (!isPrototype()) {
-            throw new IllegalStateException("user is not available on instance");
-        }
-
         return user;
     }
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getWebSocketSession() {
+        if (isPrototype()) {
+            throw new IllegalStateException("webSocketSession is not available on prototype");
+        }
+
+        return webSocketSession;
+    }
+
+    public void setWebSocketSession(String webSocketSession) {
+        this.webSocketSession = webSocketSession;
     }
 
     public Long getRoomId() {

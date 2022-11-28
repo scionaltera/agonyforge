@@ -37,6 +37,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         assertEquals(ch.getId(), result.getId());
         assertEquals(ch.getUser(), result.getUser());
         assertThrows(IllegalStateException.class, result::getRoomId);
+        assertThrows(IllegalStateException.class, result::getWebSocketSession);
         assertEquals(ch.getName(), result.getName());
         assertEquals(ch.isPrototype(), result.isPrototype());
     }
@@ -55,6 +56,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         MudCharacter chInstance = ch.buildInstance();
 
         chInstance.setRoomId(1L);
+        chInstance.setWebSocketSession("webSocketSession");
 
         uut.saveAll(List.of(ch, chInstance));
 
@@ -62,9 +64,11 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         MudCharacter result = resultOptional.orElseThrow();
 
         assertEquals(ch.getId(), result.getId());
-        assertThrows(IllegalStateException.class, result::getUser);
-        assertEquals(chInstance.getRoomId(), result.getRoomId());
+        assertEquals(ch.getUser(), result.getUser());
         assertEquals(ch.getName(), result.getName());
+
+        assertEquals(chInstance.getRoomId(), result.getRoomId());
+        assertEquals(chInstance.getWebSocketSession(), result.getWebSocketSession());
         assertEquals(chInstance.isPrototype(), result.isPrototype());
     }
 
@@ -89,6 +93,9 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         ch.setName("Scion");
 
         MudCharacter chInstance = ch.buildInstance();
+
+        chInstance.setRoomId(1L);
+        chInstance.setWebSocketSession("webSocketSession");
 
         uut.saveAll(List.of(ch, chInstance));
 
@@ -118,6 +125,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         MudCharacter chInstance = ch.buildInstance();
 
         chInstance.setRoomId(1L);
+        chInstance.setWebSocketSession("webSocketSession");
 
         uut.saveAll(List.of(ch, chInstance));
 
@@ -134,8 +142,10 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         assertTrue(result1.isPrototype());
 
         assertEquals(ch.getId(), result2.getId());
-        assertThrows(IllegalStateException.class, result2::getUser);
+        assertEquals(ch.getUser(), result2.getUser());
         assertEquals(ch.getName(), result2.getName());
+        assertEquals(chInstance.getRoomId(), result2.getRoomId());
+        assertEquals(chInstance.getWebSocketSession(), result2.getWebSocketSession());
         assertFalse(result2.isPrototype());
     }
 }

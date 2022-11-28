@@ -32,7 +32,7 @@ public class MudCharacterTest {
         assertEquals(proto.getId(), instance.getId());
         assertEquals(1L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
-        assertThrows(IllegalStateException.class, instance::getUser);
+        assertEquals(proto.getUser(), instance.getUser());
         assertThrows(IllegalStateException.class, instance::buildInstance);
     }
 
@@ -56,7 +56,24 @@ public class MudCharacterTest {
         uutInst = uut.buildInstance();
 
         assertEquals(user, uut.getUser());
-        assertThrows(IllegalStateException.class, uutInst::getUser);
+        assertEquals(user, uutInst.getUser());
+    }
+
+    @Test
+    void testWebSocketSession() {
+        MudCharacter uut = new MudCharacter();
+        MudCharacter uutInst;
+        String user = UUID.randomUUID().toString();
+        String webSocketSession = "webSocketSession";
+
+        uut.setUser(user);
+        uutInst = uut.buildInstance();
+
+        uutInst.setRoomId(1L);
+        uutInst.setWebSocketSession(webSocketSession);
+
+        assertThrows(IllegalStateException.class, uut::getWebSocketSession);
+        assertEquals(webSocketSession, uutInst.getWebSocketSession());
     }
 
     @Test
