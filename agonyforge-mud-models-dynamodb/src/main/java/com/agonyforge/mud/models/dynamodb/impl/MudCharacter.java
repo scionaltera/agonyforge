@@ -5,6 +5,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
@@ -108,6 +109,16 @@ public class MudCharacter implements Persistent {
         this.webSocketSession = webSocketSession;
     }
 
+    public Long getZoneId() {
+        if (isPrototype()) {
+            throw new IllegalStateException("zone ID is not available on prototype");
+        }
+
+        String roomIdString = getRoomId().toString();
+
+        return Long.valueOf(roomIdString.substring(0, roomIdString.length() - 2));
+    }
+
     public Long getRoomId() {
         if (isPrototype()) {
             throw new IllegalStateException("room ID is not available on prototype");
@@ -134,5 +145,18 @@ public class MudCharacter implements Persistent {
 
     private void setPrototype(boolean prototype) {
         isPrototype = prototype;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MudCharacter)) return false;
+        MudCharacter that = (MudCharacter) o;
+        return isPrototype() == that.isPrototype() && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), isPrototype());
     }
 }

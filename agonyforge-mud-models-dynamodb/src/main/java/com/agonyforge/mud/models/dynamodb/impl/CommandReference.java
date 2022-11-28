@@ -5,6 +5,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_COMMAND;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_COMMAND;
@@ -61,5 +62,18 @@ public class CommandReference implements Persistent {
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CommandReference)) return false;
+        CommandReference that = (CommandReference) o;
+        return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

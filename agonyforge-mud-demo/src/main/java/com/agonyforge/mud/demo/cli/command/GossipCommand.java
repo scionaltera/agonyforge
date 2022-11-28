@@ -4,9 +4,9 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.models.dynamodb.service.CommService;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,14 @@ import java.util.UUID;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class SayCommand implements Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SayCommand.class);
+public class GossipCommand implements Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GossipCommand.class);
     private final MudCharacterRepository characterRepository;
     private final CommService commService;
 
     @Autowired
-    public SayCommand(MudCharacterRepository characterRepository,
-                      CommService commService) {
+    public GossipCommand(MudCharacterRepository characterRepository,
+                         CommService commService) {
         this.characterRepository = characterRepository;
         this.commService = commService;
     }
@@ -40,7 +40,7 @@ public class SayCommand implements Command {
         String message = stripFirstWord(input.getInput());
 
         if (message.isBlank()) {
-            output.append("[default]What would you like to say?");
+            output.append("[default]What would you like to gossip?");
             return question;
         }
 
@@ -49,8 +49,8 @@ public class SayCommand implements Command {
         if (chOptional.isPresent()) {
             MudCharacter ch = chOptional.get();
 
-            output.append("[cyan]You say, '" + message + "[cyan]'");
-            commService.sendToRoom(webSocketContext, ch.getRoomId(), new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), message)));
+            output.append("[green]You gossip, '" + message + "[green]'");
+            commService.sendToAll(webSocketContext, new Output(String.format("[green]%s gossips, '%s[green]'", ch.getName(), message)));
         }
 
         return question;

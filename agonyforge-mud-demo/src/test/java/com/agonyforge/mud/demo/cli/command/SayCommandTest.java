@@ -14,9 +14,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,17 +59,18 @@ public class SayCommandTest {
     })
     void testExecute(String val) {
         String match = val.substring(4).stripLeading();
+        List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(ch.getRoomId()).thenReturn(100L);
 
         Input input = new Input(val);
         Output output = new Output();
         SayCommand uut = new SayCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, input, output);
+        Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -86,7 +90,7 @@ public class SayCommandTest {
         Input input = new Input("say test");
         Output output = new Output();
         SayCommand uut = new SayCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, input, output);
+        Question response = uut.execute(question, webSocketContext, List.of("SAY", "TEST"), input, output);
 
         assertEquals(question, response);
 
@@ -101,10 +105,11 @@ public class SayCommandTest {
         "say\t"
     })
     void testExecuteNoMessage(String val) {
+        List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
         SayCommand uut = new SayCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, input, output);
+        Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -112,5 +117,12 @@ public class SayCommandTest {
 
         verify(characterRepository, never()).getById(any(UUID.class), anyBoolean());
         verify(commService, never()).sendToRoom(any(WebSocketContext.class), anyLong(), any(Output.class));
+    }
+
+    private List<String> tokenize(String val) {
+        return Arrays
+            .stream(val.split(" "))
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
     }
 }

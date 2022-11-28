@@ -44,12 +44,16 @@ public class CommService extends EchoService {
      *
      * @param wsContext The WebSocketContext of the sender.
      * @param message The message to send.
+     * @param except Don't send to these characters.
      */
-    public void sendToAll(WebSocketContext wsContext, Output message) {
+    public void sendToAll(WebSocketContext wsContext, Output message, MudCharacter ... except) {
+        List<MudCharacter> skip = List.of(except);
+
         characterRepository.getByType(TYPE_PC)
             .stream()
             .filter(ch -> !ch.isPrototype())
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }
 
@@ -58,14 +62,17 @@ public class CommService extends EchoService {
      *
      * @param wsContext The WebSocketContext of the sender.
      * @param message The message to send.
+     * @param except Don't send to these characters.
      */
-    public void sendToZone(WebSocketContext wsContext, Long zoneId, Output message) {
+    public void sendToZone(WebSocketContext wsContext, Long zoneId, Output message, MudCharacter ... except) {
         String zoneIdString = zoneId.toString();
+        List<MudCharacter> skip = List.of(except);
 
         characterRepository.getByType(TYPE_PC)
             .stream()
             .filter(ch -> !ch.isPrototype())
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !skip.contains(ch))
             .filter(ch -> zoneIdString.equals(ch.getRoomId().toString().substring(0, zoneIdString.length())))
             .forEach(ch -> sendTo(ch, message));
     }
@@ -76,11 +83,14 @@ public class CommService extends EchoService {
      * @param wsContext The WebSocketContext of the sender.
      * @param roomId The ID of the room to send to.
      * @param message The message to send.
+     * @param except Don't send to these characters.
      */
-    public void sendToRoom(WebSocketContext wsContext, Long roomId, Output message) {
+    public void sendToRoom(WebSocketContext wsContext, Long roomId, Output message, MudCharacter ... except) {
+        List<MudCharacter> skip = List.of(except);
         characterRepository.getByRoom(roomId)
             .stream()
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }
 

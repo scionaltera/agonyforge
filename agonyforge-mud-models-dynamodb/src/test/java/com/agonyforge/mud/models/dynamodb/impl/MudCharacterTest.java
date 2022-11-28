@@ -77,6 +77,19 @@ public class MudCharacterTest {
     }
 
     @Test
+    void testZoneId() {
+        MudCharacter uut = new MudCharacter();
+        MudCharacter uutInst;
+        Long roomId = 100L;
+
+        uutInst = uut.buildInstance();
+        uutInst.setRoomId(roomId);
+
+        assertThrows(IllegalStateException.class, uut::getZoneId);
+        assertEquals(1L, uutInst.getZoneId());
+    }
+
+    @Test
     void testRoomId() {
         MudCharacter uut = new MudCharacter();
         MudCharacter uutInst;

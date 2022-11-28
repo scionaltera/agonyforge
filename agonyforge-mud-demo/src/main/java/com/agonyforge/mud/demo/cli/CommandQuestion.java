@@ -60,7 +60,8 @@ public class CommandQuestion extends DemoQuestion {
             return new Response(this, output);
         }
 
-        List<String> tokens = Arrays.stream(input.getInput().split(" "))
+        List<String> tokens = Arrays
+            .stream(input.getInput().split(" "))
             .map(String::toUpperCase)
             .collect(Collectors.toList());
         List<CommandReference> refs = commandRepository.getByPriority();
@@ -78,7 +79,7 @@ public class CommandQuestion extends DemoQuestion {
 
         try {
             Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
-            Question next = command.execute(this, webSocketContext, input, output);
+            Question next = command.execute(this, webSocketContext, tokens, input, output);
             return new Response(next, output);
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("No Command found for beanName: {}", ref.getBeanName());

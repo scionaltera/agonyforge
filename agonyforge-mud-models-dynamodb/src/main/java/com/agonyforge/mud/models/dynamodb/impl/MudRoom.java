@@ -5,6 +5,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ZONE;
@@ -75,5 +76,18 @@ public class MudRoom implements Persistent {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MudRoom)) return false;
+        MudRoom mudRoom = (MudRoom) o;
+        return Objects.equals(getId(), mudRoom.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
