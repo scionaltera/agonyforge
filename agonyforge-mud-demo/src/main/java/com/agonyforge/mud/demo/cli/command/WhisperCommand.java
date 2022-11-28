@@ -39,12 +39,12 @@ public class WhisperCommand implements Command {
                             Input input,
                             Output output) {
 
-        if (tokens.size() == 0) {
+        if (tokens.size() == 1) {
             output.append("[default]Who would you like to whisper to?");
             return question;
         }
 
-        if (tokens.size() == 1) {
+        if (tokens.size() == 2) {
             output.append("[default]What would you like to whisper to them?");
             return question;
         }
@@ -64,7 +64,7 @@ public class WhisperCommand implements Command {
             .findFirst();
 
         if (targetOptional.isEmpty()) {
-            output.append("There isn't anyone by that name.");
+            output.append("[default]There isn't anyone by that name.");
             return question;
         }
 
