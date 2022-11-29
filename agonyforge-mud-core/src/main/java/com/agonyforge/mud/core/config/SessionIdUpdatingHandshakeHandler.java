@@ -1,5 +1,6 @@
 package com.agonyforge.mud.core.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -7,7 +8,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
