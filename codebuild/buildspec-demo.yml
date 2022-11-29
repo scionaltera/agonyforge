@@ -22,7 +22,8 @@ phases:
       - echo "Project version is ${PROJECT_VERSION}"
   build:
     commands:
-      - ./gradlew clean build
+      - ./gradlew clean build --info --stacktrace
+      - docker images
   post_build:
     commands:
       - |
