@@ -19,7 +19,6 @@ import java.net.ServerSocket;
 import java.net.URI;
 
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class DynamoDbLocalInitializingTest {
