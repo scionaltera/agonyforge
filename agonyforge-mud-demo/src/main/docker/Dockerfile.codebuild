@@ -1,12 +1,12 @@
 # sqlite4java crashes in the alpine image so we build this JAR in Amazon Linux instead
-FROM amazoncorretto:11-al2-jdk as build
+FROM amazoncorretto:17-al2-jdk as build
 MAINTAINER Scion Altera <scion@agonyforge.com>
 WORKDIR /opt/build
 COPY . /opt/build
 RUN cd /opt/build \
     && ./gradlew --console=plain clean build -x docker
 
-FROM amazoncorretto:11-alpine-jdk
+FROM amazoncorretto:17-alpine-jdk
 MAINTAINER Scion Altera <scion@agonyforge.com>
 EXPOSE 8080
 COPY --from=build /opt/build/agonyforge-mud-demo/build/libs/agonyforge-mud-demo-*.jar /opt/mud/mud.jar
