@@ -22,9 +22,7 @@ phases:
       - echo "Project version is ${PROJECT_VERSION}"
   build:
     commands:
-      - /usr/local/bin/dockerd-entrypoint.sh
-      - docker ps -a
-      - docker build -t scionaltera/agonyforge-mud-demo:latest -f agonyforge-mud-demo/src/main/docker/Dockerfile.codebuild .
+      - ./gradlew clean build
   post_build:
     commands:
       - |
