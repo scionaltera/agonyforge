@@ -3,7 +3,6 @@ FROM amazoncorretto:17-al2-jdk as build
 MAINTAINER Scion Altera <scion@agonyforge.com>
 WORKDIR /opt/build
 COPY . /opt/build
-RUN docker ps -a && /usr/local/bin/dockerd-entrypoint.sh && docker ps -a
 RUN cd /opt/build \
     && ./gradlew --console=plain clean build -x docker --info --stacktrace
 
