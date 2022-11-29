@@ -6,13 +6,12 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.ISO_8601;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_SESSION;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_SESSION;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_USER;
 
 public class UserSession implements Persistent {
     private String principalName;
@@ -56,5 +55,18 @@ public class UserSession implements Persistent {
 
     public void setRemoteIpAddress(String remoteIpAddress) {
         this.remoteIpAddress = remoteIpAddress;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserSession)) return false;
+        UserSession that = (UserSession) o;
+        return Objects.equals(getPrincipalName(), that.getPrincipalName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPrincipalName());
     }
 }

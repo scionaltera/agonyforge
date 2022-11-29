@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -93,12 +92,13 @@ public class CharacterViewQuestionTest {
     @Test
     void testAnswerPlay() {
         UUID chId = UUID.randomUUID();
+        String wsSessionId = UUID.randomUUID().toString();
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(chInstance.isPrototype()).thenReturn(false);
+        when(wsContext.getSessionId()).thenReturn(wsSessionId);
         when(ch.buildInstance()).thenReturn(chInstance);
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
@@ -110,7 +110,9 @@ public class CharacterViewQuestionTest {
 
         MudCharacter instance = characterCaptor.getValue();
 
-        assertFalse(instance.isPrototype());
+        verify(instance).setRoomId(eq(100L));
+        verify(instance).setWebSocketSession(eq(wsSessionId));
+
         assertEquals(question, result.getNext());
     }
 

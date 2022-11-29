@@ -28,6 +28,7 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -103,7 +104,7 @@ public class CommandQuestionTest {
 
         when(commandRepository.getByPriority()).thenReturn(List.of(wrongReference, commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
-        when(command.execute(any(Question.class), any(WebSocketContext.class), any(Input.class), any(Output.class))).thenReturn(question);
+        when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));

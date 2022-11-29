@@ -5,9 +5,11 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_INSTANCE;
@@ -16,6 +18,8 @@ import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 public class MudCharacter implements Persistent {
     private UUID id;
     private String user;
+    private String webSocketSession;
+    private Long roomId;
     private String name;
     private boolean isPrototype = true;
 
@@ -32,10 +36,16 @@ public class MudCharacter implements Persistent {
             map.put("gsi2pk", AttributeValue.builder().s(DB_USER + getUser()).build());
         } else {
             map.put("sk", AttributeValue.builder().s(SORT_INSTANCE).build());
-            // TODO gsi2pk for instance will be its location
+            map.put("gsi2pk", AttributeValue.builder().s(DB_ROOM + getRoomId()).build());
         }
 
         data.put("name", AttributeValue.builder().s(getName()).build());
+        data.put("principal", AttributeValue.builder().s(getUser()).build());
+
+        if (!isPrototype()) {
+            data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
+        }
+
         map.put("data", AttributeValue.builder().m(data).build());
 
         return map;
@@ -47,12 +57,13 @@ public class MudCharacter implements Persistent {
 
         if (SORT_INSTANCE.equals(item.get("sk").s())) {
             setPrototype(false);
-        } else {
-            setUser(item.get("gsi2pk").s().substring(DB_USER.length()));
+            setRoomId(Long.valueOf(item.get("gsi2pk").s().substring(DB_ROOM.length())));
         }
 
         Map<String, AttributeValue> data = item.get("data").m();
         setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
+        setUser(data.getOrDefault("principal", AttributeValue.builder().nul(true).build()).s());
+        setWebSocketSession(data.getOrDefault("webSocketSession", AttributeValue.builder().nul(true).build()).s());
     }
 
     public MudCharacter buildInstance() {
@@ -64,6 +75,7 @@ public class MudCharacter implements Persistent {
 
         instance.setPrototype(false);
         instance.setId(getId());
+        instance.setUser(getUser());
         instance.setName(getName());
 
         return instance;
@@ -78,15 +90,45 @@ public class MudCharacter implements Persistent {
     }
 
     public String getUser() {
-        if (!isPrototype()) {
-            throw new IllegalStateException("user is not available on instance");
-        }
-
         return user;
     }
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getWebSocketSession() {
+        if (isPrototype()) {
+            throw new IllegalStateException("webSocketSession is not available on prototype");
+        }
+
+        return webSocketSession;
+    }
+
+    public void setWebSocketSession(String webSocketSession) {
+        this.webSocketSession = webSocketSession;
+    }
+
+    public Long getZoneId() {
+        if (isPrototype()) {
+            throw new IllegalStateException("zone ID is not available on prototype");
+        }
+
+        String roomIdString = getRoomId().toString();
+
+        return Long.valueOf(roomIdString.substring(0, roomIdString.length() - 2));
+    }
+
+    public Long getRoomId() {
+        if (isPrototype()) {
+            throw new IllegalStateException("room ID is not available on prototype");
+        }
+
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
     public String getName() {
@@ -103,5 +145,18 @@ public class MudCharacter implements Persistent {
 
     private void setPrototype(boolean prototype) {
         isPrototype = prototype;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MudCharacter)) return false;
+        MudCharacter that = (MudCharacter) o;
+        return isPrototype() == that.isPrototype() && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), isPrototype());
     }
 }

@@ -22,10 +22,10 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 public class EchoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EchoService.class);
 
-    private final ApplicationContext applicationContext;
-    private final SimpMessagingTemplate simpMessagingTemplate;
-    private final SimpUserRegistry simpUserRegistry;
-    private final SessionAttributeService sessionAttributeService;
+    protected final ApplicationContext applicationContext;
+    protected final SimpMessagingTemplate simpMessagingTemplate;
+    protected final SimpUserRegistry simpUserRegistry;
+    protected final SessionAttributeService sessionAttributeService;
 
     @Autowired
     public EchoService(ApplicationContext applicationContext,
@@ -72,7 +72,7 @@ public class EchoService {
      * @param message The message to send.
      * @return An Output with a prompt appended to it.
      */
-    private Output appendPrompt(WebSocketContext wsContext, Output message) {
+    protected Output appendPrompt(WebSocketContext wsContext, Output message) {
         Question question = applicationContext.getBean((String) wsContext.getAttributes().get(MUD_QUESTION), Question.class);
 
         return new Output(message).append(question.prompt(wsContext));
@@ -86,7 +86,7 @@ public class EchoService {
      * @param wsSessionId WebSocket session ID.
      * @return A MessageHeaders designed to limit the message to only the specified session ID.
      */
-    private MessageHeaders buildMessageHeaders(String wsSessionId) {
+    protected MessageHeaders buildMessageHeaders(String wsSessionId) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
         headerAccessor.setSessionId(wsSessionId);
         return headerAccessor.getMessageHeaders();

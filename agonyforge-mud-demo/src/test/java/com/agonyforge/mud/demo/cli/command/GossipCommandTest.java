@@ -4,9 +4,9 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.models.dynamodb.service.CommService;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,14 +25,13 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SayCommandTest {
+public class GossipCommandTest {
     @Mock
     private CommService commService;
 
@@ -50,34 +49,33 @@ public class SayCommandTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-        "say test",
-        "say  test",
-        "say   test",
-        "say test ",
-        "say test test",
-        "say test test test"
+        "gossip test",
+        "gossip  test",
+        "gossip   test",
+        "gossip test ",
+        "gossip test test",
+        "gossip test test test"
     })
     void testExecute(String val) {
-        String match = val.substring(4).stripLeading();
+        String match = val.substring(7).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(ch.getRoomId()).thenReturn(100L);
 
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, commService);
+        GossipCommand uut = new GossipCommand(characterRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
-        assertEquals("[cyan]You say, '" + match + "[cyan]'", output.getOutput().get(0));
+        assertEquals("[green]You gossip, '" + match + "[green]'", output.getOutput().get(0));
 
         verify(characterRepository).getById(eq(chId), anyBoolean());
-        verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));
+        verify(commService).sendToAll(eq(webSocketContext), any(Output.class));
     }
 
     @Test
@@ -87,36 +85,36 @@ public class SayCommandTest {
             MUD_CHARACTER, chId
         ));
 
-        Input input = new Input("say test");
+        Input input = new Input("gossip test");
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("SAY", "TEST"), input, output);
+        GossipCommand uut = new GossipCommand(characterRepository, commService);
+        Question response = uut.execute(question, webSocketContext, List.of("GOSSIP", "TEST"), input, output);
 
         assertEquals(question, response);
 
-        verify(commService, never()).sendToRoom(eq(webSocketContext), anyLong(), any(Output.class));
+        verify(commService, never()).sendToAll(eq(webSocketContext), any(Output.class));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {
-        "say",
-        "say ",
-        "say  ",
-        "say\t"
+        "gossip",
+        "gossip ",
+        "gossip  ",
+        "gossip\t"
     })
     void testExecuteNoMessage(String val) {
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, commService);
+        GossipCommand uut = new GossipCommand(characterRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
-        assertEquals("[default]What would you like to say?", output.getOutput().get(0));
+        assertEquals("[default]What would you like to gossip?", output.getOutput().get(0));
 
         verify(characterRepository, never()).getById(any(UUID.class), anyBoolean());
-        verify(commService, never()).sendToRoom(any(WebSocketContext.class), anyLong(), any(Output.class));
+        verify(commService, never()).sendToAll(any(WebSocketContext.class), any(Output.class));
     }
 
     private List<String> tokenize(String val) {

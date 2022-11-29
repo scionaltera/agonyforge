@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_INSTANCE;
@@ -93,6 +94,42 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
         filter.put("gsi2pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
             .attributeValueList(AttributeValue.builder().s(DB_USER + user).build())
+            .build());
+
+        QueryRequest request = QueryRequest.builder()
+            .tableName(tableNames.getTableName())
+            .indexName(tableNames.getGsi2())
+            .keyConditions(filter)
+            .build();
+
+        try {
+            QueryResponse response = dynamoDbClient.query(request);
+
+            return response.items()
+                .stream()
+                .map(item -> {
+                    MudCharacter ch = newInstance();
+                    ch.thaw(item);
+                    return ch;
+                })
+                .collect(Collectors.toList());
+        } catch (DynamoDbException e) {
+            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+        }
+
+        return List.of();
+    }
+
+    public List<MudCharacter> getByRoom(Long roomId) {
+        Map<String, Condition> filter = new HashMap<>();
+
+        filter.put("gsi2pk", Condition.builder()
+            .comparisonOperator(ComparisonOperator.EQ)
+            .attributeValueList(AttributeValue.builder().s(DB_ROOM + roomId).build())
+            .build());
+        filter.put("pk", Condition.builder()
+            .comparisonOperator(ComparisonOperator.BEGINS_WITH)
+            .attributeValueList(AttributeValue.builder().s(DB_PC).build())
             .build());
 
         QueryRequest request = QueryRequest.builder()
