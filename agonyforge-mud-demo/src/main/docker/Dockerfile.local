@@ -1,4 +1,4 @@
-FROM amazoncorretto:11-alpine-jdk
+FROM amazoncorretto:17-alpine-jdk
 MAINTAINER Scion Altera <scion@agonyforge.com>
 EXPOSE 8080
 COPY agonyforge-mud-demo-*.jar /opt/app/mud.jar
