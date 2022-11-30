@@ -24,11 +24,16 @@ public class CommandLoader {
     @PostConstruct
     public void loadCommands() {
         if (commandRepository.getByPriority().isEmpty()) {
+            CommandReference gossip = new CommandReference();
             CommandReference say = new CommandReference();
             CommandReference shout = new CommandReference();
-            CommandReference gossip = new CommandReference();
+            CommandReference look = new CommandReference();
             CommandReference tell = new CommandReference();
             CommandReference whisper = new CommandReference();
+
+            gossip.setPriority(10);
+            gossip.setName("GOSSIP");
+            gossip.setBeanName("gossipCommand");
 
             say.setPriority(10);
             say.setName("SAY");
@@ -38,9 +43,9 @@ public class CommandLoader {
             shout.setName("SHOUT");
             shout.setBeanName("shoutCommand");
 
-            gossip.setPriority(10);
-            gossip.setName("GOSSIP");
-            gossip.setBeanName("gossipCommand");
+            look.setPriority(10);
+            look.setName("LOOK");
+            look.setBeanName("lookCommand");
 
             tell.setPriority(10);
             tell.setName("TELL");
@@ -51,7 +56,7 @@ public class CommandLoader {
             whisper.setBeanName("whisperCommand");
 
             LOGGER.info("Creating command references");
-            commandRepository.saveAll(List.of(say, shout, gossip, tell, whisper));
+            commandRepository.saveAll(List.of(gossip, say, shout, look, tell, whisper));
         }
     }
 }
