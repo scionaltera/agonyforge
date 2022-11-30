@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,13 +16,14 @@ public class UserSessionRepositoryTest extends DynamoDbLocalInitializingTest {
     void testGetByPrincipal() {
         UserSessionRepository uut = new UserSessionRepository(dynamoDbClient, tableNames);
         UserSession session = new UserSession();
+        String principal = UUID.randomUUID().toString();
 
-        session.setPrincipalName("principal");
+        session.setPrincipalName(principal);
         session.setRemoteIpAddress("999.888.777.666");
 
         uut.save(session);
 
-        List<UserSession> results = uut.getByPrincipal("principal");
+        List<UserSession> results = uut.getByPrincipal(principal);
 
         assertEquals(1, results.size());
 

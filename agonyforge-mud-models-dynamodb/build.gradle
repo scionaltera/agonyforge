@@ -1,6 +1,6 @@
 plugins {
     id 'info.solidsoft.pitest' version '1.9.11'
-    id 'org.springframework.boot' version '2.7.5'
+    id 'org.springframework.boot' version '3.0.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
     id 'maven-publish'
@@ -38,7 +38,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
-    testImplementation 'com.amazonaws:DynamoDBLocal:1.20.0'
+    testImplementation 'org.testcontainers:testcontainers:1.17.6'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.6'
 }
 
 java {

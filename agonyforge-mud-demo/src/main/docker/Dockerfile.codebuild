@@ -4,7 +4,7 @@ MAINTAINER Scion Altera <scion@agonyforge.com>
 WORKDIR /opt/build
 COPY . /opt/build
 RUN cd /opt/build \
-    && ./gradlew --console=plain clean build -x docker
+    && ./gradlew --console=plain clean build -x docker --info --stacktrace
 
 FROM amazoncorretto:17-alpine-jdk
 MAINTAINER Scion Altera <scion@agonyforge.com>

@@ -16,9 +16,10 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
-                .antMatchers(
+                .requestMatchers(
                     "/",
                     "/error",
+                    "/logout",
                     "/img/*",
                     "/css/*",
                     "/js/*",
@@ -29,6 +30,10 @@ public class WebSecurityConfiguration {
             .oauth2Login((oauth) -> oauth
                 .loginPage("/")
                 .defaultSuccessUrl("/play"))
+            .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/")
+            .and()
             .sessionManagement()
             .invalidSessionUrl("/")
             .maximumSessions(1)

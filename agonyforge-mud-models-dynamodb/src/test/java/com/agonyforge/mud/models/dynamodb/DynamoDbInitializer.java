@@ -1,7 +1,5 @@
 package com.agonyforge.mud.models.dynamodb;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -132,14 +130,6 @@ public class DynamoDbInitializer {
                 ptee.getMessage());
         } catch (ResourceNotFoundException rnfe) {
             System.out.println("One of the tables was not found, verify table exists before retrying. Error: " + rnfe.getMessage());
-        } catch (AmazonServiceException ase) {
-            System.out.println("An AmazonServiceException occurred, indicates that the request was correctly transmitted to the DynamoDB " +
-                "service, but for some reason, the service was not able to process it, and returned an error response instead. Investigate and " +
-                "configure retry strategy. Error type: " + ase.getErrorType() + ". Error message: " + ase.getErrorMessage());
-        } catch (AmazonClientException ace) {
-            System.out.println("An AmazonClientException occurred, indicates that the client was unable to get a response from DynamoDB " +
-                "service, or the client was unable to parse the response from the service. Investigate and configure retry strategy. "+
-                "Error: " + ace.getMessage());
         } catch (Exception e) {
             System.out.println("An exception occurred, investigate and configure retry strategy. Error: " + e.getMessage());
         }
