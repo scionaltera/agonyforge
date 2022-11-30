@@ -27,16 +27,23 @@ phases:
     commands:
       - |
         if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
+          echo "publishing JARs to GitHub"
+          
           ./gradlew :agonyforge-mud-core:publish
           ./gradlew :agonyforge-mud-models-dynamodb:publish
         
-          if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then                
+          echo "pushing SNAPSHOT container to GitHub"
+        
+          docker tag scionaltera/agonyforge-mud-demo:latest scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+          docker tag scionaltera/agonyforge-mud-demo:latest ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+        
+          docker push ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
+        
+          if expr "${PROJECT_VERSION}" : "^v[0-9.]+$" >/dev/null; then  
+            echo "pushing RELEASE container to GitHub"
+        
             docker tag scionaltera/agonyforge-mud-demo:latest ghcr.io/scionaltera/agonyforge-mud-demo:latest            
             
             docker push ghcr.io/scionaltera/agonyforge-mud-demo:latest
           fi              
-          docker tag scionaltera/agonyforge-mud-demo:latest scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
-          docker tag scionaltera/agonyforge-mud-demo:latest ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
-          
-          docker push ghcr.io/scionaltera/agonyforge-mud-demo:${PROJECT_VERSION}
         fi
