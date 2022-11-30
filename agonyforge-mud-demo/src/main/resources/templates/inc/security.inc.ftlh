@@ -1,8 +1,8 @@
 <#-- Adapted from https://github.com/spring-projects/spring-security/issues/3275 -->
 <#macro secure roleName>
     <#assign authorized = false>
-    <#if SPRING_SECURITY_CONTEXT??>
-        <#list SPRING_SECURITY_CONTEXT.authentication.authorities as authority>
+    <#if authorities??>
+        <#list authorities as authority>
             <#if authority == roleName>
                 <#assign authorized = true>
             </#if>
@@ -15,8 +15,8 @@
 
 <#macro anonymous roleName>
     <#assign authorized = false>
-    <#if SPRING_SECURITY_CONTEXT??>
-        <#list SPRING_SECURITY_CONTEXT.authentication.authorities as authority>
+    <#if authorities??>
+        <#list authorities as authority>
             <#if authority == roleName>
                 <#assign authorized = true>
             </#if>

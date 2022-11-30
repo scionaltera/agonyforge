@@ -23,4 +23,5 @@ module com.agonyforge.mud.core {
     requires spring.security.oauth2.core;
     requires spring.security.oauth2.client;
     requires spring.core;
+    requires spring.webmvc;
 }

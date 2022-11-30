@@ -19,6 +19,7 @@ public class WebSecurityConfiguration {
                 .requestMatchers(
                     "/",
                     "/error",
+                    "/logout",
                     "/img/*",
                     "/css/*",
                     "/js/*",
@@ -29,6 +30,10 @@ public class WebSecurityConfiguration {
             .oauth2Login((oauth) -> oauth
                 .loginPage("/")
                 .defaultSuccessUrl("/play"))
+            .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/")
+            .and()
             .sessionManagement()
             .invalidSessionUrl("/")
             .maximumSessions(1)

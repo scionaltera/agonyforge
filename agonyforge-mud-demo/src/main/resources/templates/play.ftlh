@@ -6,7 +6,7 @@
 <#assign styles = [ '/css/play.css', '/css/color.css' ]>
 <#include "inc/header.inc.ftlh">
 <body>
-<@secure "ROLE_USER">
+<@secure "OIDC_USER">
     <section id="output-box">
         <ul id="output-list"></ul>
     </section>
@@ -17,12 +17,12 @@
         </form>
     </section>
 </@secure>
-<@anonymous "ROLE_USER">
+<@anonymous "OIDC_USER">
     <main class="container-fluid">
         <a href="<@spring.url '/oauth2/authorization/cognito' />">Log In</a>
     </main>
 </@anonymous>
-<@secure "ROLE_USER">
+<@secure "OIDC_USER">
     <#assign scripts = [
     '/webjars/sockjs-client/dist/sockjs.min.js',
     '/webjars/webstomp-client/dist/webstomp.min.js',
