@@ -1,5 +1,6 @@
 package com.agonyforge.mud.demo.config;
 
+import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.impl.MudZone;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Component
 public class WorldLoader {
@@ -38,15 +40,24 @@ public class WorldLoader {
         }
 
         if (roomRepository.getById(100L).isEmpty()) {
-            MudRoom room = new MudRoom();
+            MudRoom room100 = new MudRoom();
 
-            room.setId(100L);
-            room.setZoneId(1L);
-            room.setName("Default Room");
-            room.setDescription("This room was automatically generated.");
+            room100.setId(100L);
+            room100.setZoneId(1L);
+            room100.setName("Default Room");
+            room100.setDescription("This room was automatically generated.");
+            room100.setExit(Direction.WEST.getName(), new MudRoom.Exit(101L));
 
-            LOGGER.info("Creating default room");
-            roomRepository.save(room);
+            MudRoom room101 = new MudRoom();
+
+            room101.setId(101L);
+            room101.setZoneId(1L);
+            room101.setName("Adjacent Room");
+            room101.setDescription("This room was automatically generated.");
+            room101.setExit(Direction.EAST.getName(), new MudRoom.Exit(100L));
+
+            LOGGER.info("Creating default rooms");
+            roomRepository.saveAll(List.of(room100, room101));
         }
     }
 }
