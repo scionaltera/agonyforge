@@ -15,9 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 
 @Component
@@ -50,9 +48,9 @@ public class TellCommand implements Command {
             return question;
         }
 
-        String message = stripFirstWord(stripFirstWord(input.getInput()));
+        String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
-        Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
+        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
         Optional<MudCharacter> targetOptional = characterRepository.getByType(TYPE_PC)
             .stream()
             .filter(c -> !c.isPrototype())
@@ -80,28 +78,5 @@ public class TellCommand implements Command {
         commService.sendTo(target, new Output(String.format("[red]%s tells you, '%s[red]'", ch.getName(), message)));
 
         return question;
-    }
-
-    private String stripFirstWord(String input) {
-        int space = input.indexOf(' ');
-
-        if (space == -1) {
-            return "";
-        }
-
-        return input.substring(space + 1).stripLeading();
-    }
-
-    private Optional<MudCharacter> getCharacter(WebSocketContext webSocketContext, Output output) {
-        UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, false);
-
-        if (chOptional.isEmpty()) {
-            LOGGER.error("Cannot look up character by ID: {}", chId);
-            output.append("[red]Unable to find your character! The error has been reported.");
-            return Optional.empty();
-        }
-
-        return chOptional;
     }
 }
