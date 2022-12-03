@@ -10,6 +10,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,16 @@ public class CharacterViewQuestion extends DemoQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
 
     private final MudRoomRepository roomRepository;
+    private final CommService commService;
 
     @Autowired
     public CharacterViewQuestion(ApplicationContext applicationContext,
                                  MudCharacterRepository characterRepository,
-                                 MudRoomRepository roomRepository) {
+                                 MudRoomRepository roomRepository,
+                                 CommService commService) {
         super(applicationContext, characterRepository);
         this.roomRepository = roomRepository;
+        this.commService = commService;
     }
 
     @Override
@@ -72,6 +76,8 @@ public class CharacterViewQuestion extends DemoQuestion {
                 getCharacterRepository().save(ch);
 
                 LOGGER.info("{} has entered the game.", ch.getName());
+                commService.sendToAll(wsContext, new Output(String.format("[yellow]%s has entered the game!", ch.getName())), ch);
+
                 output.append(LookCommand.doLook(getCharacterRepository(), ch, room));
 
                 next = getQuestion("commandQuestion");
