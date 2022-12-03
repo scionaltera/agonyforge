@@ -15,9 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 // intentionally not annotation with @Component
 // the movement commands are configured in MoveConfiguration since they all share the same class
@@ -46,7 +43,7 @@ public class MoveCommand implements Command {
                             Input input,
                             Output output) {
 
-        Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
+        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
 
         if (chOptional.isEmpty()) {
             return question;
@@ -93,18 +90,5 @@ public class MoveCommand implements Command {
         output.append(LookCommand.doLook(characterRepository, ch, destination));
 
         return question;
-    }
-
-    private Optional<MudCharacter> getCharacter(WebSocketContext webSocketContext, Output output) {
-        UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, false);
-
-        if (chOptional.isEmpty()) {
-            LOGGER.error("Cannot look up character by ID: {}", chId);
-            output.append("[red]Unable to find your character! The error has been reported.");
-            return Optional.empty();
-        }
-
-        return chOptional;
     }
 }

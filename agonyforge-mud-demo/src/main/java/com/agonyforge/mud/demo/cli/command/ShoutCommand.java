@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
 public class ShoutCommand implements Command {
@@ -37,14 +34,14 @@ public class ShoutCommand implements Command {
                             List<String> tokens,
                             Input input,
                             Output output) {
-        String message = stripFirstWord(input.getInput());
+        String message = Command.stripFirstWord(input.getInput());
 
         if (message.isBlank()) {
             output.append("[default]What would you like to shout?");
             return question;
         }
 
-        Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
+        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
 
         if (chOptional.isPresent()) {
             MudCharacter ch = chOptional.get();
@@ -54,28 +51,5 @@ public class ShoutCommand implements Command {
         }
 
         return question;
-    }
-
-    private String stripFirstWord(String input) {
-        int space = input.indexOf(' ');
-
-        if (space == -1) {
-            return "";
-        }
-
-        return input.substring(space + 1).stripLeading();
-    }
-
-    private Optional<MudCharacter> getCharacter(WebSocketContext webSocketContext, Output output) {
-        UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, false);
-
-        if (chOptional.isEmpty()) {
-            LOGGER.error("Cannot look up character by ID: {}", chId);
-            output.append("[red]Unable to find your character! The error has been reported.");
-            return Optional.empty();
-        }
-
-        return chOptional;
     }
 }
