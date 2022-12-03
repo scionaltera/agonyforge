@@ -1,7 +1,10 @@
 package com.agonyforge.mud.demo.event;
 
+import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +24,13 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterJanitor.class);
 
     private final MudCharacterRepository characterRepository;
+    private final CommService commService;
 
     @Autowired
-    public CharacterJanitor(MudCharacterRepository characterRepository) {
+    public CharacterJanitor(MudCharacterRepository characterRepository,
+                            CommService commService) {
         this.characterRepository = characterRepository;
+        this.commService = commService;
     }
 
     @Override
@@ -43,6 +49,10 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
                 characterRepository.delete(instance);
 
                 LOGGER.info("{} has left the game.", instance.getName());
+
+                WebSocketContext webSocketContext = WebSocketContext.build(event.getMessage().getHeaders());
+                commService.sendToAll(webSocketContext,
+                    new Output(String.format("[yellow]%s has left the game!", instance.getName())), instance);
             }
         }
     }

@@ -5,8 +5,12 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +21,21 @@ import java.util.Optional;
 
 @Component
 public class CharacterViewQuestion extends DemoQuestion {
+    static final Long START_ROOM = 100L;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
+
+    private final MudRoomRepository roomRepository;
+    private final CommService commService;
 
     @Autowired
     public CharacterViewQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository) {
+                                 MudCharacterRepository characterRepository,
+                                 MudRoomRepository roomRepository,
+                                 CommService commService) {
         super(applicationContext, characterRepository);
+        this.roomRepository = roomRepository;
+        this.commService = commService;
     }
 
     @Override
@@ -50,17 +63,22 @@ public class CharacterViewQuestion extends DemoQuestion {
 
         if ("P".equalsIgnoreCase(input.getInput())) {
             Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
+            Optional<MudRoom> roomOptional = roomRepository.getById(START_ROOM);
 
-            if (chOptional.isPresent()) {
+            if (chOptional.isPresent() && roomOptional.isPresent()) {
                 MudCharacter chPrototype = chOptional.get();
                 MudCharacter ch = chPrototype.buildInstance();
+                MudRoom room = roomOptional.get();
 
-                ch.setRoomId(100L); // TODO configurable start room
+                ch.setRoomId(START_ROOM); // TODO configurable start room
                 ch.setWebSocketSession(wsContext.getSessionId());
 
                 getCharacterRepository().save(ch);
 
                 LOGGER.info("{} has entered the game.", ch.getName());
+                commService.sendToAll(wsContext, new Output(String.format("[yellow]%s has entered the game!", ch.getName())), ch);
+
+                output.append(LookCommand.doLook(getCharacterRepository(), ch, room));
 
                 next = getQuestion("commandQuestion");
             }
