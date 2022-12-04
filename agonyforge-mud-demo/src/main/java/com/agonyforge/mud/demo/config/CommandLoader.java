@@ -38,6 +38,7 @@ public class CommandLoader {
             CommandReference whisper = new CommandReference();
 
             CommandReference look = new CommandReference();
+            CommandReference who = new CommandReference();
 
             north.setPriority(1);
             north.setName("NORTH");
@@ -87,8 +88,13 @@ public class CommandLoader {
             look.setName("LOOK");
             look.setBeanName("lookCommand");
 
+            who.setPriority(10);
+            who.setName("WHO");
+            who.setBeanName("whoCommand");
+
             LOGGER.info("Creating command references");
-            commandRepository.saveAll(List.of(gossip, say, shout, look, tell, whisper, north, east, south, west, up, down));
+            commandRepository.saveAll(List.of(gossip, say, shout, look, tell, whisper, north, east, south, west, up,
+                down, who));
         }
     }
 }
