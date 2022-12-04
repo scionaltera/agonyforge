@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.agonyforge'
-version '0.0.7-SNAPSHOT'
+version '0.0.7'
 
 repositories {
     mavenCentral()
