@@ -1,7 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
 import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
-import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,33 +21,33 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ITEM;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_INSTANCE;
 
 @Repository
-public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
-    public static final Logger LOGGER = LoggerFactory.getLogger(MudCharacterRepository.class);
+public class MudItemRepository extends AbstractRepository<MudItem> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MudItemRepository.class);
 
     @Autowired
-    public MudCharacterRepository(DynamoDbClient dynamoDbClient,
-                                  DynamoDbProperties.TableNames tableNames) {
-        super(dynamoDbClient, tableNames, MudCharacter.class);
+    public MudItemRepository(DynamoDbClient dynamoDbClient,
+                             DynamoDbProperties.TableNames tableNames) {
+        super(dynamoDbClient, tableNames, MudItem.class);
     }
 
     @Override
-    public MudCharacter newInstance() {
-        return new MudCharacter();
+    public MudItem newInstance() {
+        return new MudItem();
     }
 
-    public Optional<MudCharacter> getById(UUID id, boolean prototype) {
+    public Optional<MudItem> getById(UUID id, boolean prototype) {
         Map<String, Condition> filter = new HashMap<>();
 
         filter.put("pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(DB_PC + id).build())
+            .attributeValueList(AttributeValue.builder().s(DB_ITEM + id).build())
             .build());
 
         if (prototype) {
@@ -57,7 +57,7 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
                 .build());
         } else {
             filter.put("sk", Condition.builder()
-                .comparisonOperator(ComparisonOperator.EQ)
+                .comparisonOperator(ComparisonOperator.BEGINS_WITH)
                 .attributeValueList(AttributeValue.builder().s(SORT_INSTANCE).build())
                 .build());
         }
@@ -71,11 +71,11 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
             QueryResponse response = dynamoDbClient.query(request);
 
             if (!response.hasItems() || response.items().size() <= 0) {
-                LOGGER.warn("No players returned for {}", id);
+                LOGGER.warn("No items returned for {}", id);
                 return Optional.empty();
             }
 
-            MudCharacter item = newInstance();
+            MudItem item = newInstance();
             List<Map<String, AttributeValue>> items = response.items();
 
             item.thaw(items.get(0));
@@ -88,12 +88,17 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
         return Optional.empty();
     }
 
-    public List<MudCharacter> getByUser(String user) {
+    public List<MudItem> getByCharacter(UUID character) {
         Map<String, Condition> filter = new HashMap<>();
 
         filter.put("gsi2pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(DB_USER + user).build())
+            .attributeValueList(AttributeValue.builder().s(DB_PC + character).build())
+            .build());
+
+        filter.put("pk", Condition.builder()
+            .comparisonOperator(ComparisonOperator.BEGINS_WITH)
+            .attributeValueList(AttributeValue.builder().s(DB_ITEM).build())
             .build());
 
         QueryRequest request = QueryRequest.builder()
@@ -108,9 +113,9 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
             return response.items()
                 .stream()
                 .map(item -> {
-                    MudCharacter ch = newInstance();
-                    ch.thaw(item);
-                    return ch;
+                    MudItem mudItem = newInstance();
+                    mudItem.thaw(item);
+                    return mudItem;
                 })
                 .collect(Collectors.toList());
         } catch (DynamoDbException e) {
@@ -120,17 +125,16 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
         return List.of();
     }
 
-    public List<MudCharacter> getByRoom(Long roomId) {
+    public List<MudItem> getByRoom(Long roomId) {
         Map<String, Condition> filter = new HashMap<>();
 
         filter.put("gsi2pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.EQ)
             .attributeValueList(AttributeValue.builder().s(DB_ROOM + roomId).build())
             .build());
-
         filter.put("pk", Condition.builder()
             .comparisonOperator(ComparisonOperator.BEGINS_WITH)
-            .attributeValueList(AttributeValue.builder().s(DB_PC).build())
+            .attributeValueList(AttributeValue.builder().s(DB_ITEM).build())
             .build());
 
         QueryRequest request = QueryRequest.builder()
@@ -145,9 +149,9 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
             return response.items()
                 .stream()
                 .map(item -> {
-                    MudCharacter ch = newInstance();
-                    ch.thaw(item);
-                    return ch;
+                    MudItem mudItem = newInstance();
+                    mudItem.thaw(item);
+                    return mudItem;
                 })
                 .collect(Collectors.toList());
         } catch (DynamoDbException e) {
