@@ -1,8 +1,10 @@
 package com.agonyforge.mud.demo.config;
 
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
+import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.impl.MudZone;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudZoneRepository;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class WorldLoader {
@@ -19,12 +22,15 @@ public class WorldLoader {
 
     private final MudZoneRepository zoneRepository;
     private final MudRoomRepository roomRepository;
+    private final MudItemRepository itemRepository;
 
     @Autowired
     public WorldLoader(MudZoneRepository zoneRepository,
-                       MudRoomRepository roomRepository) {
+                       MudRoomRepository roomRepository,
+                       MudItemRepository itemRepository) {
         this.zoneRepository = zoneRepository;
         this.roomRepository = roomRepository;
+        this.itemRepository = itemRepository;
     }
 
     @PostConstruct
@@ -58,6 +64,22 @@ public class WorldLoader {
 
             LOGGER.info("Creating default rooms");
             roomRepository.saveAll(List.of(room100, room101));
+        }
+
+        if (itemRepository.getByRoom(100L).isEmpty()) {
+            MudItem item = new MudItem();
+            MudItem itemInstance;
+
+            item.setId(UUID.randomUUID());
+            item.setName("a sword");
+            item.setDescription("It's a sword.");
+
+            itemInstance = item.buildInstance();
+
+            itemInstance.setRoomId(100L);
+
+            LOGGER.info("Creating default item");
+            itemRepository.saveAll(List.of(item, itemInstance));
         }
     }
 }
