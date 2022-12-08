@@ -39,9 +39,9 @@ public class MudItem implements Persistent {
             map.put("sk", AttributeValue.builder().s(SORT_INSTANCE + instanceId).build());
 
             if (TYPE_PC.equals(containerType)) {
-                map.put("gsi2pk", AttributeValue.builder().s(TYPE_PC + getCharacterId()).build());
+                map.put("gsi2pk", AttributeValue.builder().s(DB_PC + getCharacterId()).build());
             } else if (TYPE_ROOM.equals(containerType)) {
-                map.put("gsi2pk", AttributeValue.builder().s(TYPE_ROOM + getRoomId()).build());
+                map.put("gsi2pk", AttributeValue.builder().s(DB_ROOM + getRoomId()).build());
             }
         }
 
@@ -57,11 +57,11 @@ public class MudItem implements Persistent {
     public void thaw(Map<String, AttributeValue> item) {
         setId(UUID.fromString(item.get("pk").s().substring(DB_ITEM.length())));
 
-        if (SORT_INSTANCE.equals(item.get("sk").s())) {
-            setPrototype(false);
+        if (item.get("sk").s().startsWith(SORT_INSTANCE)) {
+            instanceId = UUID.fromString(item.get("sk").s().substring(SORT_INSTANCE.length()));
 
             if (item.get("gsi2pk").s().startsWith(DB_PC)) {
-                setCharacterId(item.get("gsi2pk").s().substring(DB_PC.length()));
+                setCharacterId(UUID.fromString(item.get("gsi2pk").s().substring(DB_PC.length())));
             } else if (item.get("gsi2pk").s().startsWith(DB_ROOM)) {
                 setRoomId(Long.valueOf(item.get("gsi2pk").s().substring(DB_ROOM.length())));
             }
@@ -95,20 +95,28 @@ public class MudItem implements Persistent {
         this.id = id;
     }
 
-    public String getCharacterId() {
+    public UUID getCharacterId() {
+        if (isPrototype()) {
+            throw new IllegalStateException("character ID is not available on prototype");
+        }
+
         if (TYPE_PC.equals(containerType)) {
-            return containerId;
+            return UUID.fromString(containerId);
         }
 
         return null;
     }
 
-    public void setCharacterId(String characterId) {
+    public void setCharacterId(UUID characterId) {
         containerType = TYPE_PC;
-        containerId = characterId;
+        containerId = characterId.toString();
     }
 
     public Long getRoomId() {
+        if (isPrototype()) {
+            throw new IllegalStateException("room ID is not available on prototype");
+        }
+
         if (TYPE_ROOM.equals(containerType)) {
             return Long.valueOf(containerId);
         }
@@ -143,9 +151,9 @@ public class MudItem implements Persistent {
 
     public void setPrototype(boolean prototype) {
         if (prototype) {
-            instanceId = UUID.randomUUID();
-        } else {
             instanceId = null;
+        } else {
+            instanceId = UUID.randomUUID();
         }
     }
 

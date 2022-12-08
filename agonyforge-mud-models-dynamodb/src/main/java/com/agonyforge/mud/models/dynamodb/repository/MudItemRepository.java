@@ -57,7 +57,7 @@ public class MudItemRepository extends AbstractRepository<MudItem> {
                 .build());
         } else {
             filter.put("sk", Condition.builder()
-                .comparisonOperator(ComparisonOperator.EQ)
+                .comparisonOperator(ComparisonOperator.BEGINS_WITH)
                 .attributeValueList(AttributeValue.builder().s(SORT_INSTANCE).build())
                 .build());
         }
@@ -88,7 +88,7 @@ public class MudItemRepository extends AbstractRepository<MudItem> {
         return Optional.empty();
     }
 
-    public List<MudItem> getByCharacter(String character) {
+    public List<MudItem> getByCharacter(UUID character) {
         Map<String, Condition> filter = new HashMap<>();
 
         filter.put("gsi2pk", Condition.builder()
