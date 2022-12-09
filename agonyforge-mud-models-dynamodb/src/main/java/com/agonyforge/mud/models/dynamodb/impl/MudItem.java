@@ -3,7 +3,9 @@ package com.agonyforge.mud.models.dynamodb.impl;
 import com.agonyforge.mud.models.dynamodb.Persistent;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,8 +24,9 @@ public class MudItem implements Persistent {
     private UUID instanceId = null;
     private String containerType;
     private String containerId;
-    private String name;
-    private String description;
+    private List<String> nameList = new ArrayList<>();
+    private String shortDescription;
+    private String longDescription;
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -45,8 +48,9 @@ public class MudItem implements Persistent {
             }
         }
 
-        data.put("name", AttributeValue.builder().s(getName()).build());
-        data.put("description", AttributeValue.builder().s(getDescription()).build());
+        data.put("nameList", AttributeValue.builder().ss(getNameList()).build());
+        data.put("shortDescription", AttributeValue.builder().s(getShortDescription()).build());
+        data.put("longDescription", AttributeValue.builder().s(getLongDescription()).build());
 
         map.put("data", AttributeValue.builder().m(data).build());
 
@@ -68,8 +72,9 @@ public class MudItem implements Persistent {
         }
 
         Map<String, AttributeValue> data = item.get("data").m();
-        setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
-        setDescription(data.getOrDefault("description", AttributeValue.builder().nul(true).build()).s());
+        setNameList(data.getOrDefault("nameList", AttributeValue.builder().ss().build()).ss());
+        setShortDescription(data.getOrDefault("shortDescription", AttributeValue.builder().nul(true).build()).s());
+        setLongDescription(data.getOrDefault("longDescription", AttributeValue.builder().nul(true).build()).s());
     }
 
     public MudItem buildInstance() {
@@ -81,8 +86,9 @@ public class MudItem implements Persistent {
 
         instance.setPrototype(false);
         instance.setId(getId());
-        instance.setName(getName());
-        instance.setDescription(getDescription());
+        instance.setNameList(new ArrayList<>(getNameList()));
+        instance.setShortDescription(getShortDescription());
+        instance.setLongDescription(getLongDescription());
 
         return instance;
     }
@@ -129,20 +135,28 @@ public class MudItem implements Persistent {
         containerId = roomId.toString();
     }
 
-    public String getName() {
-        return name;
+    public List<String> getNameList() {
+        return nameList;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameList(List<String> nameList) {
+        this.nameList = nameList;
     }
 
-    public String getDescription() {
-        return description;
+    public String getShortDescription() {
+        return shortDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 
     public boolean isPrototype() {
