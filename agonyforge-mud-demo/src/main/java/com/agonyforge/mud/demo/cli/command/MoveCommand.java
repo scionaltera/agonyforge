@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
@@ -22,15 +23,18 @@ public class MoveCommand implements Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveCommand.class);
 
     private final MudCharacterRepository characterRepository;
+    private final MudItemRepository itemRepository;
     private final MudRoomRepository roomRepository;
     private final CommService commService;
     private final Direction direction;
 
     public MoveCommand(MudCharacterRepository characterRepository,
+                       MudItemRepository itemRepository,
                        MudRoomRepository roomRepository,
                        CommService commService,
                        Direction direction) {
         this.characterRepository = characterRepository;
+        this.itemRepository = itemRepository;
         this.roomRepository = roomRepository;
         this.commService = commService;
         this.direction = direction;
@@ -87,7 +91,7 @@ public class MoveCommand implements Command {
         commService.sendToRoom(webSocketContext, ch.getRoomId(),
             new Output(String.format("%s arrives from %s.", ch.getName(), direction.getOpposite())));
 
-        output.append(LookCommand.doLook(characterRepository, ch, destination));
+        output.append(LookCommand.doLook(characterRepository, itemRepository, ch, destination));
 
         return question;
     }

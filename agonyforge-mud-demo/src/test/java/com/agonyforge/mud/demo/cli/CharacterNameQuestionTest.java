@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,6 +43,9 @@ public class CharacterNameQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudItemRepository itemRepository;
+
+    @Mock
     private WebSocketContext webSocketContext;
 
     @Captor
@@ -49,7 +53,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testPrompt() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, itemRepository);
         Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
@@ -70,7 +74,7 @@ public class CharacterNameQuestionTest {
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
 
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, itemRepository);
         Input input = new Input(userInput);
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -95,7 +99,7 @@ public class CharacterNameQuestionTest {
         "S"
     })
     void testAnswerTooShort(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, itemRepository);
         Input input = new Input(userInput);
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -110,7 +114,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testAnswerTooLong() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, itemRepository);
         Input input = new Input("S".repeat(13));
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -129,7 +133,7 @@ public class CharacterNameQuestionTest {
         "Sc1on"
     })
     void testAnswerInvalidLetters(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, itemRepository);
         Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
@@ -144,7 +148,7 @@ public class CharacterNameQuestionTest {
     @Test
     void testAnswerNoCaps() {
         String userInput = "scion";
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, characterRepository, itemRepository);
         Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 

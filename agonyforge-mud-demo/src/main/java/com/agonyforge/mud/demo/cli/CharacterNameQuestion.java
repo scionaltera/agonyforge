@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.agonyforge.mud.core.cli.Question;
@@ -22,8 +23,9 @@ public class CharacterNameQuestion extends DemoQuestion {
 
     @Autowired
     public CharacterNameQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository) {
-        super(applicationContext, characterRepository);
+                                 MudCharacterRepository characterRepository,
+                                 MudItemRepository itemRepository) {
+        super(applicationContext, characterRepository, itemRepository);
     }
 
     @Override

@@ -13,4 +13,5 @@ module com.agonyforge.mud.demo {
     requires spring.messaging;
     requires spring.websocket;
     requires java.annotation;
+    requires spring.core;
 }

@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.config;
 import com.agonyforge.mud.demo.cli.command.MoveCommand;
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MoveConfiguration {
     private final MudCharacterRepository characterRepository;
+    private final MudItemRepository itemRepository;
     private final MudRoomRepository roomRepository;
     private final CommService commService;
 
     @Autowired
     public MoveConfiguration(MudCharacterRepository characterRepository,
+                             MudItemRepository itemRepository,
                              MudRoomRepository roomRepository,
                              CommService commService) {
         this.characterRepository = characterRepository;
+        this.itemRepository = itemRepository;
         this.roomRepository = roomRepository;
         this.commService = commService;
     }
@@ -28,6 +32,7 @@ public class MoveConfiguration {
     public MoveCommand northCommand() {
         return new MoveCommand(
             characterRepository,
+            itemRepository,
             roomRepository,
             commService,
             Direction.NORTH);
@@ -37,6 +42,7 @@ public class MoveConfiguration {
     public MoveCommand eastCommand() {
         return new MoveCommand(
             characterRepository,
+            itemRepository,
             roomRepository,
             commService,
             Direction.EAST);
@@ -46,6 +52,7 @@ public class MoveConfiguration {
     public MoveCommand southCommand() {
         return new MoveCommand(
             characterRepository,
+            itemRepository,
             roomRepository,
             commService,
             Direction.SOUTH);
@@ -55,6 +62,7 @@ public class MoveConfiguration {
     public MoveCommand westCommand() {
         return new MoveCommand(
             characterRepository,
+            itemRepository,
             roomRepository,
             commService,
             Direction.WEST);
@@ -64,6 +72,7 @@ public class MoveConfiguration {
     public MoveCommand upCommand() {
         return new MoveCommand(
             characterRepository,
+            itemRepository,
             roomRepository,
             commService,
             Direction.UP);
@@ -73,6 +82,7 @@ public class MoveConfiguration {
     public MoveCommand downCommand() {
         return new MoveCommand(
             characterRepository,
+            itemRepository,
             roomRepository,
             commService,
             Direction.DOWN);

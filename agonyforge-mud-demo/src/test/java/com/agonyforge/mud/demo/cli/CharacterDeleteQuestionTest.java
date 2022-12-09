@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -36,6 +37,9 @@ public class CharacterDeleteQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudItemRepository itemRepository;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -56,7 +60,7 @@ public class CharacterDeleteQuestionTest {
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(chName);
 
-        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
+        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository, itemRepository);
         Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
@@ -75,7 +79,7 @@ public class CharacterDeleteQuestionTest {
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(characterRepository.getById(any(), eq(true))).thenReturn(Optional.empty());
 
-        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
+        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository, itemRepository);
         Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
@@ -94,7 +98,7 @@ public class CharacterDeleteQuestionTest {
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
+        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository, itemRepository);
         Response result = uut.answer(webSocketContext, new Input("y"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -117,7 +121,7 @@ public class CharacterDeleteQuestionTest {
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository);
+        CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, characterRepository, itemRepository);
         Response result = uut.answer(webSocketContext, new Input("n"));
         Output output = result.getFeedback().orElseThrow();
 
