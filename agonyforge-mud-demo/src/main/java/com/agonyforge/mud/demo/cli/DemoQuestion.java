@@ -5,7 +5,9 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -20,12 +22,15 @@ public abstract class DemoQuestion extends AbstractQuestion {
 
     private final ApplicationContext applicationContext;
     private final MudCharacterRepository characterRepository;
+    private final MudItemRepository itemRepository;
 
     public DemoQuestion(ApplicationContext applicationContext,
-                        MudCharacterRepository characterRepository) {
+                        MudCharacterRepository characterRepository,
+                        MudItemRepository itemRepository) {
         super();
         this.applicationContext = applicationContext;
         this.characterRepository = characterRepository;
+        this.itemRepository = itemRepository;
     }
 
     protected Question getQuestion(String name) {
@@ -47,5 +52,9 @@ public abstract class DemoQuestion extends AbstractQuestion {
 
     protected MudCharacterRepository getCharacterRepository() {
         return characterRepository;
+    }
+
+    protected MudItemRepository getItemRepository() {
+        return itemRepository;
     }
 }

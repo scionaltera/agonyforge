@@ -11,6 +11,7 @@ import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -26,8 +27,9 @@ public class CharacterMenuQuestion extends DemoQuestion {
 
     @Autowired
     public CharacterMenuQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository) {
-        super(applicationContext, characterRepository);
+                                 MudCharacterRepository characterRepository,
+                                 MudItemRepository itemRepository) {
+        super(applicationContext, characterRepository, itemRepository);
 
         menuPane.setTitle(new DemoMenuTitle("Your Characters"));
         menuPane.setPrompt(new DemoMenuPrompt());

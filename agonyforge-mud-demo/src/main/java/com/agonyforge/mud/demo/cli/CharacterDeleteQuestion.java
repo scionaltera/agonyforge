@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,9 @@ import java.util.Optional;
 public class CharacterDeleteQuestion extends DemoQuestion {
     @Autowired
     public CharacterDeleteQuestion(ApplicationContext applicationContext,
-                                   MudCharacterRepository characterRepository) {
-        super(applicationContext, characterRepository);
+                                   MudCharacterRepository characterRepository,
+                                   MudItemRepository itemRepository) {
+        super(applicationContext, characterRepository, itemRepository);
     }
 
     @Override

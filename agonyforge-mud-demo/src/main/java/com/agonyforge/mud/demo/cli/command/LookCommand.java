@@ -7,11 +7,13 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +23,11 @@ public class LookCommand implements Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(LookCommand.class);
 
     private final MudCharacterRepository characterRepository;
+    private final MudItemRepository itemRepository;
     private final MudRoomRepository roomRepository;
 
     public static Output doLook(MudCharacterRepository characterRepository,
+                                MudItemRepository itemRepository,
                                 MudCharacter ch,
                                 MudRoom room) {
 
@@ -39,13 +43,19 @@ public class LookCommand implements Command {
             .filter(target -> !target.equals(ch))
             .forEach(target -> output.append(String.format("[green]%s is here.", target.getName())));
 
+        itemRepository.getByRoom(room.getId())
+            .forEach(target -> output.append(String.format("[green]%s is lying on the ground here.",
+                StringUtils.capitalize(target.getName()))));
+
         return output;
     }
 
     @Autowired
     public LookCommand(MudCharacterRepository characterRepository,
+                       MudItemRepository itemRepository,
                        MudRoomRepository roomRepository) {
         this.characterRepository = characterRepository;
+        this.itemRepository = itemRepository;
         this.roomRepository = roomRepository;
     }
 
@@ -74,7 +84,7 @@ public class LookCommand implements Command {
 
         MudRoom room = roomOptional.get();
 
-        output.append(doLook(characterRepository, ch, room));
+        output.append(doLook(characterRepository, itemRepository, ch, room));
 
         return question;
     }

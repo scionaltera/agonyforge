@@ -10,6 +10,7 @@ import com.agonyforge.mud.models.dynamodb.impl.CommandReference;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.CommandRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -32,8 +33,9 @@ public class CommandQuestion extends DemoQuestion {
     @Autowired
     public CommandQuestion(ApplicationContext applicationContext,
                            MudCharacterRepository characterRepository,
+                           MudItemRepository itemRepository,
                            CommandRepository commandRepository) {
-        super(applicationContext, characterRepository);
+        super(applicationContext, characterRepository, itemRepository);
         this.applicationContext = applicationContext;
         this.commandRepository = commandRepository;
     }

@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.when;
 public class MoveCommandTest {
     @Mock
     private MudCharacterRepository characterRepository;
+
+    @Mock
+    private MudItemRepository itemRepository;
 
     @Mock
     private MudRoomRepository roomRepository;
@@ -72,7 +76,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(question, response);
@@ -92,7 +96,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(question, response);
@@ -113,7 +117,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());
@@ -138,7 +142,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());
@@ -164,7 +168,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());

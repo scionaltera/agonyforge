@@ -10,6 +10,7 @@ import com.agonyforge.mud.models.dynamodb.impl.CommandReference;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.CommandRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +46,9 @@ public class CommandQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudItemRepository itemRepository;
+
+    @Mock
     private CommandRepository commandRepository;
 
     @Mock
@@ -68,7 +72,7 @@ public class CommandQuestionTest {
 
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
         Output output = uut.prompt(webSocketContext);
 
         assertEquals(2, output.getOutput().size());
@@ -78,7 +82,7 @@ public class CommandQuestionTest {
 
     @Test
     void testPromptNoCharacter() {
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
         Output output = uut.prompt(webSocketContext);
 
         assertEquals(3, output.getOutput().size());
@@ -106,7 +110,7 @@ public class CommandQuestionTest {
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -127,7 +131,7 @@ public class CommandQuestionTest {
         when(commandRepository.getByPriority()).thenReturn(List.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenThrow(new NoSuchBeanDefinitionException("testCommand"));
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -143,7 +147,7 @@ public class CommandQuestionTest {
     void testAnswerNotFound() {
         when(commandRepository.getByPriority()).thenReturn(List.of());
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("notfound"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -164,7 +168,7 @@ public class CommandQuestionTest {
         "\n"
     })
     void testAnswerBlankInput(String input) {
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
         Response result = uut.answer(webSocketContext, new Input(input));
         Output output = result.getFeedback().orElseThrow();
 
