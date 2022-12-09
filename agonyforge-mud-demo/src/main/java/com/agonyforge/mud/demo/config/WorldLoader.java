@@ -71,8 +71,9 @@ public class WorldLoader {
             MudItem itemInstance;
 
             item.setId(UUID.randomUUID());
-            item.setName("a sword");
-            item.setDescription("It's a sword.");
+            item.setNameList(List.of("spoon"));
+            item.setShortDescription("a spoon");
+            item.setLongDescription("A spoon is floating in midair here.");
 
             itemInstance = item.buildInstance();
 

@@ -108,7 +108,7 @@ public class LookCommandTest {
 
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Target");
-        when(item.getName()).thenReturn("a spoon");
+        when(item.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
         when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");
         when(room.getDescription()).thenReturn("This room is a test.");
@@ -134,6 +134,6 @@ public class LookCommandTest {
         assertTrue(output.getOutput().get(1).contains("This room is a test."));
         assertTrue(output.getOutput().get(2).contains("Exits:"));
         assertTrue(output.getOutput().get(3).contains("Target is here."));
-        assertTrue(output.getOutput().get(4).contains("A spoon is"));
+        assertTrue(output.getOutput().get(4).contains("A test is"));
     }
 }

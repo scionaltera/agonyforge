@@ -24,8 +24,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         UUID uuid = UUID.randomUUID();
 
         item.setId(uuid);
-        item.setName("sword");
-        item.setDescription("A sword.");
+        item.setNameList(List.of("sword"));
+        item.setShortDescription("a sword");
+        item.setLongDescription("A sword has been dropped on the ground here.");
 
         uut.save(item);
 
@@ -35,8 +36,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         assertEquals(item.getId(), result.getId());
         assertThrows(IllegalStateException.class, result::getRoomId);
         assertThrows(IllegalStateException.class, result::getCharacterId);
-        assertEquals(item.getName(), result.getName());
-        assertEquals(item.getDescription(), result.getDescription());
+        assertEquals(item.getNameList(), result.getNameList());
+        assertEquals(item.getShortDescription(), result.getShortDescription());
+        assertEquals(item.getLongDescription(), result.getLongDescription());
         assertTrue(item.isPrototype());
     }
 
@@ -47,8 +49,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         UUID uuid = UUID.randomUUID();
 
         item.setId(uuid);
-        item.setName("sword");
-        item.setDescription("A sword.");
+        item.setNameList(List.of("sword"));
+        item.setShortDescription("a sword");
+        item.setLongDescription("A sword has been dropped on the ground here.");
 
         MudItem itemInstance = item.buildInstance();
 
@@ -59,11 +62,12 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         Optional<MudItem> resultOptional = uut.getById(uuid, false);
         MudItem result = resultOptional.orElseThrow();
 
-        assertEquals(item.getId(), result.getId());
+        assertEquals(itemInstance.getId(), result.getId());
         assertEquals(100L, result.getRoomId());
         assertNull(result.getCharacterId());
-        assertEquals(item.getName(), result.getName());
-        assertEquals(item.getDescription(), result.getDescription());
+        assertEquals(itemInstance.getNameList(), result.getNameList());
+        assertEquals(itemInstance.getShortDescription(), result.getShortDescription());
+        assertEquals(itemInstance.getLongDescription(), result.getLongDescription());
         assertFalse(result.isPrototype());
     }
 
@@ -74,8 +78,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         UUID uuid = UUID.randomUUID();
 
         item.setId(uuid);
-        item.setName("sword");
-        item.setDescription("A sword.");
+        item.setNameList(List.of("sword"));
+        item.setShortDescription("a sword");
+        item.setLongDescription("A sword has been dropped on the ground here.");
 
         MudItem itemInstance = item.buildInstance();
         UUID chId = UUID.randomUUID();
@@ -90,8 +95,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         assertEquals(item.getId(), result.getId());
         assertNull(result.getRoomId());
         assertEquals(chId, result.getCharacterId());
-        assertEquals(item.getName(), result.getName());
-        assertEquals(item.getDescription(), result.getDescription());
+        assertEquals(itemInstance.getNameList(), result.getNameList());
+        assertEquals(itemInstance.getShortDescription(), result.getShortDescription());
+        assertEquals(itemInstance.getLongDescription(), result.getLongDescription());
         assertFalse(result.isPrototype());
     }
 
@@ -112,8 +118,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         UUID chId = UUID.randomUUID();
 
         item.setId(itemId);
-        item.setName("sword");
-        item.setDescription("A sword.");
+        item.setNameList(List.of("sword"));
+        item.setShortDescription("a sword");
+        item.setLongDescription("A sword has been dropped on the ground here.");
 
         MudItem itemInstance = item.buildInstance();
 
@@ -129,8 +136,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
             .orElseThrow();
 
         assertEquals(itemInstance.getId(), result.getId());
-        assertEquals(itemInstance.getName(), result.getName());
-        assertEquals(itemInstance.getDescription(), result.getDescription());
+        assertEquals(itemInstance.getNameList(), result.getNameList());
+        assertEquals(itemInstance.getShortDescription(), result.getShortDescription());
+        assertEquals(itemInstance.getLongDescription(), result.getLongDescription());
         assertEquals(itemInstance.getCharacterId(), result.getCharacterId());
         assertNull(result.getRoomId());
         assertFalse(result.isPrototype());
@@ -144,8 +152,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
         Long roomId = 100L;
 
         item.setId(itemId);
-        item.setName("sword");
-        item.setDescription("A sword.");
+        item.setNameList(List.of("sword"));
+        item.setShortDescription("a sword");
+        item.setLongDescription("A sword has been dropped on the ground here.");
 
         MudItem itemInstance = item.buildInstance();
 
@@ -161,8 +170,9 @@ public class MudItemRepositoryTest extends DynamoDbLocalInitializingTest {
             .orElseThrow();
 
         assertEquals(itemInstance.getId(), result.getId());
-        assertEquals(itemInstance.getName(), result.getName());
-        assertEquals(itemInstance.getDescription(), result.getDescription());
+        assertEquals(itemInstance.getNameList(), result.getNameList());
+        assertEquals(itemInstance.getShortDescription(), result.getShortDescription());
+        assertEquals(itemInstance.getLongDescription(), result.getLongDescription());
         assertEquals(itemInstance.getRoomId(), result.getRoomId());
         assertNull(result.getCharacterId());
         assertFalse(result.isPrototype());

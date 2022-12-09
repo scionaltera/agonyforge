@@ -44,8 +44,8 @@ public class LookCommand implements Command {
             .forEach(target -> output.append(String.format("[green]%s is here.", target.getName())));
 
         itemRepository.getByRoom(room.getId())
-            .forEach(target -> output.append(String.format("[green]%s is lying on the ground here.",
-                StringUtils.capitalize(target.getName()))));
+            .forEach(target -> output.append(String.format("[green]%s",
+                StringUtils.capitalize(target.getLongDescription()))));
 
         return output;
     }

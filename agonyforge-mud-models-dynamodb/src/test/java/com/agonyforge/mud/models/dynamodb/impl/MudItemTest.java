@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,8 +20,9 @@ public class MudItemTest {
         MudItem proto = new MudItem();
 
         proto.setId(UUID.randomUUID());
-        proto.setName("sword");
-        proto.setDescription("A sword.");
+        proto.setNameList(List.of("sword"));
+        proto.setShortDescription("a sword");
+        proto.setLongDescription("A sword has been dropped on the ground here.");
 
         MudItem instance = proto.buildInstance();
 
@@ -32,8 +34,9 @@ public class MudItemTest {
         assertFalse(instance.isPrototype());
         assertEquals(proto.getId(), instance.getId());
         assertEquals(100L, instance.getRoomId());
-        assertEquals(proto.getName(), instance.getName());
-        assertEquals(proto.getDescription(), instance.getDescription());
+        assertEquals(proto.getNameList(), instance.getNameList());
+        assertEquals(proto.getShortDescription(), instance.getShortDescription());
+        assertEquals(proto.getLongDescription(), instance.getLongDescription());
         assertThrows(IllegalStateException.class, instance::buildInstance);
     }
 
@@ -48,23 +51,26 @@ public class MudItemTest {
     }
 
     @Test
-    void testName() {
+    void testNameList() {
         MudItem uut = new MudItem();
-        String name = "sword";
+        List<String> nameList = List.of("sword");
 
-        uut.setName(name);
+        uut.setNameList(nameList);
 
-        assertEquals(name, uut.getName());
+        assertEquals(nameList, uut.getNameList());
     }
 
     @Test
     void testDescription() {
         MudItem uut = new MudItem();
-        String description = "A sword.";
+        String shortDescription = "a sword";
+        String longDescription = "A sword has been dropped on the ground here.";
 
-        uut.setDescription(description);
+        uut.setShortDescription(shortDescription);
+        uut.setLongDescription(longDescription);
 
-        assertEquals(description, uut.getDescription());
+        assertEquals(shortDescription, uut.getShortDescription());
+        assertEquals(longDescription, uut.getLongDescription());
     }
 
     @Test
