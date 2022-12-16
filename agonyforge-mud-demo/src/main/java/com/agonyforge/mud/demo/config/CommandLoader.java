@@ -46,6 +46,7 @@ public class CommandLoader {
             refs.add(new CommandReference(10, "INVENTORY", "inventoryCommand"));
             refs.add(new CommandReference(10, "GET", "getCommand"));
             refs.add(new CommandReference(10, "DROP", "dropCommand"));
+            refs.add(new CommandReference(10, "GIVE", "giveCommand"));
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs);
