@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class GetCommandTest {
+public class DropCommandTest {
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -56,7 +56,7 @@ public class GetCommandTest {
     private MudItem other;
 
     @Test
-    void testGetNoCharacter() {
+    void testDropNoCharacter() {
         UUID chId = UUID.randomUUID();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -64,12 +64,12 @@ public class GetCommandTest {
         ));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
+            List.of("DROP", "TEST"),
+            new Input("dr t"),
             output);
 
         verifyNoInteractions(itemRepository);
@@ -78,7 +78,7 @@ public class GetCommandTest {
     }
 
     @Test
-    void testGetCharacterInVoid() {
+    void testDropCharacterInVoid() {
         UUID chId = UUID.randomUUID();
 
         when(ch.getRoomId()).thenReturn(null);
@@ -88,50 +88,50 @@ public class GetCommandTest {
         ));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
+            List.of("DROP", "TEST"),
+            new Input("dr t"),
             output);
 
         verifyNoInteractions(itemRepository);
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("nothing to get here"));
+        assertTrue(output.getOutput().get(0).contains("never get it back"));
     }
 
     @Test
-    void testGetNoItem() {
+    void testDropNoItem() {
         UUID chId = UUID.randomUUID();
-        Long roomId = 100L;
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other));
+        when(other.getNameList()).thenReturn(List.of("sword"));
+        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
+            List.of("DROP", "TEST"),
+            new Input("dr t"),
             output);
 
-        verify(itemRepository).getByRoom(eq(roomId));
+        verify(itemRepository).getByCharacter(eq(chId));
         verify(itemRepository, never()).save(any(MudItem.class));
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("anything like that here"));
+        assertTrue(output.getOutput().get(0).contains("anything like that"));
     }
 
     @Test
-    void testGet() {
+    void testDrop() {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
         String itemName = "a scurrilous test";
@@ -144,24 +144,25 @@ public class GetCommandTest {
         ));
         when(item.getNameList()).thenReturn(List.of("test"));
         when(item.getShortDescription()).thenReturn(itemName);
-        when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other, item));
+        when(other.getNameList()).thenReturn(List.of("sword"));
+        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
+            List.of("DROP", "TEST"),
+            new Input("dr t"),
             output);
 
-        verify(itemRepository).getByRoom(eq(roomId));
-        verify(item).setCharacterId(eq(chId));
+        verify(itemRepository).getByCharacter(eq(chId));
+        verify(item).setRoomId(eq(roomId));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));
         verify(commService).sendToRoom(eq(webSocketContext), eq(roomId), any(Output.class));
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You get " + itemName));
+        assertTrue(output.getOutput().get(0).contains("You drop " + itemName));
     }
 }

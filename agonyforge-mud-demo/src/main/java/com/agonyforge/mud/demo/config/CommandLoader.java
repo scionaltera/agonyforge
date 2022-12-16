@@ -45,6 +45,7 @@ public class CommandLoader {
 
             CommandReference inventory = new CommandReference();
             CommandReference get = new CommandReference();
+            CommandReference drop = new CommandReference();
 
             north.setPriority(1);
             north.setName("NORTH");
@@ -120,6 +121,11 @@ public class CommandLoader {
             get.setName("GET");
             get.setBeanName("getCommand");
             refs.add(get);
+
+            drop.setPriority(10);
+            drop.setName("DROP");
+            drop.setBeanName("dropCommand");
+            refs.add(drop);
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs);
