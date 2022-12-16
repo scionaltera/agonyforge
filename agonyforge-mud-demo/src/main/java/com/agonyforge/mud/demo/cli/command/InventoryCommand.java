@@ -20,8 +20,8 @@ import java.util.Optional;
 public class InventoryCommand implements Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(InventoryCommand.class);
 
-    private MudCharacterRepository characterRepository;
-    private MudItemRepository itemRepository;
+    private final MudCharacterRepository characterRepository;
+    private final MudItemRepository itemRepository;
 
     @Autowired
     public InventoryCommand(MudCharacterRepository characterRepository,
