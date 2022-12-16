@@ -112,6 +112,7 @@ public class GetCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(other.getNameList()).thenReturn(List.of("sword"));
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other));
 
         Output output = new Output();
@@ -144,6 +145,7 @@ public class GetCommandTest {
         ));
         when(item.getNameList()).thenReturn(List.of("test"));
         when(item.getShortDescription()).thenReturn(itemName);
+        when(other.getNameList()).thenReturn(List.of("sword"));
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
