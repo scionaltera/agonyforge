@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -24,6 +25,8 @@ public class CommandLoader {
     @PostConstruct
     public void loadCommands() {
         if (commandRepository.getByPriority().isEmpty()) {
+            List<CommandReference> refs = new ArrayList<>();
+
             CommandReference north = new CommandReference();
             CommandReference east = new CommandReference();
             CommandReference south = new CommandReference();
@@ -40,61 +43,80 @@ public class CommandLoader {
             CommandReference look = new CommandReference();
             CommandReference who = new CommandReference();
 
+            CommandReference inventory = new CommandReference();
+
             north.setPriority(1);
             north.setName("NORTH");
             north.setBeanName("northCommand");
+            refs.add(north);
 
             east.setPriority(1);
             east.setName("EAST");
             east.setBeanName("eastCommand");
+            refs.add(east);
 
             south.setPriority(1);
             south.setName("SOUTH");
             south.setBeanName("southCommand");
+            refs.add(south);
 
             west.setPriority(1);
             west.setName("WEST");
             west.setBeanName("westCommand");
+            refs.add(west);
 
             up.setPriority(1);
             up.setName("UP");
             up.setBeanName("upCommand");
+            refs.add(up);
 
             down.setPriority(1);
             down.setName("DOWN");
             down.setBeanName("downCommand");
+            refs.add(down);
 
             gossip.setPriority(10);
             gossip.setName("GOSSIP");
             gossip.setBeanName("gossipCommand");
+            refs.add(gossip);
 
             say.setPriority(10);
             say.setName("SAY");
             say.setBeanName("sayCommand");
+            refs.add(say);
 
             shout.setPriority(10);
             shout.setName("SHOUT");
             shout.setBeanName("shoutCommand");
+            refs.add(shout);
 
             tell.setPriority(10);
             tell.setName("TELL");
             tell.setBeanName("tellCommand");
+            refs.add(tell);
 
             whisper.setPriority(10);
             whisper.setName("WHISPER");
             whisper.setBeanName("whisperCommand");
+            refs.add(whisper);
 
             look.setPriority(10);
             look.setName("LOOK");
             look.setBeanName("lookCommand");
+            refs.add(look);
 
             who.setPriority(10);
             who.setName("WHO");
             who.setBeanName("whoCommand");
+            refs.add(who);
+
+            inventory.setPriority(10);
+            inventory.setName("INVENTORY");
+            inventory.setBeanName("inventoryCommand");
+            refs.add(inventory);
 
             LOGGER.info("Creating command references");
-            commandRepository.saveAll(List.of(gossip, say, shout, look, tell, whisper, north, east, south, west, up,
-                down, who));
+            commandRepository.saveAll(refs);
         }
     }
 }
