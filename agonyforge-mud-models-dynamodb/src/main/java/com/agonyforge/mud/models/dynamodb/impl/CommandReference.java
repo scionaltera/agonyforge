@@ -15,6 +15,16 @@ public class CommandReference implements Persistent {
     private int priority;
     private String beanName;
 
+    public CommandReference() {
+        // this method intentionally left blank
+    }
+
+    public CommandReference(int priority, String name, String beanName) {
+        setPriority(priority);
+        setName(name);
+        setBeanName(beanName);
+    }
+
     @Override
     public Map<String, AttributeValue> freeze() {
         Map<String, AttributeValue> map = new HashMap<>();
