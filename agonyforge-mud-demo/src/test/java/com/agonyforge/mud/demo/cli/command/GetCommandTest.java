@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,9 @@ public class GetCommandTest {
     private MudItemRepository itemRepository;
 
     @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -64,7 +68,7 @@ public class GetCommandTest {
         ));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -88,7 +92,7 @@ public class GetCommandTest {
         ));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -114,7 +118,7 @@ public class GetCommandTest {
         ));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -143,7 +147,7 @@ public class GetCommandTest {
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -176,7 +180,7 @@ public class GetCommandTest {
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

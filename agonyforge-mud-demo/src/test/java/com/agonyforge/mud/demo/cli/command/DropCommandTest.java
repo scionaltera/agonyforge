@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,9 @@ public class DropCommandTest {
     private MudItemRepository itemRepository;
 
     @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -64,7 +68,7 @@ public class DropCommandTest {
         ));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -88,7 +92,7 @@ public class DropCommandTest {
         ));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -112,7 +116,7 @@ public class DropCommandTest {
         ));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -140,7 +144,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -173,7 +177,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

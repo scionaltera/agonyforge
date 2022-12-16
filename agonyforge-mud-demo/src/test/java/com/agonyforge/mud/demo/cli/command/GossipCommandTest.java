@@ -6,6 +6,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +41,12 @@ public class GossipCommandTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -67,7 +75,7 @@ public class GossipCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, commService);
+        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -87,7 +95,7 @@ public class GossipCommandTest {
 
         Input input = new Input("gossip test");
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, commService);
+        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, List.of("GOSSIP", "TEST"), input, output);
 
         assertEquals(question, response);
@@ -106,7 +114,7 @@ public class GossipCommandTest {
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, commService);
+        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

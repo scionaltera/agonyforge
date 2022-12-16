@@ -10,6 +10,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -39,6 +40,9 @@ public class LookCommandTest {
     private MudRoomRepository roomRepository;
 
     @Mock
+    private CommService commService;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -65,7 +69,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository);
+        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),
@@ -89,7 +93,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository);
+        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),
@@ -121,7 +125,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository);
+        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),

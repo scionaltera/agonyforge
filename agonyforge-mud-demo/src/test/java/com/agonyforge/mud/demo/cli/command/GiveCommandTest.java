@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +37,9 @@ public class GiveCommandTest {
 
     @Mock
     private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
 
     @Mock
     private CommService commService;
@@ -67,7 +71,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -91,7 +95,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -117,7 +121,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -143,7 +147,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -172,7 +176,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -203,7 +207,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -238,7 +242,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -276,7 +280,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

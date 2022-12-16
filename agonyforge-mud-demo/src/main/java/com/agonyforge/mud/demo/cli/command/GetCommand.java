@@ -8,9 +8,8 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,20 +18,16 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Component
-public class GetCommand implements Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetCommand.class);
-
-    private final MudCharacterRepository characterRepository;
-    private final MudItemRepository itemRepository;
-    private final CommService commService;
-
+public class GetCommand extends AbstractCommand {
     @Autowired
     public GetCommand(MudCharacterRepository characterRepository,
                       MudItemRepository itemRepository,
+                      MudRoomRepository roomRepository,
                       CommService commService) {
-        this.characterRepository = characterRepository;
-        this.itemRepository = itemRepository;
-        this.commService = commService;
+        super(characterRepository,
+            itemRepository,
+            roomRepository,
+            commService);
     }
 
     @Override

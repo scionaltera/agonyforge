@@ -6,9 +6,9 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class GossipCommand implements Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GossipCommand.class);
-    private final MudCharacterRepository characterRepository;
-    private final CommService commService;
-
+public class GossipCommand extends AbstractCommand {
     @Autowired
     public GossipCommand(MudCharacterRepository characterRepository,
+                         MudItemRepository itemRepository,
+                         MudRoomRepository roomRepository,
                          CommService commService) {
-        this.characterRepository = characterRepository;
-        this.commService = commService;
+        super(characterRepository,
+            itemRepository,
+            roomRepository,
+            commService);
     }
 
     @Override
