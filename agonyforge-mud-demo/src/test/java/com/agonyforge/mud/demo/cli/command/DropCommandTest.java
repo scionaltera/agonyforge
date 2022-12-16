@@ -103,6 +103,31 @@ public class DropCommandTest {
     }
 
     @Test
+    void testDropNoArg() {
+        UUID chId = UUID.randomUUID();
+
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+
+        Output output = new Output();
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("DROP"),
+            new Input("dr"),
+            output);
+
+        verify(itemRepository, never()).getByCharacter(eq(chId));
+        verify(itemRepository, never()).save(any(MudItem.class));
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("What would you like"));
+    }
+
+    @Test
     void testDropNoItem() {
         UUID chId = UUID.randomUUID();
 

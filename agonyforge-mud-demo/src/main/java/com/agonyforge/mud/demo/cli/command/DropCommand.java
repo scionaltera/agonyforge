@@ -50,6 +50,11 @@ public class DropCommand implements Command {
             return question;
         }
 
+        if (tokens.size() == 1) {
+            output.append("[default]What would you like to drop?");
+            return question;
+        }
+
         List<MudItem> items = itemRepository.getByCharacter(ch.getId());
         Optional<MudItem> targetOptional = items
             .stream()

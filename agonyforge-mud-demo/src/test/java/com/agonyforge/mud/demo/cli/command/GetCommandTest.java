@@ -103,6 +103,33 @@ public class GetCommandTest {
     }
 
     @Test
+    void testGetNoArg() {
+        UUID chId = UUID.randomUUID();
+        Long roomId = 100L;
+
+        when(ch.getRoomId()).thenReturn(roomId);
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+
+        Output output = new Output();
+        GetCommand uut = new GetCommand(characterRepository, itemRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("GET"),
+            new Input("g"),
+            output);
+
+        verify(itemRepository, never()).getByRoom(eq(roomId));
+        verify(itemRepository, never()).save(any(MudItem.class));
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("What would you like to get"));
+    }
+
+    @Test
     void testGetNoItem() {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;

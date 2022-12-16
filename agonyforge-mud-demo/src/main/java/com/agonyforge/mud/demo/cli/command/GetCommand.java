@@ -50,6 +50,11 @@ public class GetCommand implements Command {
             return question;
         }
 
+        if (tokens.size() == 1) {
+            output.append("[default]What would you like to get?");
+            return question;
+        }
+
         List<MudItem> items = itemRepository.getByRoom(ch.getRoomId());
         Optional<MudItem> targetOptional = items
             .stream()
