@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -24,77 +25,31 @@ public class CommandLoader {
     @PostConstruct
     public void loadCommands() {
         if (commandRepository.getByPriority().isEmpty()) {
-            CommandReference north = new CommandReference();
-            CommandReference east = new CommandReference();
-            CommandReference south = new CommandReference();
-            CommandReference west = new CommandReference();
-            CommandReference up = new CommandReference();
-            CommandReference down = new CommandReference();
+            List<CommandReference> refs = new ArrayList<>();
 
-            CommandReference gossip = new CommandReference();
-            CommandReference say = new CommandReference();
-            CommandReference shout = new CommandReference();
-            CommandReference tell = new CommandReference();
-            CommandReference whisper = new CommandReference();
+            refs.add(new CommandReference(1, "NORTH", "northCommand"));
+            refs.add(new CommandReference(1, "EAST", "eastCommand"));
+            refs.add(new CommandReference(1, "SOUTH", "southCommand"));
+            refs.add(new CommandReference(1, "WEST", "westCommand"));
+            refs.add(new CommandReference(1, "UP", "upCommand"));
+            refs.add(new CommandReference(1, "DOWN", "downCommand"));
 
-            CommandReference look = new CommandReference();
-            CommandReference who = new CommandReference();
+            refs.add(new CommandReference(10, "GOSSIP", "gossipCommand"));
+            refs.add(new CommandReference(10, "SAY", "sayCommand"));
+            refs.add(new CommandReference(10, "SHOUT", "shoutCommand"));
+            refs.add(new CommandReference(10, "TELL", "tellCommand"));
+            refs.add(new CommandReference(10, "WHISPER", "whisperCommand"));
 
-            north.setPriority(1);
-            north.setName("NORTH");
-            north.setBeanName("northCommand");
+            refs.add(new CommandReference(10, "LOOK", "lookCommand"));
+            refs.add(new CommandReference(10, "WHO", "whoCommand"));
 
-            east.setPriority(1);
-            east.setName("EAST");
-            east.setBeanName("eastCommand");
-
-            south.setPriority(1);
-            south.setName("SOUTH");
-            south.setBeanName("southCommand");
-
-            west.setPriority(1);
-            west.setName("WEST");
-            west.setBeanName("westCommand");
-
-            up.setPriority(1);
-            up.setName("UP");
-            up.setBeanName("upCommand");
-
-            down.setPriority(1);
-            down.setName("DOWN");
-            down.setBeanName("downCommand");
-
-            gossip.setPriority(10);
-            gossip.setName("GOSSIP");
-            gossip.setBeanName("gossipCommand");
-
-            say.setPriority(10);
-            say.setName("SAY");
-            say.setBeanName("sayCommand");
-
-            shout.setPriority(10);
-            shout.setName("SHOUT");
-            shout.setBeanName("shoutCommand");
-
-            tell.setPriority(10);
-            tell.setName("TELL");
-            tell.setBeanName("tellCommand");
-
-            whisper.setPriority(10);
-            whisper.setName("WHISPER");
-            whisper.setBeanName("whisperCommand");
-
-            look.setPriority(10);
-            look.setName("LOOK");
-            look.setBeanName("lookCommand");
-
-            who.setPriority(10);
-            who.setName("WHO");
-            who.setBeanName("whoCommand");
+            refs.add(new CommandReference(10, "INVENTORY", "inventoryCommand"));
+            refs.add(new CommandReference(10, "GET", "getCommand"));
+            refs.add(new CommandReference(10, "DROP", "dropCommand"));
+            refs.add(new CommandReference(10, "GIVE", "giveCommand"));
 
             LOGGER.info("Creating command references");
-            commandRepository.saveAll(List.of(gossip, say, shout, look, tell, whisper, north, east, south, west, up,
-                down, who));
+            commandRepository.saveAll(refs);
         }
     }
 }
