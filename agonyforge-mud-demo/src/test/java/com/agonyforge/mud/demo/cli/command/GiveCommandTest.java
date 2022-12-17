@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,9 @@ public class GiveCommandTest {
     private MudItemRepository itemRepository;
 
     @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -59,53 +63,6 @@ public class GiveCommandTest {
     private MudItem other;
 
     @Test
-    void testGiveNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GIVE", "TEST", "SP"),
-            new Input("g t sp"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-    }
-
-    @Test
-    void testGiveCharacterInVoid() {
-        UUID chId = UUID.randomUUID();
-
-        when(ch.getRoomId()).thenReturn(null);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GIVE", "TEST", "SP"),
-            new Input("g t sp"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("nobody else here"));
-    }
-
-    @Test
     void testGiveNoArgs() {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
@@ -117,7 +74,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -143,7 +100,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -172,7 +129,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -203,7 +160,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -217,41 +174,6 @@ public class GiveCommandTest {
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You don't see anyone"));
-    }
-
-    @Test
-    void testGiveToSelf() {
-        UUID chId = UUID.randomUUID();
-        Long roomId = 100L;
-
-        when(ch.getId()).thenReturn(chId);
-        when(ch.getRoomId()).thenReturn(roomId);
-        when(ch.getName()).thenReturn("Scion");
-        when(target.getName()).thenReturn("Spook");
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(target, ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(item.getNameList()).thenReturn(List.of("spoon"));
-        when(other.getNameList()).thenReturn(List.of("test"));
-        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GIVE", "SPOON", "SCION"),
-            new Input("g sp sc"),
-            output);
-
-        verify(itemRepository).getByCharacter(eq(chId));
-        verify(characterRepository).getByRoom(eq(roomId));
-        verify(itemRepository, never()).save(eq(item));
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You offer it to yourself"));
     }
 
     @Test
@@ -276,7 +198,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, commService);
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

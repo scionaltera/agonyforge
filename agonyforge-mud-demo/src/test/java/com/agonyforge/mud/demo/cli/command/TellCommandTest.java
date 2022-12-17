@@ -6,6 +6,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -39,10 +40,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class TellCommandTest {
     @Mock
-    private CommService commService;
+    private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterRepository characterRepository;
+    private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private MudCharacter ch;
@@ -89,7 +96,7 @@ public class TellCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        TellCommand uut = new TellCommand(characterRepository, commService);
+        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -106,23 +113,6 @@ public class TellCommandTest {
             .anyMatch(line -> line.equals("[red]Scion tells you, '" + match + "[red]'")));
     }
 
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("tell t test");
-        Output output = new Output();
-        TellCommand uut = new TellCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("TELL", "T", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {
         "tell",
@@ -134,7 +124,7 @@ public class TellCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        TellCommand uut = new TellCommand(characterRepository, commService);
+        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -155,7 +145,7 @@ public class TellCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        TellCommand uut = new TellCommand(characterRepository, commService);
+        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -177,36 +167,12 @@ public class TellCommandTest {
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
 
-        TellCommand uut = new TellCommand(characterRepository, commService);
+        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
         assertEquals("[default]There isn't anyone by that name.", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
-    @Test
-    void testExecuteTargetIsSelf() {
-        List<String> tokens = tokenize("tell s foo");
-        Input input = new Input("tell s foo");
-        Output output = new Output();
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch));
-        when(ch.getName()).thenReturn("Scion");
-
-        TellCommand uut = new TellCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]You mumble quietly to yourself.", output.getOutput().get(0));
 
         verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
     }

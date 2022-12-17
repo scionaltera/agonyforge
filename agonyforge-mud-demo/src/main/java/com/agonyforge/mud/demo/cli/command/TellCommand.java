@@ -6,29 +6,26 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
-
 @Component
-public class TellCommand implements Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TellCommand.class);
-    private final MudCharacterRepository characterRepository;
-    private final CommService commService;
-
+public class TellCommand extends AbstractCommand {
     @Autowired
     public TellCommand(MudCharacterRepository characterRepository,
+                       MudItemRepository itemRepository,
+                       MudRoomRepository roomRepository,
                        CommService commService) {
-        this.characterRepository = characterRepository;
-        this.commService = commService;
+        super(characterRepository,
+            itemRepository,
+            roomRepository,
+            commService);
     }
 
     @Override
@@ -50,29 +47,15 @@ public class TellCommand implements Command {
 
         String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-        Optional<MudCharacter> targetOptional = characterRepository.getByType(TYPE_PC)
-            .stream()
-            .filter(c -> !c.isPrototype())
-            .filter(c -> c.getName().toUpperCase(Locale.ROOT).startsWith(targetName))
-            .findFirst();
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        Optional<MudCharacter> targetOptional = findWorldCharacter(ch, targetName);
 
         if (targetOptional.isEmpty()) {
             output.append("[default]There isn't anyone by that name.");
             return question;
         }
 
-        MudCharacter ch = chOptional.get();
         MudCharacter target = targetOptional.get();
-
-        if (ch.equals(target)) {
-            output.append("[default]You mumble quietly to yourself.");
-            return question;
-        }
 
         output.append(String.format("[red]You tell %s, '%s[red]'", target.getName(), message));
         commService.sendTo(target, new Output(String.format("[red]%s tells you, '%s[red]'", ch.getName(), message)));

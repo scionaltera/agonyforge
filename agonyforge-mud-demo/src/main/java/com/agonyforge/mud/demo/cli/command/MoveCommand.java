@@ -19,13 +19,9 @@ import java.util.Optional;
 
 // intentionally not annotation with @Component
 // the movement commands are configured in MoveConfiguration since they all share the same class
-public class MoveCommand implements Command {
+public class MoveCommand extends AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveCommand.class);
 
-    private final MudCharacterRepository characterRepository;
-    private final MudItemRepository itemRepository;
-    private final MudRoomRepository roomRepository;
-    private final CommService commService;
     private final Direction direction;
 
     public MoveCommand(MudCharacterRepository characterRepository,
@@ -33,10 +29,11 @@ public class MoveCommand implements Command {
                        MudRoomRepository roomRepository,
                        CommService commService,
                        Direction direction) {
-        this.characterRepository = characterRepository;
-        this.itemRepository = itemRepository;
-        this.roomRepository = roomRepository;
-        this.commService = commService;
+        super(characterRepository,
+            itemRepository,
+            roomRepository,
+            commService);
+
         this.direction = direction;
     }
 
@@ -46,14 +43,7 @@ public class MoveCommand implements Command {
                             List<String> tokens,
                             Input input,
                             Output output) {
-
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
-        MudCharacter ch = chOptional.get();
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {

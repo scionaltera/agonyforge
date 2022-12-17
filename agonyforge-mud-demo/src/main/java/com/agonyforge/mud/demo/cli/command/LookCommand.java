@@ -9,6 +9,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class LookCommand implements Command {
+public class LookCommand extends AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(LookCommand.class);
-
-    private final MudCharacterRepository characterRepository;
-    private final MudItemRepository itemRepository;
-    private final MudRoomRepository roomRepository;
 
     public static Output doLook(MudCharacterRepository characterRepository,
                                 MudItemRepository itemRepository,
@@ -53,10 +50,12 @@ public class LookCommand implements Command {
     @Autowired
     public LookCommand(MudCharacterRepository characterRepository,
                        MudItemRepository itemRepository,
-                       MudRoomRepository roomRepository) {
-        this.characterRepository = characterRepository;
-        this.itemRepository = itemRepository;
-        this.roomRepository = roomRepository;
+                       MudRoomRepository roomRepository,
+                       CommService commService) {
+        super(characterRepository,
+            itemRepository,
+            roomRepository,
+            commService);
     }
 
     @Override
@@ -65,14 +64,7 @@ public class LookCommand implements Command {
                             List<String> tokens,
                             Input input,
                             Output output) {
-
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
-        MudCharacter ch = chOptional.get();
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {

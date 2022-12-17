@@ -83,6 +83,10 @@ public class CommandQuestion extends DemoQuestion {
             Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
             Question next = command.execute(this, webSocketContext, tokens, input, output);
             return new Response(next, output);
+        } catch (CommandException e) {
+            LOGGER.warn("Command failed: {}", e.getMessage());
+            output.append("[red]Oops! Something went wrong...");
+            return new Response(this, output);
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("No Command found for beanName: {}", ref.getBeanName());
             output.append("[default]Huh?");

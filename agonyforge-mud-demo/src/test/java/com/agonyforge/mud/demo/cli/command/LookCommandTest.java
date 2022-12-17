@@ -10,6 +10,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,7 +25,6 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +37,9 @@ public class LookCommandTest {
 
     @Mock
     private MudRoomRepository roomRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private MudCharacter ch;
@@ -57,27 +60,6 @@ public class LookCommandTest {
     private Question question;
 
     @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository);
-        Question result = uut.execute(question,
-            webSocketContext,
-            List.of("LOOK"),
-            new Input("look"),
-            output);
-
-        verifyNoInteractions(roomRepository);
-
-        assertEquals(question, result);
-    }
-
-    @Test
     void testExecuteNoRoom() {
         UUID chId = UUID.randomUUID();
         long roomId = 100L;
@@ -89,7 +71,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository);
+        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),
@@ -121,7 +103,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository);
+        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),

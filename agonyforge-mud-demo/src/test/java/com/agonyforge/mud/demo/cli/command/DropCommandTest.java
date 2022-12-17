@@ -8,6 +8,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +36,9 @@ public class DropCommandTest {
 
     @Mock
     private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
 
     @Mock
     private CommService commService;
@@ -56,53 +59,6 @@ public class DropCommandTest {
     private MudItem other;
 
     @Test
-    void testDropNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("DROP", "TEST"),
-            new Input("dr t"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-    }
-
-    @Test
-    void testDropCharacterInVoid() {
-        UUID chId = UUID.randomUUID();
-
-        when(ch.getRoomId()).thenReturn(null);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("DROP", "TEST"),
-            new Input("dr t"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("never get it back"));
-    }
-
-    @Test
     void testDropNoArg() {
         UUID chId = UUID.randomUUID();
 
@@ -112,7 +68,7 @@ public class DropCommandTest {
         ));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -140,7 +96,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -173,7 +129,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, commService);
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

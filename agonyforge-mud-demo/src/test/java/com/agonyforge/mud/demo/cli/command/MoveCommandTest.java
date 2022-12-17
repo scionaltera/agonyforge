@@ -88,25 +88,6 @@ public class MoveCommandTest {
     }
 
     @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("west");
-        Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
-        Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
-
-        assertEquals(question, response);
-
-        verifyNoInteractions(commService);
-        verifyNoInteractions(roomRepository);
-        verify(characterRepository, never()).save(any(MudCharacter.class));
-    }
-
-    @Test
     void testExecuteNoRoom() {
         UUID chId = UUID.randomUUID();
         when(webSocketContext.getAttributes()).thenReturn(Map.of(

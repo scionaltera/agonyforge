@@ -6,6 +6,9 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,6 +26,15 @@ import static org.mockito.Mockito.when;
 public class WhoCommandTest {
     @Mock
     private MudCharacterRepository characterRepository;
+
+    @Mock
+    private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private MudCharacter ch;
@@ -52,7 +64,7 @@ public class WhoCommandTest {
         when(chInstance.getName()).thenReturn("Scion");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(characterRepository);
+        WhoCommand uut = new WhoCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);
@@ -75,7 +87,7 @@ public class WhoCommandTest {
         when(otherInstance.getName()).thenReturn("Spook");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(characterRepository);
+        WhoCommand uut = new WhoCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);

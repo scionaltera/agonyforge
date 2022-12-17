@@ -6,6 +6,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,10 +36,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ShoutCommandTest {
     @Mock
-    private CommService commService;
+    private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterRepository characterRepository;
+    private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private MudCharacter ch;
@@ -69,7 +77,7 @@ public class ShoutCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        ShoutCommand uut = new ShoutCommand(characterRepository, commService);
+        ShoutCommand uut = new ShoutCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -78,23 +86,6 @@ public class ShoutCommandTest {
 
         verify(characterRepository).getById(eq(chId), anyBoolean());
         verify(commService).sendToZone(eq(webSocketContext), eq(1L), any(Output.class));
-    }
-
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("shout test");
-        Output output = new Output();
-        ShoutCommand uut = new ShoutCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("SHOUT", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendToZone(eq(webSocketContext), anyLong(), any(Output.class));
     }
 
     @ParameterizedTest
@@ -108,7 +99,7 @@ public class ShoutCommandTest {
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        ShoutCommand uut = new ShoutCommand(characterRepository, commService);
+        ShoutCommand uut = new ShoutCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

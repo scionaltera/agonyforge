@@ -28,6 +28,7 @@ import java.util.UUID;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -116,6 +117,28 @@ public class CommandQuestionTest {
 
         assertEquals(question, result.getNext());
         assertNotNull(output);
+
+        verify(commandRepository).getByPriority();
+        verify(applicationContext).getBean(eq("testCommand"), eq(Command.class));
+    }
+
+    @Test
+    void testAnswerCommandException() {
+        CommandReference commandReference = mock(CommandReference.class);
+
+        when(commandReference.getName()).thenReturn("TEST");
+        when(commandReference.getBeanName()).thenReturn("testCommand");
+
+        when(commandRepository.getByPriority()).thenReturn(List.of(commandReference));
+        when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenThrow(new CommandException("oops!"));
+
+        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        Response result = uut.answer(webSocketContext, new Input("test"));
+        Output output = result.getFeedback().orElseThrow();
+
+        assertEquals(uut, result.getNext());
+        assertEquals(1, output.getOutput().size());
+        assertTrue(output.getOutput().get(0).contains("[red]"));
 
         verify(commandRepository).getByPriority();
         verify(applicationContext).getBean(eq("testCommand"), eq(Command.class));

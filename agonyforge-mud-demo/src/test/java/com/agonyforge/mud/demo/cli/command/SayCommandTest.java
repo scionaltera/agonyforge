@@ -4,6 +4,8 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -34,10 +36,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SayCommandTest {
     @Mock
-    private CommService commService;
+    private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterRepository characterRepository;
+    private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private MudCharacter ch;
@@ -69,7 +77,7 @@ public class SayCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, commService);
+        SayCommand uut = new SayCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -78,23 +86,6 @@ public class SayCommandTest {
 
         verify(characterRepository).getById(eq(chId), anyBoolean());
         verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));
-    }
-
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("say test");
-        Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("SAY", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendToRoom(eq(webSocketContext), anyLong(), any(Output.class));
     }
 
     @ParameterizedTest
@@ -108,7 +99,7 @@ public class SayCommandTest {
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, commService);
+        SayCommand uut = new SayCommand(characterRepository, itemRepository, roomRepository, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
