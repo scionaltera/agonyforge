@@ -27,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,53 +57,6 @@ public class GetCommandTest {
 
     @Mock
     private MudItem other;
-
-    @Test
-    void testGetNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-    }
-
-    @Test
-    void testGetCharacterInVoid() {
-        UUID chId = UUID.randomUUID();
-
-        when(ch.getRoomId()).thenReturn(null);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GetCommand uut = new GetCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("nothing to get here"));
-    }
 
     @Test
     void testGetNoArg() {

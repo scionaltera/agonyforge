@@ -113,23 +113,6 @@ public class TellCommandTest {
             .anyMatch(line -> line.equals("[red]Scion tells you, '" + match + "[red]'")));
     }
 
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("tell t test");
-        Output output = new Output();
-        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("TELL", "T", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {
         "tell",

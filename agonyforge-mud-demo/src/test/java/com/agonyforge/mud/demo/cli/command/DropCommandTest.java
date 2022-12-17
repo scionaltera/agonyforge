@@ -27,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,53 +57,6 @@ public class DropCommandTest {
 
     @Mock
     private MudItem other;
-
-    @Test
-    void testDropNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("DROP", "TEST"),
-            new Input("dr t"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-    }
-
-    @Test
-    void testDropCharacterInVoid() {
-        UUID chId = UUID.randomUUID();
-
-        when(ch.getRoomId()).thenReturn(null);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("DROP", "TEST"),
-            new Input("dr t"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("never get it back"));
-    }
 
     @Test
     void testDropNoArg() {

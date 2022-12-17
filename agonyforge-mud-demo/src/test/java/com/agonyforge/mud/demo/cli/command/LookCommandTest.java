@@ -25,7 +25,6 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,27 +58,6 @@ public class LookCommandTest {
 
     @Mock
     private Question question;
-
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(question,
-            webSocketContext,
-            List.of("LOOK"),
-            new Input("look"),
-            output);
-
-        verifyNoInteractions(roomRepository);
-
-        assertEquals(question, result);
-    }
 
     @Test
     void testExecuteNoRoom() {

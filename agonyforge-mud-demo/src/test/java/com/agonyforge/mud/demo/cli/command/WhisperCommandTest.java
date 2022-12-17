@@ -118,23 +118,6 @@ public class WhisperCommandTest {
             .anyMatch(line -> line.equals("[red]Scion whispers something to Target.")));
     }
 
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("whisper t test");
-        Output output = new Output();
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("WHISPER", "T", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {
         "whisper",

@@ -63,53 +63,6 @@ public class GiveCommandTest {
     private MudItem other;
 
     @Test
-    void testGiveNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GIVE", "TEST", "SP"),
-            new Input("g t sp"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-    }
-
-    @Test
-    void testGiveCharacterInVoid() {
-        UUID chId = UUID.randomUUID();
-
-        when(ch.getRoomId()).thenReturn(null);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GIVE", "TEST", "SP"),
-            new Input("g t sp"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("nobody else here"));
-    }
-
-    @Test
     void testGiveNoArgs() {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;

@@ -88,23 +88,6 @@ public class ShoutCommandTest {
         verify(commService).sendToZone(eq(webSocketContext), eq(1L), any(Output.class));
     }
 
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("shout test");
-        Output output = new Output();
-        ShoutCommand uut = new ShoutCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("SHOUT", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendToZone(eq(webSocketContext), anyLong(), any(Output.class));
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {
         "shout",

@@ -9,7 +9,6 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -84,23 +83,6 @@ public class GossipCommandTest {
 
         verify(characterRepository).getById(eq(chId), anyBoolean());
         verify(commService).sendToAll(eq(webSocketContext), any(Output.class));
-    }
-
-    @Test
-    void testExecuteNoCharacter() {
-        UUID chId = UUID.randomUUID();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Input input = new Input("gossip test");
-        Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question response = uut.execute(question, webSocketContext, List.of("GOSSIP", "TEST"), input, output);
-
-        assertEquals(question, response);
-
-        verify(commService, never()).sendToAll(eq(webSocketContext), any(Output.class));
     }
 
     @ParameterizedTest

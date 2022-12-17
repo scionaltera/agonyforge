@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,28 +52,6 @@ public class InventoryCommandTest {
 
     @Mock
     private MudItem item;
-
-    @Test
-    void testInventoryNoCharacter() {
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("INVENTORY"),
-            new Input("i"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-    }
 
     @Test
     void testInventory() {
