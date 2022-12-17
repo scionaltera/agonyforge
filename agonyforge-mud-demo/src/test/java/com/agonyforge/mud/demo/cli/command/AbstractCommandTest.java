@@ -21,9 +21,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +49,12 @@ public class AbstractCommandTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private MudCharacter target;
+
+    @Mock
+    private MudCharacter proto;
 
     @Mock
     private Question question;
@@ -127,5 +137,47 @@ public class AbstractCommandTest {
             List.of("TEST"),
             new Input("test"),
             output));
+    }
+
+    @Test
+    void testFindRoomCharacter() {
+        Long roomId = 100L;
+
+        lenient().when(ch.getName()).thenReturn("Scion");
+        when(ch.getRoomId()).thenReturn(roomId);
+        when(target.getName()).thenReturn("Morgan");
+        when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
+
+        AbstractCommand uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+                return question;
+            }
+        };
+
+        assertTrue(uut.findRoomCharacter(ch, "Scion").isEmpty()); // can't find yourself
+        assertTrue(uut.findRoomCharacter(ch, "Morgan").isPresent()); // case-insensitive match
+    }
+
+    @Test
+    void testFindWorldCharacter() {
+        lenient().when(ch.getName()).thenReturn("Scion");
+        lenient().when(ch.isPrototype()).thenReturn(false);
+        when(proto.isPrototype()).thenReturn(true);
+        when(target.getName()).thenReturn("Morgan");
+        when(target.isPrototype()).thenReturn(false);
+        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, proto, target));
+
+        AbstractCommand uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+                return question;
+            }
+        };
+
+        assertTrue(uut.findWorldCharacter(ch, "Scion").isEmpty()); // can't find yourself
+        assertFalse(uut.findWorldCharacter(ch, "Morgan")
+            .orElseThrow()   // case-insensitive match
+            .isPrototype()); // is not prototype
     }
 }

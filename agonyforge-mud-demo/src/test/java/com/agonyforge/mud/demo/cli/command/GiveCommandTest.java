@@ -177,41 +177,6 @@ public class GiveCommandTest {
     }
 
     @Test
-    void testGiveToSelf() {
-        UUID chId = UUID.randomUUID();
-        Long roomId = 100L;
-
-        when(ch.getId()).thenReturn(chId);
-        when(ch.getRoomId()).thenReturn(roomId);
-        when(ch.getName()).thenReturn("Scion");
-        when(target.getName()).thenReturn("Spook");
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(target, ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(item.getNameList()).thenReturn(List.of("spoon"));
-        when(other.getNameList()).thenReturn(List.of("test"));
-        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("GIVE", "SPOON", "SCION"),
-            new Input("g sp sc"),
-            output);
-
-        verify(itemRepository).getByCharacter(eq(chId));
-        verify(characterRepository).getByRoom(eq(roomId));
-        verify(itemRepository, never()).save(eq(item));
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You offer it to yourself"));
-    }
-
-    @Test
     void testGive() {
         UUID chId = UUID.randomUUID();
         UUID targetId = UUID.randomUUID();

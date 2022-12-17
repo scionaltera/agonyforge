@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 
 @Component
 public class TellCommand extends AbstractCommand {
@@ -51,11 +48,7 @@ public class TellCommand extends AbstractCommand {
         String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = characterRepository.getByType(TYPE_PC)
-            .stream()
-            .filter(c -> !c.isPrototype())
-            .filter(c -> c.getName().toUpperCase(Locale.ROOT).startsWith(targetName))
-            .findFirst();
+        Optional<MudCharacter> targetOptional = findWorldCharacter(ch, targetName);
 
         if (targetOptional.isEmpty()) {
             output.append("[default]There isn't anyone by that name.");
@@ -63,11 +56,6 @@ public class TellCommand extends AbstractCommand {
         }
 
         MudCharacter target = targetOptional.get();
-
-        if (ch.equals(target)) {
-            output.append("[default]You mumble quietly to yourself.");
-            return question;
-        }
 
         output.append(String.format("[red]You tell %s, '%s[red]'", target.getName(), message));
         commService.sendTo(target, new Output(String.format("[red]%s tells you, '%s[red]'", ch.getName(), message)));

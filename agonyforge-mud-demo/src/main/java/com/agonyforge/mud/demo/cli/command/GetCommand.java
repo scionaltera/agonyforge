@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Component
@@ -39,13 +38,7 @@ public class GetCommand extends AbstractCommand {
             return question;
         }
 
-        List<MudItem> items = itemRepository.getByRoom(ch.getRoomId());
-        Optional<MudItem> targetOptional = items
-            .stream()
-            .filter(item -> item.getNameList()
-                .stream()
-                .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(tokens.get(1))))
-            .findFirst();
+        Optional<MudItem> targetOptional = findRoomItem(ch, tokens.get(1));
 
         if (targetOptional.isEmpty()) {
             output.append("[default]You don't see anything like that here.");

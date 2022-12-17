@@ -4,15 +4,19 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.CommandException;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 
 public abstract class AbstractCommand implements Command {
     protected final MudCharacterRepository characterRepository;
@@ -48,5 +52,48 @@ public abstract class AbstractCommand implements Command {
         }
 
         return ch;
+    }
+
+    protected Optional<MudItem> findInventoryItem(MudCharacter ch, String token) {
+        List<MudItem> items = itemRepository.getByCharacter(ch.getId());
+
+        return items
+            .stream()
+            .filter(item -> item.getNameList()
+                .stream()
+                .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
+            .findFirst();
+    }
+
+    protected Optional<MudItem> findRoomItem(MudCharacter ch, String token) {
+        List<MudItem> items = itemRepository.getByRoom(ch.getRoomId());
+
+        return items
+            .stream()
+            .filter(item -> item.getNameList()
+                .stream()
+                .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
+            .findFirst();
+    }
+
+    protected Optional<MudCharacter> findRoomCharacter(MudCharacter ch, String token) {
+        List<MudCharacter> targets = characterRepository.getByRoom(ch.getRoomId());
+
+        return targets
+            .stream()
+            .filter(tch -> !tch.equals(ch))
+            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .findFirst();
+    }
+
+    protected Optional<MudCharacter> findWorldCharacter(MudCharacter ch, String token) {
+        List<MudCharacter> targets = characterRepository.getByType(TYPE_PC);
+
+        return targets
+            .stream()
+            .filter(tch -> !tch.equals(ch))
+            .filter(tch -> !tch.isPrototype())
+            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .findFirst();
     }
 }

@@ -177,30 +177,6 @@ public class TellCommandTest {
         verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
     }
 
-    @Test
-    void testExecuteTargetIsSelf() {
-        List<String> tokens = tokenize("tell s foo");
-        Input input = new Input("tell s foo");
-        Output output = new Output();
-        UUID chId = UUID.randomUUID();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch));
-        when(ch.getName()).thenReturn("Scion");
-
-        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]You mumble quietly to yourself.", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
     private List<String> tokenize(String val) {
         return Arrays
             .stream(val.split(" "))

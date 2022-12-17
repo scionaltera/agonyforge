@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Component
@@ -49,10 +48,7 @@ public class WhisperCommand extends AbstractCommand {
         String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = characterRepository.getByRoom(ch.getRoomId())
-            .stream()
-            .filter(c -> c.getName().toUpperCase(Locale.ROOT).startsWith(targetName))
-            .findFirst();
+        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, targetName);
 
         if (targetOptional.isEmpty()) {
             output.append("[default]There isn't anyone by that name.");
@@ -60,11 +56,6 @@ public class WhisperCommand extends AbstractCommand {
         }
 
         MudCharacter target = targetOptional.get();
-
-        if (ch.equals(target)) {
-            output.append("[default]You whisper quietly to yourself.");
-            return question;
-        }
 
         output.append(String.format("[red]You whisper to %s, '%s[red]'", target.getName(), message));
         commService.sendTo(target, new Output(String.format("[red]%s whispers to you, '%s[red]'", ch.getName(), message)));

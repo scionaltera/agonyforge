@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Component
@@ -44,24 +43,13 @@ public class GiveCommand extends AbstractCommand {
             return question;
         }
 
-        List<MudItem> items = itemRepository.getByCharacter(ch.getId());
-        Optional<MudItem> itemOptional = items
-            .stream()
-            .filter(item -> item.getNameList()
-                .stream()
-                .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(tokens.get(1))))
-            .findFirst();
+        Optional<MudItem> itemOptional = findInventoryItem(ch, tokens.get(1));
+        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, tokens.get(2));
 
         if (itemOptional.isEmpty()) {
             output.append("[default]You don't have anything like that.");
             return question;
         }
-
-        List<MudCharacter> targets = characterRepository.getByRoom(ch.getRoomId());
-        Optional<MudCharacter> targetOptional = targets
-            .stream()
-            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(tokens.get(2)))
-            .findFirst();
 
         if (targetOptional.isEmpty()) {
             output.append("[default]You don't see anyone by that name here.");
@@ -70,11 +58,6 @@ public class GiveCommand extends AbstractCommand {
 
         MudItem item = itemOptional.get();
         MudCharacter target = targetOptional.get();
-
-        if (ch.equals(target)) {
-            output.append("[default]You offer it to yourself, and graciously accept.");
-            return question;
-        }
 
         item.setCharacterId(target.getId());
         itemRepository.save(item);
