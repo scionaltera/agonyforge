@@ -64,7 +64,7 @@ public class LookCommand extends AbstractCommand {
                             List<String> tokens,
                             Input input,
                             Output output) {
-        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {

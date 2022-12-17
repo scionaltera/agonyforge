@@ -50,7 +50,7 @@ public class TellCommand extends AbstractCommand {
 
         String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
-        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudCharacter> targetOptional = characterRepository.getByType(TYPE_PC)
             .stream()
             .filter(c -> !c.isPrototype())

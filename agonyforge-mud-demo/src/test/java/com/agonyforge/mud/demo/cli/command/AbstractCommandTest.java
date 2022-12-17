@@ -7,6 +7,9 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.CommandException;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,9 +27,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CommandTest {
+public class AbstractCommandTest {
     @Mock
     private MudCharacterRepository characterRepository;
+
+    @Mock
+    private MudItemRepository itemRepository;
+
+    @Mock
+    private MudRoomRepository roomRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -47,10 +59,12 @@ public class CommandTest {
         ));
 
         Output output = new Output();
-        Command uut = (question, webSocketContext, tokens, input, output1) -> {
-            Command.getCharacter(characterRepository, webSocketContext, output1);
-
-            return question;
+        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+                getCurrentCharacter(webSocketContext, output);
+                return question;
+            }
         };
 
         assertThrows(CommandException.class, () -> uut.execute(
@@ -72,10 +86,12 @@ public class CommandTest {
         ));
 
         Output output = new Output();
-        Command uut = (question, webSocketContext, tokens, input, output1) -> {
-            Command.getCharacter(characterRepository, webSocketContext, output1);
-
-            return question;
+        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+                getCurrentCharacter(webSocketContext, output);
+                return question;
+            }
         };
 
         assertThrows(CommandException.class, () -> uut.execute(
@@ -97,10 +113,12 @@ public class CommandTest {
         ));
 
         Output output = new Output();
-        Command uut = (question, webSocketContext, tokens, input, output1) -> {
-            Command.getCharacter(characterRepository, webSocketContext, output1);
-
-            return question;
+        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+                getCurrentCharacter(webSocketContext, output);
+                return question;
+            }
         };
 
         assertEquals(question, uut.execute(

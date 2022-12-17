@@ -42,7 +42,7 @@ public class SayCommand extends AbstractCommand {
             return question;
         }
 
-        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         output.append("[cyan]You say, '" + message + "[cyan]'");
         commService.sendToRoom(webSocketContext, ch.getRoomId(), new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), message)));

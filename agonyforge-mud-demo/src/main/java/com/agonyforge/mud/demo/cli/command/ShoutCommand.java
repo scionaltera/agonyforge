@@ -41,7 +41,7 @@ public class ShoutCommand extends AbstractCommand {
             return question;
         }
 
-        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         output.append("[dyellow]You shout, '" + message + "[dyellow]'");
         commService.sendToZone(webSocketContext, ch.getZoneId(), new Output(String.format("[dyellow]%s shouts, '%s[dyellow]'", ch.getName(), message)));

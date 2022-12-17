@@ -32,7 +32,7 @@ public class GiveCommand extends AbstractCommand {
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         if (tokens.size() == 1) {
             output.append("[default]Which item do you want to give?");

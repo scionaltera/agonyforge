@@ -21,29 +21,6 @@ public interface Command {
 
     Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output);
 
-    static MudCharacter getCharacter(MudCharacterRepository characterRepository,
-                                               WebSocketContext webSocketContext,
-                                               Output output) {
-
-        UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, false);
-
-        if (chOptional.isEmpty()) {
-            LOGGER.error("Cannot look up character by ID: {}", chId);
-            output.append("[red]Unable to find your character! The error has been reported.");
-            throw new CommandException("Unable to load character: " + chId);
-        }
-
-        MudCharacter ch = chOptional.get();
-
-        if (ch.getRoomId() == null) {
-            output.append("[black]You are floating aimlessly in the void.");
-            throw new CommandException("Character is in the void: " + chId);
-        }
-
-        return ch;
-    }
-
     static String stripFirstWord(String input) {
         int space = input.indexOf(' ');
 
