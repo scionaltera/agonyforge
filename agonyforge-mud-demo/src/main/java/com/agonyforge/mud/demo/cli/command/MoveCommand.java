@@ -43,14 +43,7 @@ public class MoveCommand extends AbstractCommand {
                             List<String> tokens,
                             Input input,
                             Output output) {
-
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
-        MudCharacter ch = chOptional.get();
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
         Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {

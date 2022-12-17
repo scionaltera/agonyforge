@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class GossipCommand extends AbstractCommand {
@@ -34,6 +33,7 @@ public class GossipCommand extends AbstractCommand {
                             List<String> tokens,
                             Input input,
                             Output output) {
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
         String message = Command.stripFirstWord(input.getInput());
 
         if (message.isBlank()) {
@@ -41,14 +41,8 @@ public class GossipCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isPresent()) {
-            MudCharacter ch = chOptional.get();
-
-            output.append("[green]You gossip, '" + message + "[green]'");
-            commService.sendToAll(webSocketContext, new Output(String.format("[green]%s gossips, '%s[green]'", ch.getName(), message)));
-        }
+        output.append("[green]You gossip, '" + message + "[green]'");
+        commService.sendToAll(webSocketContext, new Output(String.format("[green]%s gossips, '%s[green]'", ch.getName(), message)));
 
         return question;
     }

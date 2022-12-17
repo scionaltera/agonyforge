@@ -31,13 +31,7 @@ public class InventoryCommand extends AbstractCommand {
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
-        MudCharacter ch = chOptional.get();
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
         List<MudItem> items = itemRepository.getByCharacter(ch.getId());
 
         if (items.isEmpty()) {

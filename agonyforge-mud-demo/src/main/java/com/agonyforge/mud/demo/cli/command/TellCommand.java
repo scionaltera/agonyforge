@@ -50,23 +50,18 @@ public class TellCommand extends AbstractCommand {
 
         String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
         Optional<MudCharacter> targetOptional = characterRepository.getByType(TYPE_PC)
             .stream()
             .filter(c -> !c.isPrototype())
             .filter(c -> c.getName().toUpperCase(Locale.ROOT).startsWith(targetName))
             .findFirst();
 
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
         if (targetOptional.isEmpty()) {
             output.append("[default]There isn't anyone by that name.");
             return question;
         }
 
-        MudCharacter ch = chOptional.get();
         MudCharacter target = targetOptional.get();
 
         if (ch.equals(target)) {

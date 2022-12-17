@@ -32,18 +32,7 @@ public class GetCommand extends AbstractCommand {
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
-        MudCharacter ch = chOptional.get();
-
-        if (ch.getRoomId() == null) {
-            output.append("[black]There is nothing to get here in the endless void.");
-            return question;
-        }
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
 
         if (tokens.size() == 1) {
             output.append("[default]What would you like to get?");

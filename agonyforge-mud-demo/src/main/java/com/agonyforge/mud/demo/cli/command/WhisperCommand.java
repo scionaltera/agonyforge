@@ -48,13 +48,7 @@ public class WhisperCommand extends AbstractCommand {
 
         String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
         String targetName = tokens.get(1);
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isEmpty()) {
-            return question;
-        }
-
-        MudCharacter ch = chOptional.get();
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
         Optional<MudCharacter> targetOptional = characterRepository.getByRoom(ch.getRoomId())
             .stream()
             .filter(c -> c.getName().toUpperCase(Locale.ROOT).startsWith(targetName))

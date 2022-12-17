@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.CommandException;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public interface Command {
 
     Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output);
 
-    static Optional<MudCharacter> getCharacter(MudCharacterRepository characterRepository,
+    static MudCharacter getCharacter(MudCharacterRepository characterRepository,
                                                WebSocketContext webSocketContext,
                                                Output output) {
 
@@ -30,10 +31,17 @@ public interface Command {
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
             output.append("[red]Unable to find your character! The error has been reported.");
-            return Optional.empty();
+            throw new CommandException("Unable to load character: " + chId);
         }
 
-        return chOptional;
+        MudCharacter ch = chOptional.get();
+
+        if (ch.getRoomId() == null) {
+            output.append("[black]You are floating aimlessly in the void.");
+            throw new CommandException("Character is in the void: " + chId);
+        }
+
+        return ch;
     }
 
     static String stripFirstWord(String input) {

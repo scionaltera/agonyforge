@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class SayCommand extends AbstractCommand {
@@ -37,20 +36,15 @@ public class SayCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         String message = Command.stripFirstWord(input.getInput());
+        MudCharacter ch = Command.getCharacter(characterRepository, webSocketContext, output);
 
         if (message.isBlank()) {
             output.append("[default]What would you like to say?");
             return question;
         }
 
-        Optional<MudCharacter> chOptional = Command.getCharacter(characterRepository, webSocketContext, output);
-
-        if (chOptional.isPresent()) {
-            MudCharacter ch = chOptional.get();
-
-            output.append("[cyan]You say, '" + message + "[cyan]'");
-            commService.sendToRoom(webSocketContext, ch.getRoomId(), new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), message)));
-        }
+        output.append("[cyan]You say, '" + message + "[cyan]'");
+        commService.sendToRoom(webSocketContext, ch.getRoomId(), new Output(String.format("[cyan]%s says, '%s[cyan]'", ch.getName(), message)));
 
         return question;
     }
