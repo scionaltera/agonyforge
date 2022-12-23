@@ -27,6 +27,8 @@ import static com.agonyforge.mud.models.dynamodb.impl.Constants.ISO_8601;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.KEY_MODIFIED;
 
 public abstract class AbstractRepository<T extends Persistent> {
+    public static final String EMPTY_UUID = "00000000-0000-0000-0000-000000000000";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRepository.class);
 
     protected final DynamoDbClient dynamoDbClient;

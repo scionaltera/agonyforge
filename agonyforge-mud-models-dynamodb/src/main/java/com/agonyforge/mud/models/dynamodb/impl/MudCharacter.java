@@ -10,10 +10,12 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
+import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_SPECIES;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_USER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_DATA;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.SORT_INSTANCE;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
+import static com.agonyforge.mud.models.dynamodb.repository.AbstractRepository.EMPTY_UUID;
 
 public class MudCharacter implements Persistent {
     private UUID id;
@@ -21,6 +23,7 @@ public class MudCharacter implements Persistent {
     private String webSocketSession;
     private Long roomId;
     private String name;
+    private UUID species = UUID.fromString(EMPTY_UUID);
     private boolean isPrototype = true;
 
     @Override
@@ -46,6 +49,8 @@ public class MudCharacter implements Persistent {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
         }
 
+        data.put("species", AttributeValue.builder().s(DB_SPECIES + getSpecies()).build());
+
         map.put("data", AttributeValue.builder().m(data).build());
 
         return map;
@@ -64,6 +69,7 @@ public class MudCharacter implements Persistent {
         setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
         setUser(data.getOrDefault("principal", AttributeValue.builder().nul(true).build()).s());
         setWebSocketSession(data.getOrDefault("webSocketSession", AttributeValue.builder().nul(true).build()).s());
+        setSpecies(UUID.fromString(data.getOrDefault("species", AttributeValue.builder().s(EMPTY_UUID).build()).s().substring(DB_SPECIES.length())));
     }
 
     public MudCharacter buildInstance() {
@@ -137,6 +143,14 @@ public class MudCharacter implements Persistent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(UUID species) {
+        this.species = species;
     }
 
     public boolean isPrototype() {

@@ -8,9 +8,11 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
+import com.agonyforge.mud.models.dynamodb.impl.Species;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.models.dynamodb.repository.SpeciesRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ public class CharacterViewQuestion extends DemoQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
 
     private final MudRoomRepository roomRepository;
+    private final SpeciesRepository speciesRepository;
     private final CommService commService;
 
     @Autowired
@@ -34,9 +37,11 @@ public class CharacterViewQuestion extends DemoQuestion {
                                  MudCharacterRepository characterRepository,
                                  MudItemRepository itemRepository,
                                  MudRoomRepository roomRepository,
+                                 SpeciesRepository speciesRepository,
                                  CommService commService) {
         super(applicationContext, characterRepository, itemRepository);
         this.roomRepository = roomRepository;
+        this.speciesRepository = speciesRepository;
         this.commService = commService;
     }
 
@@ -46,8 +51,18 @@ public class CharacterViewQuestion extends DemoQuestion {
         Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
+            MudCharacter ch = chOptional.get();
+            Optional<Species> speciesOptional = speciesRepository.getById(ch.getSpecies());
+
             output.append("[dcyan]Character Sheet");
-            output.append(String.format("[default]Name: [cyan]%s", chOptional.get().getName()));
+            output.append(String.format("[default]Name: [cyan]%s", ch.getName()));
+
+            if (speciesOptional.isPresent()) {
+                Species species = speciesOptional.get();
+
+                output.append(String.format("[default]Species: [cyan]%s", species.getName()));
+            }
+
             output.append("");
             output.append("[green]P[black]) Play as this character");
             output.append("[red]D[black]) Delete this character");

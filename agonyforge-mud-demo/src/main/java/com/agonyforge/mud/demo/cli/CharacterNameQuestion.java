@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+
 @Component
 public class CharacterNameQuestion extends DemoQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterNameQuestion.class);
@@ -46,15 +48,17 @@ public class CharacterNameQuestion extends DemoQuestion {
         }
 
         MudCharacter ch = new MudCharacter();
+        Output output = new Output();
 
         ch.setId(UUID.randomUUID());
         ch.setUser(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
 
         getCharacterRepository().save(ch);
+        wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
-        Question nextQuestion = getQuestion("characterMenuQuestion");
+        Question nextQuestion = getQuestion("characterSpeciesQuestion");
 
-        return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", ch.getName())));
+        return new Response(nextQuestion, output);
     }
 }
