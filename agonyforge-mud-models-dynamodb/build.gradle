@@ -20,7 +20,7 @@ configurations.maybeCreate("pitest")
 
 dependencyManagement {
     imports {
-        mavenBom 'software.amazon.awssdk:bom:2.18.41'
+        mavenBom 'software.amazon.awssdk:bom:2.19.4'
     }
 }
 
