@@ -22,7 +22,7 @@ dependencyManagement {
 }
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
+    pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
 
     implementation project(":agonyforge-mud-core")
     implementation project(":agonyforge-mud-models-dynamodb")
