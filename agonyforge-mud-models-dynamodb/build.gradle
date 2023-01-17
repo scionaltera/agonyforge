@@ -20,12 +20,12 @@ configurations.maybeCreate("pitest")
 
 dependencyManagement {
     imports {
-        mavenBom 'software.amazon.awssdk:bom:2.19.4'
+        mavenBom 'software.amazon.awssdk:bom:2.19.17'
     }
 }
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
+    pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
 
     implementation project(":agonyforge-mud-core")
 

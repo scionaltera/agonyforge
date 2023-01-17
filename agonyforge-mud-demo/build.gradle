@@ -17,12 +17,12 @@ configurations.maybeCreate("pitest")
 
 dependencyManagement {
     imports {
-        mavenBom 'software.amazon.awssdk:bom:2.19.4'
+        mavenBom 'software.amazon.awssdk:bom:2.19.17'
     }
 }
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.1.0'
+    pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
 
     implementation project(":agonyforge-mud-core")
     implementation project(":agonyforge-mud-models-dynamodb")
@@ -31,7 +31,7 @@ dependencies {
 
     implementation 'org.webjars:webjars-locator:0.46'
     implementation 'org.webjars:bootstrap:5.2.3'
-    implementation 'org.webjars:jquery:3.6.1'
+    implementation 'org.webjars:jquery:3.6.3'
     implementation 'org.webjars.npm:webstomp-client:1.2.6'
     implementation 'org.webjars.npm:sockjs-client:1.6.1'
 
