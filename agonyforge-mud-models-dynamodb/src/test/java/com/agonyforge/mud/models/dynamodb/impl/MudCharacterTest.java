@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,9 +116,9 @@ public class MudCharacterTest {
     @Test
     void testWearSlots() {
         MudCharacter uut = new MudCharacter();
-        String slot = "head";
+        String slot = "test";
 
-        uut.getWearSlots().add(slot);
+        uut.setWearSlots(List.of(slot));
 
         assertEquals(slot, uut.getWearSlots().get(0));
     }

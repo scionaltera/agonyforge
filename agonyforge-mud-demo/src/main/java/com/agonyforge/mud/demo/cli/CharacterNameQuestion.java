@@ -51,7 +51,7 @@ public class CharacterNameQuestion extends DemoQuestion {
         ch.setId(UUID.randomUUID());
         ch.setUser(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
-        ch.getWearSlots().addAll(List.of("head"));
+        ch.setWearSlots(List.of("head"));
 
         getCharacterRepository().save(ch);
 

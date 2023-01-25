@@ -47,7 +47,7 @@ public class MudCharacter implements Persistent {
         data.put("name", AttributeValue.builder().s(getName()).build());
 
         if (!getWearSlots().isEmpty()) {
-            data.put("wear_slots", AttributeValue.builder().ss(getWearSlots()).build());
+            data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());
         }
 
         if (!isPrototype()) {
@@ -86,7 +86,7 @@ public class MudCharacter implements Persistent {
         instance.setId(getId());
         instance.setUser(getUser());
         instance.setName(getName());
-        instance.getWearSlots().addAll(getWearSlots());
+        instance.setWearSlots(getWearSlots());
 
         return instance;
     }
@@ -150,7 +150,7 @@ public class MudCharacter implements Persistent {
     }
 
     public List<String> getWearSlots() {
-        return wearSlots;
+        return new ArrayList<>(wearSlots);
     }
 
     public void setWearSlots(List<String> wearSlots) {

@@ -74,6 +74,16 @@ public class MudItemTest {
     }
 
     @Test
+    void testWearSlots() {
+        MudItem uut = new MudItem();
+
+        uut.setWearSlots(List.of("test"));
+
+        assertEquals(1, uut.getWearSlots().size());
+        assertEquals("test", uut.getWearSlots().get(0));
+    }
+
+    @Test
     void testRoomId() {
         MudItem uut = new MudItem();
         MudItem uutInstance;
