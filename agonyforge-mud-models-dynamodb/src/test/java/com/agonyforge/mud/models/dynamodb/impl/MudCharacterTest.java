@@ -111,4 +111,14 @@ public class MudCharacterTest {
 
         assertEquals(name, uut.getName());
     }
+
+    @Test
+    void testWearSlots() {
+        MudCharacter uut = new MudCharacter();
+        String slot = "head";
+
+        uut.getWearSlots().add(slot);
+
+        assertEquals(slot, uut.getWearSlots().get(0));
+    }
 }
