@@ -39,13 +39,17 @@ public class EquipmentCommand extends AbstractCommand {
                 .filter(item -> item.getWorn() != null)
                 .collect(Collectors.toMap(MudItem::getWorn, Function.identity()));
 
-        output.append("[default]Your equipment:");
+        output.append("[default]You are using:");
 
-        ch.getWearSlots()
-            .stream()
-            .sorted()
-            .forEach(slot -> output.append(String.format("[default]%s : %s",
-                slot, inventory.containsKey(slot) ? inventory.get(slot).getShortDescription() : "-empty-")));
+        if (inventory.isEmpty()) {
+            output.append("Nothing.");
+        } else {
+            inventory.entrySet()
+                .stream()
+                .sorted()
+                .forEach(entry -> output.append(String.format("[default]&lt;worn on %s>\t%s",
+                    entry.getKey(), entry.getValue().getShortDescription())));
+        }
 
         return question;
     }

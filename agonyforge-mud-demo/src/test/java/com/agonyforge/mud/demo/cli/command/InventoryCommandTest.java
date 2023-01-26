@@ -78,7 +78,7 @@ public class InventoryCommandTest {
         verify(itemRepository).getByCharacter(eq(chId));
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("Your inventory"));
+        assertTrue(output.getOutput().get(0).contains("You are carrying:"));
         assertTrue(output.getOutput().get(1).contains(itemName));
     }
 
@@ -104,6 +104,7 @@ public class InventoryCommandTest {
         verify(itemRepository).getByCharacter(eq(chId));
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("aren't carrying anything"));
+        assertTrue(output.getOutput().get(0).contains("You are carrying:"));
+        assertTrue(output.getOutput().get(1).contains("Nothing"));
     }
 }

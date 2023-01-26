@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
@@ -48,11 +49,13 @@ public class EquipmentCommandTest {
     @Mock
     private MudCharacter ch;
 
+    @Mock
+    private MudItem item;
+
     @Test
-    void testEquipment() {
+    void testEquipmentNone() {
         UUID chId = UUID.randomUUID();
 
-        when(ch.getWearSlots()).thenReturn(List.of("test"));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -68,7 +71,33 @@ public class EquipmentCommandTest {
             output);
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("Your equipment"));
-        assertTrue(output.getOutput().get(1).contains("empty"));
+        assertTrue(output.getOutput().get(0).contains("You are using"));
+        assertTrue(output.getOutput().get(1).contains("Nothing."));
+    }
+
+    @Test
+    void testEquipment() {
+        UUID chId = UUID.randomUUID();
+
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(item));
+        when(item.getWorn()).thenReturn("head");
+        when(item.getShortDescription()).thenReturn("a rubber chicken");
+
+        Output output = new Output();
+        EquipmentCommand uut = new EquipmentCommand(characterRepository, itemRepository, roomRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("EQUIPMENT"),
+            new Input("eq"),
+            output);
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("You are using"));
+        assertTrue(output.getOutput().get(1).contains("&lt;worn on head>\ta rubber chicken"));
     }
 }

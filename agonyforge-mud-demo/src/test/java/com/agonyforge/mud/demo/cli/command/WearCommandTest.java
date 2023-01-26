@@ -23,7 +23,10 @@ import java.util.UUID;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -196,6 +199,11 @@ public class WearCommandTest {
             List.of("WEAR", "HAT"),
             new Input("wea ha"),
             output);
+
+        verify(commService).sendToRoom(
+            eq(webSocketContext),
+            anyLong(),
+            any(Output.class));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You wear a test hat[default] on your head"));

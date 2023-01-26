@@ -34,11 +34,15 @@ public class InventoryCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         List<MudItem> items = itemRepository.getByCharacter(ch.getId());
 
+        output.append("[default]You are carrying:");
+
         if (items.isEmpty()) {
-            output.append("[default]You aren't carrying anything.");
+            output.append("[default]Nothing.");
         } else {
-            output.append("[default]Your inventory:");
-            items.forEach(item -> output.append(item.getShortDescription()));
+            items
+                .stream()
+                .filter(item -> item.getWorn() == null)
+                .forEach(item -> output.append(item.getShortDescription()));
         }
 
         return question;
