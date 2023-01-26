@@ -84,6 +84,15 @@ public class MudItemTest {
     }
 
     @Test
+    void testWorn() {
+        MudItem uut = new MudItem();
+
+        uut.setWorn("test");
+
+        assertEquals("test", uut.getWorn());
+    }
+
+    @Test
     void testRoomId() {
         MudItem uut = new MudItem();
         MudItem uutInstance;

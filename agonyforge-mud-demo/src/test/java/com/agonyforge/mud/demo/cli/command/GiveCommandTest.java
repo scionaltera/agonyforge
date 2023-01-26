@@ -214,6 +214,6 @@ public class GiveCommandTest {
         verify(commService).sendToRoom(eq(webSocketContext), eq(roomId), any(Output.class), eq(target));
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You give a spoon to Spook."));
+        assertTrue(output.getOutput().get(0).contains("You give a spoon[default] to Spook."));
     }
 }

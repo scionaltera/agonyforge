@@ -28,6 +28,7 @@ public class MudItem implements Persistent {
     private String shortDescription;
     private String longDescription;
     private List<String> wearSlots = new ArrayList<>();
+    private String worn;
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -53,8 +54,12 @@ public class MudItem implements Persistent {
         data.put("shortDescription", AttributeValue.builder().s(getShortDescription()).build());
         data.put("longDescription", AttributeValue.builder().s(getLongDescription()).build());
 
-        if (!getWearSlots().isEmpty()) {
+        if (!wearSlots.isEmpty()) {
             data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());
+        }
+
+        if (worn != null) {
+            data.put("worn", AttributeValue.builder().s(worn).build());
         }
 
         map.put("data", AttributeValue.builder().m(data).build());
@@ -81,6 +86,7 @@ public class MudItem implements Persistent {
         setShortDescription(data.getOrDefault("shortDescription", AttributeValue.builder().nul(true).build()).s());
         setLongDescription(data.getOrDefault("longDescription", AttributeValue.builder().nul(true).build()).s());
         setWearSlots(data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss());
+        setWorn(data.getOrDefault("worn", AttributeValue.builder().nul(true).build()).s());
     }
 
     public MudItem buildInstance() {
@@ -96,6 +102,7 @@ public class MudItem implements Persistent {
         instance.setShortDescription(getShortDescription());
         instance.setLongDescription(getLongDescription());
         instance.setWearSlots(getWearSlots());
+        instance.setWorn(getWorn());
 
         return instance;
     }
@@ -172,6 +179,14 @@ public class MudItem implements Persistent {
 
     public void setWearSlots(List<String> wearSlots) {
         this.wearSlots = wearSlots;
+    }
+
+    public String getWorn() {
+        return worn;
+    }
+
+    public void setWorn(String worn) {
+        this.worn = worn;
     }
 
     public boolean isPrototype() {
