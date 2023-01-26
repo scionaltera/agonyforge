@@ -46,8 +46,11 @@ public class CharacterViewQuestion extends DemoQuestion {
         Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
+            MudCharacter ch = chOptional.get();
+
             output.append("[dcyan]Character Sheet");
-            output.append(String.format("[default]Name: [cyan]%s", chOptional.get().getName()));
+            output.append(String.format("[default]Name: [cyan]%s", ch.getName()));
+            output.append(String.format("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject()));
             output.append("");
             output.append("[green]P[black]) Play as this character");
             output.append("[red]D[black]) Delete this character");

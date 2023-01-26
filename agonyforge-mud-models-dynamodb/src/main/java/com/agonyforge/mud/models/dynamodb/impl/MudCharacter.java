@@ -25,6 +25,7 @@ public class MudCharacter implements Persistent {
     private Long roomId;
     private boolean isPrototype = true;
     private String name;
+    private Pronoun pronoun;
     private List<String> wearSlots = new ArrayList<>();
 
     @Override
@@ -45,6 +46,7 @@ public class MudCharacter implements Persistent {
 
         data.put("principal", AttributeValue.builder().s(getUser()).build());
         data.put("name", AttributeValue.builder().s(getName()).build());
+        data.put("pronoun", AttributeValue.builder().s(getPronoun().name()).build());
 
         if (!getWearSlots().isEmpty()) {
             data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());
@@ -72,6 +74,7 @@ public class MudCharacter implements Persistent {
         setUser(data.getOrDefault("principal", AttributeValue.builder().nul(true).build()).s());
         setWebSocketSession(data.getOrDefault("webSocketSession", AttributeValue.builder().nul(true).build()).s());
         setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
+        setPronoun(Pronoun.valueOf(data.getOrDefault("pronoun", AttributeValue.builder().s("IT").build()).s()));
         setWearSlots(data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss());
     }
 
@@ -86,6 +89,7 @@ public class MudCharacter implements Persistent {
         instance.setId(getId());
         instance.setUser(getUser());
         instance.setName(getName());
+        instance.setPronoun(getPronoun());
         instance.setWearSlots(getWearSlots());
 
         return instance;
@@ -147,6 +151,14 @@ public class MudCharacter implements Persistent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Pronoun getPronoun() {
+        return pronoun;
+    }
+
+    public void setPronoun(Pronoun pronoun) {
+        this.pronoun = pronoun;
     }
 
     public List<String> getWearSlots() {

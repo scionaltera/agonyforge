@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
+import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
 public class CharacterNameQuestion extends DemoQuestion {
@@ -51,11 +54,13 @@ public class CharacterNameQuestion extends DemoQuestion {
         ch.setId(UUID.randomUUID());
         ch.setUser(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
+        ch.setPronoun(Pronoun.THEY);
         ch.setWearSlots(List.of("head"));
 
         getCharacterRepository().save(ch);
+        wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
-        Question nextQuestion = getQuestion("characterMenuQuestion");
+        Question nextQuestion = getQuestion("characterPronounQuestion");
 
         return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", ch.getName())));
     }
