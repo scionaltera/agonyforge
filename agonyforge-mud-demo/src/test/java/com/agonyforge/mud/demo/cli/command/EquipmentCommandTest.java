@@ -24,11 +24,10 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class InventoryCommandTest {
+public class EquipmentCommandTest {
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -54,62 +53,54 @@ public class InventoryCommandTest {
     private MudItem item;
 
     @Mock
-    private MudItem armor;
+    private MudItem junk;
 
     @Test
-    void testInventory() {
+    void testEquipmentNone() {
         UUID chId = UUID.randomUUID();
-        String itemName = "a scurrilous test";
 
-        when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(item.getShortDescription()).thenReturn(itemName);
-        when(armor.getWorn()).thenReturn("body");
-        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(armor, item));
 
         Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(characterRepository, itemRepository, roomRepository, commService);
+        EquipmentCommand uut = new EquipmentCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("INVENTORY"),
-            new Input("i"),
+            List.of("EQUIPMENT"),
+            new Input("eq"),
             output);
 
-        verify(itemRepository).getByCharacter(eq(chId));
-
         assertEquals(question, result);
-        assertEquals(2, output.getOutput().size());
-        assertTrue(output.getOutput().get(0).contains("You are carrying:"));
-        assertTrue(output.getOutput().get(1).contains(itemName));
+        assertTrue(output.getOutput().get(0).contains("You are using"));
+        assertTrue(output.getOutput().get(1).contains("Nothing."));
     }
 
     @Test
-    void testInventoryEmpty() {
+    void testEquipment() {
         UUID chId = UUID.randomUUID();
 
-        when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(junk, item));
+        when(item.getWorn()).thenReturn("head");
+        when(item.getShortDescription()).thenReturn("a rubber chicken");
 
         Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(characterRepository, itemRepository, roomRepository, commService);
+        EquipmentCommand uut = new EquipmentCommand(characterRepository, itemRepository, roomRepository, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("INVENTORY"),
-            new Input("i"),
+            List.of("EQUIPMENT"),
+            new Input("eq"),
             output);
 
-        verify(itemRepository).getByCharacter(eq(chId));
-
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You are carrying:"));
-        assertTrue(output.getOutput().get(1).contains("Nothing"));
+        assertTrue(output.getOutput().get(0).contains("You are using"));
+        assertTrue(output.getOutput().get(1).contains("&lt;worn on head>\ta rubber chicken"));
     }
 }

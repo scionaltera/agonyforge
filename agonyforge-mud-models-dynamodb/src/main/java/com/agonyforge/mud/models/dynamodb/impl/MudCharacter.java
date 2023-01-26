@@ -3,9 +3,12 @@ package com.agonyforge.mud.models.dynamodb.impl;
 import com.agonyforge.mud.models.dynamodb.Persistent;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import java.util.UUID;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
@@ -20,8 +23,9 @@ public class MudCharacter implements Persistent {
     private String user;
     private String webSocketSession;
     private Long roomId;
-    private String name;
     private boolean isPrototype = true;
+    private String name;
+    private List<String> wearSlots = new ArrayList<>();
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -39,8 +43,12 @@ public class MudCharacter implements Persistent {
             map.put("gsi2pk", AttributeValue.builder().s(DB_ROOM + getRoomId()).build());
         }
 
-        data.put("name", AttributeValue.builder().s(getName()).build());
         data.put("principal", AttributeValue.builder().s(getUser()).build());
+        data.put("name", AttributeValue.builder().s(getName()).build());
+
+        if (!getWearSlots().isEmpty()) {
+            data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());
+        }
 
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
@@ -61,9 +69,10 @@ public class MudCharacter implements Persistent {
         }
 
         Map<String, AttributeValue> data = item.get("data").m();
-        setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
         setUser(data.getOrDefault("principal", AttributeValue.builder().nul(true).build()).s());
         setWebSocketSession(data.getOrDefault("webSocketSession", AttributeValue.builder().nul(true).build()).s());
+        setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
+        setWearSlots(data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss());
     }
 
     public MudCharacter buildInstance() {
@@ -77,6 +86,7 @@ public class MudCharacter implements Persistent {
         instance.setId(getId());
         instance.setUser(getUser());
         instance.setName(getName());
+        instance.setWearSlots(getWearSlots());
 
         return instance;
     }
@@ -137,6 +147,14 @@ public class MudCharacter implements Persistent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<String> getWearSlots() {
+        return new ArrayList<>(wearSlots);
+    }
+
+    public void setWearSlots(List<String> wearSlots) {
+        this.wearSlots = wearSlots;
     }
 
     public boolean isPrototype() {

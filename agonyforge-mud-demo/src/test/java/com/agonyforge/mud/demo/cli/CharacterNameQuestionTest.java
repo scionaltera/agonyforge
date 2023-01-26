@@ -91,6 +91,7 @@ public class CharacterNameQuestionTest {
         assertNotNull(ch.getId());
         assertEquals(principal.getName(), ch.getUser());
         assertEquals(userInput, ch.getName());
+        assertEquals("head", ch.getWearSlots().get(0));
     }
 
     @ParameterizedTest

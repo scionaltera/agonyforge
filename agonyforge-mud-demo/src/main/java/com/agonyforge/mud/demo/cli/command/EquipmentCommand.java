@@ -13,16 +13,18 @@ import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
-public class DropCommand extends AbstractCommand {
+public class EquipmentCommand extends AbstractCommand {
     @Autowired
-    public DropCommand(MudCharacterRepository characterRepository,
-                       MudItemRepository itemRepository,
-                       MudRoomRepository roomRepository,
-                       CommService commService) {
+    public EquipmentCommand(MudCharacterRepository characterRepository,
+                            MudItemRepository itemRepository,
+                            MudRoomRepository roomRepository,
+                            CommService commService) {
         super(characterRepository,
             itemRepository,
             roomRepository,
@@ -32,26 +34,22 @@ public class DropCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        Map<String, MudItem> inventory = itemRepository.getByCharacter(ch.getId())
+                .stream()
+                .filter(item -> item.getWorn() != null)
+                .collect(Collectors.toMap(MudItem::getWorn, Function.identity()));
 
-        if (tokens.size() == 1) {
-            output.append("[default]What would you like to drop?");
-            return question;
+        output.append("[default]You are using:");
+
+        if (inventory.isEmpty()) {
+            output.append("Nothing.");
+        } else {
+            inventory.entrySet()
+                .stream()
+                .sorted()
+                .forEach(entry -> output.append(String.format("[default]&lt;worn on %s>\t%s",
+                    entry.getKey(), entry.getValue().getShortDescription())));
         }
-
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't have anything like that.");
-            return question;
-        }
-
-        MudItem target = targetOptional.get();
-        target.setRoomId(ch.getRoomId());
-        itemRepository.save(target);
-
-        output.append(String.format("[default]You drop %s[default].", target.getShortDescription()));
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output(String.format("[default]%s drops %s[default].", ch.getName(), target.getShortDescription())));
 
         return question;
     }

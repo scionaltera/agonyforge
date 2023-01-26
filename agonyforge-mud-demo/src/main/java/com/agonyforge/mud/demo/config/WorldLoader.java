@@ -79,8 +79,23 @@ public class WorldLoader {
 
             itemInstance.setRoomId(100L);
 
-            LOGGER.info("Creating default item");
-            itemRepository.saveAll(List.of(item, itemInstance));
+            MudItem hat = new MudItem();
+            MudItem hatInstance;
+
+            hat.setId(UUID.randomUUID());
+            hat.setNameList(List.of("hat", "floppy"));
+            hat.setShortDescription("a floppy hat");
+            hat.setLongDescription("A floppy hat has been dropped here.");
+            hat.setWearSlots(List.of("head"));
+
+            hatInstance = hat.buildInstance();
+            hatInstance.setRoomId(101L);
+
+            LOGGER.info("Creating default items");
+            itemRepository.saveAll(List.of(
+                item, itemInstance, 
+                hat, hatInstance
+            ));
         }
     }
 }

@@ -44,9 +44,12 @@ public class CommandLoader {
             refs.add(new CommandReference(10, "WHO", "whoCommand"));
 
             refs.add(new CommandReference(10, "INVENTORY", "inventoryCommand"));
+            refs.add(new CommandReference(10, "EQUIPMENT", "equipmentCommand"));
             refs.add(new CommandReference(10, "GET", "getCommand"));
             refs.add(new CommandReference(10, "DROP", "dropCommand"));
             refs.add(new CommandReference(10, "GIVE", "giveCommand"));
+            refs.add(new CommandReference(10, "REMOVE", "removeCommand"));
+            refs.add(new CommandReference(10, "WEAR", "wearCommand"));
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs);

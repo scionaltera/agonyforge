@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -50,6 +51,7 @@ public class CharacterNameQuestion extends DemoQuestion {
         ch.setId(UUID.randomUUID());
         ch.setUser(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
+        ch.setWearSlots(List.of("head"));
 
         getCharacterRepository().save(ch);
 
