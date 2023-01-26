@@ -142,6 +142,8 @@ public class RemoveCommandTest {
             new Input("rem hat"),
             output);
 
+        verify(target).setWorn(eq(null));
+        verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),
             anyLong(),

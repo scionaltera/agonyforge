@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -172,6 +173,13 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
+        verify(target).setWorn(anyString());
+        verify(itemRepository).save(any(MudItem.class));
+        verify(commService).sendToRoom(
+            eq(webSocketContext),
+            anyLong(),
+            any(Output.class));
+
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You wear a test hat[default] on your head"));
     }
@@ -200,6 +208,43 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
+        verify(target).setWorn(eq("head"));
+        verify(itemRepository).save(any(MudItem.class));
+        verify(commService).sendToRoom(
+            eq(webSocketContext),
+            anyLong(),
+            any(Output.class));
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("You wear a test hat[default] on your head"));
+    }
+
+    @Test
+    void testWearTargetWithOtherItem() {
+        UUID chId = UUID.randomUUID();
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
+        when(ch.getWearSlots()).thenReturn(List.of("hand", "head"));
+        when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
+        when(item.getWorn()).thenReturn("hand");
+        when(target.getShortDescription()).thenReturn("a test hat");
+        when(target.getNameList()).thenReturn(List.of("hat"));
+        when(target.getWearSlots()).thenReturn(List.of("head"));
+
+        Output output = new Output();
+        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("WEAR", "HAT"),
+            new Input("wea ha"),
+            output);
+
+        verify(target).setWorn(anyString());
+        verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),
             anyLong(),

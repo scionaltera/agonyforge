@@ -52,6 +52,9 @@ public class EquipmentCommandTest {
     @Mock
     private MudItem item;
 
+    @Mock
+    private MudItem junk;
+
     @Test
     void testEquipmentNone() {
         UUID chId = UUID.randomUUID();
@@ -83,7 +86,7 @@ public class EquipmentCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(item));
+        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(junk, item));
         when(item.getWorn()).thenReturn("head");
         when(item.getShortDescription()).thenReturn("a rubber chicken");
 

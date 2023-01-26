@@ -53,6 +53,9 @@ public class InventoryCommandTest {
     @Mock
     private MudItem item;
 
+    @Mock
+    private MudItem armor;
+
     @Test
     void testInventory() {
         UUID chId = UUID.randomUUID();
@@ -64,7 +67,8 @@ public class InventoryCommandTest {
             MUD_CHARACTER, chId
         ));
         when(item.getShortDescription()).thenReturn(itemName);
-        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(item));
+        when(armor.getWorn()).thenReturn("body");
+        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(armor, item));
 
         Output output = new Output();
         InventoryCommand uut = new InventoryCommand(characterRepository, itemRepository, roomRepository, commService);
@@ -78,6 +82,7 @@ public class InventoryCommandTest {
         verify(itemRepository).getByCharacter(eq(chId));
 
         assertEquals(question, result);
+        assertEquals(2, output.getOutput().size());
         assertTrue(output.getOutput().get(0).contains("You are carrying:"));
         assertTrue(output.getOutput().get(1).contains(itemName));
     }
