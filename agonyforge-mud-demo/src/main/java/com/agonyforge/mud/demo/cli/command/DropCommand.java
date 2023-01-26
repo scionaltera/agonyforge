@@ -46,6 +46,12 @@ public class DropCommand extends AbstractCommand {
         }
 
         MudItem target = targetOptional.get();
+
+        if (target.getWorn() != null) {
+            output.append("[default]You need to remove it first.");
+            return question;
+        }
+
         target.setRoomId(ch.getRoomId());
         itemRepository.save(target);
 
