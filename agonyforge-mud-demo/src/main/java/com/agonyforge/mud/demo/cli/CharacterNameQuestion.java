@@ -60,6 +60,8 @@ public class CharacterNameQuestion extends AbstractQuestion {
         getCharacterRepository().save(ch);
         wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
+        LOGGER.info("New character created: {}", ch.getName());
+
         Question nextQuestion = getQuestion("characterPronounQuestion");
 
         return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", ch.getName())));
