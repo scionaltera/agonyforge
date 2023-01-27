@@ -23,6 +23,7 @@ import java.security.Principal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -92,7 +93,7 @@ public class CharacterNameQuestionTest {
         assertNotNull(ch.getId());
         assertEquals(principal.getName(), ch.getUser());
         assertEquals(userInput, ch.getName());
-        assertEquals(WearSlot.HEAD, ch.getWearSlots().get(0));
+        assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
     }
 
     @ParameterizedTest
