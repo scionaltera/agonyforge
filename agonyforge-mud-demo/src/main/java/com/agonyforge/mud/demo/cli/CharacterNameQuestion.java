@@ -22,7 +22,7 @@ import java.util.UUID;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class CharacterNameQuestion extends DemoQuestion {
+public class CharacterNameQuestion extends AbstractQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterNameQuestion.class);
 
     @Autowired
@@ -59,6 +59,8 @@ public class CharacterNameQuestion extends DemoQuestion {
 
         getCharacterRepository().save(ch);
         wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
+
+        LOGGER.info("New character created: {}", ch.getName());
 
         Question nextQuestion = getQuestion("characterPronounQuestion");
 

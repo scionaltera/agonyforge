@@ -10,10 +10,10 @@ import static com.agonyforge.mud.core.cli.Color.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class DemoMenuPromptTest {
+public class MenuPromptTest {
     @Test
     void testRender() {
-        DemoMenuPrompt uut = new DemoMenuPrompt();
+        MenuPrompt uut = new MenuPrompt();
         Output result = uut.render(BLUE, RED);
 
         assertEquals(2, result.getOutput().size());
@@ -23,7 +23,7 @@ public class DemoMenuPromptTest {
 
     @Test
     void testRenderDefaultColor() {
-        DemoMenuPrompt uut = new DemoMenuPrompt();
+        MenuPrompt uut = new MenuPrompt();
         Output result = uut.render();
 
         assertEquals(2, result.getOutput().size());
@@ -33,7 +33,7 @@ public class DemoMenuPromptTest {
 
     @Test
     void testRenderOneColor() {
-        DemoMenuPrompt uut = new DemoMenuPrompt();
+        MenuPrompt uut = new MenuPrompt();
         Output result = uut.render(BLUE);
 
         assertEquals(2, result.getOutput().size());

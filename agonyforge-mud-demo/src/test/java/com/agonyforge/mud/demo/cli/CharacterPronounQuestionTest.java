@@ -92,7 +92,7 @@ public class CharacterPronounQuestionTest {
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
         CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, characterRepository, itemRepository);
-        Response result = uut.answer(webSocketContext, new Input("1"));
+        Response result = uut.answer(webSocketContext, new Input("2"));
         Output output = result.getFeedback().orElseThrow();
 
         verify(ch).setPronoun(eq(Pronoun.SHE));

@@ -1,11 +1,9 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.core.cli.AbstractQuestion;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
@@ -17,16 +15,16 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
-public abstract class DemoQuestion extends AbstractQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoQuestion.class);
+public abstract class AbstractQuestion extends com.agonyforge.mud.core.cli.AbstractQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuestion.class);
 
     private final ApplicationContext applicationContext;
     private final MudCharacterRepository characterRepository;
     private final MudItemRepository itemRepository;
 
-    public DemoQuestion(ApplicationContext applicationContext,
-                        MudCharacterRepository characterRepository,
-                        MudItemRepository itemRepository) {
+    public AbstractQuestion(ApplicationContext applicationContext,
+                            MudCharacterRepository characterRepository,
+                            MudItemRepository itemRepository) {
         super();
         this.applicationContext = applicationContext;
         this.characterRepository = characterRepository;

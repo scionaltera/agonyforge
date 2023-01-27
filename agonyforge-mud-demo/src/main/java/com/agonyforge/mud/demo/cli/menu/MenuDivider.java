@@ -6,8 +6,8 @@ import com.agonyforge.mud.core.web.model.Output;
 
 import static com.agonyforge.mud.core.cli.Color.GREEN;
 
-public class DemoMenuDivider extends AbstractMenuDivider {
-    public DemoMenuDivider(int length) {
+public class MenuDivider extends AbstractMenuDivider {
+    public MenuDivider(int length) {
         super(length);
     }
 

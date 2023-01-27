@@ -7,8 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import static com.agonyforge.mud.core.cli.Color.GREEN;
 import static com.agonyforge.mud.core.cli.Color.YELLOW;
 
-public class DemoMenuTitle extends AbstractMenuTitle {
-    public DemoMenuTitle(String title) {
+public class MenuTitle extends AbstractMenuTitle {
+    public MenuTitle(String title) {
         super(title);
     }
 
@@ -17,7 +17,7 @@ public class DemoMenuTitle extends AbstractMenuTitle {
         Output menu = new Output();
         Color primary = colors.length > 0 ? colors[0] : YELLOW;
         Color secondary = colors.length > 1 ? colors[1] : GREEN;
-        DemoMenuDivider divider = new DemoMenuDivider(getTitle().length() + 6);
+        MenuDivider divider = new MenuDivider(getTitle().length() + 6);
 
         menu.append("");
         menu.append(divider.render(colors));

@@ -16,11 +16,11 @@ import static com.agonyforge.mud.core.cli.Color.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class DemoMenuItemTest {
+public class MenuItemTest {
     @Test
     void testGetItem() {
         String foo = "foo";
-        DemoMenuItem uut = new DemoMenuItem("T", "Test", foo);
+        MenuItem uut = new MenuItem("T", "Test", foo);
 
         assertEquals(foo, uut.getItem());
     }
@@ -28,7 +28,7 @@ public class DemoMenuItemTest {
     @ParameterizedTest
     @MethodSource
     void testRender(Color[] colors, String expected) {
-        DemoMenuItem uut = new DemoMenuItem("T", "Test");
+        MenuItem uut = new MenuItem("T", "Test");
         Output result = uut.render(colors);
 
         assertEquals(1, result.getOutput().size());

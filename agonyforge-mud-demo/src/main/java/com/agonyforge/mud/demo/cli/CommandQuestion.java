@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class CommandQuestion extends DemoQuestion {
+public class CommandQuestion extends AbstractQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandQuestion.class);
 
     private final ApplicationContext applicationContext;

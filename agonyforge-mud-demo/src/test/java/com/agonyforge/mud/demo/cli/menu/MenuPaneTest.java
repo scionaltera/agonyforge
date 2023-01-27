@@ -15,22 +15,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DemoMenuPaneTest {
+public class MenuPaneTest {
     @Mock
-    private DemoMenuTitle title;
+    private MenuTitle title;
 
     @Mock
-    private DemoMenuItem item1;
+    private MenuItem item1;
 
     @Mock
-    private DemoMenuItem item2;
+    private MenuItem item2;
 
     @Mock
-    private DemoMenuPrompt prompt;
+    private MenuPrompt prompt;
 
     @Test
     void testRenderEmpty() {
-        DemoMenuPane uut = new DemoMenuPane();
+        MenuPane uut = new MenuPane();
         Output result = uut.render(Color.BLUE, Color.RED);
 
         assertEquals(0, result.getOutput().size());
@@ -44,7 +44,7 @@ public class DemoMenuPaneTest {
 
         when(title.render(any())).thenReturn(new Output(line1, line2, line3));
 
-        DemoMenuPane uut = new DemoMenuPane();
+        MenuPane uut = new MenuPane();
         uut.setTitle(title);
 
         Output result = uut.render(Color.BLUE, Color.RED);
@@ -68,7 +68,7 @@ public class DemoMenuPaneTest {
         when(item1.render(any())).thenReturn(new Output(line1));
         when(item2.render(any())).thenReturn(new Output(line2));
 
-        DemoMenuPane uut = new DemoMenuPane();
+        MenuPane uut = new MenuPane();
         uut.getItems().add(item1);
         uut.getItems().add(item2);
 
@@ -90,7 +90,7 @@ public class DemoMenuPaneTest {
 
         when(prompt.render(any())).thenReturn(new Output(line1));
 
-        DemoMenuPane uut = new DemoMenuPane();
+        MenuPane uut = new MenuPane();
         uut.setPrompt(prompt);
 
         Output result = uut.render(Color.BLUE, Color.RED);
@@ -118,7 +118,7 @@ public class DemoMenuPaneTest {
         when(item2.render(any())).thenReturn(new Output(line5));
         when(prompt.render(any())).thenReturn(new Output(line6));
 
-        DemoMenuPane uut = new DemoMenuPane();
+        MenuPane uut = new MenuPane();
         uut.setTitle(title);
         uut.getItems().add(item1);
         uut.getItems().add(item2);
