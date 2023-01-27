@@ -48,6 +48,11 @@ public class WearCommand extends AbstractCommand {
 
         MudItem target = targetOptional.get();
 
+        if (target.getWearSlots().isEmpty()) {
+            output.append("[default]You can't wear that.");
+            return question;
+        }
+
         if (target.getWorn() != null) {
             output.append(String.format("[default]You are already wearing %s[default].", target.getShortDescription()));
             return question;

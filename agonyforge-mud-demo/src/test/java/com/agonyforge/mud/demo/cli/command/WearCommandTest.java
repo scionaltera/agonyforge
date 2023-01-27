@@ -104,6 +104,29 @@ public class WearCommandTest {
     }
 
     @Test
+    void testWearTargetNotWearable() {
+        UUID chId = UUID.randomUUID();
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
+        when(target.getNameList()).thenReturn(List.of("hat"));
+
+        Output output = new Output();
+        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("WEAR", "HAT"),
+            new Input("wea ha"),
+            output);
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("You can't wear that"));
+    }
+
+    @Test
     void testWearTargetAlreadyWorn() {
         UUID chId = UUID.randomUUID();
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
@@ -113,6 +136,7 @@ public class WearCommandTest {
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
+        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
@@ -139,6 +163,7 @@ public class WearCommandTest {
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HEAD);
         when(target.getNameList()).thenReturn(List.of("hat"));
+        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
