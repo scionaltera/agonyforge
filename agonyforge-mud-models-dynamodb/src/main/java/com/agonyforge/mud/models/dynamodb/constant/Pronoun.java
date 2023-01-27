@@ -1,4 +1,4 @@
-package com.agonyforge.mud.models.dynamodb.impl;
+package com.agonyforge.mud.models.dynamodb.constant;
 
 public enum Pronoun {
     HE("he", "him", "his", "himself", false),

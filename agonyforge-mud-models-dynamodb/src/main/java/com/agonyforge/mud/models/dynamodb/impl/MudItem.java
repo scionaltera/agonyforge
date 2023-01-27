@@ -1,6 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class MudItem implements Persistent {
     private List<String> nameList = new ArrayList<>();
     private String shortDescription;
     private String longDescription;
-    private List<String> wearSlots = new ArrayList<>();
-    private String worn;
+    private List<WearSlot> wearSlots = new ArrayList<>();
+    private WearSlot worn;
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -55,11 +56,16 @@ public class MudItem implements Persistent {
         data.put("longDescription", AttributeValue.builder().s(getLongDescription()).build());
 
         if (!wearSlots.isEmpty()) {
-            data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());
+            List<String> slots = wearSlots
+                .stream()
+                .map(WearSlot::name)
+                .toList();
+
+            data.put("wear_slots", AttributeValue.builder().ss(slots).build());
         }
 
         if (worn != null) {
-            data.put("worn", AttributeValue.builder().s(worn).build());
+            data.put("worn", AttributeValue.builder().s(worn.name()).build());
         }
 
         map.put("data", AttributeValue.builder().m(data).build());
@@ -85,8 +91,15 @@ public class MudItem implements Persistent {
         setNameList(data.getOrDefault("nameList", AttributeValue.builder().ss().build()).ss());
         setShortDescription(data.getOrDefault("shortDescription", AttributeValue.builder().nul(true).build()).s());
         setLongDescription(data.getOrDefault("longDescription", AttributeValue.builder().nul(true).build()).s());
-        setWearSlots(data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss());
-        setWorn(data.getOrDefault("worn", AttributeValue.builder().nul(true).build()).s());
+
+        List<String> slots = data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss();
+        setWearSlots(slots.stream().map(WearSlot::valueOf).toList());
+
+        String worn = data.getOrDefault("worn", AttributeValue.builder().nul(true).build()).s();
+
+        if (worn != null) {
+            setWorn(WearSlot.valueOf(worn));
+        }
     }
 
     public MudItem buildInstance() {
@@ -173,19 +186,19 @@ public class MudItem implements Persistent {
         this.longDescription = longDescription;
     }
 
-    public List<String> getWearSlots() {
+    public List<WearSlot> getWearSlots() {
         return new ArrayList<>(wearSlots);
     }
 
-    public void setWearSlots(List<String> wearSlots) {
+    public void setWearSlots(List<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
     }
 
-    public String getWorn() {
+    public WearSlot getWorn() {
         return worn;
     }
 
-    public void setWorn(String worn) {
+    public void setWorn(WearSlot worn) {
         this.worn = worn;
     }
 

@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -52,7 +53,7 @@ public class RemoveCommand extends AbstractCommand {
             return question;
         }
 
-        String targetSlot = target.getWorn();
+        WearSlot targetSlot = target.getWorn();
         target.setWorn(null);
         itemRepository.save(target);
 
@@ -62,7 +63,7 @@ public class RemoveCommand extends AbstractCommand {
                 ch.getName(),
                 target.getShortDescription(),
                 ch.getPronoun().getPossessive(),
-                targetSlot
+                targetSlot.getName()
             )));
 
         return question;

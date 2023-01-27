@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -47,6 +48,11 @@ public class WearCommand extends AbstractCommand {
 
         MudItem target = targetOptional.get();
 
+        if (target.getWearSlots().isEmpty()) {
+            output.append("[default]You can't wear that.");
+            return question;
+        }
+
         if (target.getWorn() != null) {
             output.append(String.format("[default]You are already wearing %s[default].", target.getShortDescription()));
             return question;
@@ -59,7 +65,7 @@ public class WearCommand extends AbstractCommand {
             .toList();
 
         // find all slots that the character has AND the target item has AND isn't already occupied
-        List<String> candidateSlots = target.getWearSlots()
+        List<WearSlot> candidateSlots = target.getWearSlots()
             .stream()
             .filter(slot -> ch.getWearSlots().contains(slot))
             .filter(slot -> wornItems.stream().noneMatch(item -> item.getWorn().equals(slot)))
@@ -70,11 +76,11 @@ public class WearCommand extends AbstractCommand {
             return question;
         }
 
-        String targetSlot = candidateSlots.get(0);
+        WearSlot targetSlot = candidateSlots.get(0);
         target.setWorn(targetSlot);
         itemRepository.save(target);
 
-        output.append(String.format("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot));
+        output.append(String.format("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot.getName()));
         commService.sendToRoom(webSocketContext, ch.getRoomId(),
             new Output(String.format("[default]%s wears %s[default] on %s %s.",
                 ch.getName(),

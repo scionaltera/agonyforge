@@ -11,7 +11,7 @@ import com.agonyforge.mud.demo.cli.menu.MenuPane;
 import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.MenuTitle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;

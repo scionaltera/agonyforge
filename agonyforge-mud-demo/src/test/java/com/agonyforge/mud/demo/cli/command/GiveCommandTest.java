@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -190,7 +191,7 @@ public class GiveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(item.getNameList()).thenReturn(List.of("spoon"));
-        when(item.getWorn()).thenReturn("nose");
+        when(item.getWorn()).thenReturn(WearSlot.FACE);
         when(other.getNameList()).thenReturn(List.of("test"));
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 

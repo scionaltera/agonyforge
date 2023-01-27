@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.config;
 
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.impl.MudZone;
@@ -86,7 +87,7 @@ public class WorldLoader {
             hat.setNameList(List.of("hat", "floppy"));
             hat.setShortDescription("a floppy hat");
             hat.setLongDescription("A floppy hat has been dropped here.");
-            hat.setWearSlots(List.of("head"));
+            hat.setWearSlots(List.of(WearSlot.HEAD));
 
             hatInstance = hat.buildInstance();
             hatInstance.setRoomId(101L);
