@@ -14,6 +14,7 @@ import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,33 +37,41 @@ public class UserSessionRepository extends AbstractRepository<UserSession> {
     }
 
     public List<UserSession> getByPrincipal(String principalName) {
-        Map<String, Condition> filter = new HashMap<>();
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<UserSession> results = new ArrayList<>();
 
-        filter.put("pk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(DB_USER + principalName).build())
-            .build());
+        do {
+            Map<String, Condition> filter = new HashMap<>();
 
-        QueryRequest request = QueryRequest.builder()
-            .tableName(tableNames.getTableName())
-            .keyConditions(filter)
-            .build();
+            filter.put("pk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(DB_USER + principalName).build())
+                .build());
 
-        try {
-            QueryResponse response = dynamoDbClient.query(request);
+            QueryRequest request = QueryRequest.builder()
+                .tableName(tableNames.getTableName())
+                .keyConditions(filter)
+                .build();
 
-            return response.items()
-                .stream()
-                .map(item -> {
-                    UserSession session = newInstance();
-                    session.thaw(item);
-                    return session;
-                })
-                .collect(Collectors.toList());
-        } catch (DynamoDbException e) {
-            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
-        }
+            try {
+                QueryResponse response = dynamoDbClient.query(request);
 
-        return List.of();
+                results.addAll(response.items()
+                    .stream()
+                    .map(item -> {
+                        UserSession session = newInstance();
+                        session.thaw(item);
+                        return session;
+                    })
+                    .toList());
+
+                lastKeyEvaluated = response.lastEvaluatedKey();
+            } catch (DynamoDbException e) {
+                LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+                lastKeyEvaluated = null;
+            }
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return results;
     }
 }
