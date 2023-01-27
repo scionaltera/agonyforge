@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class CharacterDeleteQuestion extends DemoQuestion {
+public class CharacterDeleteQuestion extends AbstractQuestion {
     @Autowired
     public CharacterDeleteQuestion(ApplicationContext applicationContext,
                                    MudCharacterRepository characterRepository,

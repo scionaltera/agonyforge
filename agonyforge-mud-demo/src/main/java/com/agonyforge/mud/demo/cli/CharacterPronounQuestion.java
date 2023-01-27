@@ -6,10 +6,10 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
+import com.agonyforge.mud.demo.cli.menu.MenuItem;
+import com.agonyforge.mud.demo.cli.menu.MenuPane;
+import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
+import com.agonyforge.mud.demo.cli.menu.MenuTitle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -24,10 +24,10 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Component
-public class CharacterPronounQuestion extends DemoQuestion {
+public class CharacterPronounQuestion extends AbstractQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterPronounQuestion.class);
 
-    private final DemoMenuPane menuPane = new DemoMenuPane();
+    private final MenuPane menuPane = new MenuPane();
 
     @Autowired
     public CharacterPronounQuestion(ApplicationContext applicationContext,
@@ -35,8 +35,8 @@ public class CharacterPronounQuestion extends DemoQuestion {
                                  MudItemRepository itemRepository) {
         super(applicationContext, characterRepository, itemRepository);
 
-        menuPane.setTitle(new DemoMenuTitle("Choose Your Pronouns"));
-        menuPane.setPrompt(new DemoMenuPrompt());
+        menuPane.setTitle(new MenuTitle("Choose Your Pronouns"));
+        menuPane.setPrompt(new MenuPrompt());
     }
 
     @Override
@@ -53,16 +53,16 @@ public class CharacterPronounQuestion extends DemoQuestion {
         String nextQuestion = "characterPronounQuestion";
         Output output = new Output();
         String choice = input.getInput().toUpperCase();
-        Optional<DemoMenuItem> itemOptional = menuPane.getItems()
+        Optional<MenuItem> itemOptional = menuPane.getItems()
             .stream()
-            .map(i -> (DemoMenuItem)i)
+            .map(i -> (MenuItem)i)
             .filter(i -> choice.equals(i.getKey()))
             .findFirst();
 
         if (itemOptional.isEmpty()) {
             output.append("[red]Please choose one of the menu options.");
         } else {
-            DemoMenuItem item = itemOptional.get();
+            MenuItem item = itemOptional.get();
             Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
 
             if (chOptional.isPresent()) {
@@ -85,8 +85,8 @@ public class CharacterPronounQuestion extends DemoQuestion {
         Arrays
             .stream(Pronoun.values())
             .sorted()
-            .forEach(pronoun -> menuPane.getItems().add(new DemoMenuItem(
-                Integer.toString(menuPane.getItems().size()),
+            .forEach(pronoun -> menuPane.getItems().add(new MenuItem(
+                Integer.toString(menuPane.getItems().size() + 1),
                 String.format("%s/%s", pronoun.getSubject(), pronoun.getObject()),
                 pronoun)));
     }

@@ -7,7 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import static com.agonyforge.mud.core.cli.Color.GREEN;
 import static com.agonyforge.mud.core.cli.Color.YELLOW;
 
-public class DemoMenuPrompt extends AbstractMenuPrompt {
+public class MenuPrompt extends AbstractMenuPrompt {
     @Override
     public Output render(Color... colors) {
         Output menu = new Output();

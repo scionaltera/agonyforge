@@ -4,7 +4,7 @@ import com.agonyforge.mud.core.cli.menu.AbstractMenuPane;
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
 
-public class DemoMenuPane extends AbstractMenuPane {
+public class MenuPane extends AbstractMenuPane {
     @Override
     public Output render(Color... colors) {
         Output menu = new Output();

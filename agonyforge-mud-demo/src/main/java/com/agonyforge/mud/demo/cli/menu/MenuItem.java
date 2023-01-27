@@ -7,14 +7,14 @@ import com.agonyforge.mud.core.web.model.Output;
 import static com.agonyforge.mud.core.cli.Color.GREEN;
 import static com.agonyforge.mud.core.cli.Color.YELLOW;
 
-public class DemoMenuItem extends AbstractMenuItem {
+public class MenuItem extends AbstractMenuItem {
     private Object item;
 
-    public DemoMenuItem(String key, String description) {
+    public MenuItem(String key, String description) {
         super(key, description);
     }
 
-    public DemoMenuItem(String key, String description, Object item) {
+    public MenuItem(String key, String description, Object item) {
         super(key, description);
         this.item = item;
     }

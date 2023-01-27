@@ -6,10 +6,10 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
-import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
+import com.agonyforge.mud.demo.cli.menu.MenuItem;
+import com.agonyforge.mud.demo.cli.menu.MenuPane;
+import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
+import com.agonyforge.mud.demo.cli.menu.MenuTitle;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,8 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class CharacterMenuQuestion extends DemoQuestion {
-    private final DemoMenuPane menuPane = new DemoMenuPane();
+public class CharacterMenuQuestion extends AbstractQuestion {
+    private final MenuPane menuPane = new MenuPane();
 
     @Autowired
     public CharacterMenuQuestion(ApplicationContext applicationContext,
@@ -31,8 +31,8 @@ public class CharacterMenuQuestion extends DemoQuestion {
                                  MudItemRepository itemRepository) {
         super(applicationContext, characterRepository, itemRepository);
 
-        menuPane.setTitle(new DemoMenuTitle("Your Characters"));
-        menuPane.setPrompt(new DemoMenuPrompt());
+        menuPane.setTitle(new MenuTitle("Your Characters"));
+        menuPane.setPrompt(new MenuPrompt());
     }
 
     @Override
@@ -49,9 +49,9 @@ public class CharacterMenuQuestion extends DemoQuestion {
         String nextQuestion = "characterMenuQuestion";
         Output output = new Output();
         String choice = input.getInput().toUpperCase();
-        Optional<DemoMenuItem> itemOptional = menuPane.getItems()
+        Optional<MenuItem> itemOptional = menuPane.getItems()
             .stream()
-            .map(i -> (DemoMenuItem)i)
+            .map(i -> (MenuItem)i)
             .filter(i -> choice.equals(i.getKey()))
             .findFirst();
 
@@ -60,7 +60,7 @@ public class CharacterMenuQuestion extends DemoQuestion {
         } else if ("N".equals(choice)) {
             nextQuestion = "characterNameQuestion";
         } else {
-            DemoMenuItem item = itemOptional.get();
+            MenuItem item = itemOptional.get();
             wsContext.getAttributes().put(MUD_CHARACTER, item.getItem());
             nextQuestion = "characterViewQuestion";
         }
@@ -72,10 +72,10 @@ public class CharacterMenuQuestion extends DemoQuestion {
 
     private void populateMenuItems(Principal principal) {
         menuPane.getItems().clear();
-        menuPane.getItems().add(new DemoMenuItem("N", "New Character"));
+        menuPane.getItems().add(new MenuItem("N", "New Character"));
 
         getCharacterRepository().getByUser(principal.getName())
-            .forEach(ch -> menuPane.getItems().add(new DemoMenuItem(
+            .forEach(ch -> menuPane.getItems().add(new MenuItem(
                 Integer.toString(menuPane.getItems().size()),
                 ch.getName(),
                 ch.getId())));
