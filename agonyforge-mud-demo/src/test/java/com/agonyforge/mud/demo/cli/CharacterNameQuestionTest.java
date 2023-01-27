@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
@@ -91,7 +92,7 @@ public class CharacterNameQuestionTest {
         assertNotNull(ch.getId());
         assertEquals(principal.getName(), ch.getUser());
         assertEquals(userInput, ch.getName());
-        assertEquals("head", ch.getWearSlots().get(0));
+        assertEquals(WearSlot.HEAD, ch.getWearSlots().get(0));
     }
 
     @ParameterizedTest

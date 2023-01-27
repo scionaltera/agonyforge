@@ -1,6 +1,8 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
+import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class MudCharacter implements Persistent {
     private boolean isPrototype = true;
     private String name;
     private Pronoun pronoun;
-    private List<String> wearSlots = new ArrayList<>();
+    private List<WearSlot> wearSlots = new ArrayList<>();
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -54,7 +56,12 @@ public class MudCharacter implements Persistent {
         }
 
         if (!getWearSlots().isEmpty()) {
-            data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());
+            List<String> slots = wearSlots
+                .stream()
+                .map(WearSlot::name)
+                .toList();
+
+            data.put("wear_slots", AttributeValue.builder().ss(slots).build());
         }
 
         if (!isPrototype()) {
@@ -80,7 +87,12 @@ public class MudCharacter implements Persistent {
         setWebSocketSession(data.getOrDefault("webSocketSession", AttributeValue.builder().nul(true).build()).s());
         setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
         setPronoun(Pronoun.valueOf(data.getOrDefault("pronoun", AttributeValue.builder().s("IT").build()).s()));
-        setWearSlots(data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss());
+
+        List<String> slots = data.getOrDefault("wear_slots", AttributeValue.builder().nul(true).build()).ss();
+        setWearSlots(slots
+            .stream()
+            .map(WearSlot::valueOf)
+            .toList());
     }
 
     public MudCharacter buildInstance() {
@@ -166,11 +178,11 @@ public class MudCharacter implements Persistent {
         this.pronoun = pronoun;
     }
 
-    public List<String> getWearSlots() {
+    public List<WearSlot> getWearSlots() {
         return new ArrayList<>(wearSlots);
     }
 
-    public void setWearSlots(List<String> wearSlots) {
+    public void setWearSlots(List<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
     }
 

@@ -4,9 +4,10 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
-import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
@@ -133,7 +134,7 @@ public class RemoveCommandTest {
         when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(target));
         when(target.getNameList()).thenReturn(List.of("test", "hat"));
         when(target.getShortDescription()).thenReturn("a test hat");
-        when(target.getWorn()).thenReturn("head");
+        when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
         RemoveCommand uut = new RemoveCommand(characterRepository, itemRepository, roomRepository, commService);

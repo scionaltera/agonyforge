@@ -1,5 +1,6 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -116,10 +117,9 @@ public class MudCharacterTest {
     @Test
     void testWearSlots() {
         MudCharacter uut = new MudCharacter();
-        String slot = "test";
 
-        uut.setWearSlots(List.of(slot));
+        uut.setWearSlots(List.of(WearSlot.HEAD));
 
-        assertEquals(slot, uut.getWearSlots().get(0));
+        assertEquals(WearSlot.HEAD, uut.getWearSlots().get(0));
     }
 }

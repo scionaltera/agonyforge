@@ -4,9 +4,10 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
-import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
@@ -112,7 +113,7 @@ public class WearCommandTest {
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWorn()).thenReturn("head");
+        when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
@@ -136,7 +137,7 @@ public class WearCommandTest {
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
-        when(item.getWorn()).thenReturn("head");
+        when(item.getWorn()).thenReturn(WearSlot.HEAD);
         when(target.getNameList()).thenReturn(List.of("hat"));
 
         Output output = new Output();
@@ -160,11 +161,11 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
-        when(ch.getWearSlots()).thenReturn(List.of("head"));
+        when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of("head"));
+        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
@@ -175,7 +176,7 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
-        verify(target).setWorn(anyString());
+        verify(target).setWorn(any(WearSlot.class));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),
@@ -194,13 +195,13 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
-        when(ch.getWearSlots()).thenReturn(List.of("hand", "head"));
+        when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
-        when(item.getWorn()).thenReturn("hand");
+        when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of("hand", "head"));
+        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
@@ -211,7 +212,7 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
-        verify(target).setWorn(eq("head"));
+        verify(target).setWorn(eq(WearSlot.HEAD));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),
@@ -230,13 +231,13 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
-        when(ch.getWearSlots()).thenReturn(List.of("hand", "head"));
+        when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
-        when(item.getWorn()).thenReturn("hand");
+        when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of("head"));
+        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
@@ -247,7 +248,7 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
-        verify(target).setWorn(anyString());
+        verify(target).setWorn(any(WearSlot.class));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),

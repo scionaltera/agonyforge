@@ -1,8 +1,9 @@
 package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class CharacterNameQuestion extends AbstractQuestion {
         ch.setUser(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
         ch.setPronoun(Pronoun.THEY);
-        ch.setWearSlots(List.of("head"));
+        ch.setWearSlots(List.of(WearSlot.HEAD));
 
         getCharacterRepository().save(ch);
         wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());

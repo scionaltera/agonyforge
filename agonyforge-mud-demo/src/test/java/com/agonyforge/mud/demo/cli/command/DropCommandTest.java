@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -122,7 +123,7 @@ public class DropCommandTest {
             MUD_CHARACTER, chId
         ));
         when(item.getNameList()).thenReturn(List.of("test"));
-        when(item.getWorn()).thenReturn("head");
+        when(item.getWorn()).thenReturn(WearSlot.HEAD);
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(item, other));
 
         Output output = new Output();
