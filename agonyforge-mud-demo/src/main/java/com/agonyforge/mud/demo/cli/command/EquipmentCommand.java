@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -34,7 +35,7 @@ public class EquipmentCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Map<String, MudItem> inventory = itemRepository.getByCharacter(ch.getId())
+        Map<WearSlot, MudItem> inventory = itemRepository.getByCharacter(ch.getId())
                 .stream()
                 .filter(item -> item.getWorn() != null)
                 .collect(Collectors.toMap(MudItem::getWorn, Function.identity()));
@@ -47,8 +48,8 @@ public class EquipmentCommand extends AbstractCommand {
             inventory.entrySet()
                 .stream()
                 .sorted()
-                .forEach(entry -> output.append(String.format("[default]&lt;worn on %s>\t%s",
-                    entry.getKey(), entry.getValue().getShortDescription())));
+                .forEach(entry -> output.append(String.format("[default]&lt;%s>\t%s",
+                    entry.getKey().getPhrase(), entry.getValue().getShortDescription())));
         }
 
         return question;
