@@ -79,7 +79,7 @@ public class WearCommand extends AbstractCommand {
             new Output(String.format("[default]%s wears %s[default] on %s %s.",
                 ch.getName(),
                 target.getShortDescription(),
-                "their", // TODO pronouns
+                ch.getPronoun().getPossessive(),
                 targetSlot
             )));
 

@@ -177,6 +177,41 @@ public class GiveCommandTest {
     }
 
     @Test
+    void testGiveWornItem() {
+        UUID chId = UUID.randomUUID();
+        Long roomId = 100L;
+
+        when(ch.getId()).thenReturn(chId);
+        when(ch.getRoomId()).thenReturn(roomId);
+        when(target.getName()).thenReturn("Spook");
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(target, ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(item.getNameList()).thenReturn(List.of("spoon"));
+        when(item.getWorn()).thenReturn("nose");
+        when(other.getNameList()).thenReturn(List.of("test"));
+        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
+
+        Output output = new Output();
+        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("GIVE", "SPOON", "SPOOK"),
+            new Input("g sp sp"),
+            output);
+
+        verify(itemRepository).getByCharacter(eq(chId));
+        verify(characterRepository).getByRoom(eq(roomId));
+        verify(itemRepository, never()).save(eq(item));
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("remove it first"));
+    }
+
+    @Test
     void testGive() {
         UUID chId = UUID.randomUUID();
         UUID targetId = UUID.randomUUID();

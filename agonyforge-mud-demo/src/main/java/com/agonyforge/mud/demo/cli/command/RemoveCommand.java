@@ -61,7 +61,7 @@ public class RemoveCommand extends AbstractCommand {
             new Output(String.format("[default]%s removes %s[default] from %s %s.",
                 ch.getName(),
                 target.getShortDescription(),
-                "their", // TODO pronouns
+                ch.getPronoun().getPossessive(),
                 targetSlot
             )));
 

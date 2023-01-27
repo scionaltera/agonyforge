@@ -112,6 +112,36 @@ public class DropCommandTest {
     }
 
     @Test
+    void testDropWornItem() {
+        UUID chId = UUID.randomUUID();
+        String itemName = "a scurrilous test";
+
+        when(ch.getId()).thenReturn(chId);
+        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(item.getNameList()).thenReturn(List.of("test"));
+        when(item.getWorn()).thenReturn("head");
+        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(item, other));
+
+        Output output = new Output();
+        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("DROP", "TEST"),
+            new Input("dr t"),
+            output);
+
+        verify(itemRepository).getByCharacter(eq(chId));
+        verify(itemRepository, never()).save(any(MudItem.class));
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().get(0).contains("remove it first"));
+    }
+
+    @Test
     void testDrop() {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;

@@ -59,6 +59,11 @@ public class GiveCommand extends AbstractCommand {
         MudItem item = itemOptional.get();
         MudCharacter target = targetOptional.get();
 
+        if (item.getWorn() != null) {
+            output.append("[default]You need to remove it first.");
+            return question;
+        }
+
         item.setCharacterId(target.getId());
         itemRepository.save(item);
 

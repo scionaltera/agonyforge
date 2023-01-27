@@ -70,7 +70,7 @@ public class CharacterNameQuestionTest {
         "SCION"
     })
     void testAnswer(String userInput) {
-        when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("characterPronounQuestion"), eq(Question.class))).thenReturn(question);
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
 
