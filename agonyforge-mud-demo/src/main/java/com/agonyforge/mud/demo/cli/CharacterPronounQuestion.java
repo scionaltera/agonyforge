@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.menu;
+package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
@@ -6,7 +6,10 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.demo.cli.DemoQuestion;
+import com.agonyforge.mud.demo.cli.menu.DemoMenuItem;
+import com.agonyforge.mud.demo.cli.menu.DemoMenuPane;
+import com.agonyforge.mud.demo.cli.menu.DemoMenuPrompt;
+import com.agonyforge.mud.demo.cli.menu.DemoMenuTitle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;

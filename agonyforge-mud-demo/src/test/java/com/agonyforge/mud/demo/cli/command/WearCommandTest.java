@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
+import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
@@ -160,6 +161,7 @@ public class WearCommandTest {
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
         when(ch.getWearSlots()).thenReturn(List.of("head"));
+        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
         when(target.getWearSlots()).thenReturn(List.of("head"));
@@ -193,6 +195,7 @@ public class WearCommandTest {
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(List.of("hand", "head"));
+        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn("hand");
         when(target.getShortDescription()).thenReturn("a test hat");
@@ -228,6 +231,7 @@ public class WearCommandTest {
         ));
         when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(List.of("hand", "head"));
+        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn("hand");
         when(target.getShortDescription()).thenReturn("a test hat");

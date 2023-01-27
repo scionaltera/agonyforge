@@ -46,7 +46,12 @@ public class MudCharacter implements Persistent {
 
         data.put("principal", AttributeValue.builder().s(getUser()).build());
         data.put("name", AttributeValue.builder().s(getName()).build());
-        data.put("pronoun", AttributeValue.builder().s(getPronoun().name()).build());
+
+        if (getPronoun() != null) {
+            data.put("pronoun", AttributeValue.builder().s(getPronoun().name()).build());
+        } else {
+            data.put("pronoun", AttributeValue.builder().s(Pronoun.IT.name()).build());
+        }
 
         if (!getWearSlots().isEmpty()) {
             data.put("wear_slots", AttributeValue.builder().ss(wearSlots).build());

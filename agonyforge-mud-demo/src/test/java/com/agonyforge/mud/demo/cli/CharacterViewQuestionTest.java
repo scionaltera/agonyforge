@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
+import com.agonyforge.mud.models.dynamodb.impl.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
@@ -84,18 +85,21 @@ public class CharacterViewQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(characterName);
+        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
         Output result = uut.prompt(wsContext);
 
-        assertEquals(7, result.getOutput().size());
-        assertTrue(result.getOutput().get(0).contains("Character Sheet"));
-        assertTrue(result.getOutput().get(1).contains(characterName));
-        assertEquals("", result.getOutput().get(2));
-        assertTrue(result.getOutput().get(3).contains("Play"));
-        assertTrue(result.getOutput().get(4).contains("Delete"));
-        assertTrue(result.getOutput().get(5).contains("Go back"));
-        assertTrue(result.getOutput().get(6).contains("selection"));
+        int i = 0;
+        assertEquals(8, result.getOutput().size());
+        assertTrue(result.getOutput().get(i++).contains("Character Sheet"));
+        assertTrue(result.getOutput().get(i++).contains(characterName));
+        assertTrue(result.getOutput().get(i++).contains(Pronoun.SHE.getObject()));
+        assertEquals("", result.getOutput().get(i++));
+        assertTrue(result.getOutput().get(i++).contains("Play"));
+        assertTrue(result.getOutput().get(i++).contains("Delete"));
+        assertTrue(result.getOutput().get(i++).contains("Go back"));
+        assertTrue(result.getOutput().get(i).contains("selection"));
     }
 
     @Test
