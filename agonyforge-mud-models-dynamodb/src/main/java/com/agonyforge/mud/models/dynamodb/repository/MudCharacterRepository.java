@@ -14,12 +14,12 @@ import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_PC;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.DB_ROOM;
@@ -89,71 +89,89 @@ public class MudCharacterRepository extends AbstractRepository<MudCharacter> {
     }
 
     public List<MudCharacter> getByUser(String user) {
-        Map<String, Condition> filter = new HashMap<>();
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<MudCharacter> results = new ArrayList<>();
 
-        filter.put("gsi2pk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(DB_USER + user).build())
-            .build());
+        do {
+            Map<String, Condition> filter = new HashMap<>();
 
-        QueryRequest request = QueryRequest.builder()
-            .tableName(tableNames.getTableName())
-            .indexName(tableNames.getGsi2())
-            .keyConditions(filter)
-            .build();
+            filter.put("gsi2pk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(DB_USER + user).build())
+                .build());
 
-        try {
-            QueryResponse response = dynamoDbClient.query(request);
+            QueryRequest request = QueryRequest.builder()
+                .tableName(tableNames.getTableName())
+                .indexName(tableNames.getGsi2())
+                .keyConditions(filter)
+                .exclusiveStartKey(lastKeyEvaluated)
+                .build();
 
-            return response.items()
-                .stream()
-                .map(item -> {
-                    MudCharacter ch = newInstance();
-                    ch.thaw(item);
-                    return ch;
-                })
-                .collect(Collectors.toList());
-        } catch (DynamoDbException e) {
-            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
-        }
+            try {
+                QueryResponse response = dynamoDbClient.query(request);
 
-        return List.of();
+                results.addAll(response.items()
+                    .stream()
+                    .map(item -> {
+                        MudCharacter ch = newInstance();
+                        ch.thaw(item);
+                        return ch;
+                    })
+                    .toList());
+
+                lastKeyEvaluated = response.lastEvaluatedKey();
+            } catch (DynamoDbException e) {
+                LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+                lastKeyEvaluated = null;
+            }
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return results;
     }
 
     public List<MudCharacter> getByRoom(Long roomId) {
-        Map<String, Condition> filter = new HashMap<>();
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<MudCharacter> results = new ArrayList<>();
 
-        filter.put("gsi2pk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(DB_ROOM + roomId).build())
-            .build());
+        do {
+            Map<String, Condition> filter = new HashMap<>();
 
-        filter.put("pk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.BEGINS_WITH)
-            .attributeValueList(AttributeValue.builder().s(DB_PC).build())
-            .build());
+            filter.put("gsi2pk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(DB_ROOM + roomId).build())
+                .build());
 
-        QueryRequest request = QueryRequest.builder()
-            .tableName(tableNames.getTableName())
-            .indexName(tableNames.getGsi2())
-            .keyConditions(filter)
-            .build();
+            filter.put("pk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.BEGINS_WITH)
+                .attributeValueList(AttributeValue.builder().s(DB_PC).build())
+                .build());
 
-        try {
-            QueryResponse response = dynamoDbClient.query(request);
+            QueryRequest request = QueryRequest.builder()
+                .tableName(tableNames.getTableName())
+                .indexName(tableNames.getGsi2())
+                .keyConditions(filter)
+                .exclusiveStartKey(lastKeyEvaluated)
+                .build();
 
-            return response.items()
-                .stream()
-                .map(item -> {
-                    MudCharacter ch = newInstance();
-                    ch.thaw(item);
-                    return ch;
-                })
-                .collect(Collectors.toList());
-        } catch (DynamoDbException e) {
-            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
-        }
+            try {
+                QueryResponse response = dynamoDbClient.query(request);
 
-        return List.of();
+                results.addAll(response.items()
+                    .stream()
+                    .map(item -> {
+                        MudCharacter ch = newInstance();
+                        ch.thaw(item);
+                        return ch;
+                    })
+                    .toList());
+
+                lastKeyEvaluated = response.lastEvaluatedKey();
+            } catch (DynamoDbException e) {
+                LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+                lastKeyEvaluated = null;
+            }
+        } while(lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return results;
     }
 }

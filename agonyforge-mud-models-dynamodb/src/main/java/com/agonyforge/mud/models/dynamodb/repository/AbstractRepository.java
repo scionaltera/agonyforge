@@ -17,6 +17,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,35 +45,44 @@ public abstract class AbstractRepository<T extends Persistent> {
     public abstract T newInstance();
 
     public List<T> getByType(String type) {
-        Map<String, Condition> filter = new HashMap<>();
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<T> results = new ArrayList<>();
 
-        filter.put("gsi1pk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(type).build())
-            .build());
+        do {
+            Map<String, Condition> filter = new HashMap<>();
 
-        QueryRequest request = QueryRequest.builder()
-            .tableName(tableNames.getTableName())
-            .indexName(tableNames.getGsi1())
-            .keyConditions(filter)
-            .build();
+            filter.put("gsi1pk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(type).build())
+                .build());
 
-        try {
-            QueryResponse response = dynamoDbClient.query(request);
+            QueryRequest request = QueryRequest.builder()
+                .tableName(tableNames.getTableName())
+                .indexName(tableNames.getGsi1())
+                .keyConditions(filter)
+                .exclusiveStartKey(lastKeyEvaluated)
+                .build();
 
-            return response.items()
-                .stream()
-                .map(item -> {
-                    T thing = newInstance();
-                    thing.thaw(item);
-                    return thing;
-                })
-                .collect(Collectors.toList());
-        } catch (DynamoDbException e) {
-            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
-        }
+            try {
+                QueryResponse response = dynamoDbClient.query(request);
 
-        return List.of();
+                results.addAll(response.items()
+                    .stream()
+                    .map(item -> {
+                        T thing = newInstance();
+                        thing.thaw(item);
+                        return thing;
+                    })
+                    .toList());
+
+                lastKeyEvaluated = response.lastEvaluatedKey();
+            } catch (DynamoDbException e) {
+                LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+                lastKeyEvaluated = null;
+            }
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return results;
     }
 
     public void saveAll(List<T> items) {

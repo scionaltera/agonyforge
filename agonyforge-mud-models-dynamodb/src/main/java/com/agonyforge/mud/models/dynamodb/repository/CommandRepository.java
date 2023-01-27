@@ -14,10 +14,10 @@ import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_COMMAND;
 
@@ -36,34 +36,43 @@ public class CommandRepository extends AbstractRepository<CommandReference> {
     }
 
     public List<CommandReference> getByPriority() {
-        Map<String, Condition> filter = new HashMap<>();
+        Map<String, AttributeValue> lastKeyEvaluated = null;
+        List<CommandReference> results = new ArrayList<>();
 
-        filter.put("gsi1pk", Condition.builder()
-            .comparisonOperator(ComparisonOperator.EQ)
-            .attributeValueList(AttributeValue.builder().s(TYPE_COMMAND).build())
-            .build());
+        do {
+            Map<String, Condition> filter = new HashMap<>();
 
-        QueryRequest request = QueryRequest.builder()
-            .tableName(tableNames.getTableName())
-            .indexName(tableNames.getGsi1())
-            .keyConditions(filter)
-            .build();
+            filter.put("gsi1pk", Condition.builder()
+                .comparisonOperator(ComparisonOperator.EQ)
+                .attributeValueList(AttributeValue.builder().s(TYPE_COMMAND).build())
+                .build());
 
-        try {
-            QueryResponse response = dynamoDbClient.query(request);
+            QueryRequest request = QueryRequest.builder()
+                .tableName(tableNames.getTableName())
+                .indexName(tableNames.getGsi1())
+                .keyConditions(filter)
+                .exclusiveStartKey(lastKeyEvaluated)
+                .build();
 
-            return response.items()
-                .stream()
-                .map(attributes -> {
-                    CommandReference item = newInstance();
-                    item.thaw(attributes);
-                    return item;
-                })
-                .collect(Collectors.toList());
-        } catch (DynamoDbException e) {
-            LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
-        }
+            try {
+                QueryResponse response = dynamoDbClient.query(request);
 
-        return List.of();
+                results.addAll(response.items()
+                    .stream()
+                    .map(attributes -> {
+                        CommandReference item = newInstance();
+                        item.thaw(attributes);
+                        return item;
+                    })
+                    .toList());
+
+                lastKeyEvaluated = response.lastEvaluatedKey();
+            } catch (DynamoDbException e) {
+                LOGGER.error("DynamoDbException: {}", e.getMessage(), e);
+                lastKeyEvaluated = null;
+            }
+        } while (lastKeyEvaluated != null && lastKeyEvaluated.size() > 0);
+
+        return results;
     }
 }
