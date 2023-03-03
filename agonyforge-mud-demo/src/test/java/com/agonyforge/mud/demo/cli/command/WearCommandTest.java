@@ -27,13 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WearCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -64,13 +66,17 @@ public class WearCommandTest {
     @Test
     void testWearNoArg() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -85,13 +91,17 @@ public class WearCommandTest {
     @Test
     void testWearNoInventoryItem() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -106,6 +116,10 @@ public class WearCommandTest {
     @Test
     void testWearTargetNotWearable() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -114,7 +128,7 @@ public class WearCommandTest {
         when(target.getNameList()).thenReturn(List.of("hat"));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -129,6 +143,10 @@ public class WearCommandTest {
     @Test
     void testWearTargetAlreadyWorn() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -140,7 +158,7 @@ public class WearCommandTest {
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -155,6 +173,10 @@ public class WearCommandTest {
     @Test
     void testWearTargetNoAvailableSlot() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -166,7 +188,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -181,6 +203,10 @@ public class WearCommandTest {
     @Test
     void testWearTarget() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -193,7 +219,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -215,6 +241,10 @@ public class WearCommandTest {
     @Test
     void testWearTargetSecondMatch() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -229,7 +259,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -251,6 +281,10 @@ public class WearCommandTest {
     @Test
     void testWearTargetWithOtherItem() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -265,7 +299,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(characterRepository, itemRepository, roomRepository, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

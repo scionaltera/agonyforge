@@ -8,7 +8,6 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +47,8 @@ public class LookCommand extends AbstractCommand {
     }
 
     @Autowired
-    public LookCommand(MudCharacterRepository characterRepository,
-                       MudItemRepository itemRepository,
-                       MudRoomRepository roomRepository,
-                       CommService commService) {
-        super(characterRepository,
-            itemRepository,
-            roomRepository,
-            commService);
+    public LookCommand(RepositoryBundle repositoryBundle, CommService commService) {
+        super(repositoryBundle, commService);
     }
 
     @Override

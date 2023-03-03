@@ -39,6 +39,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class WhisperCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -82,6 +85,10 @@ public class WhisperCommandTest {
         String match = val.substring(9).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -94,7 +101,7 @@ public class WhisperCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -126,11 +133,15 @@ public class WhisperCommandTest {
         "whisper  "
     })
     void testExecuteNoTarget(String val) {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
 
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -147,11 +158,15 @@ public class WhisperCommandTest {
         "whisper t  "
     })
     void testExecuteNoMessage(String val) {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
 
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -168,12 +183,16 @@ public class WhisperCommandTest {
         Output output = new Output();
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
 
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

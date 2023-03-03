@@ -34,6 +34,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class GossipCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -68,6 +71,10 @@ public class GossipCommandTest {
         String match = val.substring(7).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -75,7 +82,7 @@ public class GossipCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
+        GossipCommand uut = new GossipCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -97,7 +104,12 @@ public class GossipCommandTest {
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
+        GossipCommand uut = new GossipCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

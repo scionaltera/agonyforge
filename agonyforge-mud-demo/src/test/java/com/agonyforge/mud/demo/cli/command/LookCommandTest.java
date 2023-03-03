@@ -30,6 +30,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class LookCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -64,6 +67,9 @@ public class LookCommandTest {
         UUID chId = UUID.randomUUID();
         long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -71,7 +77,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
+        LookCommand uut = new LookCommand(repositoryBundle, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),
@@ -88,6 +94,9 @@ public class LookCommandTest {
         UUID chId = UUID.randomUUID();
         long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Target");
         when(item.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
@@ -103,7 +112,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
+        LookCommand uut = new LookCommand(repositoryBundle, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),

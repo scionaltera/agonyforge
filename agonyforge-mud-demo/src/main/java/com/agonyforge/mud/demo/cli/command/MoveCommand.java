@@ -7,9 +7,6 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +21,10 @@ public class MoveCommand extends AbstractCommand {
 
     private final Direction direction;
 
-    public MoveCommand(MudCharacterRepository characterRepository,
-                       MudItemRepository itemRepository,
-                       MudRoomRepository roomRepository,
+    public MoveCommand(RepositoryBundle repositoryBundle,
                        CommService commService,
                        Direction direction) {
-        super(characterRepository,
-            itemRepository,
-            roomRepository,
-            commService);
+        super(repositoryBundle, commService);
 
         this.direction = direction;
     }

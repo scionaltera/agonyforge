@@ -24,13 +24,11 @@ public abstract class AbstractCommand implements Command {
     protected final MudRoomRepository roomRepository;
     protected final CommService commService;
 
-    public AbstractCommand(MudCharacterRepository characterRepository,
-                           MudItemRepository itemRepository,
-                           MudRoomRepository roomRepository,
+    public AbstractCommand(RepositoryBundle repositoryBundle,
                            CommService commService) {
-        this.characterRepository = characterRepository;
-        this.itemRepository = itemRepository;
-        this.roomRepository = roomRepository;
+        this.characterRepository = repositoryBundle.getCharacterRepository();
+        this.itemRepository = repositoryBundle.getItemRepository();
+        this.roomRepository = repositoryBundle.getRoomRepository();
         this.commService = commService;
     }
 

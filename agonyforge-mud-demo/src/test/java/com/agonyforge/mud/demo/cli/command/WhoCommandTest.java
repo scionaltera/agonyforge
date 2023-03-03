@@ -25,6 +25,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class WhoCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -59,12 +62,15 @@ public class WhoCommandTest {
         List<MudCharacter> characters = List.of(ch, chInstance);
         Output output = new Output();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.isPrototype()).thenReturn(true);
         when(chInstance.isPrototype()).thenReturn(false);
         when(chInstance.getName()).thenReturn("Scion");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhoCommand uut = new WhoCommand(repositoryBundle, commService);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);
@@ -79,6 +85,9 @@ public class WhoCommandTest {
         List<MudCharacter> characters = List.of(ch, chInstance, other, otherInstance);
         Output output = new Output();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.isPrototype()).thenReturn(true);
         when(chInstance.isPrototype()).thenReturn(false);
         when(chInstance.getName()).thenReturn("Scion");
@@ -87,7 +96,7 @@ public class WhoCommandTest {
         when(otherInstance.getName()).thenReturn("Spook");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhoCommand uut = new WhoCommand(repositoryBundle, commService);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);

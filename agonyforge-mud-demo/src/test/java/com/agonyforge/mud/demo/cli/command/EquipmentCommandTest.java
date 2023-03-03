@@ -30,6 +30,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class EquipmentCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -60,13 +63,16 @@ public class EquipmentCommandTest {
     void testEquipmentNone() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        EquipmentCommand uut = new EquipmentCommand(characterRepository, itemRepository, roomRepository, commService);
+        EquipmentCommand uut = new EquipmentCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -83,6 +89,9 @@ public class EquipmentCommandTest {
     void testEquipment() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -92,7 +101,7 @@ public class EquipmentCommandTest {
         when(item.getShortDescription()).thenReturn("a rubber chicken");
 
         Output output = new Output();
-        EquipmentCommand uut = new EquipmentCommand(characterRepository, itemRepository, roomRepository, commService);
+        EquipmentCommand uut = new EquipmentCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

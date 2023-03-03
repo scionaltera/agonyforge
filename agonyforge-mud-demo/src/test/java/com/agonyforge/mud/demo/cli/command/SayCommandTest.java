@@ -35,6 +35,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SayCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -69,6 +72,10 @@ public class SayCommandTest {
         String match = val.substring(4).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -77,7 +84,7 @@ public class SayCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, itemRepository, roomRepository, commService);
+        SayCommand uut = new SayCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -96,10 +103,14 @@ public class SayCommandTest {
         "say\t"
     })
     void testExecuteNoMessage(String val) {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        SayCommand uut = new SayCommand(characterRepository, itemRepository, roomRepository, commService);
+        SayCommand uut = new SayCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

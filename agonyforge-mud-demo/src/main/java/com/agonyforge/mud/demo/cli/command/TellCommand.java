@@ -5,9 +5,6 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,14 +15,8 @@ import java.util.Optional;
 @Component
 public class TellCommand extends AbstractCommand {
     @Autowired
-    public TellCommand(MudCharacterRepository characterRepository,
-                       MudItemRepository itemRepository,
-                       MudRoomRepository roomRepository,
-                       CommService commService) {
-        super(characterRepository,
-            itemRepository,
-            roomRepository,
-            commService);
+    public TellCommand(RepositoryBundle repositoryBundle, CommService commService) {
+        super(repositoryBundle, commService);
     }
 
     @Override

@@ -40,6 +40,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class TellCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -86,6 +88,10 @@ public class TellCommandTest {
         String match = val.substring(7).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -97,7 +103,7 @@ public class TellCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -121,11 +127,15 @@ public class TellCommandTest {
         "tell  "
     })
     void testExecuteNoTarget(String val) {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
 
-        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -142,11 +152,15 @@ public class TellCommandTest {
         "tell t  "
     })
     void testExecuteNoMessage(String val) {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
 
-        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -163,12 +177,15 @@ public class TellCommandTest {
         Output output = new Output();
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
 
-        TellCommand uut = new TellCommand(characterRepository, itemRepository, roomRepository, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

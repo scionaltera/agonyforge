@@ -33,6 +33,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class DropCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -63,13 +66,16 @@ public class DropCommandTest {
     void testDropNoArg() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -88,6 +94,9 @@ public class DropCommandTest {
     void testDropNoItem() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -97,7 +106,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -117,6 +126,9 @@ public class DropCommandTest {
         UUID chId = UUID.randomUUID();
         String itemName = "a scurrilous test";
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -127,7 +139,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(item, other));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -148,6 +160,9 @@ public class DropCommandTest {
         Long roomId = 100L;
         String itemName = "a scurrilous test";
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
@@ -160,7 +175,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

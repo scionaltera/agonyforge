@@ -34,6 +34,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RemoveCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -60,13 +63,17 @@ public class RemoveCommandTest {
     @Test
     void testRemoveNoArg() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(characterRepository, itemRepository, roomRepository, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -81,13 +88,17 @@ public class RemoveCommandTest {
     @Test
     void testRemoveNoTarget() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(characterRepository, itemRepository, roomRepository, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -102,6 +113,10 @@ public class RemoveCommandTest {
     @Test
     void testRemoveTargetNotWorn() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -111,7 +126,7 @@ public class RemoveCommandTest {
         when(target.getShortDescription()).thenReturn("a test hat");
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(characterRepository, itemRepository, roomRepository, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -126,6 +141,10 @@ public class RemoveCommandTest {
     @Test
     void testRemoveTarget() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -137,7 +156,7 @@ public class RemoveCommandTest {
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(characterRepository, itemRepository, roomRepository, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

@@ -34,6 +34,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class GiveCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -68,6 +71,9 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -75,7 +81,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -94,6 +100,9 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -101,7 +110,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -120,6 +129,9 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
@@ -130,7 +142,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -150,6 +162,9 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
@@ -161,7 +176,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -182,6 +197,9 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Spook");
@@ -196,7 +214,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -218,6 +236,9 @@ public class GiveCommandTest {
         UUID targetId = UUID.randomUUID();
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(ch.getName()).thenReturn("Scion");
@@ -234,7 +255,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(characterRepository, itemRepository, roomRepository, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

@@ -31,6 +31,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class InventoryCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -62,6 +65,9 @@ public class InventoryCommandTest {
         UUID chId = UUID.randomUUID();
         String itemName = "a scurrilous test";
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -72,7 +78,7 @@ public class InventoryCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(armor, item));
 
         Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(characterRepository, itemRepository, roomRepository, commService);
+        InventoryCommand uut = new InventoryCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -92,6 +98,9 @@ public class InventoryCommandTest {
     void testInventoryEmpty() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -99,7 +108,7 @@ public class InventoryCommandTest {
         ));
 
         Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(characterRepository, itemRepository, roomRepository, commService);
+        InventoryCommand uut = new InventoryCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,

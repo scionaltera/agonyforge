@@ -36,6 +36,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MoveCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -65,6 +68,10 @@ public class MoveCommandTest {
     @Test
     void testExecute() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -76,7 +83,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(question, response);
@@ -90,6 +97,10 @@ public class MoveCommandTest {
     @Test
     void testExecuteNoRoom() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -98,7 +109,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());
@@ -114,6 +125,10 @@ public class MoveCommandTest {
     @Test
     void testExecuteNoExit() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -123,7 +138,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());
@@ -139,6 +154,10 @@ public class MoveCommandTest {
     @Test
     void testExecuteBrokenExit() {
         UUID chId = UUID.randomUUID();
+
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -149,7 +168,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());

@@ -33,6 +33,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class AbstractCommandTest {
     @Mock
+    private RepositoryBundle repositoryBundle;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -63,13 +66,16 @@ public class AbstractCommandTest {
     void testGetCharacterNotFound() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.empty());
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -89,6 +95,9 @@ public class AbstractCommandTest {
     void testGetCharacterInVoid() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(null);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -96,7 +105,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -116,6 +125,9 @@ public class AbstractCommandTest {
     void testGetCharacterValid() {
         UUID chId = UUID.randomUUID();
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(100L);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -123,7 +135,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -143,12 +155,15 @@ public class AbstractCommandTest {
     void testFindRoomCharacter() {
         Long roomId = 100L;
 
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(ch.getName()).thenReturn("Scion");
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Morgan");
         when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
 
-        AbstractCommand uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 return question;
@@ -161,6 +176,9 @@ public class AbstractCommandTest {
 
     @Test
     void testFindWorldCharacter() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(ch.getName()).thenReturn("Scion");
         lenient().when(ch.isPrototype()).thenReturn(false);
         when(proto.isPrototype()).thenReturn(true);
@@ -168,7 +186,7 @@ public class AbstractCommandTest {
         when(target.isPrototype()).thenReturn(false);
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, proto, target));
 
-        AbstractCommand uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 return question;
