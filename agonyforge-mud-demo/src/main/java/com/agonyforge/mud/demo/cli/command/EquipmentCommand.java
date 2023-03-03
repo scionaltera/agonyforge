@@ -26,7 +26,7 @@ public class EquipmentCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Map<WearSlot, MudItem> inventory = itemRepository.getByCharacter(ch.getId())
+        Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().getByCharacter(ch.getId())
                 .stream()
                 .filter(item -> item.getWorn() != null)
                 .collect(Collectors.toMap(MudItem::getWorn, Function.identity()));

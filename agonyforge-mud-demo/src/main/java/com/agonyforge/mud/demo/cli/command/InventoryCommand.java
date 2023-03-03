@@ -22,7 +22,7 @@ public class InventoryCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        List<MudItem> items = itemRepository.getByCharacter(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().getByCharacter(ch.getId());
 
         output.append("[default]You are carrying:");
 

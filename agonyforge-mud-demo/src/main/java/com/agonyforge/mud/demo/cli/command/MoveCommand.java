@@ -36,7 +36,7 @@ public class MoveCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
+        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {
             output.append("[black]You are floating in the void, unable to move.");
@@ -53,7 +53,7 @@ public class MoveCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudRoom> destOptional = roomRepository.getById(exit.getDestinationId());
+        Optional<MudRoom> destOptional = getRepositoryBundle().getRoomRepository().getById(exit.getDestinationId());
 
         if (destOptional.isEmpty()) {
             output.append("[default]Alas, you cannot go that way.");
@@ -64,16 +64,16 @@ public class MoveCommand extends AbstractCommand {
 
         MudRoom destination = destOptional.get();
 
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("%s leaves %s.", ch.getName(), direction.getName()));
 
         ch.setRoomId(exit.getDestinationId());
-        characterRepository.save(ch);
+        getRepositoryBundle().getCharacterRepository().save(ch);
 
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("%s arrives from %s.", ch.getName(), direction.getOpposite()));
 
-        output.append(LookCommand.doLook(characterRepository, itemRepository, ch, destination));
+        output.append(LookCommand.doLook(getRepositoryBundle().getCharacterRepository(), getRepositoryBundle().getItemRepository(), ch, destination));
 
         return question;
     }

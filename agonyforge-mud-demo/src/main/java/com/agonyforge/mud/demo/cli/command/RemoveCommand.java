@@ -46,10 +46,10 @@ public class RemoveCommand extends AbstractCommand {
 
         WearSlot targetSlot = target.getWorn();
         target.setWorn(null);
-        itemRepository.save(target);
+        getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You remove %s[default].", target.getShortDescription());
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("[default]%s removes %s[default] from %s %s.",
                 ch.getName(),
                 target.getShortDescription(),

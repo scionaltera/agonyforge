@@ -22,7 +22,7 @@ public class WhoCommand extends AbstractCommand {
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        List<MudCharacter> characters = characterRepository.getByType(TYPE_PC)
+        List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().getByType(TYPE_PC)
             .stream()
             .filter(ch -> !ch.isPrototype())
             .toList();

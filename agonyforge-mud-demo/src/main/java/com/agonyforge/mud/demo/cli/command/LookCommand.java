@@ -58,7 +58,7 @@ public class LookCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
+        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {
             output.append("[black]You are floating in the void...");
@@ -69,7 +69,7 @@ public class LookCommand extends AbstractCommand {
 
         MudRoom room = roomOptional.get();
 
-        output.append(doLook(characterRepository, itemRepository, ch, room));
+        output.append(doLook(getRepositoryBundle().getCharacterRepository(), getRepositoryBundle().getItemRepository(), ch, room));
 
         return question;
     }

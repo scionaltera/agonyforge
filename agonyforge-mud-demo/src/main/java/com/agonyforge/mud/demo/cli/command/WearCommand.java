@@ -50,7 +50,7 @@ public class WearCommand extends AbstractCommand {
         }
 
         // find all items already worn
-        List<MudItem> wornItems = itemRepository.getByCharacter(ch.getId())
+        List<MudItem> wornItems = getRepositoryBundle().getItemRepository().getByCharacter(ch.getId())
             .stream()
             .filter(item -> item.getWorn() != null)
             .toList();
@@ -69,10 +69,10 @@ public class WearCommand extends AbstractCommand {
 
         WearSlot targetSlot = candidateSlots.get(0);
         target.setWorn(targetSlot);
-        itemRepository.save(target);
+        getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot.getName());
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("[default]%s wears %s[default] on %s %s.",
                 ch.getName(),
                 target.getShortDescription(),

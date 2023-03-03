@@ -56,11 +56,11 @@ public class GiveCommand extends AbstractCommand {
         }
 
         item.setCharacterId(target.getId());
-        itemRepository.save(item);
+        getRepositoryBundle().getItemRepository().save(item);
 
         output.append("[default]You give %s[default] to %s.", item.getShortDescription(), target.getName());
-        commService.sendTo(target, new Output("[default]%s gives %s[default] to you.", ch.getName(), item.getShortDescription()));
-        commService.sendToRoom(webSocketContext,
+        getCommService().sendTo(target, new Output("[default]%s gives %s[default] to you.", ch.getName(), item.getShortDescription()));
+        getCommService().sendToRoom(webSocketContext,
             ch.getRoomId(),
             new Output("[default]%s gives %s[default] to %s.", ch.getName(), item.getShortDescription(), target.getName()),
             target);

@@ -49,7 +49,7 @@ public class TellCommand extends AbstractCommand {
         MudCharacter target = targetOptional.get();
 
         output.append("[red]You tell %s, '%s[red]'", target.getName(), message);
-        commService.sendTo(target, new Output("[red]%s tells you, '%s[red]'", ch.getName(), message));
+        getCommService().sendTo(target, new Output("[red]%s tells you, '%s[red]'", ch.getName(), message));
 
         return question;
     }
