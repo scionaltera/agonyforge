@@ -13,8 +13,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -71,7 +69,7 @@ public class WebSocketControllerTest {
 
     @Test
     void testSubscribe() {
-        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("").append("[default]> "));
         when(question.getBeanName()).thenReturn("testQuestion");
 
         WebSocketController uut = new WebSocketController(applicationContext, question);
@@ -109,7 +107,7 @@ public class WebSocketControllerTest {
         when(response.getNext()).thenReturn(question);
         when(response.getFeedback()).thenReturn(Optional.of(new Output("[cyan]You say, 'Hello![cyan]'")));
         when(question.answer(any(WebSocketContext.class), any(Input.class))).thenReturn(response);
-        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("").append("[default]> "));
         when(question.getBeanName()).thenReturn("nextQuestion");
 
         Input input = new Input("Hello!");

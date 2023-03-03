@@ -14,7 +14,9 @@ public class MenuPrompt extends AbstractMenuPrompt {
         Color primary = colors.length > 0 ? colors[0] : YELLOW;
         Color secondary = colors.length > 1 ? colors[1] : GREEN;
 
-        menu.append("", secondary + "Please " + primary + "make your selection" + secondary + ": ");
+        menu
+            .append("")
+            .append(secondary + "Please " + primary + "make your selection" + secondary + ": ");
 
         return menu;
     }

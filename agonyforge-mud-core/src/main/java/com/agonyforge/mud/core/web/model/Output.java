@@ -13,7 +13,7 @@ public class Output {
         // this method intentionally left blank
     }
 
-    public Output(String ... output) {
+    public Output(String output) {
         append(output);
     }
 
@@ -25,8 +25,8 @@ public class Output {
         append(outputs);
     }
 
-    public Output append(String ... output) {
-        lines.addAll(Arrays.asList(output));
+    public Output append(String output) {
+        lines.add(output);
 
         return this;
     }

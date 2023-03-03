@@ -18,6 +18,7 @@ import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,7 +94,7 @@ public class EchoServiceTest {
         when(sessionAttributeService.getSessionAttributes(eq(targetSessionId))).thenReturn(attributes);
 
         when(simpUserRegistry.getUsers()).thenReturn(Set.of(sender, target));
-        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output(Arrays.asList("", "[default]> ")));
         when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
     }
 
@@ -112,7 +113,7 @@ public class EchoServiceTest {
         verify(simpMessagingTemplate, times(1)).convertAndSendToUser(
             eq("Bob"),
             eq("/queue/output"),
-            eq(new Output("Testy McTestface", "", "[default]> ")),
+            eq(new Output(Arrays.asList("Testy McTestface", "", "[default]> "))),
             headersCaptor.capture());
 
         MessageHeaders headers = headersCaptor.getValue();
@@ -143,7 +144,7 @@ public class EchoServiceTest {
         when(sessionAttributeService.getSessionAttributes(eq(targetSessionId))).thenReturn(attributes);
 
         when(simpUserRegistry.getUsers()).thenReturn(Set.of(sender));
-        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output(Arrays.asList("", "[default]> ")));
         when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
     }
 
@@ -162,7 +163,7 @@ public class EchoServiceTest {
         verify(simpMessagingTemplate, times(1)).convertAndSendToUser(
             eq("Alice"),
             eq("/queue/output"),
-            eq(new Output("Testy McTestface", "", "[default]> ")),
+            eq(new Output(Arrays.asList("Testy McTestface", "", "[default]> "))),
             headersCaptor.capture());
 
         MessageHeaders headers = headersCaptor.getValue();

@@ -18,6 +18,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class CommServiceTest {
 
         attributes.put(MUD_QUESTION, "nextQuestion");
 
-        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("", "[default]> "));
+        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output(Arrays.asList("", "[default]> ")));
         lenient().when(sessionAttributeService.getSessionAttributes(eq(wsSessionId))).thenReturn(attributes);
         lenient().when(sessionAttributeService.getSessionAttributes(eq(targetWsSessionId))).thenReturn(attributes);
         lenient().when(sessionAttributeService.getSessionAttributes(eq(otherWsSessionId))).thenReturn(attributes);
