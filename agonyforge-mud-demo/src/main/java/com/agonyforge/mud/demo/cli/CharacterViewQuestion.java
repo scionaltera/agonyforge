@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
+import com.agonyforge.mud.demo.cli.command.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
@@ -83,7 +84,9 @@ public class CharacterViewQuestion extends AbstractQuestion {
                 LOGGER.info("{} has entered the game.", ch.getName());
                 commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
 
-                output.append(LookCommand.doLook(getCharacterRepository(), getItemRepository(), ch, room));
+                // TODO this is temporary pending refactor of Question constructor
+                RepositoryBundle repositoryBundle = new RepositoryBundle(getCharacterRepository(), getItemRepository(), roomRepository);
+                output.append(LookCommand.doLook(repositoryBundle, ch, room));
 
                 next = getQuestion("commandQuestion");
             }

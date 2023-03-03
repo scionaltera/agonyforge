@@ -73,7 +73,7 @@ public class MoveCommand extends AbstractCommand {
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("%s arrives from %s.", ch.getName(), direction.getOpposite()));
 
-        output.append(LookCommand.doLook(getRepositoryBundle().getCharacterRepository(), getRepositoryBundle().getItemRepository(), ch, destination));
+        output.append(LookCommand.doLook(getRepositoryBundle(), ch, destination));
 
         return question;
     }

@@ -6,8 +6,6 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +20,7 @@ import java.util.Optional;
 public class LookCommand extends AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(LookCommand.class);
 
-    public static Output doLook(MudCharacterRepository characterRepository,
-                                MudItemRepository itemRepository,
+    public static Output doLook(RepositoryBundle repositoryBundle,
                                 MudCharacter ch,
                                 MudRoom room) {
 
@@ -34,12 +31,12 @@ public class LookCommand extends AbstractCommand {
             .append("[dwhite]%s", room.getDescription())
             .append("[dcyan]Exits: %s", String.join(", ", room.getExits()));
 
-        characterRepository.getByRoom(room.getId())
+        repositoryBundle.getCharacterRepository().getByRoom(room.getId())
             .stream()
             .filter(target -> !target.equals(ch))
             .forEach(target -> output.append("[green]%s is here.", target.getName()));
 
-        itemRepository.getByRoom(room.getId())
+        repositoryBundle.getItemRepository().getByRoom(room.getId())
             .forEach(target -> output.append("[green]%s",
                 StringUtils.capitalize(target.getLongDescription())));
 
@@ -69,7 +66,7 @@ public class LookCommand extends AbstractCommand {
 
         MudRoom room = roomOptional.get();
 
-        output.append(doLook(getRepositoryBundle().getCharacterRepository(), getRepositoryBundle().getItemRepository(), ch, room));
+        output.append(doLook(getRepositoryBundle(), ch, room));
 
         return question;
     }
