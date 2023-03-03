@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RepositoryBundle {
-    private MudCharacterRepository characterRepository;
-    private MudItemRepository itemRepository;
-    private MudRoomRepository roomRepository;
+    private final MudCharacterRepository characterRepository;
+    private final MudItemRepository itemRepository;
+    private final MudRoomRepository roomRepository;
 
     @Autowired
     public RepositoryBundle(MudCharacterRepository characterRepository,
