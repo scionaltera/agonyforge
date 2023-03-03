@@ -9,7 +9,6 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -63,7 +62,8 @@ public class ShoutCommandTest {
         "shout   test",
         "shout test ",
         "shout test test",
-        "shout test test test"
+        "shout test test test",
+        "shout hax %s hax"
     })
     void testExecute(String val) {
         String match = val.substring(6).stripLeading();

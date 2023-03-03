@@ -79,7 +79,8 @@ public class TellCommandTest {
         "tell t   test",
         "tell t test ",
         "tell t test test",
-        "tell t test test test"
+        "tell t test test test",
+        "tell t hax %s hax"
     })
     void testExecute(String val) {
         String match = val.substring(7).stripLeading();
