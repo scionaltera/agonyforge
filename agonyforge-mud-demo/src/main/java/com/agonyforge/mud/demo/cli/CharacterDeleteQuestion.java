@@ -6,8 +6,6 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -18,9 +16,8 @@ import java.util.Optional;
 public class CharacterDeleteQuestion extends AbstractQuestion {
     @Autowired
     public CharacterDeleteQuestion(ApplicationContext applicationContext,
-                                   MudCharacterRepository characterRepository,
-                                   MudItemRepository itemRepository) {
-        super(applicationContext, characterRepository, itemRepository);
+                                   RepositoryBundle repositoryBundle) {
+        super(applicationContext, repositoryBundle);
     }
 
     @Override
@@ -42,7 +39,7 @@ public class CharacterDeleteQuestion extends AbstractQuestion {
 
         if (chOptional.isPresent()) {
             if ("Y".equalsIgnoreCase(input.getInput())) {
-                getCharacterRepository().delete(chOptional.get());
+                getRepositoryBundle().getCharacterRepository().delete(chOptional.get());
                 output.append("[red]Your character has been deleted.");
             } else {
                 output.append("[green]Ok! Your character is safe!");

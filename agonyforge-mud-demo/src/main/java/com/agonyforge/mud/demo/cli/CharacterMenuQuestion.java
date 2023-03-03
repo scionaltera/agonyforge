@@ -10,8 +10,6 @@ import com.agonyforge.mud.demo.cli.menu.MenuItem;
 import com.agonyforge.mud.demo.cli.menu.MenuPane;
 import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.MenuTitle;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -27,9 +25,8 @@ public class CharacterMenuQuestion extends AbstractQuestion {
 
     @Autowired
     public CharacterMenuQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository,
-                                 MudItemRepository itemRepository) {
-        super(applicationContext, characterRepository, itemRepository);
+                                 RepositoryBundle repositoryBundle) {
+        super(applicationContext, repositoryBundle);
 
         menuPane.setTitle(new MenuTitle("Your Characters"));
         menuPane.setPrompt(new MenuPrompt());
@@ -74,7 +71,7 @@ public class CharacterMenuQuestion extends AbstractQuestion {
         menuPane.getItems().clear();
         menuPane.getItems().add(new MenuItem("N", "New Character"));
 
-        getCharacterRepository().getByUser(principal.getName())
+        getRepositoryBundle().getCharacterRepository().getByUser(principal.getName())
             .forEach(ch -> menuPane.getItems().add(new MenuItem(
                 Integer.toString(menuPane.getItems().size()),
                 ch.getName(),

@@ -4,8 +4,6 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.agonyforge.mud.core.cli.Question;
@@ -28,9 +26,8 @@ public class CharacterNameQuestion extends AbstractQuestion {
 
     @Autowired
     public CharacterNameQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository,
-                                 MudItemRepository itemRepository) {
-        super(applicationContext, characterRepository, itemRepository);
+                                 RepositoryBundle repositoryBundle) {
+        super(applicationContext, repositoryBundle);
     }
 
     @Override
@@ -58,7 +55,7 @@ public class CharacterNameQuestion extends AbstractQuestion {
         ch.setPronoun(Pronoun.THEY);
         ch.setWearSlots(Arrays.stream(WearSlot.values()).toList());
 
-        getCharacterRepository().save(ch);
+        getRepositoryBundle().getCharacterRepository().save(ch);
         wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
         LOGGER.info("New character created: {}", ch.getName());

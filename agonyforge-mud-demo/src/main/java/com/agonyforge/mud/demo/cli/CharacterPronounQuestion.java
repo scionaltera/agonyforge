@@ -12,8 +12,6 @@ import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.MenuTitle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -31,9 +29,8 @@ public class CharacterPronounQuestion extends AbstractQuestion {
 
     @Autowired
     public CharacterPronounQuestion(ApplicationContext applicationContext,
-                                 MudCharacterRepository characterRepository,
-                                 MudItemRepository itemRepository) {
-        super(applicationContext, characterRepository, itemRepository);
+                                 RepositoryBundle repositoryBundle) {
+        super(applicationContext, repositoryBundle);
 
         menuPane.setTitle(new MenuTitle("Choose Your Pronouns"));
         menuPane.setPrompt(new MenuPrompt());
@@ -68,7 +65,7 @@ public class CharacterPronounQuestion extends AbstractQuestion {
             if (chOptional.isPresent()) {
                 MudCharacter ch = chOptional.get();
                 ch.setPronoun((Pronoun)item.getItem());
-                getCharacterRepository().save(ch);
+                getRepositoryBundle().getCharacterRepository().save(ch);
             }
 
             nextQuestion = "characterMenuQuestion";

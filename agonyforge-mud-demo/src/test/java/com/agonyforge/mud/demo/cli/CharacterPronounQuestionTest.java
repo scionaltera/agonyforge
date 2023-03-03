@@ -9,6 +9,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,11 +27,15 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CharacterPronounQuestionTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private Question question;
 
@@ -49,9 +54,15 @@ public class CharacterPronounQuestionTest {
     @Mock
     private MudCharacter ch;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+    }
+
     @Test
     void testPrompt() {
-        CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, characterRepository, itemRepository);
+        CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(webSocketContext);
 
         assertEquals(6 + Pronoun.values().length, result.getOutput().size());
@@ -69,7 +80,7 @@ public class CharacterPronounQuestionTest {
     void testAnswerInvalid() {
         when(applicationContext.getBean(eq("characterPronounQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, characterRepository, itemRepository);
+        CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, repositoryBundle);
         Response result = uut.answer(webSocketContext, new Input(""));
         Output output = result.getFeedback().orElseThrow();
 
@@ -87,7 +98,7 @@ public class CharacterPronounQuestionTest {
         ));
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
-        CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, characterRepository, itemRepository);
+        CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, repositoryBundle);
         Response result = uut.answer(webSocketContext, new Input("2"));
         Output output = result.getFeedback().orElseThrow();
 
