@@ -54,7 +54,7 @@ public class WearCommand extends AbstractCommand {
         }
 
         if (target.getWorn() != null) {
-            output.append(String.format("[default]You are already wearing %s[default].", target.getShortDescription()));
+            output.append("[default]You are already wearing %s[default].", target.getShortDescription());
             return question;
         }
 
@@ -80,14 +80,14 @@ public class WearCommand extends AbstractCommand {
         target.setWorn(targetSlot);
         itemRepository.save(target);
 
-        output.append(String.format("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot.getName()));
+        output.append("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot.getName());
         commService.sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output(String.format("[default]%s wears %s[default] on %s %s.",
+            new Output("[default]%s wears %s[default] on %s %s.",
                 ch.getName(),
                 target.getShortDescription(),
                 ch.getPronoun().getPossessive(),
                 targetSlot
-            )));
+            ));
 
         return question;
     }

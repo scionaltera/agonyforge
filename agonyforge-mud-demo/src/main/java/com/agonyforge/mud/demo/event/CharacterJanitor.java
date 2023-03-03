@@ -52,7 +52,7 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
 
                 WebSocketContext webSocketContext = WebSocketContext.build(event.getMessage().getHeaders());
                 commService.sendToAll(webSocketContext,
-                    new Output(String.format("[yellow]%s has left the game!", instance.getName())), instance);
+                    new Output("[yellow]%s has left the game!", instance.getName()), instance);
             }
         }
     }

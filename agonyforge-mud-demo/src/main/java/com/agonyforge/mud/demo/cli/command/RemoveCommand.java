@@ -49,7 +49,7 @@ public class RemoveCommand extends AbstractCommand {
         MudItem target = targetOptional.get();
 
         if (target.getWorn() == null) {
-            output.append(String.format("[default]You aren't wearing %s[default].", target.getShortDescription()));
+            output.append("[default]You aren't wearing %s[default].", target.getShortDescription());
             return question;
         }
 
@@ -57,14 +57,14 @@ public class RemoveCommand extends AbstractCommand {
         target.setWorn(null);
         itemRepository.save(target);
 
-        output.append(String.format("[default]You remove %s[default].", target.getShortDescription()));
+        output.append("[default]You remove %s[default].", target.getShortDescription());
         commService.sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output(String.format("[default]%s removes %s[default] from %s %s.",
+            new Output("[default]%s removes %s[default] from %s %s.",
                 ch.getName(),
                 target.getShortDescription(),
                 ch.getPronoun().getPossessive(),
                 targetSlot.getName()
-            )));
+            ));
 
         return question;
     }

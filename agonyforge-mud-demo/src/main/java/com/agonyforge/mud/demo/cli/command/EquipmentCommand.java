@@ -48,8 +48,8 @@ public class EquipmentCommand extends AbstractCommand {
             inventory.entrySet()
                 .stream()
                 .sorted()
-                .forEach(entry -> output.append(String.format("[default]&lt;%s>\t%s",
-                    entry.getKey().getPhrase(), entry.getValue().getShortDescription())));
+                .forEach(entry -> output.append("[default]&lt;%s>\t%s",
+                    entry.getKey().getPhrase(), entry.getValue().getShortDescription()));
         }
 
         return question;

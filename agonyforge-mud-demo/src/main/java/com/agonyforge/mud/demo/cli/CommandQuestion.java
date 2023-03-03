@@ -48,7 +48,7 @@ public class CommandQuestion extends AbstractQuestion {
         if (chOptional.isPresent()) {
             output
                 .append("")
-                .append(String.format("[green]%s[default]> ", chOptional.get().getName()));
+                .append("[green]%s[default]> ", chOptional.get().getName());
         } else {
             output
                 .append("")

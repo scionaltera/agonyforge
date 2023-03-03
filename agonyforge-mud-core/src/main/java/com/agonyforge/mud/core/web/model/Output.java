@@ -13,8 +13,8 @@ public class Output {
         // this method intentionally left blank
     }
 
-    public Output(String output) {
-        append(output);
+    public Output(String output, Object ... args) {
+        append(output, args);
     }
 
     public Output(Collection<String> output) {
@@ -25,8 +25,8 @@ public class Output {
         append(outputs);
     }
 
-    public Output append(String output) {
-        lines.add(output);
+    public Output append(String output, Object ... args) {
+        lines.add(String.format(output, args));
 
         return this;
     }
