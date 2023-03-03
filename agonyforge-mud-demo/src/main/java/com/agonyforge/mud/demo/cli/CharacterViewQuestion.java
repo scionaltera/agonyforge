@@ -49,8 +49,8 @@ public class CharacterViewQuestion extends AbstractQuestion {
             MudCharacter ch = chOptional.get();
 
             output.append("[dcyan]Character Sheet");
-            output.append(String.format("[default]Name: [cyan]%s", ch.getName()));
-            output.append(String.format("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject()));
+            output.append("[default]Name: [cyan]%s", ch.getName());
+            output.append("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
             output.append("");
             output.append("[green]P[black]) Play as this character");
             output.append("[red]D[black]) Delete this character");
@@ -81,7 +81,7 @@ public class CharacterViewQuestion extends AbstractQuestion {
                 getCharacterRepository().save(ch);
 
                 LOGGER.info("{} has entered the game.", ch.getName());
-                commService.sendToAll(wsContext, new Output(String.format("[yellow]%s has entered the game!", ch.getName())), ch);
+                commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
 
                 output.append(LookCommand.doLook(getCharacterRepository(), getItemRepository(), ch, room));
 

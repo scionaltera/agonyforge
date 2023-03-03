@@ -61,7 +61,8 @@ public class GossipCommandTest {
         "gossip   test",
         "gossip test ",
         "gossip test test",
-        "gossip test test test"
+        "gossip test test test",
+        "gossip hax %s hax"
     })
     void testExecute(String val) {
         String match = val.substring(7).stripLeading();

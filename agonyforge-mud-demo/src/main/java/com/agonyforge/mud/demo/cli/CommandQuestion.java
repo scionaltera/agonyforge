@@ -46,9 +46,13 @@ public class CommandQuestion extends AbstractQuestion {
         Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
-            output.append("", String.format("[green]%s[default]> ", chOptional.get().getName()));
+            output
+                .append("")
+                .append("[green]%s[default]> ", chOptional.get().getName());
         } else {
-            output.append("", "[default]> ");
+            output
+                .append("")
+                .append("[default]> ");
         }
 
         return output;

@@ -29,9 +29,8 @@ public class CharacterDeleteQuestion extends AbstractQuestion {
         Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         return chOptional.map(mudCharacter -> new Output(
-            String.format(
                 "[red]Are you SURE you want to delete %s? [white][y/N][red]: ",
-                mudCharacter.getName())))
+                mudCharacter.getName()))
             .orElse(output);
     }
 

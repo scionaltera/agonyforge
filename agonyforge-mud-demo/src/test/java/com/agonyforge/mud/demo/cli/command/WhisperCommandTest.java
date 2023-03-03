@@ -75,7 +75,8 @@ public class WhisperCommandTest {
         "whisper t   test",
         "whisper t test ",
         "whisper t test test",
-        "whisper t test test test"
+        "whisper t test test test",
+        "whisper t hax %s hax"
     })
     void testExecute(String val) {
         String match = val.substring(9).stripLeading();

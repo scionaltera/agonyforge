@@ -65,6 +65,6 @@ public class CharacterNameQuestion extends AbstractQuestion {
 
         Question nextQuestion = getQuestion("characterPronounQuestion");
 
-        return new Response(nextQuestion, new Output(String.format("[default]Hello, [white]%s[default]!", ch.getName())));
+        return new Response(nextQuestion, new Output("[default]Hello, [white]%s[default]!", ch.getName()));
     }
 }

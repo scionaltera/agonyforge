@@ -31,18 +31,18 @@ public class LookCommand extends AbstractCommand {
         Output output = new Output();
 
         output
-            .append(String.format("[yellow](%d) %s", room.getId(), room.getName()))
-            .append(String.format("[dwhite]%s", room.getDescription()))
-            .append(String.format("[dcyan]Exits: %s", String.join(", ", room.getExits())));
+            .append("[yellow](%d) %s", room.getId(), room.getName())
+            .append("[dwhite]%s", room.getDescription())
+            .append("[dcyan]Exits: %s", String.join(", ", room.getExits()));
 
         characterRepository.getByRoom(room.getId())
             .stream()
             .filter(target -> !target.equals(ch))
-            .forEach(target -> output.append(String.format("[green]%s is here.", target.getName())));
+            .forEach(target -> output.append("[green]%s is here.", target.getName()));
 
         itemRepository.getByRoom(room.getId())
-            .forEach(target -> output.append(String.format("[green]%s",
-                StringUtils.capitalize(target.getLongDescription()))));
+            .forEach(target -> output.append("[green]%s",
+                StringUtils.capitalize(target.getLongDescription())));
 
         return output;
     }

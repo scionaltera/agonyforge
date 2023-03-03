@@ -36,14 +36,17 @@ public class WhoCommand extends AbstractCommand {
             .filter(ch -> !ch.isPrototype())
             .toList();
 
-        output.append("[black]=== [white]Who is Playing [black]===", "");
+        output
+            .append("[black]=== [white]Who is Playing [black]===")
+            .append("");
 
-        characters.forEach(ch -> output.append(String.format("[dwhite]%s",
-            ch.getName())));
+        characters.forEach(ch -> output.append("[dwhite]%s", ch.getName()));
 
-        output.append("", String.format("[white]%d player%s online.",
-            characters.size(),
-            characters.size() == 1 ? "" : "s"));
+        output
+            .append("")
+            .append("[white]%d player%s online.",
+                characters.size(),
+                characters.size() == 1 ? "" : "s");
 
         return question;
     }

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,7 +44,7 @@ public class MenuPaneTest {
         String line2 = "* Test *";
         String line3 = "********";
 
-        when(title.render(any())).thenReturn(new Output(line1, line2, line3));
+        when(title.render(any())).thenReturn(new Output(Arrays.asList(line1, line2, line3)));
 
         MenuPane uut = new MenuPane();
         uut.setTitle(title);
@@ -113,7 +115,7 @@ public class MenuPaneTest {
         String line5 = "2) Two";
         String line6 = "Choose: ";
 
-        when(title.render(any())).thenReturn(new Output(line1, line2, line3));
+        when(title.render(any())).thenReturn(new Output(Arrays.asList(line1, line2, line3)));
         when(item1.render(any())).thenReturn(new Output(line4));
         when(item2.render(any())).thenReturn(new Output(line5));
         when(prompt.render(any())).thenReturn(new Output(line6));

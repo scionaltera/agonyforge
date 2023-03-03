@@ -73,13 +73,13 @@ public class MoveCommand extends AbstractCommand {
         MudRoom destination = destOptional.get();
 
         commService.sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output(String.format("%s leaves %s.", ch.getName(), direction.getName())));
+            new Output("%s leaves %s.", ch.getName(), direction.getName()));
 
         ch.setRoomId(exit.getDestinationId());
         characterRepository.save(ch);
 
         commService.sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output(String.format("%s arrives from %s.", ch.getName(), direction.getOpposite())));
+            new Output("%s arrives from %s.", ch.getName(), direction.getOpposite()));
 
         output.append(LookCommand.doLook(characterRepository, itemRepository, ch, destination));
 

@@ -18,15 +18,6 @@ public class OutputTest {
     }
 
     @Test
-    void testPreloadConstructorVararg() {
-        Output full = new Output("one", "two", "three");
-        List<String> expected = Arrays.asList("one", "two", "three");
-
-        assertEquals(expected, full.toList());
-        assertEquals("one\ntwo\nthree", full.toString());
-    }
-
-    @Test
     void testPreloadConstructorCollection() {
         Output full = new Output(Arrays.asList("one", "two", "three"));
         List<String> expected = Arrays.asList("one", "two", "three");
@@ -55,18 +46,6 @@ public class OutputTest {
         output
             .append("Output!")
             .append("Now!");
-
-        assertEquals(Arrays.asList("Output!", "Now!"), output.getOutput());
-        assertEquals("Output!\nNow!", output.toString());
-    }
-
-    @Test
-    void testAppendVararg() {
-        Output output = new Output();
-
-        assertEquals("", output.toString());
-
-        output.append("Output!", "Now!");
 
         assertEquals(Arrays.asList("Output!", "Now!"), output.getOutput());
         assertEquals("Output!\nNow!", output.toString());

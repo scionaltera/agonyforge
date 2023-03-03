@@ -57,8 +57,8 @@ public class TellCommand extends AbstractCommand {
 
         MudCharacter target = targetOptional.get();
 
-        output.append(String.format("[red]You tell %s, '%s[red]'", target.getName(), message));
-        commService.sendTo(target, new Output(String.format("[red]%s tells you, '%s[red]'", ch.getName(), message)));
+        output.append("[red]You tell %s, '%s[red]'", target.getName(), message);
+        commService.sendTo(target, new Output("[red]%s tells you, '%s[red]'", ch.getName(), message));
 
         return question;
     }
