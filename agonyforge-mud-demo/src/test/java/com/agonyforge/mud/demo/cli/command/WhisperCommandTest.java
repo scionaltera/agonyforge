@@ -9,6 +9,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,6 +72,13 @@ public class WhisperCommandTest {
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
 
+    @BeforeEach
+    void setUp() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
         "whisper t test",
@@ -86,9 +94,6 @@ public class WhisperCommandTest {
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -133,10 +138,6 @@ public class WhisperCommandTest {
         "whisper  "
     })
     void testExecuteNoTarget(String val) {
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
@@ -158,10 +159,6 @@ public class WhisperCommandTest {
         "whisper t  "
     })
     void testExecuteNoMessage(String val) {
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
@@ -182,10 +179,6 @@ public class WhisperCommandTest {
         Input input = new Input("whisper t foo");
         Output output = new Output();
         UUID chId = UUID.randomUUID();
-
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId

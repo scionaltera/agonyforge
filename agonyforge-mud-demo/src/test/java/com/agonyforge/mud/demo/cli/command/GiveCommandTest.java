@@ -11,6 +11,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -66,14 +67,18 @@ public class GiveCommandTest {
     @Mock
     private MudItem other;
 
+    @BeforeEach
+    void setUp() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testGiveNoArgs() {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -100,9 +105,6 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -129,9 +131,6 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
@@ -162,9 +161,6 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
@@ -197,9 +193,6 @@ public class GiveCommandTest {
         UUID chId = UUID.randomUUID();
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Spook");
@@ -236,9 +229,6 @@ public class GiveCommandTest {
         UUID targetId = UUID.randomUUID();
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
         when(ch.getName()).thenReturn("Scion");

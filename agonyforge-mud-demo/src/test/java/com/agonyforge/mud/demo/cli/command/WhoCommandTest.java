@@ -9,6 +9,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -57,14 +58,18 @@ public class WhoCommandTest {
     @Mock
     private WebSocketContext webSocketContext;
 
+    @BeforeEach
+    void setUp() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testExecuteOnePlayer() {
         List<MudCharacter> characters = List.of(ch, chInstance);
         Output output = new Output();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.isPrototype()).thenReturn(true);
         when(chInstance.isPrototype()).thenReturn(false);
         when(chInstance.getName()).thenReturn("Scion");
@@ -85,9 +90,6 @@ public class WhoCommandTest {
         List<MudCharacter> characters = List.of(ch, chInstance, other, otherInstance);
         Output output = new Output();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.isPrototype()).thenReturn(true);
         when(chInstance.isPrototype()).thenReturn(false);
         when(chInstance.getName()).thenReturn("Scion");

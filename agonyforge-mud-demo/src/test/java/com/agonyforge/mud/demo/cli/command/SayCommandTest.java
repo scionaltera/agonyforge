@@ -9,6 +9,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -58,6 +59,13 @@ public class SayCommandTest {
     @Mock
     private Question question;
 
+    @BeforeEach
+    void setUp() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
         "say test",
@@ -73,9 +81,6 @@ public class SayCommandTest {
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -103,10 +108,6 @@ public class SayCommandTest {
         "say\t"
     })
     void testExecuteNoMessage(String val) {
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();

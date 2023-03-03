@@ -11,6 +11,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -60,14 +61,18 @@ public class InventoryCommandTest {
     @Mock
     private MudItem armor;
 
+    @BeforeEach
+    void setUp() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testInventory() {
         UUID chId = UUID.randomUUID();
         String itemName = "a scurrilous test";
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -98,9 +103,6 @@ public class InventoryCommandTest {
     void testInventoryEmpty() {
         UUID chId = UUID.randomUUID();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getId()).thenReturn(chId);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(

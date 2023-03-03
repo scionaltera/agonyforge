@@ -10,6 +10,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -62,13 +63,17 @@ public class AbstractCommandTest {
     @Mock
     private Question question;
 
+    @BeforeEach
+    void setUp() {
+        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testGetCharacterNotFound() {
         UUID chId = UUID.randomUUID();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.empty());
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -95,9 +100,6 @@ public class AbstractCommandTest {
     void testGetCharacterInVoid() {
         UUID chId = UUID.randomUUID();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(null);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -125,9 +127,6 @@ public class AbstractCommandTest {
     void testGetCharacterValid() {
         UUID chId = UUID.randomUUID();
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         when(ch.getRoomId()).thenReturn(100L);
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -155,9 +154,6 @@ public class AbstractCommandTest {
     void testFindRoomCharacter() {
         Long roomId = 100L;
 
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(ch.getName()).thenReturn("Scion");
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Morgan");
@@ -176,9 +172,6 @@ public class AbstractCommandTest {
 
     @Test
     void testFindWorldCharacter() {
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(ch.getName()).thenReturn("Scion");
         lenient().when(ch.isPrototype()).thenReturn(false);
         when(proto.isPrototype()).thenReturn(true);
