@@ -4,11 +4,13 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -20,10 +22,14 @@ import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WhoCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -54,6 +60,13 @@ public class WhoCommandTest {
     @Mock
     private WebSocketContext webSocketContext;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testExecuteOnePlayer() {
         List<MudCharacter> characters = List.of(ch, chInstance);
@@ -64,7 +77,7 @@ public class WhoCommandTest {
         when(chInstance.getName()).thenReturn("Scion");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhoCommand uut = new WhoCommand(repositoryBundle, commService);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);
@@ -87,7 +100,7 @@ public class WhoCommandTest {
         when(otherInstance.getName()).thenReturn("Spook");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhoCommand uut = new WhoCommand(repositoryBundle, commService);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);

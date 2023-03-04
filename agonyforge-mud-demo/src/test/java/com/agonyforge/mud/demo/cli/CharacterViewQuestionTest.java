@@ -12,6 +12,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -32,12 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CharacterViewQuestionTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private ApplicationContext applicationContext;
 
@@ -74,6 +79,13 @@ public class CharacterViewQuestionTest {
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testPrompt() {
         UUID chId = UUID.randomUUID();
@@ -87,7 +99,7 @@ public class CharacterViewQuestionTest {
         when(ch.getName()).thenReturn(characterName);
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
         Output result = uut.prompt(wsContext);
 
         int i = 0;
@@ -106,7 +118,7 @@ public class CharacterViewQuestionTest {
     void testPromptNoCharacter() {
         when(characterRepository.getById(any(), anyBoolean())).thenReturn(Optional.empty());
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
         Output result = uut.prompt(wsContext);
 
         assertTrue(result.getOutput().get(0).contains("[red]"));
@@ -128,7 +140,7 @@ public class CharacterViewQuestionTest {
         when(roomRepository.getById(eq(START_ROOM))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("p"));
 
         verify(characterRepository).save(characterCaptor.capture());
@@ -150,7 +162,7 @@ public class CharacterViewQuestionTest {
     void testAnswerDelete() {
         when(applicationContext.getBean(eq("characterDeleteQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("d"));
 
         assertEquals(question, result.getNext());
@@ -162,7 +174,7 @@ public class CharacterViewQuestionTest {
     void testAnswerBack() {
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("b"));
 
         assertEquals(question, result.getNext());
@@ -172,7 +184,7 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testAnswerUnknown() {
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, characterRepository, itemRepository, roomRepository, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("x"));
         Output output = result.getFeedback().orElseThrow();
 

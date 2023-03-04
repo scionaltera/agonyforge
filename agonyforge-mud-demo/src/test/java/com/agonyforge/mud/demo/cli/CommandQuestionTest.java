@@ -11,6 +11,7 @@ import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.CommandRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -40,6 +42,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommandQuestionTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private ApplicationContext applicationContext;
 
@@ -64,6 +69,12 @@ public class CommandQuestionTest {
     @Mock
     private Question question;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+    }
+
     @Test
     void testPrompt() {
         UUID chId = UUID.randomUUID();
@@ -73,7 +84,7 @@ public class CommandQuestionTest {
 
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Output output = uut.prompt(webSocketContext);
 
         assertEquals(2, output.getOutput().size());
@@ -83,7 +94,7 @@ public class CommandQuestionTest {
 
     @Test
     void testPromptNoCharacter() {
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Output output = uut.prompt(webSocketContext);
 
         assertEquals(3, output.getOutput().size());
@@ -111,7 +122,7 @@ public class CommandQuestionTest {
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -132,7 +143,7 @@ public class CommandQuestionTest {
         when(commandRepository.getByPriority()).thenReturn(List.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenThrow(new CommandException("oops!"));
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -154,7 +165,7 @@ public class CommandQuestionTest {
         when(commandRepository.getByPriority()).thenReturn(List.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenThrow(new NoSuchBeanDefinitionException("testCommand"));
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -170,7 +181,7 @@ public class CommandQuestionTest {
     void testAnswerNotFound() {
         when(commandRepository.getByPriority()).thenReturn(List.of());
 
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("notfound"));
         Output output = result.getFeedback().orElseThrow();
 
@@ -191,7 +202,7 @@ public class CommandQuestionTest {
         "\n"
     })
     void testAnswerBlankInput(String input) {
-        CommandQuestion uut = new CommandQuestion(applicationContext, characterRepository, itemRepository, commandRepository);
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input(input));
         Output output = result.getFeedback().orElseThrow();
 

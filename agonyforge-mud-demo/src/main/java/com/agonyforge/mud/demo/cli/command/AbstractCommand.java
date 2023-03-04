@@ -3,11 +3,9 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.CommandException;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 
 import java.util.List;
@@ -19,24 +17,26 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 
 public abstract class AbstractCommand implements Command {
-    protected final MudCharacterRepository characterRepository;
-    protected final MudItemRepository itemRepository;
-    protected final MudRoomRepository roomRepository;
-    protected final CommService commService;
+    private final RepositoryBundle repositoryBundle;
+    private final CommService commService;
 
-    public AbstractCommand(MudCharacterRepository characterRepository,
-                           MudItemRepository itemRepository,
-                           MudRoomRepository roomRepository,
+    public AbstractCommand(RepositoryBundle repositoryBundle,
                            CommService commService) {
-        this.characterRepository = characterRepository;
-        this.itemRepository = itemRepository;
-        this.roomRepository = roomRepository;
+        this.repositoryBundle = repositoryBundle;
         this.commService = commService;
+    }
+
+    protected RepositoryBundle getRepositoryBundle() {
+        return repositoryBundle;
+    }
+
+    protected CommService getCommService() {
+        return commService;
     }
 
     protected MudCharacter getCurrentCharacter(WebSocketContext webSocketContext, Output output) {
         UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, false);
+        Optional<MudCharacter> chOptional = getRepositoryBundle().getCharacterRepository().getById(chId, false);
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
@@ -55,7 +55,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudItem> findInventoryItem(MudCharacter ch, String token) {
-        List<MudItem> items = itemRepository.getByCharacter(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().getByCharacter(ch.getId());
 
         return items
             .stream()
@@ -66,7 +66,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudItem> findRoomItem(MudCharacter ch, String token) {
-        List<MudItem> items = itemRepository.getByRoom(ch.getRoomId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().getByRoom(ch.getRoomId());
 
         return items
             .stream()
@@ -77,7 +77,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudCharacter> findRoomCharacter(MudCharacter ch, String token) {
-        List<MudCharacter> targets = characterRepository.getByRoom(ch.getRoomId());
+        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().getByRoom(ch.getRoomId());
 
         return targets
             .stream()
@@ -87,7 +87,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudCharacter> findWorldCharacter(MudCharacter ch, String token) {
-        List<MudCharacter> targets = characterRepository.getByType(TYPE_PC);
+        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().getByType(TYPE_PC);
 
         return targets
             .stream()

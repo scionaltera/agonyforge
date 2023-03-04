@@ -4,11 +4,13 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -38,6 +41,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WhisperCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -68,6 +74,13 @@ public class WhisperCommandTest {
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
         "whisper t test",
@@ -82,6 +95,7 @@ public class WhisperCommandTest {
         String match = val.substring(9).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -94,7 +108,7 @@ public class WhisperCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -130,7 +144,7 @@ public class WhisperCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -151,7 +165,7 @@ public class WhisperCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -173,7 +187,7 @@ public class WhisperCommandTest {
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
 
-        WhisperCommand uut = new WhisperCommand(characterRepository, itemRepository, roomRepository, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

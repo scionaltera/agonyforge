@@ -5,11 +5,13 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.CommandException;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -32,6 +34,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AbstractCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -59,6 +64,13 @@ public class AbstractCommandTest {
     @Mock
     private Question question;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testGetCharacterNotFound() {
         UUID chId = UUID.randomUUID();
@@ -69,7 +81,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -96,7 +108,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -123,7 +135,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -148,7 +160,7 @@ public class AbstractCommandTest {
         when(target.getName()).thenReturn("Morgan");
         when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
 
-        AbstractCommand uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 return question;
@@ -168,7 +180,7 @@ public class AbstractCommandTest {
         when(target.isPrototype()).thenReturn(false);
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, proto, target));
 
-        AbstractCommand uut = new AbstractCommand(characterRepository, itemRepository, roomRepository, commService) {
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 return question;

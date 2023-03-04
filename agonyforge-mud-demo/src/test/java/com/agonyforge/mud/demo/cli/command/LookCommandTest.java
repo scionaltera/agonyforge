@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
@@ -11,6 +12,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -25,10 +27,14 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class LookCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -59,6 +65,13 @@ public class LookCommandTest {
     @Mock
     private Question question;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testExecuteNoRoom() {
         UUID chId = UUID.randomUUID();
@@ -71,7 +84,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
+        LookCommand uut = new LookCommand(repositoryBundle, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),
@@ -103,7 +116,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(characterRepository, itemRepository, roomRepository, commService);
+        LookCommand uut = new LookCommand(repositoryBundle, commService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),

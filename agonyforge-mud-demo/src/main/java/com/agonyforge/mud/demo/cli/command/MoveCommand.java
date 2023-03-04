@@ -4,12 +4,10 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +22,10 @@ public class MoveCommand extends AbstractCommand {
 
     private final Direction direction;
 
-    public MoveCommand(MudCharacterRepository characterRepository,
-                       MudItemRepository itemRepository,
-                       MudRoomRepository roomRepository,
+    public MoveCommand(RepositoryBundle repositoryBundle,
                        CommService commService,
                        Direction direction) {
-        super(characterRepository,
-            itemRepository,
-            roomRepository,
-            commService);
+        super(repositoryBundle, commService);
 
         this.direction = direction;
     }
@@ -44,7 +37,7 @@ public class MoveCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = roomRepository.getById(ch.getRoomId());
+        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {
             output.append("[black]You are floating in the void, unable to move.");
@@ -61,7 +54,7 @@ public class MoveCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudRoom> destOptional = roomRepository.getById(exit.getDestinationId());
+        Optional<MudRoom> destOptional = getRepositoryBundle().getRoomRepository().getById(exit.getDestinationId());
 
         if (destOptional.isEmpty()) {
             output.append("[default]Alas, you cannot go that way.");
@@ -72,16 +65,16 @@ public class MoveCommand extends AbstractCommand {
 
         MudRoom destination = destOptional.get();
 
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("%s leaves %s.", ch.getName(), direction.getName()));
 
         ch.setRoomId(exit.getDestinationId());
-        characterRepository.save(ch);
+        getRepositoryBundle().getCharacterRepository().save(ch);
 
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("%s arrives from %s.", ch.getName(), direction.getOpposite()));
 
-        output.append(LookCommand.doLook(characterRepository, itemRepository, ch, destination));
+        output.append(LookCommand.doLook(getRepositoryBundle(), ch, destination));
 
         return question;
     }

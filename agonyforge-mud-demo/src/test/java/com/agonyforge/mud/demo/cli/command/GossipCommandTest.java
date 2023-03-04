@@ -4,11 +4,13 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -27,12 +29,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class GossipCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private CommService commService;
 
@@ -54,6 +60,13 @@ public class GossipCommandTest {
     @Mock
     private Question question;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
         "gossip test",
@@ -68,6 +81,7 @@ public class GossipCommandTest {
         String match = val.substring(7).stripLeading();
         List<String> tokens = tokenize(val);
         UUID chId = UUID.randomUUID();
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -75,7 +89,7 @@ public class GossipCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
+        GossipCommand uut = new GossipCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -97,7 +111,8 @@ public class GossipCommandTest {
         List<String> tokens = tokenize(val);
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(characterRepository, itemRepository, roomRepository, commService);
+
+        GossipCommand uut = new GossipCommand(repositoryBundle, commService);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

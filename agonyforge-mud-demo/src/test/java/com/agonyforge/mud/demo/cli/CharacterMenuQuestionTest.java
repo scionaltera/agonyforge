@@ -8,6 +8,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -25,12 +26,16 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CharacterMenuQuestionTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private Principal principal;
 
@@ -52,6 +57,12 @@ public class CharacterMenuQuestionTest {
     @Mock
     private WebSocketContext webSocketContext;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+    }
+
     @Test
     void testPromptNoCharacters() {
         String principalName = "principal";
@@ -61,8 +72,7 @@ public class CharacterMenuQuestionTest {
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
-            characterRepository,
-            itemRepository);
+            repositoryBundle);
         Output result = uut.prompt(webSocketContext);
         Optional<String> itemOptional = result.getOutput()
                 .stream()
@@ -87,8 +97,7 @@ public class CharacterMenuQuestionTest {
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
-            characterRepository,
-            itemRepository);
+            repositoryBundle);
         Output result = uut.prompt(webSocketContext);
         Optional<String> newCharacterLineOptional = result.getOutput()
             .stream()
@@ -115,8 +124,7 @@ public class CharacterMenuQuestionTest {
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
-            characterRepository,
-            itemRepository);
+            repositoryBundle);
         uut.prompt(webSocketContext);
         Output result = uut.prompt(webSocketContext);
 
@@ -132,8 +140,7 @@ public class CharacterMenuQuestionTest {
     void testAnswerEmpty() {
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
-            characterRepository,
-            itemRepository);
+            repositoryBundle);
 
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(uut);
@@ -151,8 +158,7 @@ public class CharacterMenuQuestionTest {
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
-            characterRepository,
-            itemRepository);
+            repositoryBundle);
         Response result = uut.answer(webSocketContext, new Input("n"));
 
         assertEquals(question, result.getNext());
@@ -177,8 +183,7 @@ public class CharacterMenuQuestionTest {
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
-            characterRepository,
-            itemRepository);
+            repositoryBundle);
 
         Response result = uut.answer(webSocketContext, new Input("1"));
 

@@ -4,11 +4,9 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,14 +17,8 @@ import java.util.Optional;
 @Component
 public class GetCommand extends AbstractCommand {
     @Autowired
-    public GetCommand(MudCharacterRepository characterRepository,
-                      MudItemRepository itemRepository,
-                      MudRoomRepository roomRepository,
-                      CommService commService) {
-        super(characterRepository,
-            itemRepository,
-            roomRepository,
-            commService);
+    public GetCommand(RepositoryBundle repositoryBundle, CommService commService) {
+        super(repositoryBundle, commService);
     }
 
     @Override
@@ -47,10 +39,10 @@ public class GetCommand extends AbstractCommand {
 
         MudItem target = targetOptional.get();
         target.setCharacterId(ch.getId());
-        itemRepository.save(target);
+        getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You get %s[default].", target.getShortDescription());
-        commService.sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("[default]%s gets %s[default].", ch.getName(), target.getShortDescription()));
 
         return question;

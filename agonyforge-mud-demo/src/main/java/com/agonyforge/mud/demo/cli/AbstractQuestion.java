@@ -4,8 +4,6 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -19,25 +17,26 @@ public abstract class AbstractQuestion extends com.agonyforge.mud.core.cli.Abstr
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuestion.class);
 
     private final ApplicationContext applicationContext;
-    private final MudCharacterRepository characterRepository;
-    private final MudItemRepository itemRepository;
+    private final RepositoryBundle repositoryBundle;
 
     public AbstractQuestion(ApplicationContext applicationContext,
-                            MudCharacterRepository characterRepository,
-                            MudItemRepository itemRepository) {
+                            RepositoryBundle repositoryBundle) {
         super();
         this.applicationContext = applicationContext;
-        this.characterRepository = characterRepository;
-        this.itemRepository = itemRepository;
+        this.repositoryBundle = repositoryBundle;
     }
 
     protected Question getQuestion(String name) {
         return applicationContext.getBean(name, Question.class);
     }
 
+    protected RepositoryBundle getRepositoryBundle() {
+        return repositoryBundle;
+    }
+
     protected Optional<MudCharacter> getCharacter(WebSocketContext wsContext, Output output) {
         UUID chId = (UUID) wsContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = characterRepository.getById(chId, true);
+        Optional<MudCharacter> chOptional = getRepositoryBundle().getCharacterRepository().getById(chId, true);
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
@@ -46,13 +45,5 @@ public abstract class AbstractQuestion extends com.agonyforge.mud.core.cli.Abstr
         }
 
         return chOptional;
-    }
-
-    protected MudCharacterRepository getCharacterRepository() {
-        return characterRepository;
-    }
-
-    protected MudItemRepository getItemRepository() {
-        return itemRepository;
     }
 }

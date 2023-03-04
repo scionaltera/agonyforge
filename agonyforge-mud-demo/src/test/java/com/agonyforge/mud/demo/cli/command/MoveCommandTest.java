@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
@@ -11,6 +12,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,6 +38,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MoveCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -62,9 +68,17 @@ public class MoveCommandTest {
     @Mock
     private MudRoom destination;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testExecute() {
         UUID chId = UUID.randomUUID();
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -76,7 +90,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(question, response);
@@ -90,6 +104,7 @@ public class MoveCommandTest {
     @Test
     void testExecuteNoRoom() {
         UUID chId = UUID.randomUUID();
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -98,7 +113,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());
@@ -114,6 +129,7 @@ public class MoveCommandTest {
     @Test
     void testExecuteNoExit() {
         UUID chId = UUID.randomUUID();
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -123,7 +139,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());
@@ -139,6 +155,7 @@ public class MoveCommandTest {
     @Test
     void testExecuteBrokenExit() {
         UUID chId = UUID.randomUUID();
+
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -149,7 +166,7 @@ public class MoveCommandTest {
 
         Input input = new Input("west");
         Output output = new Output();
-        MoveCommand uut = new MoveCommand(characterRepository, itemRepository, roomRepository, commService, Direction.WEST);
+        MoveCommand uut = new MoveCommand(repositoryBundle, commService, Direction.WEST);
         Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
         assertEquals(1, output.getOutput().size());

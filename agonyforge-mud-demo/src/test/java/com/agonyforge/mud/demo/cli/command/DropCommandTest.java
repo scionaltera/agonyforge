@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
@@ -11,6 +12,7 @@ import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -26,12 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DropCommandTest {
+    @Mock
+    private RepositoryBundle repositoryBundle;
+
     @Mock
     private MudCharacterRepository characterRepository;
 
@@ -59,6 +65,13 @@ public class DropCommandTest {
     @Mock
     private MudItem other;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
+        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+    }
+
     @Test
     void testDropNoArg() {
         UUID chId = UUID.randomUUID();
@@ -69,7 +82,7 @@ public class DropCommandTest {
         ));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -97,7 +110,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -127,7 +140,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(item, other));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -160,7 +173,7 @@ public class DropCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        DropCommand uut = new DropCommand(characterRepository, itemRepository, roomRepository, commService);
+        DropCommand uut = new DropCommand(repositoryBundle, commService);
         Question result = uut.execute(
             question,
             webSocketContext,
