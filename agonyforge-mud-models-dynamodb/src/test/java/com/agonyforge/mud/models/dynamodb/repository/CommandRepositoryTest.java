@@ -17,11 +17,11 @@ public class CommandRepositoryTest extends DynamoDbLocalInitializingTest {
         CommandReference ref1 = new CommandReference();
         CommandReference ref2 = new CommandReference();
 
-        ref1.setPriority(100);
+        ref1.setPriority("100");
         ref1.setName("SOUTH");
         ref1.setBeanName("southCommand");
 
-        ref2.setPriority(1000);
+        ref2.setPriority("1000");
         ref2.setName("SAY");
         ref2.setBeanName("sayCommand");
 

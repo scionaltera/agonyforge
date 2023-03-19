@@ -27,29 +27,29 @@ public class CommandLoader {
         if (commandRepository.getByPriority().isEmpty()) {
             List<CommandReference> refs = new ArrayList<>();
 
-            refs.add(new CommandReference(1, "NORTH", "northCommand"));
-            refs.add(new CommandReference(1, "EAST", "eastCommand"));
-            refs.add(new CommandReference(1, "SOUTH", "southCommand"));
-            refs.add(new CommandReference(1, "WEST", "westCommand"));
-            refs.add(new CommandReference(1, "UP", "upCommand"));
-            refs.add(new CommandReference(1, "DOWN", "downCommand"));
+            refs.add(new CommandReference("01", "NORTH", "northCommand"));
+            refs.add(new CommandReference("01", "EAST", "eastCommand"));
+            refs.add(new CommandReference("01", "SOUTH", "southCommand"));
+            refs.add(new CommandReference("01", "WEST", "westCommand"));
+            refs.add(new CommandReference("01", "UP", "upCommand"));
+            refs.add(new CommandReference("01", "DOWN", "downCommand"));
 
-            refs.add(new CommandReference(10, "GOSSIP", "gossipCommand"));
-            refs.add(new CommandReference(10, "SAY", "sayCommand"));
-            refs.add(new CommandReference(10, "SHOUT", "shoutCommand"));
-            refs.add(new CommandReference(10, "TELL", "tellCommand"));
-            refs.add(new CommandReference(10, "WHISPER", "whisperCommand"));
+            refs.add(new CommandReference("05", "LOOK", "lookCommand"));
+            refs.add(new CommandReference("05", "WHO", "whoCommand"));
+            refs.add(new CommandReference("05", "SCORE", "scoreCommand"));
+            refs.add(new CommandReference("05", "EQUIPMENT", "equipmentCommand"));
+            refs.add(new CommandReference("05", "INVENTORY", "inventoryCommand"));
 
-            refs.add(new CommandReference(10, "LOOK", "lookCommand"));
-            refs.add(new CommandReference(10, "WHO", "whoCommand"));
-
-            refs.add(new CommandReference(10, "INVENTORY", "inventoryCommand"));
-            refs.add(new CommandReference(10, "EQUIPMENT", "equipmentCommand"));
-            refs.add(new CommandReference(10, "GET", "getCommand"));
-            refs.add(new CommandReference(10, "DROP", "dropCommand"));
-            refs.add(new CommandReference(10, "GIVE", "giveCommand"));
-            refs.add(new CommandReference(10, "REMOVE", "removeCommand"));
-            refs.add(new CommandReference(10, "WEAR", "wearCommand"));
+            refs.add(new CommandReference("10", "DROP", "dropCommand"));
+            refs.add(new CommandReference("10", "GET", "getCommand"));
+            refs.add(new CommandReference("10", "GIVE", "giveCommand"));
+            refs.add(new CommandReference("10", "REMOVE", "removeCommand"));
+            refs.add(new CommandReference("10", "WEAR", "wearCommand"));
+            refs.add(new CommandReference("10", "GOSSIP", "gossipCommand"));
+            refs.add(new CommandReference("10", "SAY", "sayCommand"));
+            refs.add(new CommandReference("10", "SHOUT", "shoutCommand"));
+            refs.add(new CommandReference("10", "TELL", "tellCommand"));
+            refs.add(new CommandReference("10", "WHISPER", "whisperCommand"));
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs);
