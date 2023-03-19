@@ -12,14 +12,14 @@ import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_COMMAND;
 
 public class CommandReference implements Persistent {
     private String name;
-    private int priority;
+    private String priority;
     private String beanName;
 
     public CommandReference() {
         // this method intentionally left blank
     }
 
-    public CommandReference(int priority, String name, String beanName) {
+    public CommandReference(String priority, String name, String beanName) {
         setPriority(priority);
         setName(name);
         setBeanName(beanName);
@@ -43,7 +43,7 @@ public class CommandReference implements Persistent {
     @Override
     public void thaw(Map<String, AttributeValue> item) {
         String pkTemp = item.get("pk").s();
-        setPriority(Integer.parseInt(pkTemp.substring(0, pkTemp.indexOf("#"))));
+        setPriority(pkTemp.substring(0, pkTemp.indexOf("#")));
         setName(item.get("sk").s().substring(SORT_COMMAND.length()));
 
         Map<String, AttributeValue> data = item.get("data").m();
@@ -58,11 +58,11 @@ public class CommandReference implements Persistent {
         this.name = name;
     }
 
-    public int getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 
