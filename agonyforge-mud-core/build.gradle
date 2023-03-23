@@ -19,7 +19,7 @@ dependencies {
     pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
 
     implementation 'com.hazelcast:hazelcast:5.2.2'
-    implementation 'io.projectreactor.netty:reactor-netty:1.1.4'
+    implementation 'io.projectreactor.netty:reactor-netty:1.1.5'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'
