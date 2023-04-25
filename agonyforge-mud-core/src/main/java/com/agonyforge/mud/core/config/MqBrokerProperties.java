@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "mud.broker")
-public class ActiveMqBrokerProperties {
+public class MqBrokerProperties {
     private Boolean ssl;
     private String host;
     private Integer port;
