@@ -41,18 +41,43 @@ services:
       done
       '
 
-  activemq:
-    image: symptoma/activemq:5.17.1-envvars
+# This is the highest version of RabbitMQ that is supported by AWS's "Amazon MQ"
+# product as of writing this. Any message broker capable of supporting the STOMP
+# protocol should be able to work. I am targeting Agony Forge at being deployed
+# in AWS, so I'm trying to keep things like this as close as possible to what you'd
+# see there.
+  rabbitmq:
+    image: rabbitmq:3.10-management
     ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
       - "127.0.0.1:61613:61613"
-      - "127.0.0.1:8161:8161"
-    environment:
-      ACTIVEMQ_WEBCONSOLE_USE_DEFAULT_ADDRESS: "false"
+    volumes:
+      - './src/main/resources/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins'
 
-      # user with access to web UI
-      ACTIVEMQ_WEBADMIN_USERNAME: admin
-      ACTIVEMQ_WEBADMIN_PASSWORD: admin
-
-      # user with access to broker
-      ACTIVEMQ_USERNAME: mud
-      ACTIVEMQ_PASSWORD: mud
+# If you'd rather use ActiveMQ here's a sample configuration for it.
+# This is the highest version supported by AWS's "Amazon MQ" version of ActiveMQ as
+# of writing this.
+#
+# I stopped using it and switched to RabbitMQ because this version is getting pretty
+# old. Apache released an update to ActiveMQ called Artemis and Spring Boot's starter
+# library for activemq stopped getting updated in favor of their artemis one. Since I
+# can't use newer versions on AWS and I can't use the old Spring Boot library in the
+# latest Spring Boot, it made sense to swap over to RabbitMQ which seems to be getting
+# more current support over there.
+#
+#  activemq:
+#    image: symptoma/activemq:5.17.1-envvars
+#    ports:
+#      - "127.0.0.1:61613:61613"
+#      - "127.0.0.1:8161:8161"
+#    environment:
+#      ACTIVEMQ_WEBCONSOLE_USE_DEFAULT_ADDRESS: "false"
+#
+#      # user with access to web UI
+#      ACTIVEMQ_WEBADMIN_USERNAME: admin
+#      ACTIVEMQ_WEBADMIN_PASSWORD: admin
+#
+#      # user with access to broker
+#      ACTIVEMQ_USERNAME: mud
+#      ACTIVEMQ_PASSWORD: mud

@@ -20,10 +20,10 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> {
-    private final ActiveMqBrokerProperties brokerProperties;
+    private final MqBrokerProperties brokerProperties;
 
     @Autowired
-    public WebSocketBrokerConfiguration(ActiveMqBrokerProperties brokerProperties) {
+    public WebSocketBrokerConfiguration(MqBrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
     }
 
