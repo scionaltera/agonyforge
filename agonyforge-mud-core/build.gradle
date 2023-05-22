@@ -16,7 +16,7 @@ repositories {
 configurations.maybeCreate("pitest")
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
+    pitest 'org.pitest:pitest-junit5-plugin:1.2.0'
 
     implementation 'com.hazelcast:hazelcast:5.3.0'
     implementation 'io.projectreactor.netty:reactor-netty:1.1.7'

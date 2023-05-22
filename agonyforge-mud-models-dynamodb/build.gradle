@@ -25,7 +25,7 @@ dependencyManagement {
 }
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
+    pitest 'org.pitest:pitest-junit5-plugin:1.2.0'
 
     implementation project(":agonyforge-mud-core")
 
