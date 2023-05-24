@@ -6,6 +6,8 @@ module com.agonyforge.mud.demo {
     requires spring.security.core;
     requires spring.security.web;
     requires spring.session.core;
+    requires spring.integration.core;
+    requires spring.integration.stomp;
     requires com.agonyforge.mud.core;
     requires org.slf4j;
     requires com.agonyforge.mud.models.dynamodb;

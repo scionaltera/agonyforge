@@ -42,6 +42,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.security:spring-security-oauth2-core'
     implementation 'org.springframework.session:spring-session-core'
+    implementation 'org.springframework.integration:spring-integration-stomp'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

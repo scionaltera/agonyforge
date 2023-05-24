@@ -11,21 +11,13 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.broker.BrokerAvailabilityEvent;
-import org.springframework.messaging.simp.stomp.StompCommand;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.messaging.simp.stomp.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.socket.WebSocketHttpHeaders;
-import org.springframework.web.socket.client.WebSocketClient;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import javax.annotation.PreDestroy;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +30,7 @@ public class FightCoordinator implements StompSessionHandler {
 
     private final HazelcastInstance hazelcastInstance;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final ReactorNettyTcpStompClient stompClient;
     private final MqBrokerProperties brokerProperties;
 
     private final Map<String, StompSession.Subscription> subscriptions = new HashMap<>();
@@ -48,18 +41,17 @@ public class FightCoordinator implements StompSessionHandler {
     @Autowired
     public FightCoordinator(HazelcastInstance hazelcastInstance,
                             SimpMessagingTemplate simpMessagingTemplate,
+                            ReactorNettyTcpStompClient stompClient,
                             MqBrokerProperties brokerProperties) {
         this.hazelcastInstance = hazelcastInstance;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.stompClient = stompClient;
         this.brokerProperties = brokerProperties;
     }
 
     @EventListener
     public void onApplicationEvent(BrokerAvailabilityEvent event) {
         isBrokerAvailable = event.isBrokerAvailable();
-
-        WebSocketClient client = new StandardWebSocketClient();
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
 
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
@@ -68,25 +60,13 @@ public class FightCoordinator implements StompSessionHandler {
         stompHeaders.setAcceptVersion("1.1", "1.2");
         stompHeaders.setLogin(brokerProperties.getClientUsername());
         stompHeaders.setPasscode(brokerProperties.getClientPassword());
-//        stompHeaders.setHeartbeat(new long[] {10000L, 10000L});
+        stompHeaders.setHeartbeat(new long[] {10000L, 10000L});
         stompHeaders.setSession("fight-coordinator");
 
-
-        WebSocketHttpHeaders handshakeHeaders = new WebSocketHttpHeaders();
-
         try {
-            stompSession = stompClient
-                .connectAsync(
-                    URI.create(String.format("ws%s://%s:%s/ws",
-                        brokerProperties.getSsl() ? "s" : "",
-                        brokerProperties.getHost(),
-                        15674)),
-                    null,
-                    stompHeaders,
-                    this)
-                .get();
+            stompSession = stompClient.connectAsync(stompHeaders, this).get();
         } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error("Oops: {}", e.getMessage(), e);
+            LOGGER.error("Exception trying to connect: {}", e.getMessage(), e);
         }
     }
 
@@ -109,7 +89,6 @@ public class FightCoordinator implements StompSessionHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        LOGGER.info("in getPayloadType()");
         return FightMessage.class;
     }
 
