@@ -30,16 +30,19 @@ public class WebSecurityConfiguration {
             .oauth2Login((oauth) -> oauth
                 .loginPage("/")
                 .defaultSuccessUrl("/play"))
-            .logout()
-            .logoutUrl("/logout")
-            .logoutSuccessUrl("/")
-            .and()
-            .sessionManagement()
-            .invalidSessionUrl("/")
-            .maximumSessions(1)
-            .maxSessionsPreventsLogin(true)
-            .expiredUrl("/")
-            .sessionRegistry(sessionRegistry());
+            .logout((logout) ->
+                logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/")
+            )
+            .sessionManagement((sessionMgmt) ->
+                sessionMgmt
+                    .invalidSessionUrl("/")
+                    .maximumSessions(1)
+                    .maxSessionsPreventsLogin(true)
+                    .expiredUrl("/")
+                    .sessionRegistry(sessionRegistry())
+            );
 
         return http.build();
     }
