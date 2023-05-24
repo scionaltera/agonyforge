@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
@@ -103,5 +104,33 @@ public class WebSocketController {
         wsContext.getAttributes().put(MUD_QUESTION, nextQuestion.getBeanName());
 
         return output;
+    }
+
+    @MessageMapping("/fight")
+    @SendTo("/app/flarg")
+    public String onFight1(String payload) {
+        LOGGER.info("in onFight1(): {}", payload);
+        return payload;
+    }
+
+    @MessageMapping("/app/fight")
+    @SendTo("/app/flarg")
+    public String onFight2(String payload) {
+        LOGGER.info("in onFight2(): {}", payload);
+        return payload;
+    }
+
+    @MessageMapping("/topic/fight")
+    @SendTo("/app/flarg")
+    public String onFight3(String payload) {
+        LOGGER.info("in onFight3(): {}", payload);
+        return payload;
+    }
+
+    @MessageMapping("/queue/fight")
+    @SendTo("/app/flarg")
+    public String onFight4(String payload) {
+        LOGGER.info("in onFight4(): {}", payload);
+        return payload;
     }
 }
