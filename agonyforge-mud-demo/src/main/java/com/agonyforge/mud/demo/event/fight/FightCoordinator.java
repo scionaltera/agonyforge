@@ -24,9 +24,23 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * In a system with potentially multiple servers we need a way to coordinate things like fights across the whole
+ * group so that they get resolved the same way no matter which server you happen to be connected to. This class
+ * registers a STOMP client to /queue/fight and listens for messages there. If this server is also the "leader"
+ * (see comment in the code below because that probably doesn't mean what you think it means) it will generate
+ * messages on the queue periodically. One arbitrarily chosen server will get each message and process the fights
+ * for that round. That spreads the load of processing across the whole cluster but also avoids multiple servers
+ * processing the same fights at the same time. This pattern should be used for anything that needs to be processed
+ * periodically in the game but shouldn't be duplicated.
+ * <p>
+ * A more scalable approach could be to split the list of fights equally across all the servers and have them each
+ * do their own batch every tick.
+ */
 @Controller
 public class FightCoordinator implements StompSessionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(FightCoordinator.class);
+    private static final String DESTINATION_FIGHT = "/queue/fight";
 
     private final HazelcastInstance hazelcastInstance;
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -74,17 +88,22 @@ public class FightCoordinator implements StompSessionHandler {
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         LOGGER.info("Client connection to STOMP server established");
 
-        subscriptions.put("/topic/fight", stompSession.subscribe("/topic/fight", this));
+        subscriptions.put(DESTINATION_FIGHT, stompSession.subscribe(DESTINATION_FIGHT, this));
     }
 
     @Override
     public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-        LOGGER.error("Exception while handling frame", exception);
+        LOGGER.error("Exception while handling frame: session={} command={} headers={} payload={}",
+            session.getSessionId(),
+            command,
+            headers,
+            payload,
+            exception);
     }
 
     @Override
     public void handleTransportError(StompSession session, Throwable exception) {
-        LOGGER.error("Got a transport error", exception);
+        LOGGER.error("Got a transport error: session={}", session.getSessionId(), exception);
     }
 
     @Override
@@ -135,7 +154,7 @@ public class FightCoordinator implements StompSessionHandler {
 
             fightMessage.setMessage("foightin round the world");
 
-            simpMessagingTemplate.convertAndSend("/topic/fight", fightMessage, messageHeaders);
+            simpMessagingTemplate.convertAndSend(DESTINATION_FIGHT, fightMessage, messageHeaders);
         }
     }
 }
