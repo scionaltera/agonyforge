@@ -49,6 +49,7 @@ services:
     ports:
       - "127.0.0.1:5672:5672"
       - "127.0.0.1:15672:15672"
+      - "127.0.0.1:15674:15674"
       - "127.0.0.1:61613:61613"
     volumes:
       - './src/main/resources/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins'
