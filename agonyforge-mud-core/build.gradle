@@ -1,6 +1,6 @@
 plugins {
     id 'info.solidsoft.pitest' version '1.9.11'
-    id 'org.springframework.boot' version '3.0.6'
+    id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
     id 'maven-publish'
@@ -16,10 +16,10 @@ repositories {
 configurations.maybeCreate("pitest")
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.1.2'
+    pitest 'org.pitest:pitest-junit5-plugin:1.2.0'
 
-    implementation 'com.hazelcast:hazelcast:5.2.3'
-    implementation 'io.projectreactor.netty:reactor-netty:1.1.6'
+    implementation 'com.hazelcast:hazelcast:5.3.0'
+    implementation 'io.projectreactor.netty:reactor-netty:1.1.7'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'
@@ -34,6 +34,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.9.2'
 }
 
 java {

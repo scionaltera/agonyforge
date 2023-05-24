@@ -12,9 +12,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MenuPaneTest {
@@ -44,7 +42,7 @@ public class MenuPaneTest {
         String line2 = "* Test *";
         String line3 = "********";
 
-        when(title.render(any())).thenReturn(new Output(Arrays.asList(line1, line2, line3)));
+        doReturn(new Output(Arrays.asList(line1, line2, line3))).when(title).render(any(Color[].class));
 
         MenuPane uut = new MenuPane();
         uut.setTitle(title);
@@ -67,8 +65,8 @@ public class MenuPaneTest {
         String line1 = "1) One";
         String line2 = "2) Two";
 
-        when(item1.render(any())).thenReturn(new Output(line1));
-        when(item2.render(any())).thenReturn(new Output(line2));
+        doReturn(new Output(line1)).when(item1).render(any(Color[].class));
+        doReturn(new Output(line2)).when(item2).render(any(Color[].class));
 
         MenuPane uut = new MenuPane();
         uut.getItems().add(item1);
@@ -90,7 +88,7 @@ public class MenuPaneTest {
     void testRenderPrompt() {
         String line1 = "Choose: ";
 
-        when(prompt.render(any())).thenReturn(new Output(line1));
+        doReturn(new Output(line1)).when(prompt).render(any(Color[].class));
 
         MenuPane uut = new MenuPane();
         uut.setPrompt(prompt);
@@ -115,10 +113,10 @@ public class MenuPaneTest {
         String line5 = "2) Two";
         String line6 = "Choose: ";
 
-        when(title.render(any())).thenReturn(new Output(Arrays.asList(line1, line2, line3)));
-        when(item1.render(any())).thenReturn(new Output(line4));
-        when(item2.render(any())).thenReturn(new Output(line5));
-        when(prompt.render(any())).thenReturn(new Output(line6));
+        doReturn(new Output(Arrays.asList(line1, line2, line3))).when(title).render(any(Color[].class));
+        doReturn(new Output(line4)).when(item1).render(any(Color[].class));
+        doReturn(new Output(line5)).when(item2).render(any(Color[].class));
+        doReturn(new Output(line6)).when(prompt).render(any(Color[].class));
 
         MenuPane uut = new MenuPane();
         uut.setTitle(title);
