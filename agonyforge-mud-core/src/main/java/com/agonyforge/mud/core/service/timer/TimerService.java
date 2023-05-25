@@ -5,6 +5,7 @@ import com.hazelcast.cluster.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -28,15 +29,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * In a system with potentially multiple servers we need a way to coordinate things like fights across the whole
  * group so that they get resolved the same way no matter which server you happen to be connected to. This class
- * registers a STOMP client to /queue/fight and listens for messages there. If this server is also the "leader"
+ * registers a STOMP client to several queues and listens for messages there. If this server is also the "leader"
  * (see comment in the code below because that probably doesn't mean what you think it means) it will generate
- * messages on the queue periodically. One arbitrarily chosen server will get each message and process the fights
- * for that round. That spreads the load of processing across the whole cluster but also avoids multiple servers
- * processing the same fights at the same time. This pattern should be used for anything that needs to be processed
- * periodically in the game but shouldn't be duplicated.
+ * messages on the queue on fixed time intervals. One arbitrarily chosen server will get each message and publish
+ * a corresponding application event.
  * <p>
- * A more scalable approach could be to split the list of fights equally across all the servers and have them each
- * do their own batch every tick.
+ * The game code can register an event listener that would process one round of fights, without worrying about
+ * the underlying complexity of server clustering. That spreads the load of processing across the whole cluster
+ * but also avoids multiple servers processing the same fights at the same time. This pattern should be used for
+ * anything that needs to be processed periodically in the game by only one server at a time.
  */
 @Controller
 public class TimerService implements StompSessionHandler {
@@ -47,6 +48,7 @@ public class TimerService implements StompSessionHandler {
     private static final String DESTINATION_DAY = "/queue/per_day";
 
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final HazelcastInstance hazelcastInstance;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ReactorNettyTcpStompClient stompClient;
@@ -58,10 +60,12 @@ public class TimerService implements StompSessionHandler {
     private StompSession stompSession = null;
 
     @Autowired
-    public TimerService(HazelcastInstance hazelcastInstance,
+    public TimerService(ApplicationEventPublisher applicationEventPublisher,
+                        HazelcastInstance hazelcastInstance,
                         SimpMessagingTemplate simpMessagingTemplate,
                         ReactorNettyTcpStompClient stompClient,
                         MqBrokerProperties brokerProperties) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.hazelcastInstance = hazelcastInstance;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.stompClient = stompClient;
@@ -121,19 +125,25 @@ public class TimerService implements StompSessionHandler {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        LOGGER.info("Got a new message: headers={} payload={}", headers, payload);
+        LOGGER.trace("Received timer message: headers={} payload={}", headers, payload);
 
         if (null == headers.getDestination()) {
             LOGGER.error("Message destination is null!");
             return;
         }
 
+        TimerEvent event = null;
+
         switch(headers.getDestination()) {
-            case DESTINATION_SECOND -> LOGGER.info("Per-second timer!");
-            case DESTINATION_MINUTE -> LOGGER.info("Per-minute timer!");
-            case DESTINATION_HOUR -> LOGGER.info("Per-hour timer!");
-            case DESTINATION_DAY -> LOGGER.info("Per-day timer!");
+            case DESTINATION_SECOND -> event = new TimerEvent(this, TimeUnit.SECONDS);
+            case DESTINATION_MINUTE -> event = new TimerEvent(this, TimeUnit.MINUTES);
+            case DESTINATION_HOUR -> event = new TimerEvent(this, TimeUnit.HOURS);
+            case DESTINATION_DAY -> event = new TimerEvent(this, TimeUnit.DAYS);
             default -> LOGGER.error("Unknown message destination!");
+        }
+
+        if (event != null) {
+            applicationEventPublisher.publishEvent(event);
         }
     }
 
