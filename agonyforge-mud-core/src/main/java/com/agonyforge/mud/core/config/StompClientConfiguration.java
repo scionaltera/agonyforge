@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.config;
+package com.agonyforge.mud.core.config;
 
 import com.agonyforge.mud.core.config.MqBrokerProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 @EnableIntegration
-public class StompConfiguration {
+public class StompClientConfiguration {
     private final MqBrokerProperties brokerProperties;
 
     @Autowired
-    public StompConfiguration(MqBrokerProperties brokerProperties) {
+    public StompClientConfiguration(MqBrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
     }
 

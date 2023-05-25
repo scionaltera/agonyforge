@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.event.fight;
+package com.agonyforge.mud.core.service.timer;
 
 import com.agonyforge.mud.core.config.MqBrokerProperties;
 import com.hazelcast.cluster.Member;
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * In a system with potentially multiple servers we need a way to coordinate things like fights across the whole
@@ -38,9 +39,13 @@ import java.util.concurrent.ExecutionException;
  * do their own batch every tick.
  */
 @Controller
-public class FightCoordinator implements StompSessionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FightCoordinator.class);
-    private static final String DESTINATION_FIGHT = "/queue/fight";
+public class TimerService implements StompSessionHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimerService.class);
+    private static final String DESTINATION_SECOND = "/queue/per_second";
+    private static final String DESTINATION_MINUTE = "/queue/per_minute";
+    private static final String DESTINATION_HOUR = "/queue/per_hour";
+    private static final String DESTINATION_DAY = "/queue/per_day";
+
 
     private final HazelcastInstance hazelcastInstance;
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -53,10 +58,10 @@ public class FightCoordinator implements StompSessionHandler {
     private StompSession stompSession = null;
 
     @Autowired
-    public FightCoordinator(HazelcastInstance hazelcastInstance,
-                            SimpMessagingTemplate simpMessagingTemplate,
-                            ReactorNettyTcpStompClient stompClient,
-                            MqBrokerProperties brokerProperties) {
+    public TimerService(HazelcastInstance hazelcastInstance,
+                        SimpMessagingTemplate simpMessagingTemplate,
+                        ReactorNettyTcpStompClient stompClient,
+                        MqBrokerProperties brokerProperties) {
         this.hazelcastInstance = hazelcastInstance;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.stompClient = stompClient;
@@ -88,7 +93,10 @@ public class FightCoordinator implements StompSessionHandler {
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         LOGGER.info("Client connection to STOMP server established");
 
-        subscriptions.put(DESTINATION_FIGHT, stompSession.subscribe(DESTINATION_FIGHT, this));
+        subscriptions.put(DESTINATION_SECOND, stompSession.subscribe(DESTINATION_SECOND, this));
+        subscriptions.put(DESTINATION_MINUTE, stompSession.subscribe(DESTINATION_MINUTE, this));
+        subscriptions.put(DESTINATION_HOUR, stompSession.subscribe(DESTINATION_HOUR, this));
+        subscriptions.put(DESTINATION_DAY, stompSession.subscribe(DESTINATION_DAY, this));
     }
 
     @Override
@@ -103,19 +111,30 @@ public class FightCoordinator implements StompSessionHandler {
 
     @Override
     public void handleTransportError(StompSession session, Throwable exception) {
-        LOGGER.error("Got a transport error: session={}", session.getSessionId(), exception);
+        LOGGER.error("Transport error: session={}", session.getSessionId(), exception);
     }
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return FightMessage.class;
+        return TimerMessage.class;
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        LOGGER.debug("Got a new message: {}", payload);
+        LOGGER.info("Got a new message: headers={} payload={}", headers, payload);
 
-        // TODO process the ongoing fights
+        if (null == headers.getDestination()) {
+            LOGGER.error("Message destination is null!");
+            return;
+        }
+
+        switch(headers.getDestination()) {
+            case DESTINATION_SECOND -> LOGGER.info("Per-second timer!");
+            case DESTINATION_MINUTE -> LOGGER.info("Per-minute timer!");
+            case DESTINATION_HOUR -> LOGGER.info("Per-hour timer!");
+            case DESTINATION_DAY -> LOGGER.info("Per-day timer!");
+            default -> LOGGER.error("Unknown message destination!");
+        }
     }
 
     @PreDestroy
@@ -129,8 +148,27 @@ public class FightCoordinator implements StompSessionHandler {
         }
     }
 
-    @Scheduled(cron = "0/1 * * * * ?")
-    public void doFights() {
+    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.SECONDS)
+    public void doPerSecond() {
+        doTimer(DESTINATION_SECOND);
+    }
+
+    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.MINUTES)
+    public void doPerMinute() {
+        doTimer(DESTINATION_MINUTE);
+    }
+
+    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.HOURS)
+    public void doPerHour() {
+        doTimer(DESTINATION_HOUR);
+    }
+
+    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.DAYS)
+    public void doPerDay() {
+        doTimer(DESTINATION_DAY);
+    }
+
+    private void doTimer(final String destination) {
         // "leader" is a little bit of a misnomer here
         // it's not actually the elected leader of the Hazelcast cluster
         // apparently you can't even get that info via public API?!
@@ -150,12 +188,9 @@ public class FightCoordinator implements StompSessionHandler {
             LOGGER.debug("leader={} me={}", leaderOptional.orElse(null), me);
 
             MessageHeaders messageHeaders = SimpMessageHeaderAccessor.create().getMessageHeaders();
-            FightMessage fightMessage = new FightMessage();
+            TimerMessage timerMessage = new TimerMessage(System.currentTimeMillis());
 
-            // TODO put something useful in here
-            fightMessage.setMessage("foightin round the world");
-
-            simpMessagingTemplate.convertAndSend(DESTINATION_FIGHT, fightMessage, messageHeaders);
+            simpMessagingTemplate.convertAndSend(destination, timerMessage, messageHeaders);
         }
     }
 }
