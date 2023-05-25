@@ -6,7 +6,7 @@ set -x
 # If you remove the $AWS_ENDPOINT argument, this ought to work for real in AWS too.
 # My personal preference would be to use the CloudFormation template instead, though.
 
-aws "$AWS_ENDPOINT" \
+aws $AWS_ENDPOINT \
     dynamodb create-table \
         --no-paginate \
         --table-name agonyforge \
@@ -39,7 +39,7 @@ aws "$AWS_ENDPOINT" \
             ]"
 
 # sets the TTL attribute in table
-aws "$AWS_ENDPOINT" \
+aws $AWS_ENDPOINT \
     dynamodb update-time-to-live \
         --table-name agonyforge \
         --time-to-live-specification "Enabled=true, AttributeName=ttl"
