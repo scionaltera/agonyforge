@@ -113,9 +113,9 @@ public class FightCoordinator implements StompSessionHandler {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        LOGGER.info("Got a new message: {}", payload);
+        LOGGER.debug("Got a new message: {}", payload);
 
-        // TODO consume a FightMessage
+        // TODO process the ongoing fights
     }
 
     @PreDestroy
@@ -147,11 +147,12 @@ public class FightCoordinator implements StompSessionHandler {
             .findFirst();
 
         if (isBrokerAvailable && leaderOptional.isPresent() && leaderOptional.get().equals(me)) {
-            LOGGER.info("leader={} me={}", leaderOptional.orElse(null), me);
+            LOGGER.debug("leader={} me={}", leaderOptional.orElse(null), me);
 
             MessageHeaders messageHeaders = SimpMessageHeaderAccessor.create().getMessageHeaders();
             FightMessage fightMessage = new FightMessage();
 
+            // TODO put something useful in here
             fightMessage.setMessage("foightin round the world");
 
             simpMessagingTemplate.convertAndSend(DESTINATION_FIGHT, fightMessage, messageHeaders);
