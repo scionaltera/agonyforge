@@ -19,10 +19,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.PreDestroy;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -42,10 +39,11 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class TimerService implements StompSessionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TimerService.class);
-    private static final String DESTINATION_SECOND = "/queue/per_second";
-    private static final String DESTINATION_MINUTE = "/queue/per_minute";
-    private static final String DESTINATION_HOUR = "/queue/per_hour";
-    private static final String DESTINATION_DAY = "/queue/per_day";
+    static final String DESTINATION_SECOND = "/queue/per_second";
+    static final String DESTINATION_MINUTE = "/queue/per_minute";
+    static final String DESTINATION_HOUR = "/queue/per_hour";
+    static final String DESTINATION_DAY = "/queue/per_day";
+    static final String STOMP_SESSION_NAME = "core-timers";
 
 
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -74,7 +72,7 @@ public class TimerService implements StompSessionHandler {
 
     @EventListener
     public void onApplicationEvent(BrokerAvailabilityEvent event) {
-        isBrokerAvailable = event.isBrokerAvailable();
+        setBrokerAvailability(event.isBrokerAvailable());
 
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
@@ -84,7 +82,7 @@ public class TimerService implements StompSessionHandler {
         stompHeaders.setLogin(brokerProperties.getClientUsername());
         stompHeaders.setPasscode(brokerProperties.getClientPassword());
         stompHeaders.setHeartbeat(new long[] {10000L, 10000L});
-        stompHeaders.setSession("fight-coordinator");
+        stompHeaders.setSession(STOMP_SESSION_NAME);
 
         try {
             stompSession = stompClient.connectAsync(stompHeaders, this).get();
@@ -97,10 +95,10 @@ public class TimerService implements StompSessionHandler {
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         LOGGER.info("Client connection to STOMP server established");
 
-        subscriptions.put(DESTINATION_SECOND, stompSession.subscribe(DESTINATION_SECOND, this));
-        subscriptions.put(DESTINATION_MINUTE, stompSession.subscribe(DESTINATION_MINUTE, this));
-        subscriptions.put(DESTINATION_HOUR, stompSession.subscribe(DESTINATION_HOUR, this));
-        subscriptions.put(DESTINATION_DAY, stompSession.subscribe(DESTINATION_DAY, this));
+        subscriptions.put(DESTINATION_SECOND, session.subscribe(DESTINATION_SECOND, this));
+        subscriptions.put(DESTINATION_MINUTE, session.subscribe(DESTINATION_MINUTE, this));
+        subscriptions.put(DESTINATION_HOUR, session.subscribe(DESTINATION_HOUR, this));
+        subscriptions.put(DESTINATION_DAY, session.subscribe(DESTINATION_DAY, this));
     }
 
     @Override
@@ -147,6 +145,10 @@ public class TimerService implements StompSessionHandler {
         }
     }
 
+    public StompSession.Subscription getSubscription(String destination) {
+        return subscriptions.get(destination);
+    }
+
     @PreDestroy
     void onShutdown() {
         for (String key : subscriptions.keySet()) {
@@ -156,6 +158,10 @@ public class TimerService implements StompSessionHandler {
         if (stompSession != null) {
             stompSession.disconnect();
         }
+    }
+
+    void setBrokerAvailability(boolean isBrokerAvailable) {
+        this.isBrokerAvailable = isBrokerAvailable;
     }
 
     @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.SECONDS)
@@ -190,9 +196,8 @@ public class TimerService implements StompSessionHandler {
         UUID me = hazelcastInstance.getCluster().getLocalMember().getUuid();
         Optional<UUID> leaderOptional = hazelcastInstance.getCluster().getMembers()
             .stream()
-            .map(Member::getUuid)
-            .sorted()
-            .findFirst();
+            .min(Comparator.comparing(Member::getUuid))
+            .map(Member::getUuid);
 
         if (isBrokerAvailable && leaderOptional.isPresent() && leaderOptional.get().equals(me)) {
             LOGGER.debug("leader={} me={}", leaderOptional.orElse(null), me);

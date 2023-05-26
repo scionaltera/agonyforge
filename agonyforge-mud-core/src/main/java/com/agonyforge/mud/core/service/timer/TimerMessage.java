@@ -13,10 +13,6 @@ public class TimerMessage {
         return timestamp;
     }
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
     public String toString() {
         return "TimerMessage{" +
