@@ -73,7 +73,7 @@ public class CharacterViewQuestion extends AbstractQuestion {
 
                 getRepositoryBundle().getCharacterRepository().save(ch);
 
-                LOGGER.info("{} has entered the game.", ch.getName());
+                LOGGER.info("{} has entered the game", ch.getName());
                 commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
 
                 output.append(LookCommand.doLook(getRepositoryBundle(), ch, room));
