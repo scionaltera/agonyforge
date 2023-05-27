@@ -11,6 +11,7 @@ public class Constants {
 
     public static final String KEY_MODIFIED = "lastModified";
 
+    public static final String DB_PROPERTY = "PROPERTY#";
     public static final String DB_USER = "USER#";
     public static final String DB_PC = "PC#";
     public static final String DB_ITEM = "ITEM#";
@@ -22,6 +23,7 @@ public class Constants {
     public static final String SORT_INSTANCE = "INSTANCE#";
     public static final String SORT_COMMAND = "COMMAND#";
 
+    public static final String TYPE_PROPERTY = "PROPERTY";
     public static final String TYPE_USER = "USER";
     public static final String TYPE_SESSION = "SESSION";
     public static final String TYPE_PC = "PC";
