@@ -40,7 +40,8 @@ public class CommService extends EchoService {
     }
 
     /**
-     * Send a message to all characters that are playing except the sender.
+     * Send a message to all characters that are playing except the sender and specifically excluded
+     * characters.
      *
      * @param wsContext The WebSocketContext of the sender.
      * @param message The message to send.
@@ -53,6 +54,22 @@ public class CommService extends EchoService {
             .stream()
             .filter(ch -> !ch.isPrototype())
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !skip.contains(ch))
+            .forEach(ch -> sendTo(ch, message));
+    }
+
+    /**
+     * Send a message to all characters except specifically excluded characters.
+     *
+     * @param message The message to send.
+     * @param except Don't send to these characters.
+     */
+    public void sendToAll(Output message, MudCharacter ... except) {
+        List<MudCharacter> skip = List.of(except);
+
+        characterRepository.getByType(TYPE_PC)
+            .stream()
+            .filter(ch -> !ch.isPrototype())
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }

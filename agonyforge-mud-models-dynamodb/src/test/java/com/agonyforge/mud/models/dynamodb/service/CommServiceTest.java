@@ -115,7 +115,7 @@ public class CommServiceTest {
     }
 
     @Test
-    void testSendToAll() {
+    void testSendToAllWebsocket() {
         CommService uut = new CommService(
             applicationContext,
             simpMessagingTemplate,
@@ -126,6 +126,43 @@ public class CommServiceTest {
         Output message = new Output("message");
 
         uut.sendToAll(webSocketContext, message);
+
+        verify(simpMessagingTemplate).convertAndSendToUser(
+            eq(targetPrincipal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
+
+        verify(simpMessagingTemplate).convertAndSendToUser(
+            eq(otherPrincipal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
+
+        verifyNoMoreInteractions(simpMessagingTemplate);
+    }
+
+    @Test
+    void testSendToAll() {
+        CommService uut = new CommService(
+            applicationContext,
+            simpMessagingTemplate,
+            simpUserRegistry,
+            sessionAttributeService,
+            characterRepository);
+
+        Output message = new Output("message");
+
+        uut.sendToAll(message);
+
+        verify(simpMessagingTemplate).convertAndSendToUser(
+            eq(principal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
 
         verify(simpMessagingTemplate).convertAndSendToUser(
             eq(targetPrincipal),

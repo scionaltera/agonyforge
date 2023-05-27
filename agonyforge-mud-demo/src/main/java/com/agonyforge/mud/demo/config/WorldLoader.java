@@ -3,9 +3,11 @@ package com.agonyforge.mud.demo.config;
 import com.agonyforge.mud.models.dynamodb.constant.Direction;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import com.agonyforge.mud.models.dynamodb.impl.MudItem;
+import com.agonyforge.mud.models.dynamodb.impl.MudProperty;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.impl.MudZone;
 import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
+import com.agonyforge.mud.models.dynamodb.repository.MudPropertyRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
 import com.agonyforge.mud.models.dynamodb.repository.MudZoneRepository;
 import org.slf4j.Logger;
@@ -17,18 +19,23 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.UUID;
 
+import static com.agonyforge.mud.demo.event.WeatherListener.PROPERTY_HOUR;
+
 @Component
 public class WorldLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorldLoader.class);
 
+    private final MudPropertyRepository propertyRepository;
     private final MudZoneRepository zoneRepository;
     private final MudRoomRepository roomRepository;
     private final MudItemRepository itemRepository;
 
     @Autowired
-    public WorldLoader(MudZoneRepository zoneRepository,
+    public WorldLoader(MudPropertyRepository propertyRepository,
+                       MudZoneRepository zoneRepository,
                        MudRoomRepository roomRepository,
                        MudItemRepository itemRepository) {
+        this.propertyRepository = propertyRepository;
         this.zoneRepository = zoneRepository;
         this.roomRepository = roomRepository;
         this.itemRepository = itemRepository;
@@ -36,6 +43,13 @@ public class WorldLoader {
 
     @PostConstruct
     public void loadWorld() {
+        if (propertyRepository.getByName(PROPERTY_HOUR).isEmpty()) {
+            MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "0");
+
+            LOGGER.info("Setting world time");
+            propertyRepository.save(mudHour);
+        }
+
         if (zoneRepository.getById(1L).isEmpty()) {
             MudZone zone = new MudZone();
 
