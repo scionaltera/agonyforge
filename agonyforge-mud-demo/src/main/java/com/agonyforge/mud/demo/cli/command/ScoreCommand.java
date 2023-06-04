@@ -25,6 +25,13 @@ public class ScoreCommand extends AbstractCommand {
 
         output.append("[default]Your name is [white]%s[default].", ch.getName());
         output.append("[default]Your pronouns are [white]%s/%s[default].", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
+        output.append("[default]STR: [white]%s", ch.getStrength());
+        output.append("[default]DEX: [white]%s", ch.getDexterity());
+        output.append("[default]CON: [white]%s", ch.getConstitution());
+        output.append("[default]INT: [white]%s", ch.getIntelligence());
+        output.append("[default]WIS: [white]%s", ch.getWisdom());
+        output.append("[default]CHA: [white]%s", ch.getCharisma());
+        output.append("[default]DEF: [white]%s", ch.getDefense());
 
         return question;
     }

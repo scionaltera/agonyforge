@@ -44,6 +44,13 @@ public class CharacterViewQuestion extends AbstractQuestion {
             output.append("[dcyan]Character Sheet");
             output.append("[default]Name: [cyan]%s", ch.getName());
             output.append("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
+            output.append("[default]STR: [cyan]%d", ch.getStrength());
+            output.append("[default]DEX: [cyan]%d", ch.getDexterity());
+            output.append("[default]CON: [cyan]%d", ch.getConstitution());
+            output.append("[default]INT: [cyan]%d", ch.getIntelligence());
+            output.append("[default]WIS: [cyan]%d", ch.getWisdom());
+            output.append("[default]CHA: [cyan]%d", ch.getCharisma());
+            output.append("[default]DEF: [cyan]%d", ch.getDefense());
             output.append("");
             output.append("[green]P[black]) Play as this character");
             output.append("[red]D[black]) Delete this character");

@@ -29,6 +29,12 @@ public class MudCharacter implements Persistent {
     private String name;
     private Pronoun pronoun;
     private List<WearSlot> wearSlots = new ArrayList<>();
+    private int strength = 0;
+    private int dexterity = 0;
+    private int constitution = 0;
+    private int intelligence = 0;
+    private int wisdom = 0;
+    private int charisma = 0;
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -64,6 +70,13 @@ public class MudCharacter implements Persistent {
             data.put("wear_slots", AttributeValue.builder().ss(slots).build());
         }
 
+        data.put("strength", AttributeValue.builder().n(Integer.toString(getStrength())).build());
+        data.put("dexterity", AttributeValue.builder().n(Integer.toString(getDexterity())).build());
+        data.put("constitution", AttributeValue.builder().n(Integer.toString(getConstitution())).build());
+        data.put("intelligence", AttributeValue.builder().n(Integer.toString(getIntelligence())).build());
+        data.put("wisdom", AttributeValue.builder().n(Integer.toString(getWisdom())).build());
+        data.put("charisma", AttributeValue.builder().n(Integer.toString(getCharisma())).build());
+
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
         }
@@ -93,6 +106,12 @@ public class MudCharacter implements Persistent {
             .stream()
             .map(WearSlot::valueOf)
             .toList());
+        setStrength(Integer.parseInt(data.getOrDefault("strength", AttributeValue.builder().n("0").build()).n()));
+        setDexterity(Integer.parseInt(data.getOrDefault("dexterity", AttributeValue.builder().n("0").build()).n()));
+        setConstitution(Integer.parseInt(data.getOrDefault("constitution", AttributeValue.builder().n("0").build()).n()));
+        setIntelligence(Integer.parseInt(data.getOrDefault("intelligence", AttributeValue.builder().n("0").build()).n()));
+        setWisdom(Integer.parseInt(data.getOrDefault("wisdom", AttributeValue.builder().n("0").build()).n()));
+        setCharisma(Integer.parseInt(data.getOrDefault("charisma", AttributeValue.builder().n("0").build()).n()));
     }
 
     public MudCharacter buildInstance() {
@@ -108,6 +127,12 @@ public class MudCharacter implements Persistent {
         instance.setName(getName());
         instance.setPronoun(getPronoun());
         instance.setWearSlots(getWearSlots());
+        instance.setStrength(getStrength());
+        instance.setDexterity(getDexterity());
+        instance.setConstitution(getConstitution());
+        instance.setIntelligence(getIntelligence());
+        instance.setWisdom(getWisdom());
+        instance.setCharisma(getCharisma());
 
         return instance;
     }
@@ -184,6 +209,58 @@ public class MudCharacter implements Persistent {
 
     public void setWearSlots(List<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getDexterity() {
+        return dexterity;
+    }
+
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
+    }
+
+    public int getConstitution() {
+        return constitution;
+    }
+
+    public void setConstitution(int constitution) {
+        this.constitution = constitution;
+    }
+
+    public int getIntelligence() {
+        return intelligence;
+    }
+
+    public void setIntelligence(int intelligence) {
+        this.intelligence = intelligence;
+    }
+
+    public int getWisdom() {
+        return wisdom;
+    }
+
+    public void setWisdom(int wisdom) {
+        this.wisdom = wisdom;
+    }
+
+    public int getCharisma() {
+        return charisma;
+    }
+
+    public void setCharisma(int charisma) {
+        this.charisma = charisma;
+    }
+
+    public int getDefense() {
+        return getConstitution(); // TODO also add any equipped items that provide +DEF
     }
 
     public boolean isPrototype() {

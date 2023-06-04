@@ -122,4 +122,24 @@ public class MudCharacterTest {
 
         assertEquals(WearSlot.HEAD, uut.getWearSlots().get(0));
     }
+
+    @Test
+    void testAttributes() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setStrength(1);
+        uut.setDexterity(2);
+        uut.setConstitution(3);
+        uut.setIntelligence(4);
+        uut.setWisdom(5);
+        uut.setCharisma(6);
+
+        assertEquals(1, uut.getStrength());
+        assertEquals(2, uut.getDexterity());
+        assertEquals(3, uut.getConstitution());
+        assertEquals(4, uut.getIntelligence());
+        assertEquals(5, uut.getWisdom());
+        assertEquals(6, uut.getCharisma());
+        assertEquals(3, uut.getConstitution());
+    }
 }
