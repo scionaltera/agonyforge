@@ -21,7 +21,7 @@ import java.util.UUID;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class CharacterNameQuestion extends AbstractQuestion {
+public class CharacterNameQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterNameQuestion.class);
 
     @Autowired

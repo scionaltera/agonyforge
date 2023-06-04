@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Component
-public class CharacterPronounQuestion extends AbstractQuestion {
+public class CharacterPronounQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterPronounQuestion.class);
 
     private final MenuPane menuPane = new MenuPane();

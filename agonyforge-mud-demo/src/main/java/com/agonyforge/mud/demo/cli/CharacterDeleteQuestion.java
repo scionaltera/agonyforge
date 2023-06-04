@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class CharacterDeleteQuestion extends AbstractQuestion {
+public class CharacterDeleteQuestion extends BaseQuestion {
     @Autowired
     public CharacterDeleteQuestion(ApplicationContext applicationContext,
                                    RepositoryBundle repositoryBundle) {

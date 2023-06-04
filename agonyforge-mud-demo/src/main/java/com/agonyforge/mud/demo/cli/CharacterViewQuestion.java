@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class CharacterViewQuestion extends AbstractQuestion {
+public class CharacterViewQuestion extends BaseQuestion {
     static final Long START_ROOM = 100L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
