@@ -1,5 +1,6 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -127,19 +128,35 @@ public class MudCharacterTest {
     void testAttributes() {
         MudCharacter uut = new MudCharacter();
 
-        uut.setStrength(1);
-        uut.setDexterity(2);
-        uut.setConstitution(3);
-        uut.setIntelligence(4);
-        uut.setWisdom(5);
-        uut.setCharisma(6);
+        uut.setStat(Stat.STR, 1);
 
-        assertEquals(1, uut.getStrength());
-        assertEquals(2, uut.getDexterity());
-        assertEquals(3, uut.getConstitution());
-        assertEquals(4, uut.getIntelligence());
-        assertEquals(5, uut.getWisdom());
-        assertEquals(6, uut.getCharisma());
-        assertEquals(3, uut.getConstitution());
+        assertEquals(1, uut.getStat(Stat.STR));
+    }
+
+    @Test
+    void testAddAttribute() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setStat(Stat.STR, 3);
+        uut.setStat(Stat.DEX, 3);
+
+        assertEquals(3, uut.getStat(Stat.STR));
+        assertEquals(3, uut.getStat(Stat.DEX));
+
+        uut.addStat(Stat.STR, 2);
+        uut.addStat(Stat.DEX, -2);
+
+        assertEquals(5, uut.getStat(Stat.STR));
+        assertEquals(1, uut.getStat(Stat.DEX));
+    }
+
+    @Test
+    void testDefense() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setStat(Stat.CON, 3);
+
+        assertEquals(3, uut.getStat(Stat.CON));
+        assertEquals(3, uut.getDefense());
     }
 }

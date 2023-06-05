@@ -2,10 +2,12 @@ package com.agonyforge.mud.models.dynamodb.impl;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +31,11 @@ public class MudCharacter implements Persistent {
     private String name;
     private Pronoun pronoun;
     private List<WearSlot> wearSlots = new ArrayList<>();
-    private int strength = 0;
-    private int dexterity = 0;
-    private int constitution = 0;
-    private int intelligence = 0;
-    private int wisdom = 0;
-    private int charisma = 0;
+    private final Map<Stat, Integer> stats = new HashMap<>();
+
+    public MudCharacter() {
+        Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
+    }
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -70,12 +71,12 @@ public class MudCharacter implements Persistent {
             data.put("wear_slots", AttributeValue.builder().ss(slots).build());
         }
 
-        data.put("strength", AttributeValue.builder().n(Integer.toString(getStrength())).build());
-        data.put("dexterity", AttributeValue.builder().n(Integer.toString(getDexterity())).build());
-        data.put("constitution", AttributeValue.builder().n(Integer.toString(getConstitution())).build());
-        data.put("intelligence", AttributeValue.builder().n(Integer.toString(getIntelligence())).build());
-        data.put("wisdom", AttributeValue.builder().n(Integer.toString(getWisdom())).build());
-        data.put("charisma", AttributeValue.builder().n(Integer.toString(getCharisma())).build());
+        Map<String, AttributeValue> stats = new HashMap<>();
+
+        Arrays.stream(Stat.values())
+            .forEach(stat -> stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getStat(stat))).build()));
+
+        data.put("stats", AttributeValue.builder().m(stats).build());
 
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
@@ -106,12 +107,11 @@ public class MudCharacter implements Persistent {
             .stream()
             .map(WearSlot::valueOf)
             .toList());
-        setStrength(Integer.parseInt(data.getOrDefault("strength", AttributeValue.builder().n("0").build()).n()));
-        setDexterity(Integer.parseInt(data.getOrDefault("dexterity", AttributeValue.builder().n("0").build()).n()));
-        setConstitution(Integer.parseInt(data.getOrDefault("constitution", AttributeValue.builder().n("0").build()).n()));
-        setIntelligence(Integer.parseInt(data.getOrDefault("intelligence", AttributeValue.builder().n("0").build()).n()));
-        setWisdom(Integer.parseInt(data.getOrDefault("wisdom", AttributeValue.builder().n("0").build()).n()));
-        setCharisma(Integer.parseInt(data.getOrDefault("charisma", AttributeValue.builder().n("0").build()).n()));
+
+        Map<String, AttributeValue> stats = data.get("stats").m();
+
+        Arrays.stream(Stat.values())
+                .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
     }
 
     public MudCharacter buildInstance() {
@@ -127,12 +127,9 @@ public class MudCharacter implements Persistent {
         instance.setName(getName());
         instance.setPronoun(getPronoun());
         instance.setWearSlots(getWearSlots());
-        instance.setStrength(getStrength());
-        instance.setDexterity(getDexterity());
-        instance.setConstitution(getConstitution());
-        instance.setIntelligence(getIntelligence());
-        instance.setWisdom(getWisdom());
-        instance.setCharisma(getCharisma());
+
+        Arrays.stream(Stat.values())
+                .forEach(stat -> instance.setStat(stat, getStat(stat)));
 
         return instance;
     }
@@ -211,56 +208,20 @@ public class MudCharacter implements Persistent {
         this.wearSlots = wearSlots;
     }
 
-    public int getStrength() {
-        return strength;
+    public int getStat(Stat stat) {
+        return stats.get(stat);
     }
 
-    public void setStrength(int strength) {
-        this.strength = Math.min(Math.max(0, strength), 10);
+    public void setStat(Stat stat, int value) {
+        stats.put(stat, value);
     }
 
-    public int getDexterity() {
-        return dexterity;
-    }
-
-    public void setDexterity(int dexterity) {
-        this.dexterity = Math.min(Math.max(0, dexterity), 10);
-    }
-
-    public int getConstitution() {
-        return constitution;
-    }
-
-    public void setConstitution(int constitution) {
-        this.constitution = Math.min(Math.max(0, constitution), 10);
-    }
-
-    public int getIntelligence() {
-        return intelligence;
-    }
-
-    public void setIntelligence(int intelligence) {
-        this.intelligence = Math.min(Math.max(0, intelligence), 10);
-    }
-
-    public int getWisdom() {
-        return wisdom;
-    }
-
-    public void setWisdom(int wisdom) {
-        this.wisdom = Math.min(Math.max(0, wisdom), 10);
-    }
-
-    public int getCharisma() {
-        return charisma;
-    }
-
-    public void setCharisma(int charisma) {
-        this.charisma = Math.min(Math.max(0, charisma), 10);
+    public void addStat(Stat stat, int addend) {
+        stats.put(stat, stats.get(stat) + addend);
     }
 
     public int getDefense() {
-        return getConstitution(); // TODO also add any equipped items that provide +DEF
+        return getStat(Stat.CON); // TODO add bonuses from species/class/gear
     }
 
     public boolean isPrototype() {

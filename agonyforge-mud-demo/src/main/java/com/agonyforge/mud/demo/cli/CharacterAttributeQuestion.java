@@ -10,12 +10,14 @@ import com.agonyforge.mud.demo.cli.menu.MenuItem;
 import com.agonyforge.mud.demo.cli.menu.MenuPane;
 import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
 import com.agonyforge.mud.demo.cli.menu.MenuTitle;
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 @Component
@@ -55,28 +57,22 @@ public class CharacterAttributeQuestion extends BaseQuestion {
             if (totalPoints >= STARTING_ATTRIBUTES) {
                 output.append("[red]You don't have any more points to allocate!");
             } else {
-                switch (choice) {
-                    case "1+" -> ch.setStrength(ch.getStrength() + 1);
-                    case "2+" -> ch.setDexterity(ch.getDexterity() + 1);
-                    case "3+" -> ch.setConstitution(ch.getConstitution() + 1);
-                    case "4+" -> ch.setIntelligence(ch.getIntelligence() + 1);
-                    case "5+" -> ch.setWisdom(ch.getWisdom() + 1);
-                    case "6+" -> ch.setCharisma(ch.getCharisma() + 1);
-                    default -> output.append("[red][red]Oops! Try a number with a plus or minus!");
+                try {
+                    int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
+                    ch.addStat(Stat.values()[i], 1);
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    output.append("[red][red]Oops! Try a number with a plus or minus!");
                 }
             }
         } else if (choice.contains("-")) {
             if (totalPoints <= 0) {
                 output.append("[red]You haven't assigned any of your points yet!");
             } else {
-                switch (choice) {
-                    case "1-" -> ch.setStrength(ch.getStrength() - 1);
-                    case "2-" -> ch.setDexterity(ch.getDexterity() - 1);
-                    case "3-" -> ch.setConstitution(ch.getConstitution() - 1);
-                    case "4-" -> ch.setIntelligence(ch.getIntelligence() - 1);
-                    case "5-" -> ch.setWisdom(ch.getWisdom() - 1);
-                    case "6-" -> ch.setCharisma(ch.getCharisma() - 1);
-                    default -> output.append("[red][red]Oops! Try a number with a plus or minus!");
+                try {
+                    int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
+                    ch.addStat(Stat.values()[i], -1);
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    output.append("[red][red]Oops! Try a number with a plus or minus!");
                 }
             }
         } else {
@@ -100,12 +96,9 @@ public class CharacterAttributeQuestion extends BaseQuestion {
     }
 
     private int computeAttributePoints(MudCharacter ch) {
-        return ch.getStrength()
-            + ch.getDexterity()
-            + ch.getConstitution()
-            + ch.getIntelligence()
-            + ch.getWisdom()
-            + ch.getCharisma();
+        return Arrays.stream(Stat.values())
+            .map(ch::getStat)
+            .reduce(0, Integer::sum);
     }
 
     private void populateMenuItems(MudCharacter ch) {
@@ -116,12 +109,10 @@ public class CharacterAttributeQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from an attribute!"));
         menuPane.getItems().add(new MenuItem(" ", "[default]For example, '3+' to raise CON or '6-' to lower CHA."));
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Allocate [white]%d more points [default]for your attributes.", points)));
-        menuPane.getItems().add(new MenuItem("1[+/-]", String.format("Strength     (%d)", ch.getStrength())));
-        menuPane.getItems().add(new MenuItem("2[+/-]", String.format("Dexterity    (%d)", ch.getDexterity())));
-        menuPane.getItems().add(new MenuItem("3[+/-]", String.format("Constitution (%d)", ch.getConstitution())));
-        menuPane.getItems().add(new MenuItem("4[+/-]", String.format("Intelligence (%d)", ch.getIntelligence())));
-        menuPane.getItems().add(new MenuItem("5[+/-]", String.format("Wisdom       (%d)", ch.getWisdom())));
-        menuPane.getItems().add(new MenuItem("6[+/-]", String.format("Charisma     (%d)", ch.getCharisma())));
+
+        Arrays.stream(Stat.values())
+                .forEachOrdered(stat -> menuPane.getItems().add(new MenuItem((stat.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", stat.getName(), ch.getStat(stat)))));
+
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }
 }
