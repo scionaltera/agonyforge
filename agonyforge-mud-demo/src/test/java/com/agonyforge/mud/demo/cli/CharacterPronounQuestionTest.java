@@ -92,7 +92,7 @@ public class CharacterPronounQuestionTest {
     void testAnswerValid() {
         UUID chId = UUID.randomUUID();
 
-        when(applicationContext.getBean(eq("characterAttributeQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("characterStatQuestion"), eq(Question.class))).thenReturn(question);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));

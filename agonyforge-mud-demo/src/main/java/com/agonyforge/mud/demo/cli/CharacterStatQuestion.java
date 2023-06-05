@@ -21,17 +21,17 @@ import java.util.Arrays;
 import java.util.Locale;
 
 @Component
-public class CharacterAttributeQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterAttributeQuestion.class);
-    private static final int STARTING_ATTRIBUTES = 6;
+public class CharacterStatQuestion extends BaseQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterStatQuestion.class);
+    private static final int STARTING_STATS = 6;
 
     private final MenuPane menuPane = new MenuPane();
 
-    public CharacterAttributeQuestion(ApplicationContext applicationContext,
-                                      RepositoryBundle repositoryBundle) {
+    public CharacterStatQuestion(ApplicationContext applicationContext,
+                                 RepositoryBundle repositoryBundle) {
         super(applicationContext, repositoryBundle);
 
-        menuPane.setTitle(new MenuTitle("Allocate Attribute Points"));
+        menuPane.setTitle(new MenuTitle("Allocate Stat Points"));
         menuPane.setPrompt(new MenuPrompt());
     }
 
@@ -47,14 +47,14 @@ public class CharacterAttributeQuestion extends BaseQuestion {
 
     @Override
     public Response answer(WebSocketContext webSocketContext, Input input) {
-        String nextQuestion = "characterAttributeQuestion";
+        String nextQuestion = "characterStatQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
         String choice = input.getInput().toUpperCase(Locale.ENGLISH);
-        int totalPoints = computeAttributePoints(ch);
+        int totalPoints = computeStatPoints(ch);
 
         if (choice.contains("+")) {
-            if (totalPoints >= STARTING_ATTRIBUTES) {
+            if (totalPoints >= STARTING_STATS) {
                 output.append("[red]You don't have any more points to allocate!");
             } else {
                 try {
@@ -77,11 +77,11 @@ public class CharacterAttributeQuestion extends BaseQuestion {
             }
         } else {
             if (choice.equals("S")) {
-                if (totalPoints == STARTING_ATTRIBUTES) {
-                    output.append("[green]Character attributes saved!");
+                if (totalPoints == STARTING_STATS) {
+                    output.append("[green]Character stats saved!");
                     nextQuestion = "characterMenuQuestion";
                 } else {
-                    output.append("[red]Please allocate exactly 6 points for your attributes.");
+                    output.append("[red]Please allocate exactly 6 points for your stats.");
                 }
             } else {
                 output.append("[red]Oops! Try a number with a plus or minus!");
@@ -95,7 +95,7 @@ public class CharacterAttributeQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    private int computeAttributePoints(MudCharacter ch) {
+    private int computeStatPoints(MudCharacter ch) {
         return Arrays.stream(Stat.values())
             .map(ch::getStat)
             .reduce(0, Integer::sum);
@@ -104,11 +104,11 @@ public class CharacterAttributeQuestion extends BaseQuestion {
     private void populateMenuItems(MudCharacter ch) {
         menuPane.getItems().clear();
 
-        int points = STARTING_ATTRIBUTES - computeAttributePoints(ch);
+        int points = STARTING_STATS - computeStatPoints(ch);
 
-        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from an attribute!"));
+        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from a stat."));
         menuPane.getItems().add(new MenuItem(" ", "[default]For example, '3+' to raise CON or '6-' to lower CHA."));
-        menuPane.getItems().add(new MenuItem(" ", String.format("[default]Allocate [white]%d more points [default]for your attributes.", points)));
+        menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Stat.values())
                 .forEachOrdered(stat -> menuPane.getItems().add(new MenuItem((stat.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", stat.getName(), ch.getStat(stat)))));

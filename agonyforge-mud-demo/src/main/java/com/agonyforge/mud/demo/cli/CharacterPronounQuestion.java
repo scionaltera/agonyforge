@@ -68,7 +68,7 @@ public class CharacterPronounQuestion extends BaseQuestion {
                 getRepositoryBundle().getCharacterRepository().save(ch);
             }
 
-            nextQuestion = "characterAttributeQuestion";
+            nextQuestion = "characterStatQuestion";
         }
 
         Question next = getQuestion(nextQuestion);
