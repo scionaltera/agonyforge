@@ -216,7 +216,7 @@ public class MudCharacter implements Persistent {
     }
 
     public void setStrength(int strength) {
-        this.strength = strength;
+        this.strength = Math.min(Math.max(0, strength), 10);
     }
 
     public int getDexterity() {
@@ -224,7 +224,7 @@ public class MudCharacter implements Persistent {
     }
 
     public void setDexterity(int dexterity) {
-        this.dexterity = dexterity;
+        this.dexterity = Math.min(Math.max(0, dexterity), 10);
     }
 
     public int getConstitution() {
@@ -232,7 +232,7 @@ public class MudCharacter implements Persistent {
     }
 
     public void setConstitution(int constitution) {
-        this.constitution = constitution;
+        this.constitution = Math.min(Math.max(0, constitution), 10);
     }
 
     public int getIntelligence() {
@@ -240,7 +240,7 @@ public class MudCharacter implements Persistent {
     }
 
     public void setIntelligence(int intelligence) {
-        this.intelligence = intelligence;
+        this.intelligence = Math.min(Math.max(0, intelligence), 10);
     }
 
     public int getWisdom() {
@@ -248,7 +248,7 @@ public class MudCharacter implements Persistent {
     }
 
     public void setWisdom(int wisdom) {
-        this.wisdom = wisdom;
+        this.wisdom = Math.min(Math.max(0, wisdom), 10);
     }
 
     public int getCharisma() {
@@ -256,7 +256,7 @@ public class MudCharacter implements Persistent {
     }
 
     public void setCharisma(int charisma) {
-        this.charisma = charisma;
+        this.charisma = Math.min(Math.max(0, charisma), 10);
     }
 
     public int getDefense() {

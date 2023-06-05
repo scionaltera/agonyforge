@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Component
 public class CharacterAttributeQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterAttributeQuestion.class);
@@ -44,23 +46,51 @@ public class CharacterAttributeQuestion extends BaseQuestion {
         String nextQuestion = "characterAttributeQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
-        String choice = input.getInput();
+        String choice = input.getInput().toUpperCase(Locale.ENGLISH);
+        int totalPoints = computeAttributePoints(ch);
 
-        switch(choice) {
-            case "1" -> ch.setStrength(ch.getStrength() + 1);
-            case "2" -> ch.setDexterity(ch.getDexterity() + 1);
-            case "3" -> ch.setConstitution(ch.getConstitution() + 1);
-            case "4" -> ch.setIntelligence(ch.getIntelligence() + 1);
-            case "5" -> ch.setWisdom(ch.getWisdom() + 1);
-            case "6" -> ch.setCharisma(ch.getCharisma() + 1);
+        if (choice.contains("+")) {
+            if (totalPoints >= STARTING_ATTRIBUTES) {
+                output.append("[red]You don't have any more points to allocate!");
+            } else {
+                switch (choice) {
+                    case "1+" -> ch.setStrength(ch.getStrength() + 1);
+                    case "2+" -> ch.setDexterity(ch.getDexterity() + 1);
+                    case "3+" -> ch.setConstitution(ch.getConstitution() + 1);
+                    case "4+" -> ch.setIntelligence(ch.getIntelligence() + 1);
+                    case "5+" -> ch.setWisdom(ch.getWisdom() + 1);
+                    case "6+" -> ch.setCharisma(ch.getCharisma() + 1);
+                    default -> output.append("[red][red]Oops! Try a number with a plus or minus!");
+                }
+            }
+        } else if (choice.contains("-")) {
+            if (totalPoints <= 0) {
+                output.append("[red]You haven't assigned any of your points yet!");
+            } else {
+                switch (choice) {
+                    case "1-" -> ch.setStrength(ch.getStrength() - 1);
+                    case "2-" -> ch.setDexterity(ch.getDexterity() - 1);
+                    case "3-" -> ch.setConstitution(ch.getConstitution() - 1);
+                    case "4-" -> ch.setIntelligence(ch.getIntelligence() - 1);
+                    case "5-" -> ch.setWisdom(ch.getWisdom() - 1);
+                    case "6-" -> ch.setCharisma(ch.getCharisma() - 1);
+                    default -> output.append("[red][red]Oops! Try a number with a plus or minus!");
+                }
+            }
+        } else {
+            if (choice.equals("S")) {
+                if (totalPoints == STARTING_ATTRIBUTES) {
+                    output.append("[green]Character attributes saved!");
+                    nextQuestion = "characterMenuQuestion";
+                } else {
+                    output.append("[red]Please allocate exactly 6 points for your attributes.");
+                }
+            } else {
+                output.append("[red]Oops! Try a number with a plus or minus!");
+            }
         }
 
         getRepositoryBundle().getCharacterRepository().save(ch);
-
-        if (computeAttributePoints(ch) >= 6) {
-            output.append("[green]Character attributes saved!");
-            nextQuestion = "characterMenuQuestion";
-        }
 
         Question next = getQuestion(nextQuestion);
 
@@ -81,12 +111,15 @@ public class CharacterAttributeQuestion extends BaseQuestion {
 
         int points = STARTING_ATTRIBUTES - computeAttributePoints(ch);
 
+        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from an attribute!"));
+        menuPane.getItems().add(new MenuItem(" ", "[default]For example, '3+' to raise CON or '6-' to lower CHA."));
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Allocate [white]%d more points [default]for your attributes.", points)));
-        menuPane.getItems().add(new MenuItem("1", String.format("Strength     (%d)", ch.getStrength())));
-        menuPane.getItems().add(new MenuItem("2", String.format("Dexterity    (%d)", ch.getDexterity())));
-        menuPane.getItems().add(new MenuItem("3", String.format("Constitution (%d)", ch.getConstitution())));
-        menuPane.getItems().add(new MenuItem("4", String.format("Intelligence (%d)", ch.getIntelligence())));
-        menuPane.getItems().add(new MenuItem("5", String.format("Wisdom       (%d)", ch.getWisdom())));
-        menuPane.getItems().add(new MenuItem("6", String.format("Charisma     (%d)", ch.getCharisma())));
+        menuPane.getItems().add(new MenuItem("1[+/-]", String.format("Strength     (%d)", ch.getStrength())));
+        menuPane.getItems().add(new MenuItem("2[+/-]", String.format("Dexterity    (%d)", ch.getDexterity())));
+        menuPane.getItems().add(new MenuItem("3[+/-]", String.format("Constitution (%d)", ch.getConstitution())));
+        menuPane.getItems().add(new MenuItem("4[+/-]", String.format("Intelligence (%d)", ch.getIntelligence())));
+        menuPane.getItems().add(new MenuItem("5[+/-]", String.format("Wisdom       (%d)", ch.getWisdom())));
+        menuPane.getItems().add(new MenuItem("6[+/-]", String.format("Charisma     (%d)", ch.getCharisma())));
+        menuPane.getItems().add(new MenuItem("S", "Save"));
     }
 }
