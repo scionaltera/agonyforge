@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.menu;
+package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
@@ -6,8 +6,10 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.demo.cli.BaseQuestion;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.menu.MenuItem;
+import com.agonyforge.mud.demo.cli.menu.MenuPane;
+import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
+import com.agonyforge.mud.demo.cli.menu.MenuTitle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
