@@ -13,14 +13,14 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
-public abstract class AbstractQuestion extends com.agonyforge.mud.core.cli.AbstractQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuestion.class);
+public abstract class BaseQuestion extends com.agonyforge.mud.core.cli.AbstractQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseQuestion.class);
 
     private final ApplicationContext applicationContext;
     private final RepositoryBundle repositoryBundle;
 
-    public AbstractQuestion(ApplicationContext applicationContext,
-                            RepositoryBundle repositoryBundle) {
+    public BaseQuestion(ApplicationContext applicationContext,
+                        RepositoryBundle repositoryBundle) {
         super();
         this.applicationContext = applicationContext;
         this.repositoryBundle = repositoryBundle;

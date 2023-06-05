@@ -5,10 +5,7 @@ import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
 
 public class MenuPane extends AbstractMenuPane {
-    @Override
-    public Output render(Color... colors) {
-        Output menu = new Output();
-
+    public Output render(Output menu, Color... colors) {
         if (getTitle() != null) {
             menu.append(getTitle().render(colors));
         }
@@ -20,5 +17,12 @@ public class MenuPane extends AbstractMenuPane {
         }
 
         return menu;
+    }
+
+    @Override
+    public Output render(Color... colors) {
+        Output menu = new Output();
+
+        return render(menu, colors);
     }
 }

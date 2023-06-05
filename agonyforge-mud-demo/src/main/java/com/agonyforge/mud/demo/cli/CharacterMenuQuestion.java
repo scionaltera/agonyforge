@@ -20,7 +20,7 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
-public class CharacterMenuQuestion extends AbstractQuestion {
+public class CharacterMenuQuestion extends BaseQuestion {
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired

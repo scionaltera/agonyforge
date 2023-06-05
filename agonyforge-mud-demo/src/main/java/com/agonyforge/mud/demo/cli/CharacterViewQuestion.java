@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.service.CommService;
@@ -15,10 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
-public class CharacterViewQuestion extends AbstractQuestion {
+public class CharacterViewQuestion extends BaseQuestion {
     static final Long START_ROOM = 100L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
@@ -44,6 +46,11 @@ public class CharacterViewQuestion extends AbstractQuestion {
             output.append("[dcyan]Character Sheet");
             output.append("[default]Name: [cyan]%s", ch.getName());
             output.append("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
+
+            Arrays.stream(Stat.values())
+                    .forEachOrdered(stat -> output.append("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getStat(stat)));
+
+            output.append("[default]DEF: [cyan]%d", ch.getDefense());
             output.append("");
             output.append("[green]P[black]) Play as this character");
             output.append("[red]D[black]) Delete this character");

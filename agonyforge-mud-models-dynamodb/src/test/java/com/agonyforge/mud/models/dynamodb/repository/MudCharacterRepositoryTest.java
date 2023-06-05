@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -173,7 +172,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         List<MudCharacter> results = uut.getByType(TYPE_PC)
             .stream()
             .filter(pc -> uuid.equals(pc.getId())) // we'll get results from other tests too
-            .collect(Collectors.toList());
+            .toList();
         MudCharacter result1 = results.get(0);
         MudCharacter result2 = results.get(1);
 

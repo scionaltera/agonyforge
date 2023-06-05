@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class CommandQuestion extends AbstractQuestion {
+public class CommandQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandQuestion.class);
 
     private final ApplicationContext applicationContext;

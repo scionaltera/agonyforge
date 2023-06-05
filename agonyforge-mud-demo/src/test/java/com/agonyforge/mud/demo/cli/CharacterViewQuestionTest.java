@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -103,10 +105,17 @@ public class CharacterViewQuestionTest {
         Output result = uut.prompt(wsContext);
 
         int i = 0;
-        assertEquals(8, result.getOutput().size());
+        assertEquals(15, result.getOutput().size());
         assertTrue(result.getOutput().get(i++).contains("Character Sheet"));
         assertTrue(result.getOutput().get(i++).contains(characterName));
         assertTrue(result.getOutput().get(i++).contains(Pronoun.SHE.getObject()));
+        assertTrue(result.getOutput().get(i++).contains("STR:"));
+        assertTrue(result.getOutput().get(i++).contains("DEX:"));
+        assertTrue(result.getOutput().get(i++).contains("CON:"));
+        assertTrue(result.getOutput().get(i++).contains("INT:"));
+        assertTrue(result.getOutput().get(i++).contains("WIS:"));
+        assertTrue(result.getOutput().get(i++).contains("CHA:"));
+        assertTrue(result.getOutput().get(i++).contains("DEF:"));
         assertEquals("", result.getOutput().get(i++));
         assertTrue(result.getOutput().get(i++).contains("Play"));
         assertTrue(result.getOutput().get(i++).contains("Delete"));

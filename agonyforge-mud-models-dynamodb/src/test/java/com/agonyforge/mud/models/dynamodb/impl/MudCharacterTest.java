@@ -1,5 +1,6 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -121,5 +122,41 @@ public class MudCharacterTest {
         uut.setWearSlots(List.of(WearSlot.HEAD));
 
         assertEquals(WearSlot.HEAD, uut.getWearSlots().get(0));
+    }
+
+    @Test
+    void testAttributes() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setStat(Stat.STR, 1);
+
+        assertEquals(1, uut.getStat(Stat.STR));
+    }
+
+    @Test
+    void testAddAttribute() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setStat(Stat.STR, 3);
+        uut.setStat(Stat.DEX, 3);
+
+        assertEquals(3, uut.getStat(Stat.STR));
+        assertEquals(3, uut.getStat(Stat.DEX));
+
+        uut.addStat(Stat.STR, 2);
+        uut.addStat(Stat.DEX, -2);
+
+        assertEquals(5, uut.getStat(Stat.STR));
+        assertEquals(1, uut.getStat(Stat.DEX));
+    }
+
+    @Test
+    void testDefense() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setStat(Stat.CON, 3);
+
+        assertEquals(3, uut.getStat(Stat.CON));
+        assertEquals(3, uut.getDefense());
     }
 }

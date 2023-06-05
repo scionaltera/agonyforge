@@ -2,10 +2,12 @@ package com.agonyforge.mud.models.dynamodb.impl;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
+import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,11 @@ public class MudCharacter implements Persistent {
     private String name;
     private Pronoun pronoun;
     private List<WearSlot> wearSlots = new ArrayList<>();
+    private final Map<Stat, Integer> stats = new HashMap<>();
+
+    public MudCharacter() {
+        Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
+    }
 
     @Override
     public Map<String, AttributeValue> freeze() {
@@ -64,6 +71,13 @@ public class MudCharacter implements Persistent {
             data.put("wear_slots", AttributeValue.builder().ss(slots).build());
         }
 
+        Map<String, AttributeValue> stats = new HashMap<>();
+
+        Arrays.stream(Stat.values())
+            .forEach(stat -> stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getStat(stat))).build()));
+
+        data.put("stats", AttributeValue.builder().m(stats).build());
+
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
         }
@@ -93,6 +107,11 @@ public class MudCharacter implements Persistent {
             .stream()
             .map(WearSlot::valueOf)
             .toList());
+
+        Map<String, AttributeValue> stats = data.get("stats").m();
+
+        Arrays.stream(Stat.values())
+                .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
     }
 
     public MudCharacter buildInstance() {
@@ -108,6 +127,9 @@ public class MudCharacter implements Persistent {
         instance.setName(getName());
         instance.setPronoun(getPronoun());
         instance.setWearSlots(getWearSlots());
+
+        Arrays.stream(Stat.values())
+                .forEach(stat -> instance.setStat(stat, getStat(stat)));
 
         return instance;
     }
@@ -184,6 +206,22 @@ public class MudCharacter implements Persistent {
 
     public void setWearSlots(List<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
+    }
+
+    public int getStat(Stat stat) {
+        return stats.get(stat);
+    }
+
+    public void setStat(Stat stat, int value) {
+        stats.put(stat, value);
+    }
+
+    public void addStat(Stat stat, int addend) {
+        stats.put(stat, stats.get(stat) + addend);
+    }
+
+    public int getDefense() {
+        return getStat(Stat.CON); // TODO add bonuses from species/class/gear
     }
 
     public boolean isPrototype() {
