@@ -12,4 +12,4 @@
 
 [yellow]Copyright &copy; 2022 Scion Altera
 [dyellow]All code is <a target="_blank" href="https://github.com/scionaltera/agonyforge">original</a> and MIT licensed.
-[dyellow]Some game elements inspired by <a target="_blank" href="https://www.smaug.org/">Smaug</a> and <a target="_blank" href="https://www.runehammer.online/">Index Card RPG</a>.
+[dyellow]Game elements from <a target="_blank" href="https://www.runehammer.online/">Index Card RPG</a> used with permission.
