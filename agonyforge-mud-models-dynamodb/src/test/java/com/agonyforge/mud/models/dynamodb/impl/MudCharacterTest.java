@@ -1,5 +1,6 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
+import com.agonyforge.mud.models.dynamodb.constant.Effort;
 import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
 import org.junit.jupiter.api.Test;
@@ -158,5 +159,31 @@ public class MudCharacterTest {
 
         assertEquals(3, uut.getStat(Stat.CON));
         assertEquals(3, uut.getDefense());
+    }
+
+    @Test
+    void testEfforts() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setEffort(Effort.GUNS, 1);
+
+        assertEquals(1, uut.getEffort(Effort.GUNS));
+    }
+
+    @Test
+    void testAddEffort() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setEffort(Effort.BASIC, 3);
+        uut.setEffort(Effort.GUNS, 3);
+
+        assertEquals(3, uut.getEffort(Effort.BASIC));
+        assertEquals(3, uut.getEffort(Effort.GUNS));
+
+        uut.addEffort(Effort.BASIC, 2);
+        uut.addEffort(Effort.GUNS, -2);
+
+        assertEquals(5, uut.getEffort(Effort.BASIC));
+        assertEquals(1, uut.getEffort(Effort.GUNS));
     }
 }

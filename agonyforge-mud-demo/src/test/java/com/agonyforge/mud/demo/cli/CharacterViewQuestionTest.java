@@ -105,16 +105,26 @@ public class CharacterViewQuestionTest {
         Output result = uut.prompt(wsContext);
 
         int i = 0;
-        assertEquals(15, result.getOutput().size());
-        assertTrue(result.getOutput().get(i++).contains("Character Sheet"));
+        assertEquals(19, result.getOutput().size());
+        assertTrue(result.getOutput().get(i++).contains("CHARACTER SHEET"));
         assertTrue(result.getOutput().get(i++).contains(characterName));
         assertTrue(result.getOutput().get(i++).contains(Pronoun.SHE.getObject()));
+        i++; // blank line
+        assertTrue(result.getOutput().get(i).contains("Stats"));
+        assertTrue(result.getOutput().get(i++).contains("Efforts"));
+        assertTrue(result.getOutput().get(i).contains("Basic"));
         assertTrue(result.getOutput().get(i++).contains("STR:"));
+        assertTrue(result.getOutput().get(i).contains("Weapons & Tools"));
         assertTrue(result.getOutput().get(i++).contains("DEX:"));
+        assertTrue(result.getOutput().get(i).contains("Guns"));
         assertTrue(result.getOutput().get(i++).contains("CON:"));
+        assertTrue(result.getOutput().get(i).contains("Energy & Magic"));
         assertTrue(result.getOutput().get(i++).contains("INT:"));
+        assertTrue(result.getOutput().get(i).contains("Ultimate"));
         assertTrue(result.getOutput().get(i++).contains("WIS:"));
         assertTrue(result.getOutput().get(i++).contains("CHA:"));
+        i++; // blank line
+        assertTrue(result.getOutput().get(i++).contains("Health:"));
         assertTrue(result.getOutput().get(i++).contains("DEF:"));
         assertEquals("", result.getOutput().get(i++));
         assertTrue(result.getOutput().get(i++).contains("Play"));

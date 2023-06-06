@@ -1,6 +1,7 @@
 package com.agonyforge.mud.models.dynamodb.impl;
 
 import com.agonyforge.mud.models.dynamodb.Persistent;
+import com.agonyforge.mud.models.dynamodb.constant.Effort;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
 import com.agonyforge.mud.models.dynamodb.constant.Stat;
 import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
@@ -32,9 +33,11 @@ public class MudCharacter implements Persistent {
     private Pronoun pronoun;
     private List<WearSlot> wearSlots = new ArrayList<>();
     private final Map<Stat, Integer> stats = new HashMap<>();
+    private final Map<Effort, Integer> efforts = new HashMap<>();
 
     public MudCharacter() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
+        Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
     }
 
     @Override
@@ -72,11 +75,15 @@ public class MudCharacter implements Persistent {
         }
 
         Map<String, AttributeValue> stats = new HashMap<>();
+        Map<String, AttributeValue> efforts = new HashMap<>();
 
         Arrays.stream(Stat.values())
             .forEach(stat -> stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getStat(stat))).build()));
+        Arrays.stream(Effort.values())
+            .forEach(effort -> efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getEffort(effort))).build()));
 
         data.put("stats", AttributeValue.builder().m(stats).build());
+        data.put("efforts", AttributeValue.builder().m(efforts).build());
 
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
@@ -109,9 +116,12 @@ public class MudCharacter implements Persistent {
             .toList());
 
         Map<String, AttributeValue> stats = data.get("stats").m();
+        Map<String, AttributeValue> efforts = data.get("efforts").m();
 
         Arrays.stream(Stat.values())
-                .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
+            .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
+        Arrays.stream(Effort.values())
+            .forEach(effort -> setEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n())));
     }
 
     public MudCharacter buildInstance() {
@@ -129,7 +139,9 @@ public class MudCharacter implements Persistent {
         instance.setWearSlots(getWearSlots());
 
         Arrays.stream(Stat.values())
-                .forEach(stat -> instance.setStat(stat, getStat(stat)));
+            .forEach(stat -> instance.setStat(stat, getStat(stat)));
+        Arrays.stream(Effort.values())
+            .forEach(effort -> instance.setEffort(effort, getEffort(effort)));
 
         return instance;
     }
@@ -222,6 +234,18 @@ public class MudCharacter implements Persistent {
 
     public int getDefense() {
         return getStat(Stat.CON); // TODO add bonuses from species/class/gear
+    }
+
+    public int getEffort(Effort effort) {
+        return efforts.get(effort);
+    }
+
+    public void setEffort(Effort effort, int value) {
+        efforts.put(effort, value);
+    }
+
+    public void addEffort(Effort effort, int addend) {
+        efforts.put(effort, efforts.get(effort) + addend);
     }
 
     public boolean isPrototype() {
