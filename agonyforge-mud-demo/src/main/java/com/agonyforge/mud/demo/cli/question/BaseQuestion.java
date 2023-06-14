@@ -1,8 +1,9 @@
-package com.agonyforge.mud.demo.cli;
+package com.agonyforge.mud.demo.cli.question;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli;
+package com.agonyforge.mud.demo.cli.question;
 
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.models.dynamodb.constant.Effort;

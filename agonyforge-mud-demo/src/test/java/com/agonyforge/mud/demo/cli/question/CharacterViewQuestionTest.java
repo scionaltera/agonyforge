@@ -1,11 +1,12 @@
-package com.agonyforge.mud.demo.cli;
+package com.agonyforge.mud.demo.cli.question;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.models.dynamodb.constant.Stat;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.question.CharacterViewQuestion;
 import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
 import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
 import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
@@ -22,14 +23,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.demo.cli.CharacterViewQuestion.START_ROOM;
+import static com.agonyforge.mud.demo.cli.question.CharacterViewQuestion.START_ROOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
