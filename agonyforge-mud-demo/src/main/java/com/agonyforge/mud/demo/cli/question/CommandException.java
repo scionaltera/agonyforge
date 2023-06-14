@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli;
+package com.agonyforge.mud.demo.cli.question;
 
 public class CommandException extends RuntimeException {
     public CommandException() {

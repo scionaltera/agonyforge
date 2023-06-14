@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli;
+package com.agonyforge.mud.demo.cli.question;
 
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.menu.MenuItem;
 import com.agonyforge.mud.demo.cli.menu.MenuPane;
 import com.agonyforge.mud.demo.cli.menu.MenuPrompt;
