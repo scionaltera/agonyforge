@@ -51,6 +51,7 @@ public class CommandLoader {
             refs.add(new CommandReference("10", "TELL", "tellCommand"));
             refs.add(new CommandReference("10", "WHISPER", "whisperCommand"));
 
+            refs.add(new CommandReference("15", "ROLL", "rollCommand"));
             refs.add(new CommandReference("15", "TIME", "timeCommand"));
 
             LOGGER.info("Creating command references");
