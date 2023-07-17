@@ -12,6 +12,7 @@ import com.agonyforge.mud.models.dynamodb.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -48,9 +49,13 @@ public class RollCommand extends AbstractCommand {
         }
 
         try {
-            effort = Effort.valueOf(tokens.get(2));
+            effort = Arrays
+                .stream(Effort.values())
+                .filter(eff -> tokens.get(2).equalsIgnoreCase(eff.getName()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No such Effort."));
         } catch (IllegalArgumentException ee) {
-            output.append("[red]No such Effort.");
+            output.append("[red]%s", ee.getMessage());
             return question;
         }
 
