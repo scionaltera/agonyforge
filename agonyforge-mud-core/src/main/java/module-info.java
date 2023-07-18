@@ -6,6 +6,7 @@ module com.agonyforge.mud.core {
     exports com.agonyforge.mud.core.service.timer;
     exports com.agonyforge.mud.core.web.controller;
     exports com.agonyforge.mud.core.config;
+    exports com.agonyforge.mud.core.service.dice;
     requires spring.beans;
     requires spring.boot;
     requires spring.context;

@@ -1,6 +1,8 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.service.dice.DiceResult;
+import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  * This is just for testing and probably won't stay in the game.
@@ -22,11 +23,13 @@ import java.util.Random;
  */
 @Component
 public class RollCommand extends AbstractCommand {
-    private static final Random RANDOM = new Random();
+    private final DiceService diceService;
 
     @Autowired
-    public RollCommand(RepositoryBundle repositoryBundle, CommService commService) {
+    public RollCommand(RepositoryBundle repositoryBundle, DiceService diceService, CommService commService) {
         super(repositoryBundle, commService);
+
+        this.diceService = diceService;
     }
 
     @Override
@@ -59,29 +62,28 @@ public class RollCommand extends AbstractCommand {
             return question;
         }
 
-        int attemptRoll = RANDOM.nextInt(1, 21);
-        int attemptResult = ch.getStat(stat) + attemptRoll;
+        DiceResult attemptRoll = diceService.roll(1, 20, ch.getStat(stat));
 
         output.append("[cyan]ATTEMPT: [yellow]%d [dwhite]+ [cyan]%d [dwhite]= [white]%d [dwhite]for [cyan]%s[dwhite]!",
-            attemptRoll, ch.getStat(stat), attemptResult, stat.getAbbreviation());
+            attemptRoll.getRoll(0), ch.getStat(stat), attemptRoll.getModifiedRoll(0), stat.getAbbreviation());
 
-        int effortRoll = RANDOM.nextInt(1, effort.getDie() + 1);
-        int effortResult = ch.getEffort(effort) + effortRoll;
+        DiceResult effortRoll = diceService.roll(1, effort.getDie(), ch.getEffort(effort));
 
         output.append("[magenta]EFFORT: [yellow]%d [dwhite]+ [magenta]%d [dwhite]= [white]%d [dwhite]for [magenta]%s[dwhite]!",
-            effortRoll, ch.getEffort(effort), effortResult, effort.getName());
+            effortRoll.getRoll(0), ch.getEffort(effort), effortRoll.getModifiedRoll(0), effort.getName());
 
-        if (attemptRoll == 20) {
-            int ultimateRoll = RANDOM.nextInt(1, Effort.ULTIMATE.getDie() + 1);
-            int ultimateResult = ch.getEffort(Effort.ULTIMATE) + ultimateRoll;
+        int total = effortRoll.getModifiedRoll(0);
+
+        if (attemptRoll.getRoll(0) == 20) {
+            DiceResult ultimateRoll = diceService.roll(1, Effort.ULTIMATE.getDie(), ch.getEffort(Effort.ULTIMATE));
 
             output.append("[yellow]ULTIMATE: [yellow]%d [dwhite]+ [yellow]%d [dwhite]= [white]%s[dwhite]!",
-                ultimateRoll, ch.getEffort(Effort.ULTIMATE), ultimateResult);
+                ultimateRoll.getRoll(0), ch.getEffort(Effort.ULTIMATE), ultimateRoll.getModifiedRoll(0));
 
-            effortResult += ultimateResult;
+            total += ultimateRoll.getModifiedRoll(0);
         }
 
-        output.append("[green]TOTAL: [white]%d", effortResult);
+        output.append("[green]TOTAL: [white]%d", total);
 
         return question;
     }
