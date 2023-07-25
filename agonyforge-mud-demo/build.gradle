@@ -1,7 +1,7 @@
 plugins {
     id 'info.solidsoft.pitest' version '1.9.11'
-    id 'org.springframework.boot' version '3.1.0'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '3.1.2'
+    id 'io.spring.dependency-management' version '1.1.2'
     id 'com.palantir.docker' version '0.35.0'
     id 'java'
 }
@@ -17,7 +17,7 @@ configurations.maybeCreate("pitest")
 
 dependencyManagement {
     imports {
-        mavenBom 'software.amazon.awssdk:bom:2.20.83'
+        mavenBom 'software.amazon.awssdk:bom:2.20.110'
     }
 }
 
@@ -31,7 +31,7 @@ dependencies {
 
     implementation 'com.hazelcast:hazelcast:5.3.1'
 
-    implementation 'org.webjars:webjars-locator:0.46'
+    implementation 'org.webjars:webjars-locator:0.47'
     implementation 'org.webjars:bootstrap:5.3.0'
     implementation 'org.webjars:jquery:3.6.4'
     implementation 'org.webjars.npm:webstomp-client:1.2.6'
