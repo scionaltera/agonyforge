@@ -16,10 +16,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -64,10 +63,7 @@ public class CommandQuestion extends BaseQuestion {
             return new Response(this, output);
         }
 
-        List<String> tokens = Arrays
-            .stream(input.getInput().split(" "))
-            .map(String::toUpperCase)
-            .collect(Collectors.toList());
+        List<String> tokens = tokenize(input.getInput());
         List<CommandReference> refs = commandRepository.getByPriority();
         Optional<CommandReference> refOptional = refs
             .stream()
@@ -94,5 +90,30 @@ public class CommandQuestion extends BaseQuestion {
             output.append("[default]Huh?");
             return new Response(this, output);
         }
+    }
+
+    private List<String> tokenize(String escaped) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder buf = new StringBuilder();
+        boolean isQuoting = false;
+
+        String input = HtmlUtils.htmlUnescape(escaped);
+
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) == '"') {
+                isQuoting = !isQuoting;
+            } else if (!isQuoting && input.charAt(i) == ' ') {
+                tokens.add(buf.toString().toUpperCase(Locale.ROOT));
+                buf.setLength(0);
+            } else {
+                buf.append(input.charAt(i));
+            }
+        }
+
+        if (buf.length() > 0) {
+            tokens.add(buf.toString().toUpperCase(Locale.ROOT));
+        }
+
+        return tokens;
     }
 }

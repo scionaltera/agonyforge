@@ -7,6 +7,9 @@ volume/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### OSX ###
+.DS_Store
+
 ### STS ###
 .apt_generated
 .classpath

@@ -3,6 +3,7 @@ module com.agonyforge.mud.demo {
     requires spring.boot.autoconfigure;
     requires spring.context;
     requires spring.beans;
+    requires spring.web;
     requires spring.security.core;
     requires spring.security.web;
     requires spring.session.core;

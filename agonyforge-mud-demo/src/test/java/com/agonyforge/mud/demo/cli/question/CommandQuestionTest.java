@@ -215,4 +215,26 @@ public class CommandQuestionTest {
         verify(commandRepository, never()).getByPriority();
         verify(applicationContext, never()).getBean(anyString(), eq(Command.class));
     }
+
+    @Test
+    void testAnswerQuotedTokens() {
+        CommandReference commandReference = mock(CommandReference.class);
+
+        when(commandReference.getName()).thenReturn("QUOTED STRING");
+        when(commandReference.getBeanName()).thenReturn("testCommand");
+
+        when(commandRepository.getByPriority()).thenReturn(List.of(commandReference));
+        when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
+        when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
+
+        CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
+        Response result = uut.answer(webSocketContext, new Input("\"quoted string\""));
+        Output output = result.getFeedback().orElseThrow();
+
+        assertEquals(question, result.getNext());
+        assertNotNull(output);
+
+        verify(commandRepository).getByPriority();
+        verify(applicationContext).getBean(eq("testCommand"), eq(Command.class));
+    }
 }
