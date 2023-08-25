@@ -1,7 +1,7 @@
 package com.agonyforge.mud.demo.config;
 
-import com.agonyforge.mud.models.dynamodb.impl.CommandReference;
-import com.agonyforge.mud.models.dynamodb.repository.CommandRepository;
+import com.agonyforge.mud.demo.model.impl.CommandReference;
+import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

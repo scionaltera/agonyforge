@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.event;
 
-import com.agonyforge.mud.models.dynamodb.impl.User;
-import com.agonyforge.mud.models.dynamodb.impl.UserSession;
-import com.agonyforge.mud.models.dynamodb.repository.UserRepository;
-import com.agonyforge.mud.models.dynamodb.repository.UserSessionRepository;
+import com.agonyforge.mud.demo.model.impl.User;
+import com.agonyforge.mud.demo.model.impl.UserSession;
+import com.agonyforge.mud.demo.model.repository.UserRepository;
+import com.agonyforge.mud.demo.model.repository.UserSessionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

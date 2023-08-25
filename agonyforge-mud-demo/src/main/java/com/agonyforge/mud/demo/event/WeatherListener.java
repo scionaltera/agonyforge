@@ -2,9 +2,9 @@ package com.agonyforge.mud.demo.event;
 
 import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.models.dynamodb.impl.MudProperty;
-import com.agonyforge.mud.models.dynamodb.repository.MudPropertyRepository;
-import com.agonyforge.mud.models.dynamodb.service.CommService;
+import com.agonyforge.mud.demo.model.impl.MudProperty;
+import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
+import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
