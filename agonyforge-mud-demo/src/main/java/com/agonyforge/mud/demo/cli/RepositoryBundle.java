@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudPropertyRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
+import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
+import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

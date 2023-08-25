@@ -1,10 +1,10 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.models.dynamodb.repository.MudCharacterRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudPropertyRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
+import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
+import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
+import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

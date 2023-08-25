@@ -15,4 +15,5 @@ module com.agonyforge.mud.demo {
     requires spring.websocket;
     requires java.annotation;
     requires spring.core;
+    requires software.amazon.awssdk.services.dynamodb;
 }

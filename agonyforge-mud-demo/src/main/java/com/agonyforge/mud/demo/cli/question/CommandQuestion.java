@@ -7,9 +7,9 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.Command;
-import com.agonyforge.mud.models.dynamodb.impl.CommandReference;
-import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.repository.CommandRepository;
+import com.agonyforge.mud.demo.model.impl.CommandReference;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class CommandQuestion extends BaseQuestion {

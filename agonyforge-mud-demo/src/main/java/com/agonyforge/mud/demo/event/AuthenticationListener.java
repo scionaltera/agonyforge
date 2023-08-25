@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.event;
 
-import com.agonyforge.mud.models.dynamodb.impl.User;
-import com.agonyforge.mud.models.dynamodb.impl.UserSession;
-import com.agonyforge.mud.models.dynamodb.repository.UserRepository;
-import com.agonyforge.mud.models.dynamodb.repository.UserSessionRepository;
+import com.agonyforge.mud.demo.model.impl.User;
+import com.agonyforge.mud.demo.model.impl.UserSession;
+import com.agonyforge.mud.demo.model.repository.UserRepository;
+import com.agonyforge.mud.demo.model.repository.UserSessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

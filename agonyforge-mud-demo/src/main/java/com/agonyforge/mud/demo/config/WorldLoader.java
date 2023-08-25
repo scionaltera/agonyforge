@@ -1,15 +1,15 @@
 package com.agonyforge.mud.demo.config;
 
-import com.agonyforge.mud.models.dynamodb.constant.Direction;
-import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
-import com.agonyforge.mud.models.dynamodb.impl.MudItem;
-import com.agonyforge.mud.models.dynamodb.impl.MudProperty;
-import com.agonyforge.mud.models.dynamodb.impl.MudRoom;
-import com.agonyforge.mud.models.dynamodb.impl.MudZone;
-import com.agonyforge.mud.models.dynamodb.repository.MudItemRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudPropertyRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudRoomRepository;
-import com.agonyforge.mud.models.dynamodb.repository.MudZoneRepository;
+import com.agonyforge.mud.demo.model.constant.Direction;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.MudProperty;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
+import com.agonyforge.mud.demo.model.impl.MudZone;
+import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
+import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
+import com.agonyforge.mud.demo.model.repository.MudZoneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

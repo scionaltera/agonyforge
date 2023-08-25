@@ -4,9 +4,9 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.impl.MudItem;
-import com.agonyforge.mud.models.dynamodb.service.CommService;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.service.CommService;
 
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.TYPE_PC;
+import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PC;
 
 public abstract class AbstractCommand implements Command {
     private final RepositoryBundle repositoryBundle;

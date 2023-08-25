@@ -1,6 +1,5 @@
 package com.agonyforge.mud.models.dynamodb.repository;
 
-import com.agonyforge.mud.models.dynamodb.DynamoDbInitializer;
 import com.agonyforge.mud.models.dynamodb.config.DynamoDbProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,9 +44,6 @@ public abstract class DynamoDbLocalInitializingTest {
                 StaticCredentialsProvider.create(
                     AwsBasicCredentials.create("x", "x")))
             .build();
-
-        // create tables and stuff
-        new DynamoDbInitializer(dynamoDbClient).initialize();
     }
 
     @BeforeEach

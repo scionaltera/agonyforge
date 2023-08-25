@@ -2,8 +2,8 @@ package com.agonyforge.mud.demo.config;
 
 import com.agonyforge.mud.demo.cli.command.MoveCommand;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.models.dynamodb.constant.Direction;
-import com.agonyforge.mud.models.dynamodb.service.CommService;
+import com.agonyforge.mud.demo.model.constant.Direction;
+import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

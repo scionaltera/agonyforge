@@ -2,9 +2,9 @@ package com.agonyforge.mud.demo.cli.question;
 
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.models.dynamodb.constant.WearSlot;
-import com.agonyforge.mud.models.dynamodb.impl.MudCharacter;
-import com.agonyforge.mud.models.dynamodb.constant.Pronoun;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.constant.Pronoun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.agonyforge.mud.core.cli.Question;
