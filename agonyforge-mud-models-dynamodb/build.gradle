@@ -1,8 +1,8 @@
 plugins {
-    id 'info.solidsoft.pitest' version '1.9.11'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.3'
     id 'java'
+    id 'java-test-fixtures'
     id 'maven-publish'
 }
 
@@ -16,8 +16,6 @@ repositories {
     }
 }
 
-configurations.maybeCreate("pitest")
-
 dependencyManagement {
     imports {
         mavenBom 'software.amazon.awssdk:bom:2.20.131'
@@ -25,8 +23,6 @@ dependencyManagement {
 }
 
 dependencies {
-    pitest 'org.pitest:pitest-junit5-plugin:1.2.0'
-
     implementation project(":agonyforge-mud-core")
 
     implementation 'software.amazon.awssdk:dynamodb'
@@ -41,6 +37,14 @@ dependencies {
     testImplementation 'org.testcontainers:testcontainers:1.18.3'
     testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
     testImplementation 'org.junit.platform:junit-platform-launcher'
+
+    testFixturesImplementation 'software.amazon.awssdk:dynamodb'
+    testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testFixturesImplementation 'org.springframework.security:spring-security-test'
+    testFixturesImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testFixturesImplementation 'org.testcontainers:testcontainers:1.18.3'
+    testFixturesImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+    testFixturesImplementation 'org.junit.platform:junit-platform-launcher'
 }
 
 java {
@@ -56,6 +60,10 @@ task copyNativeLibs(type: Copy) {
         include "*.dll"
     }
     into 'build/libs'
+}
+
+compileTestJava {
+    dependsOn(copyNativeLibs)
 }
 
 test {
@@ -81,35 +89,7 @@ tasks.test {
     }
 }
 
-tasks.pitest {
-    doFirst {
-        systemProperty "java.library.path", 'build/libs'
-    }
-}
-
-pitest {
-    coverageThreshold = 70
-    mutationThreshold = 70
-    timestampedReports = false
-
-    targetClasses = [
-        "com.agonyforge.mud.models.dynamodb.*"
-    ]
-
-    excludedMethods = [
-        "hashCode",
-        "equals"
-    ]
-
-    excludedClasses = [
-        "com.agonyforge.mud.models.dynamodb.config.*",
-        "com.agonyforge.mud.models.dynamodb.*.Abstract*"
-    ]
-}
-
 test.dependsOn tasks.copyNativeLibs
-tasks.pitest.mustRunAfter test
-check.dependsOn tasks.pitest
 
 publishing {
     repositories {

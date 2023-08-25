@@ -5,7 +5,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -15,10 +18,10 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.net.URI;
 
-import static org.mockito.Mockito.lenient;
-
 @ExtendWith(MockitoExtension.class)
 public abstract class DynamoDbLocalInitializingTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbLocalInitializingTest.class);
+
     protected static DynamoDbClient dynamoDbClient;
     protected static final GenericContainer dynamoDbLocal;
 
@@ -33,7 +36,8 @@ public abstract class DynamoDbLocalInitializingTest {
     protected DynamoDbProperties.TableNames tableNames;
 
     @BeforeAll
-    static void setUpAll() throws Exception {
+    static void setUpClient() throws Exception {
+        LOGGER.info("Initializing DynamoDB client");
         dynamoDbClient = DynamoDbClient
             .builder()
             .endpointOverride(new URI(String.format("http://%s:%s",
@@ -48,8 +52,12 @@ public abstract class DynamoDbLocalInitializingTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(tableNames.getTableName()).thenReturn("agonyforge");
-        lenient().when(tableNames.getGsi1()).thenReturn("gsi1");
-        lenient().when(tableNames.getGsi2()).thenReturn("gsi2");
+        Mockito.lenient().when(tableNames.getTableName()).thenReturn("agonyforge");
+        Mockito.lenient().when(tableNames.getGsi1()).thenReturn("gsi1");
+        Mockito.lenient().when(tableNames.getGsi2()).thenReturn("gsi2");
+    }
+
+    protected static DynamoDbClient getDynamoDbClient() {
+        return dynamoDbClient;
     }
 }
