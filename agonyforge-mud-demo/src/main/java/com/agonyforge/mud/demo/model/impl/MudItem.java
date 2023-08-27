@@ -11,14 +11,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ITEM;
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_PC;
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ROOM;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_INSTANCE;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_ITEM;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PC;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_ROOM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ITEM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_INSTANCE;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_ITEM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_ROOM;
 
 public class MudItem implements Persistent {
     private UUID id;

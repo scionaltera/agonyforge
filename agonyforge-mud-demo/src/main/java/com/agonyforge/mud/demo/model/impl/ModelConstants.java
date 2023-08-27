@@ -2,11 +2,8 @@ package com.agonyforge.mud.demo.model.impl;
 
 import org.springframework.context.annotation.Configuration;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 @Configuration
-public class Constants {
+public class ModelConstants {
     public static final String DB_PROPERTY = "PROPERTY#";
     public static final String DB_USER = "USER#";
     public static final String DB_PC = "PC#";

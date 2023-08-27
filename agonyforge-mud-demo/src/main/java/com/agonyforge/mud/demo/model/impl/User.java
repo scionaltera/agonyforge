@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_USER;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_USER;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_USER;
 
 public class User implements Persistent {
     private String principalName; // Principal name

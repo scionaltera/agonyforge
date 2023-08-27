@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.ISO_8601;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.KEY_MODIFIED;
+import static com.agonyforge.mud.models.dynamodb.impl.DynamoDbConstants.ISO_8601;
+import static com.agonyforge.mud.models.dynamodb.impl.DynamoDbConstants.KEY_MODIFIED;
 
 public abstract class AbstractRepository<T extends Persistent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRepository.class);

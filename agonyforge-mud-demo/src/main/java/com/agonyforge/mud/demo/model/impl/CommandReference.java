@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_COMMAND;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_COMMAND;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_COMMAND;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_COMMAND;
 
 public class CommandReference implements Persistent {
     private String name;

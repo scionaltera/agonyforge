@@ -22,11 +22,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_PC;
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ROOM;
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_USER;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_INSTANCE;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_INSTANCE;
 
 @Repository
 public class MudCharacterRepository extends AbstractRepository<MudCharacter> {

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 
 @Component
 public class WhoCommand extends AbstractCommand {

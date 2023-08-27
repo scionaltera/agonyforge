@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_COMMAND;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_COMMAND;
 
 @Repository
 public class CommandRepository extends AbstractRepository<CommandReference> {

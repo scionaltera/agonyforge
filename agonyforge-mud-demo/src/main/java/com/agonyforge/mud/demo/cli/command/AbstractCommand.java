@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 
 public abstract class AbstractCommand implements Command {
     private final RepositoryBundle repositoryBundle;
