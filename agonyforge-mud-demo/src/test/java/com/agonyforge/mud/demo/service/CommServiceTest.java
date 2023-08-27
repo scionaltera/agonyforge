@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

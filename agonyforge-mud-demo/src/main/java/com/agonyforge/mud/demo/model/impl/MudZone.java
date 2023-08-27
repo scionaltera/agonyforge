@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ZONE;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_ZONE;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ZONE;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_ZONE;
 
 public class MudZone implements Persistent {
     private Long id;

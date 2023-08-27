@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ROOM;
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ZONE;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_ROOM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ZONE;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_ROOM;
 
 public class MudRoom implements Persistent {
     private Long id;

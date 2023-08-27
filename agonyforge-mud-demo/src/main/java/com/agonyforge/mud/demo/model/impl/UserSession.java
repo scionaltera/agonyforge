@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_USER;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_SESSION;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_SESSION;
-import static com.agonyforge.mud.models.dynamodb.impl.Constants.ISO_8601;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_SESSION;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_SESSION;
+import static com.agonyforge.mud.models.dynamodb.impl.DynamoDbConstants.ISO_8601;
 
 public class UserSession implements Persistent {
     private String principalName;

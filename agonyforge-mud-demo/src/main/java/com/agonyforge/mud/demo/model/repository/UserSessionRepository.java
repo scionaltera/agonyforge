@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_USER;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
 
 @Repository
 public class UserSessionRepository extends AbstractRepository<UserSession> {

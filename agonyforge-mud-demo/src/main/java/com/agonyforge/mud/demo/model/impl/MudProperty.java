@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_PROPERTY;
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PROPERTY;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PROPERTY;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PROPERTY;
 
 public class MudProperty implements Persistent {
     private String name;

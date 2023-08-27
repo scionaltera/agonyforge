@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.TYPE_PC;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;

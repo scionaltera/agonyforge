@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_PROPERTY;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PROPERTY;
 
 @Repository
 public class MudPropertyRepository extends AbstractRepository<MudProperty> {

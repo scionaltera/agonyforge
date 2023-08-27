@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_ROOM;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
 
 @Repository
 public class MudRoomRepository extends AbstractRepository<MudRoom> {

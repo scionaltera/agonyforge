@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.model.impl.Constants.DB_USER;
-import static com.agonyforge.mud.demo.model.impl.Constants.SORT_DATA;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
 
 @Repository
 public class UserRepository extends AbstractRepository<User> {
