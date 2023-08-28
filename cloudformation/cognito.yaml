@@ -15,7 +15,7 @@ Parameters:
     Default: http://localhost:8080/login/oauth2/code/cognito
   DefaultRedirectURI:
     Type: String
-    Description: Default URI to redirect to.
+    Description: Default URI to redirect to. Must be in the OAuthCallbackURLs list.
     Default: http://localhost:8080/login/oauth2/code/cognito
   LogoutURLs:
     Type: String
