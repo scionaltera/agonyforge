@@ -35,7 +35,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testImplementation 'org.testcontainers:testcontainers:1.18.3'
-    testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
     testImplementation 'org.junit.platform:junit-platform-launcher'
 
     testFixturesImplementation 'software.amazon.awssdk:dynamodb'
@@ -43,7 +43,7 @@ dependencies {
     testFixturesImplementation 'org.springframework.security:spring-security-test'
     testFixturesImplementation 'org.junit.jupiter:junit-jupiter-params'
     testFixturesImplementation 'org.testcontainers:testcontainers:1.18.3'
-    testFixturesImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+    testFixturesImplementation 'org.testcontainers:junit-jupiter:1.19.0'
     testFixturesImplementation 'org.junit.platform:junit-platform-launcher'
 }
 
