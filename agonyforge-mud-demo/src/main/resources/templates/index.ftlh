@@ -11,13 +11,21 @@
     <section class="row">
         <section class="col-12">
             <@secure "OIDC_USER">
-            <p>You are authenticated.</p>
-            <p><a href="<@spring.url '/play' />">Play</a></p>
-            <p><a href="<@spring.url '/logout' />">Log Out</a></p>
+            <p>You are logged in.
+            </p>
+            <form action="<@spring.url '/play' />" method="get">
+                <button type="submit" class="btn btn-outline-primary">Play</button>
+            </form>
+            <form action="<@spring.url '/logout' />" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-outline-danger">Log Out</button>
+            </form>
             </@secure>
             <@anonymous "OIDC_USER">
-            <p>You are anonymous.</p>
-            <p><a href="<@spring.url '/oauth2/authorization/cognito' />">Log In</a></p>
+            <p>You are not logged in.</p>
+            <form action="<@spring.url '/oauth2/authorization/cognito' />" method="get">
+                <button type="submit" class="btn btn-outline-primary">Play</button>
+            </form>
             </@anonymous>
         </section>
     </section>
