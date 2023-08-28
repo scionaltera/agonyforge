@@ -1,45 +1,48 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Cognito User Pool for Agony Forge MUD
 Parameters:
-  CognitoCertificateArn:
+  UserPoolName:
     Type: String
-    Description: The ARN for the ACM certificate used by the Cognito User Pool.
-  CognitoCustomDomain:
+    Description: The name of the User Pool to create.
+    Default: agony-forge-users
+  CognitoDomain:
     Type: String
-    Description: The custom domain name to use in Cognito.
+    Description: The prefix for the Cognito auth URL.
+    Default: NAME.auth.REGION.amazoncognito.com
   OAuthCallbackURLs:
     Type: String
     Description: Comma separated list of callback URLs.
+    Default: http://localhost:8080/login/oauth2/code/cognito
   DefaultRedirectURI:
     Type: String
-    Description: Default URI to redirect to.
+    Description: Default URI to redirect to. Must be in the OAuthCallbackURLs list.
+    Default: http://localhost:8080/login/oauth2/code/cognito
   LogoutURLs:
     Type: String
     Description: Comma separated list of logout URLs.
+    Default: http://localhost:8080
   SecretName:
     Type: String
-    Description: Name of client secret in Secrets Manager.
+    Description: Name of secret in Secrets Manager.
   AwsClientId:
     Type: String
-    Description: LoginWithAmazon client ID in Secrets Manager.
+    Description: Key for Client ID in Secrets Manager.
   AwsClientSecret:
     Type: String
-    Description: LoginWithAmazon client secret in Secrets Manager.
+    Description: Key for Client Secret in Secrets Manager.
 Resources:
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      AliasAttributes:
-        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
       UsernameConfiguration:
         CaseSensitive: false
-      UserPoolName: mud-pool
+      UserPoolName: !Ref UserPoolName
   CognitoUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      CustomDomainConfig:
-        CertificateArn: !Ref CognitoCertificateArn
-      Domain: !Ref CognitoCustomDomain
+      Domain: !Ref CognitoDomain
       UserPoolId:
         Ref: CognitoUserPool
   CognitoUserPoolClient:
@@ -51,13 +54,9 @@ Resources:
         - code
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
-        - phone
-        - email
         - openid
-        - profile
-        - aws.cognito.signin.user.admin
       CallbackURLs: !Split [",", !Ref OAuthCallbackURLs]
-      ClientName: MudClient
+      ClientName: !Join ["-", [ !Ref UserPoolName, "client" ] ]
       DefaultRedirectURI: !Ref DefaultRedirectURI
       ExplicitAuthFlows:
         - ALLOW_CUSTOM_AUTH
@@ -68,6 +67,13 @@ Resources:
       PreventUserExistenceErrors: ENABLED
       SupportedIdentityProviders:
         - LoginWithAmazon
+      TokenValidityUnits:
+        AccessToken: days
+        IdToken: days
+        RefreshToken: days
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
       UserPoolId:
         Ref: CognitoUserPool
   CognitoAmazonIdentityProvider:
@@ -77,6 +83,7 @@ Resources:
         username: user_id
         email: email
         given_name: name
+        zoneinfo: postal_code
       ProviderDetails:
         client_id: !Sub "{{resolve:secretsmanager:${SecretName}:SecretString:${AwsClientId}}}"
         client_secret: !Sub "{{resolve:secretsmanager:${SecretName}:SecretString:${AwsClientSecret}}}"
