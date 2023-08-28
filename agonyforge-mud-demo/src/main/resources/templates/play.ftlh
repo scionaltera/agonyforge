@@ -19,7 +19,9 @@
 </@secure>
 <@anonymous "OIDC_USER">
     <main class="container-fluid">
-        <a href="<@spring.url '/oauth2/authorization/cognito' />">Log In</a>
+        <form action="<@spring.url '/oauth2/authorization/cognito' />" method="get">
+            <button type="submit" class="btn btn-outline-primary">Play</button>
+        </form>
     </main>
 </@anonymous>
 <@secure "OIDC_USER">
