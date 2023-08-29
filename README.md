@@ -1,4 +1,4 @@
-![Discord](https://img.shields.io/discord/1145891199346024512?label=discord)
+[![Discord](https://img.shields.io/discord/1145891199346024512?label=discord)](https://discord.gg/6DHKrMJCJE)
 
 # Agony Forge
 **Build a game, not an antique.**  
