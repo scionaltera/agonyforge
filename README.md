@@ -1,3 +1,5 @@
+![Discord](https://img.shields.io/discord/1145891199346024512?label=discord)
+
 # Agony Forge
 **Build a game, not an antique.**  
 Agony Forge is a framework for building web based Multi User Domains, or MUDs. Think Spring Boot for building a MUD. It's free and open source. The main goal for Agony Forge is to make it easy for retro gaming enthusiasts to bring the feeling of MUDs back in the 90s forward to the modern day.
