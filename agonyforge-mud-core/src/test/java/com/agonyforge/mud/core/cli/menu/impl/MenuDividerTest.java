@@ -1,8 +1,8 @@
-package com.agonyforge.mud.demo.cli.menu;
+package com.agonyforge.mud.core.cli.menu.impl;
 
 import com.agonyforge.mud.core.cli.Color;
+import com.agonyforge.mud.core.cli.menu.impl.MenuDivider;
 import com.agonyforge.mud.core.web.model.Output;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,19 +16,11 @@ import static com.agonyforge.mud.core.cli.Color.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class MenuItemTest {
-    @Test
-    void testGetItem() {
-        String foo = "foo";
-        MenuItem uut = new MenuItem("T", "Test", foo);
-
-        assertEquals(foo, uut.getItem());
-    }
-
+public class MenuDividerTest {
     @ParameterizedTest
     @MethodSource
     void testRender(Color[] colors, String expected) {
-        MenuItem uut = new MenuItem("T", "Test");
+        MenuDivider uut = new MenuDivider(10);
         Output result = uut.render(colors);
 
         assertEquals(1, result.getOutput().size());
@@ -37,9 +29,9 @@ public class MenuItemTest {
 
     private static Stream<Arguments> testRender() {
         return Stream.of(
-            Arguments.of(new Color[] {BLUE, RED}, "[blue]T[red]) [blue]Test"),
-            Arguments.of(new Color[] {BLUE}, "[blue]T[green]) [blue]Test"),
-            Arguments.of(new Color[] {}, "[yellow]T[green]) [yellow]Test")
+            Arguments.of(new Color[] {BLUE, RED}, "[red]**********"),
+            Arguments.of(new Color[] {BLUE}, "[green]**********"),
+            Arguments.of(new Color[] {}, "[green]**********")
         );
     }
 }

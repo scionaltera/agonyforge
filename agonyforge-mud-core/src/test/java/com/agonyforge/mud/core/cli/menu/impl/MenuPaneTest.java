@@ -1,6 +1,10 @@
-package com.agonyforge.mud.demo.cli.menu;
+package com.agonyforge.mud.core.cli.menu.impl;
 
 import com.agonyforge.mud.core.cli.Color;
+import com.agonyforge.mud.core.cli.menu.impl.MenuItem;
+import com.agonyforge.mud.core.cli.menu.impl.MenuPane;
+import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
+import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.core.web.model.Output;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

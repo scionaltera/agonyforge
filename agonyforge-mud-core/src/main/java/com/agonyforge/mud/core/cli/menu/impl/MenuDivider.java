@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.menu;
+package com.agonyforge.mud.core.cli.menu.impl;
 
 import com.agonyforge.mud.core.cli.menu.AbstractMenuDivider;
 import com.agonyforge.mud.core.cli.Color;
