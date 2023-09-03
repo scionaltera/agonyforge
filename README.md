@@ -28,6 +28,8 @@ $ docker-compose up
 # go to http://localhost:8080 to see the MUD!
 ```
 
+Please check the [Wiki](https://github.com/scionaltera/agonyforge/wiki/How-to-Develop) for much more detailed setup instructions. If you get stuck, feel free to ask for help on our Discord by clicking the badge at the top of this README.
+
 After it matures a little, I am excited to get it [online](https://agonyforge.com) and let people play it there. Here's what it looks like.
 
 ![A screenshot of a simple Agony Forge play session](docs/images/screenshot.png)
