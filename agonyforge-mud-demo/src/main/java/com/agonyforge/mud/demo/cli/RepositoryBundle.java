@@ -4,6 +4,7 @@ import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
+import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,16 +14,19 @@ public class RepositoryBundle {
     private final MudCharacterRepository characterRepository;
     private final MudItemRepository itemRepository;
     private final MudRoomRepository roomRepository;
+    private final MudSpeciesRepository speciesRepository;
 
     @Autowired
     public RepositoryBundle(MudPropertyRepository propertyRepository,
                             MudCharacterRepository characterRepository,
                             MudItemRepository itemRepository,
-                            MudRoomRepository roomRepository) {
+                            MudRoomRepository roomRepository,
+                            MudSpeciesRepository speciesRepository) {
         this.propertyRepository = propertyRepository;
         this.characterRepository = characterRepository;
         this.itemRepository = itemRepository;
         this.roomRepository = roomRepository;
+        this.speciesRepository = speciesRepository;
     }
 
     public MudPropertyRepository getPropertyRepository() {
@@ -39,5 +43,9 @@ public class RepositoryBundle {
 
     public MudRoomRepository getRoomRepository() {
         return roomRepository;
+    }
+
+    public MudSpeciesRepository getSpeciesRepository() {
+        return speciesRepository;
     }
 }

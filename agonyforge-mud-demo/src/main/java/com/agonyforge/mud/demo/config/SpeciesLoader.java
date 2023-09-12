@@ -14,6 +14,8 @@ import java.util.UUID;
 
 @Component
 public class SpeciesLoader {
+    public static final UUID DEFAULT_SPECIES_ID = UUID.fromString("d41b3960-e464-4def-b5d2-1ac7abbbc5d0");
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SpeciesLoader.class);
 
     private final MudSpeciesRepository speciesRepository;
@@ -27,7 +29,7 @@ public class SpeciesLoader {
     public void loadSpecies() {
         MudSpecies human = new MudSpecies();
 
-        human.setId(UUID.randomUUID());
+        human.setId(DEFAULT_SPECIES_ID);
         human.setName("Human");
         human.setStat(Stat.INT, 1);
         human.setStat(Stat.CHA, 1);

@@ -80,7 +80,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
             if (choice.equals("S")) {
                 if (totalPoints == STARTING_EFFORTS) {
                     output.append("[green]Character efforts saved!");
-                    nextQuestion = "characterMenuQuestion";
+                    nextQuestion = "characterSpeciesQuestion";
                 } else {
                     output.append("[red]Please allocate exactly %d points for your efforts.", STARTING_EFFORTS);
                 }

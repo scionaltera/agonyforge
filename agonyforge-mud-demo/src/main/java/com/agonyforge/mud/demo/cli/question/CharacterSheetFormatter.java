@@ -14,6 +14,7 @@ public final class CharacterSheetFormatter {
         output.append("[dcyan]CHARACTER SHEET");
         output.append("[default]Name: [cyan]%s", ch.getName());
         output.append("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
+        output.append("[default]Species: [cyan]%s", ch.getSpeciesId());
         output.append("");
         output.append("[cyan]Stats   [magenta]Efforts");
         for (int i = 0; i < Math.max(Stat.values().length, Effort.values().length); i++) {

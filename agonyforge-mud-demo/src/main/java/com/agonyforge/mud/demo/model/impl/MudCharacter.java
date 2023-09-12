@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import java.util.UUID;
 
+import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PC;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
@@ -34,6 +35,8 @@ public class MudCharacter implements Persistent {
     private List<WearSlot> wearSlots = new ArrayList<>();
     private final Map<Stat, Integer> stats = new HashMap<>();
     private final Map<Effort, Integer> efforts = new HashMap<>();
+    private UUID speciesId;
+
 
     public MudCharacter() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
@@ -85,6 +88,12 @@ public class MudCharacter implements Persistent {
         data.put("stats", AttributeValue.builder().m(stats).build());
         data.put("efforts", AttributeValue.builder().m(efforts).build());
 
+        if (getSpeciesId() != null) {
+            data.put("species", AttributeValue.builder().s(speciesId.toString()).build());
+        } else {
+            data.put("species", AttributeValue.builder().s(DEFAULT_SPECIES_ID.toString()).build());
+        }
+
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
         }
@@ -122,6 +131,8 @@ public class MudCharacter implements Persistent {
             .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
         Arrays.stream(Effort.values())
             .forEach(effort -> setEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n())));
+
+        setSpeciesId(UUID.fromString(data.get("species").s()));
     }
 
     public MudCharacter buildInstance() {
@@ -246,6 +257,14 @@ public class MudCharacter implements Persistent {
 
     public void addEffort(Effort effort, int addend) {
         efforts.put(effort, efforts.get(effort) + addend);
+    }
+
+    public UUID getSpeciesId() {
+        return speciesId;
+    }
+
+    public void setSpeciesId(UUID speciesId) {
+        this.speciesId = speciesId;
     }
 
     public boolean isPrototype() {
