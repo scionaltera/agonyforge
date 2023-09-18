@@ -15,16 +15,19 @@ import java.util.List;
 
 @Component
 public class ScoreCommand extends AbstractCommand {
+    private final CharacterSheetFormatter characterSheetFormatter;
+
     @Autowired
-    public ScoreCommand(RepositoryBundle repositoryBundle, CommService commService) {
+    public ScoreCommand(RepositoryBundle repositoryBundle, CommService commService, CharacterSheetFormatter characterSheetFormatter) {
         super(repositoryBundle, commService);
+        this.characterSheetFormatter = characterSheetFormatter;
     }
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
-        CharacterSheetFormatter.format(ch, output);
+        characterSheetFormatter.format(ch, output);
 
         return question;
     }
