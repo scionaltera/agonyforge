@@ -60,7 +60,7 @@ public class CharacterStatQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addStat(Stat.values()[i], 1);
+                    ch.addBaseStat(Stat.values()[i], 1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red]Oops! Try a number with a plus or minus!");
                 }
@@ -71,7 +71,7 @@ public class CharacterStatQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addStat(Stat.values()[i], -1);
+                    ch.addBaseStat(Stat.values()[i], -1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red][red]Oops! Try a number with a plus or minus!");
                 }
@@ -98,7 +98,7 @@ public class CharacterStatQuestion extends BaseQuestion {
 
     private int computeStatPoints(MudCharacter ch) {
         return Arrays.stream(Stat.values())
-            .map(ch::getStat)
+            .map(ch::getBaseStat)
             .reduce(0, Integer::sum);
     }
 
@@ -112,7 +112,7 @@ public class CharacterStatQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Stat.values())
-                .forEachOrdered(stat -> menuPane.getItems().add(new MenuItem((stat.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", stat.getName(), ch.getStat(stat)))));
+                .forEachOrdered(stat -> menuPane.getItems().add(new MenuItem((stat.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", stat.getName(), ch.getBaseStat(stat)))));
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }

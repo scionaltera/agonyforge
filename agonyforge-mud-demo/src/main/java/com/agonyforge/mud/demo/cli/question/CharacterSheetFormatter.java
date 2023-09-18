@@ -35,8 +35,8 @@ public final class CharacterSheetFormatter {
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;
 
             // TODO this is the wrong place to do the ch + species modifier arithmetic... how to make it easier?
-            String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getStat(stat) + species.getStat(stat)) : "";
-            String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getEffort(effort) + species.getEffort(effort)) : "";
+            String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getBaseStat(stat) + species.getStat(stat)) : "";
+            String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getBaseEffort(effort) + species.getEffort(effort)) : "";
 
             output.append("%15s\t%15s", statString, effortString);
         }
