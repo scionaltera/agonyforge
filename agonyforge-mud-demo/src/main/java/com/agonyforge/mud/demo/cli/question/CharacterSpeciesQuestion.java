@@ -22,8 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_SPECIES;
@@ -94,10 +96,30 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
         getRepositoryBundle().getSpeciesRepository().getByType(TYPE_SPECIES)
             .stream()
             .sorted(Comparator.comparing(MudSpecies::getName, String::compareToIgnoreCase))
-            .forEach(species -> menuPane.getItems().add(new MenuItem(
-                Integer.toString(menuPane.getItems().size() + 1),
-                String.format("%s", species.getName()),
-                species
-            )));
+            .forEach(species -> {
+                List<String> buffs = new ArrayList<>();
+
+                Arrays.stream(Stat.values())
+                        .filter(stat -> species.getStat(stat) != 0)
+                        .forEach(stat -> buffs.add(String.format("%s %s%d",
+                            stat.getAbbreviation(),
+                            species.getStat(stat) >= 0 ? "+" : "-",
+                            species.getStat(stat))));
+
+                Arrays.stream(Effort.values())
+                    .filter(effort -> species.getEffort(effort) != 0)
+                    .forEach(effort -> buffs.add(String.format("%s %s%d",
+                        effort.getName(),
+                        species.getEffort(effort) >= 0 ? "+" : "-",
+                        species.getEffort(effort))));
+
+                menuPane.getItems().add(new MenuItem(
+                    Integer.toString(menuPane.getItems().size() + 1),
+                    // the formatting below is fragile and will need to be adjusted when you add
+                    // any species with a name longer than "Human"
+                    String.format("%6s: %s", species.getName(), String.join(", ", buffs)),
+                    species
+                ));
+            });
     }
 }
