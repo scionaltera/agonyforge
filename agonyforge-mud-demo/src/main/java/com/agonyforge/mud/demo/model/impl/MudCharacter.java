@@ -39,7 +39,6 @@ public class MudCharacter implements Persistent {
     private final Map<Effort, Integer> speciesEfforts = new HashMap<>();
     private UUID speciesId;
 
-
     public MudCharacter() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
@@ -87,13 +86,15 @@ public class MudCharacter implements Persistent {
         Map<String, AttributeValue> speciesEfforts = new HashMap<>();
 
         Arrays.stream(Stat.values())
-            .forEach(stat -> stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getBaseStat(stat))).build()));
+            .forEach(stat -> {
+                stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getBaseStat(stat))).build());
+                speciesStats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesStat(stat))).build());
+            });
         Arrays.stream(Effort.values())
-            .forEach(effort -> efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getBaseEffort(effort))).build()));
-        Arrays.stream(Stat.values())
-            .forEach(stat -> speciesStats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesStat(stat))).build()));
-        Arrays.stream(Effort.values())
-            .forEach(effort -> speciesEfforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesEffort(effort))).build()));
+            .forEach(effort -> {
+                efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getBaseEffort(effort))).build());
+                speciesEfforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesEffort(effort))).build());
+            });
 
         data.put("stats", AttributeValue.builder().m(stats).build());
         data.put("efforts", AttributeValue.builder().m(efforts).build());
@@ -142,13 +143,15 @@ public class MudCharacter implements Persistent {
         Map<String, AttributeValue> speciesEfforts = data.get("species_efforts").m();
 
         Arrays.stream(Stat.values())
-            .forEach(stat -> setBaseStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
+            .forEach(stat -> {
+                setBaseStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
+                setSpeciesStat(stat, Integer.parseInt(speciesStats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
+            });
         Arrays.stream(Effort.values())
-            .forEach(effort -> setBaseEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n())));
-        Arrays.stream(Stat.values())
-            .forEach(stat -> setSpeciesStat(stat, Integer.parseInt(speciesStats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
-        Arrays.stream(Effort.values())
-            .forEach(effort -> setSpeciesEffort(effort, Integer.parseInt(speciesEfforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n())));
+            .forEach(effort -> {
+                setBaseEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
+                setSpeciesEffort(effort, Integer.parseInt(speciesEfforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
+            });
 
         setSpeciesId(UUID.fromString(data.get("species").s()));
     }
@@ -284,7 +287,7 @@ public class MudCharacter implements Persistent {
     }
 
     public int getDefense() {
-        return getBaseStat(Stat.CON); // TODO add bonuses from species/class/gear
+        return getBaseStat(Stat.CON) + getSpeciesStat(Stat.CON);
     }
 
     public int getEffort(Effort effort) {

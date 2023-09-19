@@ -21,7 +21,6 @@ public final class CharacterSheetFormatter {
     }
 
     public void format(MudCharacter ch, Output output) {
-        // TODO how expensive is this fetch gonna be over time? should denormalize species onto ch maybe?
         MudSpecies species = speciesRepository.getById(ch.getSpeciesId() != null ? ch.getSpeciesId() : DEFAULT_SPECIES_ID).orElseThrow();
 
         output.append("[dcyan]CHARACTER SHEET");
@@ -34,16 +33,14 @@ public final class CharacterSheetFormatter {
             Stat stat = Stat.values().length > i ? Stat.values()[i] : null;
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;
 
-            // TODO this is the wrong place to do the ch + species modifier arithmetic... how to make it easier?
-            String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getBaseStat(stat) + species.getStat(stat)) : "";
-            String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getBaseEffort(effort) + species.getEffort(effort)) : "";
+            String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getStat(stat)) : "";
+            String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getEffort(effort)) : "";
 
             output.append("%15s\t%15s", statString, effortString);
         }
 
         output.append("");
         output.append("[default]Health: [red]❤");
-        // TODO technically should get DEF from species instead of CON even though they're related
-        output.append("[default]DEF: [green]%d", ch.getDefense() + species.getStat(Stat.CON));
+        output.append("[default]DEF: [green]%d", ch.getDefense());
     }
 }

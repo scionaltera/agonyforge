@@ -192,9 +192,11 @@ public class MudCharacterTest {
         MudCharacter uut = new MudCharacter();
 
         uut.setBaseStat(Stat.CON, 3);
+        uut.setSpeciesStat(Stat.CON, 2);
 
         assertEquals(3, uut.getBaseStat(Stat.CON));
-        assertEquals(3, uut.getDefense());
+        assertEquals(2, uut.getSpeciesStat(Stat.CON));
+        assertEquals(5, uut.getDefense());
     }
 
     @Test

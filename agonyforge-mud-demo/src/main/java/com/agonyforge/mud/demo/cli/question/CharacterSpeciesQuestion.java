@@ -12,6 +12,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 
+import com.agonyforge.mud.demo.model.constant.Effort;
+import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudSpecies;
 import org.slf4j.Logger;
@@ -68,7 +70,13 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
 
             if (chOptional.isPresent()) {
                 MudCharacter ch = chOptional.get();
-                ch.setSpeciesId(((MudSpecies)item.getItem()).getId());
+                MudSpecies species = (MudSpecies)item.getItem();
+
+                ch.setSpeciesId(species.getId());
+
+                Arrays.stream(Stat.values()).forEach(stat -> ch.setSpeciesStat(stat, species.getStat(stat)));
+                Arrays.stream(Effort.values()).forEach(effort -> ch.setSpeciesEffort(effort, species.getEffort(effort)));
+
                 getRepositoryBundle().getCharacterRepository().save(ch);
             }
 
