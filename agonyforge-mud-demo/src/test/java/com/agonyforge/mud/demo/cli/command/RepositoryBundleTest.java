@@ -5,6 +5,7 @@ import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
+import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -26,17 +27,22 @@ public class RepositoryBundleTest {
     @Mock
     private MudRoomRepository roomRepository;
 
+    @Mock
+    private MudSpeciesRepository speciesRepository;
+
     @Test
     void testGetters() {
         RepositoryBundle uut = new RepositoryBundle(
             propertyRepository,
             characterRepository,
             itemRepository,
-            roomRepository);
+            roomRepository,
+            speciesRepository);
 
         assertEquals(propertyRepository, uut.getPropertyRepository());
         assertEquals(characterRepository, uut.getCharacterRepository());
         assertEquals(itemRepository, uut.getItemRepository());
         assertEquals(roomRepository, uut.getRoomRepository());
+        assertEquals(speciesRepository, uut.getSpeciesRepository());
     }
 }

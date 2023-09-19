@@ -25,13 +25,16 @@ public class CharacterViewQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
 
     private final CommService commService;
+    private final CharacterSheetFormatter characterSheetFormatter;
 
     @Autowired
     public CharacterViewQuestion(ApplicationContext applicationContext,
                                  RepositoryBundle repositoryBundle,
-                                 CommService commService) {
+                                 CommService commService,
+                                 CharacterSheetFormatter characterSheetFormatter) {
         super(applicationContext, repositoryBundle);
         this.commService = commService;
+        this.characterSheetFormatter = characterSheetFormatter;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class CharacterViewQuestion extends BaseQuestion {
         if (chOptional.isPresent()) {
             MudCharacter ch = chOptional.get();
 
-            CharacterSheetFormatter.format(ch, output);
+            characterSheetFormatter.format(ch, output);
 
             output.append("");
             output.append("[green]P[black]) Play as this character");

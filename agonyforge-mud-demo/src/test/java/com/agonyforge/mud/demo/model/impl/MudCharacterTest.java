@@ -126,64 +126,138 @@ public class MudCharacterTest {
     }
 
     @Test
-    void testAttributes() {
+    void testCombinedStats() {
         MudCharacter uut = new MudCharacter();
 
-        uut.setStat(Stat.STR, 1);
+        uut.setBaseStat(Stat.STR, 2);
+        uut.setSpeciesStat(Stat.STR, 3);
 
-        assertEquals(1, uut.getStat(Stat.STR));
+        assertEquals(5, uut.getStat(Stat.STR));
     }
 
     @Test
-    void testAddAttribute() {
+    void testBaseStats() {
         MudCharacter uut = new MudCharacter();
 
-        uut.setStat(Stat.STR, 3);
-        uut.setStat(Stat.DEX, 3);
+        uut.setBaseStat(Stat.STR, 1);
 
-        assertEquals(3, uut.getStat(Stat.STR));
-        assertEquals(3, uut.getStat(Stat.DEX));
+        assertEquals(1, uut.getBaseStat(Stat.STR));
+    }
 
-        uut.addStat(Stat.STR, 2);
-        uut.addStat(Stat.DEX, -2);
+    @Test
+    void testSetAndAddBaseStats() {
+        MudCharacter uut = new MudCharacter();
 
-        assertEquals(5, uut.getStat(Stat.STR));
-        assertEquals(1, uut.getStat(Stat.DEX));
+        uut.setBaseStat(Stat.STR, 3);
+        uut.setBaseStat(Stat.DEX, 3);
+
+        assertEquals(3, uut.getBaseStat(Stat.STR));
+        assertEquals(3, uut.getBaseStat(Stat.DEX));
+
+        uut.addBaseStat(Stat.STR, 2);
+        uut.addBaseStat(Stat.DEX, -2);
+
+        assertEquals(5, uut.getBaseStat(Stat.STR));
+        assertEquals(1, uut.getBaseStat(Stat.DEX));
+    }
+
+    @Test
+    void testSpeciesStats() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setSpeciesStat(Stat.STR, 1);
+
+        assertEquals(1, uut.getSpeciesStat(Stat.STR));
+    }
+
+    @Test
+    void testSetAndAddSpeciesStats() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setSpeciesStat(Stat.STR, 3);
+        uut.setSpeciesStat(Stat.DEX, 3);
+
+        assertEquals(3, uut.getSpeciesStat(Stat.STR));
+        assertEquals(3, uut.getSpeciesStat(Stat.DEX));
+
+        uut.addSpeciesStat(Stat.STR, 2);
+        uut.addSpeciesStat(Stat.DEX, -2);
+
+        assertEquals(5, uut.getSpeciesStat(Stat.STR));
+        assertEquals(1, uut.getSpeciesStat(Stat.DEX));
     }
 
     @Test
     void testDefense() {
         MudCharacter uut = new MudCharacter();
 
-        uut.setStat(Stat.CON, 3);
+        uut.setBaseStat(Stat.CON, 3);
+        uut.setSpeciesStat(Stat.CON, 2);
 
-        assertEquals(3, uut.getStat(Stat.CON));
-        assertEquals(3, uut.getDefense());
+        assertEquals(3, uut.getBaseStat(Stat.CON));
+        assertEquals(2, uut.getSpeciesStat(Stat.CON));
+        assertEquals(5, uut.getDefense());
     }
 
     @Test
-    void testEfforts() {
+    void testCombinedEfforts() {
         MudCharacter uut = new MudCharacter();
 
-        uut.setEffort(Effort.GUNS, 1);
-
-        assertEquals(1, uut.getEffort(Effort.GUNS));
-    }
-
-    @Test
-    void testAddEffort() {
-        MudCharacter uut = new MudCharacter();
-
-        uut.setEffort(Effort.BASIC, 3);
-        uut.setEffort(Effort.GUNS, 3);
-
-        assertEquals(3, uut.getEffort(Effort.BASIC));
-        assertEquals(3, uut.getEffort(Effort.GUNS));
-
-        uut.addEffort(Effort.BASIC, 2);
-        uut.addEffort(Effort.GUNS, -2);
+        uut.setBaseEffort(Effort.BASIC, 2);
+        uut.setSpeciesEffort(Effort.BASIC, 3);
 
         assertEquals(5, uut.getEffort(Effort.BASIC));
-        assertEquals(1, uut.getEffort(Effort.GUNS));
+    }
+
+    @Test
+    void testBaseEfforts() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setBaseEffort(Effort.GUNS, 1);
+
+        assertEquals(1, uut.getBaseEffort(Effort.GUNS));
+    }
+
+    @Test
+    void testSetAndAddBaseEffort() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setBaseEffort(Effort.BASIC, 3);
+        uut.setBaseEffort(Effort.GUNS, 3);
+
+        assertEquals(3, uut.getBaseEffort(Effort.BASIC));
+        assertEquals(3, uut.getBaseEffort(Effort.GUNS));
+
+        uut.addBaseEffort(Effort.BASIC, 2);
+        uut.addBaseEffort(Effort.GUNS, -2);
+
+        assertEquals(5, uut.getBaseEffort(Effort.BASIC));
+        assertEquals(1, uut.getBaseEffort(Effort.GUNS));
+    }
+
+    @Test
+    void testSpeciesEfforts() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setSpeciesEffort(Effort.GUNS, 1);
+
+        assertEquals(1, uut.getSpeciesEffort(Effort.GUNS));
+    }
+
+    @Test
+    void testSetAndAddSpeciesEffort() {
+        MudCharacter uut = new MudCharacter();
+
+        uut.setSpeciesEffort(Effort.BASIC, 3);
+        uut.setSpeciesEffort(Effort.GUNS, 3);
+
+        assertEquals(3, uut.getSpeciesEffort(Effort.BASIC));
+        assertEquals(3, uut.getSpeciesEffort(Effort.GUNS));
+
+        uut.addSpeciesEffort(Effort.BASIC, 2);
+        uut.addSpeciesEffort(Effort.GUNS, -2);
+
+        assertEquals(5, uut.getSpeciesEffort(Effort.BASIC));
+        assertEquals(1, uut.getSpeciesEffort(Effort.GUNS));
     }
 }

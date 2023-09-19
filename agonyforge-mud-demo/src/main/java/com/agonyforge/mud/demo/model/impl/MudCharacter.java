@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import java.util.UUID;
 
+import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PC;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
@@ -34,10 +35,15 @@ public class MudCharacter implements Persistent {
     private List<WearSlot> wearSlots = new ArrayList<>();
     private final Map<Stat, Integer> stats = new HashMap<>();
     private final Map<Effort, Integer> efforts = new HashMap<>();
+    private final Map<Stat, Integer> speciesStats = new HashMap<>();
+    private final Map<Effort, Integer> speciesEfforts = new HashMap<>();
+    private UUID speciesId;
 
     public MudCharacter() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
+        Arrays.stream(Stat.values()).forEach((stat) -> speciesStats.put(stat, 0));
+        Arrays.stream(Effort.values()).forEach((effort) -> speciesEfforts.put(effort, 0));
     }
 
     @Override
@@ -76,14 +82,30 @@ public class MudCharacter implements Persistent {
 
         Map<String, AttributeValue> stats = new HashMap<>();
         Map<String, AttributeValue> efforts = new HashMap<>();
+        Map<String, AttributeValue> speciesStats = new HashMap<>();
+        Map<String, AttributeValue> speciesEfforts = new HashMap<>();
 
         Arrays.stream(Stat.values())
-            .forEach(stat -> stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getStat(stat))).build()));
+            .forEach(stat -> {
+                stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getBaseStat(stat))).build());
+                speciesStats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesStat(stat))).build());
+            });
         Arrays.stream(Effort.values())
-            .forEach(effort -> efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getEffort(effort))).build()));
+            .forEach(effort -> {
+                efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getBaseEffort(effort))).build());
+                speciesEfforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesEffort(effort))).build());
+            });
 
         data.put("stats", AttributeValue.builder().m(stats).build());
         data.put("efforts", AttributeValue.builder().m(efforts).build());
+        data.put("species_stats", AttributeValue.builder().m(speciesStats).build());
+        data.put("species_efforts", AttributeValue.builder().m(speciesEfforts).build());
+
+        if (getSpeciesId() != null) {
+            data.put("species", AttributeValue.builder().s(speciesId.toString()).build());
+        } else {
+            data.put("species", AttributeValue.builder().s(DEFAULT_SPECIES_ID.toString()).build());
+        }
 
         if (!isPrototype()) {
             data.put("webSocketSession", AttributeValue.builder().s(getWebSocketSession()).build());
@@ -117,11 +139,21 @@ public class MudCharacter implements Persistent {
 
         Map<String, AttributeValue> stats = data.get("stats").m();
         Map<String, AttributeValue> efforts = data.get("efforts").m();
+        Map<String, AttributeValue> speciesStats = data.get("species_stats").m();
+        Map<String, AttributeValue> speciesEfforts = data.get("species_efforts").m();
 
         Arrays.stream(Stat.values())
-            .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
+            .forEach(stat -> {
+                setBaseStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
+                setSpeciesStat(stat, Integer.parseInt(speciesStats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
+            });
         Arrays.stream(Effort.values())
-            .forEach(effort -> setEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n())));
+            .forEach(effort -> {
+                setBaseEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
+                setSpeciesEffort(effort, Integer.parseInt(speciesEfforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
+            });
+
+        setSpeciesId(UUID.fromString(data.get("species").s()));
     }
 
     public MudCharacter buildInstance() {
@@ -139,9 +171,15 @@ public class MudCharacter implements Persistent {
         instance.setWearSlots(getWearSlots());
 
         Arrays.stream(Stat.values())
-            .forEach(stat -> instance.setStat(stat, getStat(stat)));
+            .forEach(stat -> {
+                instance.setBaseStat(stat, getBaseStat(stat));
+                instance.setSpeciesStat(stat, getSpeciesStat(stat));
+            });
         Arrays.stream(Effort.values())
-            .forEach(effort -> instance.setEffort(effort, getEffort(effort)));
+            .forEach(effort -> {
+                instance.setBaseEffort(effort, getBaseEffort(effort));
+                instance.setSpeciesEffort(effort, getSpeciesEffort(effort));
+            });
 
         return instance;
     }
@@ -221,31 +259,71 @@ public class MudCharacter implements Persistent {
     }
 
     public int getStat(Stat stat) {
+        return stats.get(stat) + speciesStats.get(stat);
+    }
+
+    public int getBaseStat(Stat stat) {
         return stats.get(stat);
     }
 
-    public void setStat(Stat stat, int value) {
+    public void setBaseStat(Stat stat, int value) {
         stats.put(stat, value);
     }
 
-    public void addStat(Stat stat, int addend) {
+    public void addBaseStat(Stat stat, int addend) {
         stats.put(stat, stats.get(stat) + addend);
     }
 
+    public int getSpeciesStat(Stat stat) {
+        return speciesStats.get(stat);
+    }
+
+    public void setSpeciesStat(Stat stat, int value) {
+        speciesStats.put(stat, value);
+    }
+
+    public void addSpeciesStat(Stat stat, int addend) {
+        speciesStats.put(stat, speciesStats.get(stat) + addend);
+    }
+
     public int getDefense() {
-        return getStat(Stat.CON); // TODO add bonuses from species/class/gear
+        return getBaseStat(Stat.CON) + getSpeciesStat(Stat.CON);
     }
 
     public int getEffort(Effort effort) {
+        return efforts.get(effort) + speciesEfforts.get(effort);
+    }
+
+    public int getBaseEffort(Effort effort) {
         return efforts.get(effort);
     }
 
-    public void setEffort(Effort effort, int value) {
+    public void setBaseEffort(Effort effort, int value) {
         efforts.put(effort, value);
     }
 
-    public void addEffort(Effort effort, int addend) {
+    public void addBaseEffort(Effort effort, int addend) {
         efforts.put(effort, efforts.get(effort) + addend);
+    }
+
+    public int getSpeciesEffort(Effort effort) {
+        return speciesEfforts.get(effort);
+    }
+
+    public void setSpeciesEffort(Effort effort, int value) {
+        speciesEfforts.put(effort, value);
+    }
+
+    public void addSpeciesEffort(Effort effort, int addend) {
+        speciesEfforts.put(effort, speciesEfforts.get(effort) + addend);
+    }
+
+    public UUID getSpeciesId() {
+        return speciesId;
+    }
+
+    public void setSpeciesId(UUID speciesId) {
+        this.speciesId = speciesId;
     }
 
     public boolean isPrototype() {

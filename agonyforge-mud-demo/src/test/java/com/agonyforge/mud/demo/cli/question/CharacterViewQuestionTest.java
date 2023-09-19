@@ -9,9 +9,11 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
+import com.agonyforge.mud.demo.model.impl.MudSpecies;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
+import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
 import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
@@ -29,11 +32,13 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.CharacterViewQuestion.START_ROOM;
+import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -57,6 +62,9 @@ public class CharacterViewQuestionTest {
     private MudRoomRepository roomRepository;
 
     @Mock
+    private MudSpeciesRepository speciesRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -64,6 +72,9 @@ public class CharacterViewQuestionTest {
 
     @Mock
     private MudCharacter chInstance;
+
+    @Mock
+    private MudSpecies species;
 
     @Mock
     private MudRoom room;
@@ -80,11 +91,16 @@ public class CharacterViewQuestionTest {
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
 
+    private CharacterSheetFormatter characterSheetFormatter;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+        lenient().when(repositoryBundle.getSpeciesRepository()).thenReturn(speciesRepository);
+
+        characterSheetFormatter = Mockito.spy(new CharacterSheetFormatter(speciesRepository));
     }
 
     @Test
@@ -99,15 +115,18 @@ public class CharacterViewQuestionTest {
         when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(characterName);
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
+        when(ch.getSpeciesId()).thenReturn(DEFAULT_SPECIES_ID);
+        when(speciesRepository.getById(eq(DEFAULT_SPECIES_ID))).thenReturn(Optional.of(species));
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
 
         int i = 0;
-        assertEquals(19, result.getOutput().size());
+        assertEquals(20, result.getOutput().size());
         assertTrue(result.getOutput().get(i++).contains("CHARACTER SHEET"));
         assertTrue(result.getOutput().get(i++).contains(characterName));
         assertTrue(result.getOutput().get(i++).contains(Pronoun.SHE.getObject()));
+        assertTrue(result.getOutput().get(i++).contains("Species:"));
         i++; // blank line
         assertTrue(result.getOutput().get(i).contains("Stats"));
         assertTrue(result.getOutput().get(i++).contains("Efforts"));
@@ -136,7 +155,7 @@ public class CharacterViewQuestionTest {
     void testPromptNoCharacter() {
         when(characterRepository.getById(any(), anyBoolean())).thenReturn(Optional.empty());
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
 
         assertTrue(result.getOutput().get(0).contains("[red]"));
@@ -158,7 +177,7 @@ public class CharacterViewQuestionTest {
         when(roomRepository.getById(eq(START_ROOM))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("p"));
 
         verify(characterRepository).save(characterCaptor.capture());
@@ -180,7 +199,7 @@ public class CharacterViewQuestionTest {
     void testAnswerDelete() {
         when(applicationContext.getBean(eq("characterDeleteQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("d"));
 
         assertEquals(question, result.getNext());
@@ -192,7 +211,7 @@ public class CharacterViewQuestionTest {
     void testAnswerBack() {
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("b"));
 
         assertEquals(question, result.getNext());
@@ -202,7 +221,7 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testAnswerUnknown() {
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("x"));
         Output output = result.getFeedback().orElseThrow();
 

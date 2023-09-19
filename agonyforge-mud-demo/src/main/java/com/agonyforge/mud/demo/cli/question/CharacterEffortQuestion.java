@@ -60,7 +60,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addEffort(Effort.values()[i], 1);
+                    ch.addBaseEffort(Effort.values()[i], 1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red]Oops! Try a number with a plus or minus!");
                 }
@@ -71,7 +71,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addEffort(Effort.values()[i], -1);
+                    ch.addBaseEffort(Effort.values()[i], -1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red]Oops! Try a number with a plus or minus!");
                 }
@@ -80,7 +80,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
             if (choice.equals("S")) {
                 if (totalPoints == STARTING_EFFORTS) {
                     output.append("[green]Character efforts saved!");
-                    nextQuestion = "characterMenuQuestion";
+                    nextQuestion = "characterSpeciesQuestion";
                 } else {
                     output.append("[red]Please allocate exactly %d points for your efforts.", STARTING_EFFORTS);
                 }
@@ -98,7 +98,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
 
     private int computeEffortPoints(MudCharacter ch) {
         return Arrays.stream(Effort.values())
-            .map(ch::getEffort)
+            .map(ch::getBaseEffort)
             .reduce(0, Integer::sum);
     }
 
@@ -112,7 +112,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Effort.values())
-            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", effort.getName(), ch.getEffort(effort)))));
+            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", effort.getName(), ch.getBaseEffort(effort)))));
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }

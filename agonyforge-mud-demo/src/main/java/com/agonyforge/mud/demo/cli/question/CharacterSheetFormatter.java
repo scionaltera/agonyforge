@@ -4,16 +4,30 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudSpecies;
+import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
+
+@Component
 public final class CharacterSheetFormatter {
-    private CharacterSheetFormatter() {
-        // this method intentionally left blank
+    private final MudSpeciesRepository speciesRepository;
+
+    @Autowired
+    public CharacterSheetFormatter(MudSpeciesRepository speciesRepository) {
+        this.speciesRepository = speciesRepository;
     }
 
-    public static void format(MudCharacter ch, Output output) {
+    public void format(MudCharacter ch, Output output) {
+        // TODO this is only used to get the species name, should denormalize that too maybe?
+        MudSpecies species = speciesRepository.getById(ch.getSpeciesId() != null ? ch.getSpeciesId() : DEFAULT_SPECIES_ID).orElseThrow();
+
         output.append("[dcyan]CHARACTER SHEET");
         output.append("[default]Name: [cyan]%s", ch.getName());
         output.append("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
+        output.append("[default]Species: [cyan]%s", species.getName());
         output.append("");
         output.append("[cyan]Stats   [magenta]Efforts");
         for (int i = 0; i < Math.max(Stat.values().length, Effort.values().length); i++) {
