@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.MudProfessionRepository;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
@@ -15,18 +16,21 @@ public class RepositoryBundle {
     private final MudItemRepository itemRepository;
     private final MudRoomRepository roomRepository;
     private final MudSpeciesRepository speciesRepository;
+    private final MudProfessionRepository professionRepository;
 
     @Autowired
     public RepositoryBundle(MudPropertyRepository propertyRepository,
                             MudCharacterRepository characterRepository,
                             MudItemRepository itemRepository,
                             MudRoomRepository roomRepository,
-                            MudSpeciesRepository speciesRepository) {
+                            MudSpeciesRepository speciesRepository,
+                            MudProfessionRepository professionRepository) {
         this.propertyRepository = propertyRepository;
         this.characterRepository = characterRepository;
         this.itemRepository = itemRepository;
         this.roomRepository = roomRepository;
         this.speciesRepository = speciesRepository;
+        this.professionRepository = professionRepository;
     }
 
     public MudPropertyRepository getPropertyRepository() {
@@ -47,5 +51,9 @@ public class RepositoryBundle {
 
     public MudSpeciesRepository getSpeciesRepository() {
         return speciesRepository;
+    }
+
+    public MudProfessionRepository getProfessionRepository() {
+        return professionRepository;
     }
 }
