@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.MudProfessionRepository;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
@@ -30,6 +31,9 @@ public class RepositoryBundleTest {
     @Mock
     private MudSpeciesRepository speciesRepository;
 
+    @Mock
+    private MudProfessionRepository professionRepository;
+
     @Test
     void testGetters() {
         RepositoryBundle uut = new RepositoryBundle(
@@ -37,12 +41,14 @@ public class RepositoryBundleTest {
             characterRepository,
             itemRepository,
             roomRepository,
-            speciesRepository);
+            speciesRepository,
+            professionRepository);
 
         assertEquals(propertyRepository, uut.getPropertyRepository());
         assertEquals(characterRepository, uut.getCharacterRepository());
         assertEquals(itemRepository, uut.getItemRepository());
         assertEquals(roomRepository, uut.getRoomRepository());
         assertEquals(speciesRepository, uut.getSpeciesRepository());
+        assertEquals(professionRepository, uut.getProfessionRepository());
     }
 }

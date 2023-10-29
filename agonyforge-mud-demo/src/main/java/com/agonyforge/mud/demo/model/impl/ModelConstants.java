@@ -11,6 +11,7 @@ public class ModelConstants {
     public static final String DB_ZONE = "ZONE#";
     public static final String DB_ROOM = "ROOM#";
     public static final String DB_SPECIES = "SPECIES#";
+    public static final String DB_PROFESSION = "PROFESSION#";
 
     public static final String SORT_DATA = "DATA";
     public static final String SORT_SESSION = "SESSION#";
@@ -25,5 +26,6 @@ public class ModelConstants {
     public static final String TYPE_ZONE = "ZONE";
     public static final String TYPE_ROOM = "ROOM";
     public static final String TYPE_SPECIES = "SPECIES";
+    public static final String TYPE_PROFESSION = "PROFESSION";
     public static final String TYPE_COMMAND = "COMMAND";
 }

@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import java.util.UUID;
 
+import static com.agonyforge.mud.demo.config.ProfessionLoader.DEFAULT_PROFESSION_ID;
 import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PC;
 import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_ROOM;
@@ -37,13 +38,18 @@ public class MudCharacter implements Persistent {
     private final Map<Effort, Integer> efforts = new HashMap<>();
     private final Map<Stat, Integer> speciesStats = new HashMap<>();
     private final Map<Effort, Integer> speciesEfforts = new HashMap<>();
+    private final Map<Stat, Integer> professionStats = new HashMap<>();
+    private final Map<Effort, Integer> professionEfforts = new HashMap<>();
     private UUID speciesId;
+    private UUID professionId;
 
     public MudCharacter() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
         Arrays.stream(Stat.values()).forEach((stat) -> speciesStats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> speciesEfforts.put(effort, 0));
+        Arrays.stream(Stat.values()).forEach((stat) -> professionStats.put(stat, 0));
+        Arrays.stream(Effort.values()).forEach((effort) -> professionEfforts.put(effort, 0));
     }
 
     @Override
@@ -84,27 +90,39 @@ public class MudCharacter implements Persistent {
         Map<String, AttributeValue> efforts = new HashMap<>();
         Map<String, AttributeValue> speciesStats = new HashMap<>();
         Map<String, AttributeValue> speciesEfforts = new HashMap<>();
+        Map<String, AttributeValue> professionStats = new HashMap<>();
+        Map<String, AttributeValue> professionEfforts = new HashMap<>();
 
         Arrays.stream(Stat.values())
             .forEach(stat -> {
                 stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getBaseStat(stat))).build());
                 speciesStats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesStat(stat))).build());
+                professionStats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getProfessionStat(stat))).build());
             });
         Arrays.stream(Effort.values())
             .forEach(effort -> {
                 efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getBaseEffort(effort))).build());
                 speciesEfforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getSpeciesEffort(effort))).build());
+                professionEfforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getProfessionEffort(effort))).build());
             });
 
         data.put("stats", AttributeValue.builder().m(stats).build());
         data.put("efforts", AttributeValue.builder().m(efforts).build());
         data.put("species_stats", AttributeValue.builder().m(speciesStats).build());
         data.put("species_efforts", AttributeValue.builder().m(speciesEfforts).build());
+        data.put("profession_stats", AttributeValue.builder().m(professionStats).build());
+        data.put("profession_efforts", AttributeValue.builder().m(professionEfforts).build());
 
         if (getSpeciesId() != null) {
             data.put("species", AttributeValue.builder().s(speciesId.toString()).build());
         } else {
             data.put("species", AttributeValue.builder().s(DEFAULT_SPECIES_ID.toString()).build());
+        }
+
+        if (getProfessionId() != null) {
+            data.put("profession", AttributeValue.builder().s(professionId.toString()).build());
+        } else {
+            data.put("profession", AttributeValue.builder().s(DEFAULT_PROFESSION_ID.toString()).build());
         }
 
         if (!isPrototype()) {
@@ -141,19 +159,24 @@ public class MudCharacter implements Persistent {
         Map<String, AttributeValue> efforts = data.get("efforts").m();
         Map<String, AttributeValue> speciesStats = data.get("species_stats").m();
         Map<String, AttributeValue> speciesEfforts = data.get("species_efforts").m();
+        Map<String, AttributeValue> professionStats = data.get("profession_stats").m();
+        Map<String, AttributeValue> professionEfforts = data.get("profession_efforts").m();
 
         Arrays.stream(Stat.values())
             .forEach(stat -> {
                 setBaseStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
                 setSpeciesStat(stat, Integer.parseInt(speciesStats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
+                setProfessionStat(stat, Integer.parseInt(professionStats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n()));
             });
         Arrays.stream(Effort.values())
             .forEach(effort -> {
                 setBaseEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
                 setSpeciesEffort(effort, Integer.parseInt(speciesEfforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
+                setProfessionEffort(effort, Integer.parseInt(professionEfforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
             });
 
         setSpeciesId(UUID.fromString(data.get("species").s()));
+        setProfessionId(UUID.fromString(data.get("profession").s()));
     }
 
     public MudCharacter buildInstance() {
@@ -174,11 +197,13 @@ public class MudCharacter implements Persistent {
             .forEach(stat -> {
                 instance.setBaseStat(stat, getBaseStat(stat));
                 instance.setSpeciesStat(stat, getSpeciesStat(stat));
+                instance.setProfessionStat(stat, getProfessionStat(stat));
             });
         Arrays.stream(Effort.values())
             .forEach(effort -> {
                 instance.setBaseEffort(effort, getBaseEffort(effort));
                 instance.setSpeciesEffort(effort, getSpeciesEffort(effort));
+                instance.setProfessionEffort(effort, getProfessionEffort(effort));
             });
 
         return instance;
@@ -259,7 +284,7 @@ public class MudCharacter implements Persistent {
     }
 
     public int getStat(Stat stat) {
-        return stats.get(stat) + speciesStats.get(stat);
+        return stats.get(stat) + speciesStats.get(stat) + professionStats.get(stat);
     }
 
     public int getBaseStat(Stat stat) {
@@ -286,12 +311,24 @@ public class MudCharacter implements Persistent {
         speciesStats.put(stat, speciesStats.get(stat) + addend);
     }
 
+    public int getProfessionStat(Stat stat) {
+        return professionStats.get(stat);
+    }
+
+    public void setProfessionStat(Stat stat, int value) {
+        professionStats.put(stat, value);
+    }
+
+    public void addProfessionStat(Stat stat, int addend) {
+        professionStats.put(stat, professionStats.get(stat) + addend);
+    }
+
     public int getDefense() {
         return getBaseStat(Stat.CON) + getSpeciesStat(Stat.CON);
     }
 
     public int getEffort(Effort effort) {
-        return efforts.get(effort) + speciesEfforts.get(effort);
+        return efforts.get(effort) + speciesEfforts.get(effort) + professionEfforts.get(effort);
     }
 
     public int getBaseEffort(Effort effort) {
@@ -318,12 +355,32 @@ public class MudCharacter implements Persistent {
         speciesEfforts.put(effort, speciesEfforts.get(effort) + addend);
     }
 
+    public int getProfessionEffort(Effort effort) {
+        return professionEfforts.get(effort);
+    }
+
+    public void setProfessionEffort(Effort effort, int value) {
+        professionEfforts.put(effort, value);
+    }
+
+    public void addProfessionEffort(Effort effort, int addend) {
+        professionEfforts.put(effort, professionEfforts.get(effort) + addend);
+    }
+
     public UUID getSpeciesId() {
         return speciesId;
     }
 
     public void setSpeciesId(UUID speciesId) {
         this.speciesId = speciesId;
+    }
+
+    public UUID getProfessionId() {
+        return professionId;
+    }
+
+    public void setProfessionId(UUID professionId) {
+        this.professionId = professionId;
     }
 
     public boolean isPrototype() {

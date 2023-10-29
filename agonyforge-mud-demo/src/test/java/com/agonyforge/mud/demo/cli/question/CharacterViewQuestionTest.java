@@ -7,11 +7,13 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudProfession;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.MudSpecies;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.MudProfessionRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -32,13 +34,13 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.CharacterViewQuestion.START_ROOM;
+import static com.agonyforge.mud.demo.config.ProfessionLoader.DEFAULT_PROFESSION_ID;
 import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -65,6 +67,9 @@ public class CharacterViewQuestionTest {
     private MudSpeciesRepository speciesRepository;
 
     @Mock
+    private MudProfessionRepository professionRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -75,6 +80,9 @@ public class CharacterViewQuestionTest {
 
     @Mock
     private MudSpecies species;
+
+    @Mock
+    private MudProfession profession;
 
     @Mock
     private MudRoom room;
@@ -99,8 +107,9 @@ public class CharacterViewQuestionTest {
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(repositoryBundle.getSpeciesRepository()).thenReturn(speciesRepository);
+        lenient().when(repositoryBundle.getProfessionRepository()).thenReturn(professionRepository);
 
-        characterSheetFormatter = Mockito.spy(new CharacterSheetFormatter(speciesRepository));
+        characterSheetFormatter = Mockito.spy(new CharacterSheetFormatter(speciesRepository, professionRepository));
     }
 
     @Test
@@ -117,16 +126,18 @@ public class CharacterViewQuestionTest {
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(ch.getSpeciesId()).thenReturn(DEFAULT_SPECIES_ID);
         when(speciesRepository.getById(eq(DEFAULT_SPECIES_ID))).thenReturn(Optional.of(species));
+        when(professionRepository.getById(eq(DEFAULT_PROFESSION_ID))).thenReturn(Optional.of(profession));
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
 
         int i = 0;
-        assertEquals(20, result.getOutput().size());
+        assertEquals(21, result.getOutput().size());
         assertTrue(result.getOutput().get(i++).contains("CHARACTER SHEET"));
         assertTrue(result.getOutput().get(i++).contains(characterName));
         assertTrue(result.getOutput().get(i++).contains(Pronoun.SHE.getObject()));
         assertTrue(result.getOutput().get(i++).contains("Species:"));
+        assertTrue(result.getOutput().get(i++).contains("Profession:"));
         i++; // blank line
         assertTrue(result.getOutput().get(i).contains("Stats"));
         assertTrue(result.getOutput().get(i++).contains("Efforts"));
