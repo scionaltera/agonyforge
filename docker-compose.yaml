@@ -45,7 +45,7 @@ services:
 # in AWS, so I'm trying to keep things like this as close as possible to what you'd
 # see there.
   rabbitmq:
-    image: rabbitmq:3.10-management
+    image: rabbitmq:3.11.20-management
     ports:
       - "127.0.0.1:5672:5672"
       - "127.0.0.1:15672:15672"
