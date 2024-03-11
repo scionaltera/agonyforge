@@ -32,7 +32,7 @@ dependencies {
     implementation 'com.hazelcast:hazelcast:5.3.6'
 
     implementation 'org.webjars:webjars-locator:0.51'
-    implementation 'org.webjars:bootstrap:5.3.2'
+    implementation 'org.webjars:bootstrap:5.3.3'
     implementation 'org.webjars:jquery:3.7.1'
     implementation 'org.webjars.npm:webstomp-client:1.2.6'
     implementation 'org.webjars.npm:sockjs-client:1.6.1'
