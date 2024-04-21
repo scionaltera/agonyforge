@@ -13,16 +13,16 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration {
-    private final String clientId;
-    private final String logoutUrl;
+//    private final String clientId;
+//    private final String logoutUrl;
 
-    public WebSecurityConfiguration(
-        @Value("${spring.security.oauth2.client.registration.cognito.clientId}") String clientId,
-        @Value("${spring.security.oauth2.client.registration.cognito.logoutUrl}") String logoutUrl) {
+    public WebSecurityConfiguration() {}
+//        @Value("${spring.security.oauth2.client.registration.cognito.clientId}") String clientId,
+//        @Value("${spring.security.oauth2.client.registration.cognito.logoutUrl}") String logoutUrl) {
 
-        this.clientId = clientId;
-        this.logoutUrl = logoutUrl;
-    }
+//        this.clientId = clientId;
+//        this.logoutUrl = logoutUrl;
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,7 +43,7 @@ public class WebSecurityConfiguration {
                 .defaultSuccessUrl("/play"))
             .logout((logout) -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId))
+//                .logoutSuccessHandler(new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId))
             )
             .sessionManagement((sessionMgmt) -> sessionMgmt
                 .invalidSessionUrl("/")

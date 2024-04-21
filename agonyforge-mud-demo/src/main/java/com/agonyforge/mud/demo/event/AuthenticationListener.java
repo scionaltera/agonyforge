@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
@@ -33,14 +33,14 @@ public class AuthenticationListener {
         LOGGER.debug("Authentication success: {}", event.getAuthentication().getName());
 
         Authentication authentication = event.getAuthentication();
-        DefaultOidcUser principal = (DefaultOidcUser) authentication.getPrincipal();
+        DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
         WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
         User user = new User();
         UserSession session = new UserSession();
 
         user.setPrincipalName(principal.getName());
-        user.setGivenName(principal.getGivenName());
-        user.setEmailAddress(principal.getEmail());
+        user.setGivenName(principal.getAttribute("name"));
+        user.setEmailAddress(principal.getAttribute("email"));
 
         session.setPrincipalName(principal.getName());
         session.setRemoteIpAddress(details.getRemoteAddress());
