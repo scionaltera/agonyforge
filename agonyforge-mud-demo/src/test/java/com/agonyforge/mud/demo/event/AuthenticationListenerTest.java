@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,8 +57,8 @@ public class AuthenticationListenerTest {
         when(authentication.getPrincipal()).thenReturn(principal);
         when(authentication.getDetails()).thenReturn(details);
         when(principal.getName()).thenReturn(principalName);
-        when(principal.getGivenName()).thenReturn(givenName);
-        when(principal.getEmail()).thenReturn(email);
+        when(principal.getAttribute(eq("name"))).thenReturn(givenName);
+        when(principal.getAttribute(eq("email"))).thenReturn(email);
         when(details.getRemoteAddress()).thenReturn(remoteIpAddress);
 
         AuthenticationListener uut = new AuthenticationListener(userRepository, userSessionRepository);

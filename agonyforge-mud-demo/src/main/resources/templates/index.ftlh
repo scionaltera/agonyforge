@@ -10,7 +10,7 @@
     </section>
     <section class="row">
         <section class="col-12">
-            <@secure "OIDC_USER">
+            <@secure "OAUTH2_USER">
             <p>You are logged in.
             </p>
             <form action="<@spring.url '/play' />" method="get">
@@ -21,9 +21,9 @@
                 <button type="submit" class="btn btn-outline-danger">Log Out</button>
             </form>
             </@secure>
-            <@anonymous "OIDC_USER">
+            <@anonymous "OAUTH2_USER">
             <p>You are not logged in.</p>
-            <form action="<@spring.url '/oauth2/authorization/cognito' />" method="get">
+            <form action="<@spring.url '/oauth2/authorization/github' />" method="get">
                 <button type="submit" class="btn btn-outline-primary">Play</button>
             </form>
             </@anonymous>

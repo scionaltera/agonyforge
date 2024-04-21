@@ -6,7 +6,7 @@
 <#assign styles = [ '/css/play.css', '/css/color.css' ]>
 <#include "inc/header.inc.ftlh">
 <body>
-<@secure "OIDC_USER">
+<@secure "OAUTH2_USER">
     <section id="output-box">
         <ul id="output-list"></ul>
     </section>
@@ -17,14 +17,14 @@
         </form>
     </section>
 </@secure>
-<@anonymous "OIDC_USER">
+<@anonymous "OAUTH2_USER">
     <main class="container-fluid">
-        <form action="<@spring.url '/oauth2/authorization/cognito' />" method="get">
+        <form action="<@spring.url '/oauth2/authorization/github' />" method="get">
             <button type="submit" class="btn btn-outline-primary">Play</button>
         </form>
     </main>
 </@anonymous>
-<@secure "OIDC_USER">
+<@secure "OAUTH2_USER">
     <#assign scripts = [
     '/webjars/sockjs-client/dist/sockjs.min.js',
     '/webjars/webstomp-client/dist/webstomp.min.js',
