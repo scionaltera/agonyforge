@@ -18,23 +18,21 @@ let ownMessage = false;
 const clientWsErrorCodes = [1008, 2000]; // we should ask user to refresh
 
 $(document).ready(function() {
-    $("form").submit(function(event) {
+    $("form").on("submit", function(event) {
         sendInput();
-        event.preventDefault();
         return false;
     });
 
     connect();
 });
 
-$(document).keydown(function(event) {
+$(document).on("keydown", function(event) {
     if (event.which === 9) { // don't tab away from input
-        event.preventDefault();
         return false;
     }
 });
 
-$(document).keyup(function(event) {
+$(document).on("keyup", function(event) {
     const inputBox = $("form input");
 
     if (event.which === 38) { // up arrow - command history prev
@@ -47,6 +45,8 @@ $(document).keyup(function(event) {
         if (commandHistoryIndex >= 0) {
             inputBox.val(commandHistory[commandHistoryIndex]);
         }
+
+        return false;
     } else if (event.which === 40) { // down arrow - command history next
         commandHistoryIndex--;
 
@@ -59,6 +59,8 @@ $(document).keyup(function(event) {
         } else {
             inputBox.val("");
         }
+
+        return false;
     }
 });
 
