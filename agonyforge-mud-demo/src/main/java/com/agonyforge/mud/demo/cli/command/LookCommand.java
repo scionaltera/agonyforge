@@ -11,6 +11,7 @@ import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -45,8 +46,8 @@ public class LookCommand extends AbstractCommand {
     }
 
     @Autowired
-    public LookCommand(RepositoryBundle repositoryBundle, CommService commService) {
-        super(repositoryBundle, commService);
+    public LookCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+        super(repositoryBundle, commService, applicationContext);
     }
 
     @Override

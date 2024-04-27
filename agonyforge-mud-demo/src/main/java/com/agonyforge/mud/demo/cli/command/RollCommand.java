@@ -12,6 +12,7 @@ import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -26,8 +27,11 @@ public class RollCommand extends AbstractCommand {
     private final DiceService diceService;
 
     @Autowired
-    public RollCommand(RepositoryBundle repositoryBundle, DiceService diceService, CommService commService) {
-        super(repositoryBundle, commService);
+    public RollCommand(RepositoryBundle repositoryBundle,
+                       CommService commService,
+                       ApplicationContext applicationContext,
+                       DiceService diceService) {
+        super(repositoryBundle, commService, applicationContext);
 
         this.diceService = diceService;
     }

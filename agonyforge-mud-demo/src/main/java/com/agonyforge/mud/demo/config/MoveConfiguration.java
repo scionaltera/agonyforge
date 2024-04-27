@@ -5,6 +5,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Direction;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,12 +13,15 @@ import org.springframework.context.annotation.Configuration;
 public class MoveConfiguration {
     private final RepositoryBundle repositoryBundle;
     private final CommService commService;
+    private final ApplicationContext applicationContext;
 
     @Autowired
     public MoveConfiguration(RepositoryBundle repositoryBundle,
-                             CommService commService) {
+                             CommService commService,
+                             ApplicationContext applicationContext) {
         this.repositoryBundle = repositoryBundle;
         this.commService = commService;
+        this.applicationContext = applicationContext;
     }
 
     @Bean
@@ -25,6 +29,7 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            applicationContext,
             Direction.NORTH);
     }
 
@@ -33,6 +38,7 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            applicationContext,
             Direction.EAST);
     }
 
@@ -41,6 +47,7 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            applicationContext,
             Direction.SOUTH);
     }
 
@@ -49,6 +56,7 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            applicationContext,
             Direction.WEST);
     }
 
@@ -57,6 +65,7 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            applicationContext,
             Direction.UP);
     }
 
@@ -65,6 +74,7 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            applicationContext,
             Direction.DOWN);
     }
 }

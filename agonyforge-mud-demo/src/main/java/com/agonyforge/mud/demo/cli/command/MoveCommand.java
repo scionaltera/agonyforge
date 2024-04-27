@@ -11,6 +11,7 @@ import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,9 @@ public class MoveCommand extends AbstractCommand {
 
     public MoveCommand(RepositoryBundle repositoryBundle,
                        CommService commService,
+                       ApplicationContext applicationContext,
                        Direction direction) {
-        super(repositoryBundle, commService);
+        super(repositoryBundle, commService, applicationContext);
 
         this.direction = direction;
     }

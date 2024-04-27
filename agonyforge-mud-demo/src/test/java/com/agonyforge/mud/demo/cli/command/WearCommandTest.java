@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WearCommandTest {
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Mock
     private RepositoryBundle repositoryBundle;
 
@@ -83,7 +87,7 @@ public class WearCommandTest {
         ));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -105,7 +109,7 @@ public class WearCommandTest {
         ));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -129,7 +133,7 @@ public class WearCommandTest {
         when(target.getNameList()).thenReturn(List.of("hat"));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -156,7 +160,7 @@ public class WearCommandTest {
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -183,7 +187,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -211,7 +215,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -248,7 +252,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -285,7 +289,7 @@ public class WearCommandTest {
         when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
 
         Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService);
+        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,

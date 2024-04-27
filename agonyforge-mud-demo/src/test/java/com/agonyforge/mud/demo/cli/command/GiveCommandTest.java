@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,9 @@ import static org.mockito.Mockito.when;
 public class GiveCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -88,7 +92,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -114,7 +118,7 @@ public class GiveCommandTest {
         ));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -143,7 +147,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -174,7 +178,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -209,7 +213,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -247,7 +251,7 @@ public class GiveCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService);
+        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.when;
 public class AbstractCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -81,7 +85,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(repositoryBundle, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -108,7 +112,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(repositoryBundle, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -135,7 +139,7 @@ public class AbstractCommandTest {
         ));
 
         Output output = new Output();
-        Command uut = new AbstractCommand(repositoryBundle, commService) {
+        Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 getCurrentCharacter(webSocketContext, output);
@@ -160,7 +164,7 @@ public class AbstractCommandTest {
         when(target.getName()).thenReturn("Morgan");
         when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
 
-        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService) {
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 return question;
@@ -180,7 +184,7 @@ public class AbstractCommandTest {
         when(target.isPrototype()).thenReturn(false);
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, proto, target));
 
-        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService) {
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
             public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
                 return question;

@@ -54,6 +54,8 @@ public class CommandLoader {
             refs.add(new CommandReference("15", "ROLL", "rollCommand"));
             refs.add(new CommandReference("15", "TIME", "timeCommand"));
 
+            refs.add(new CommandReference("20", "REDIT", "roomEditorCommand"));
+
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs);
         }

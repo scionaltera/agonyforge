@@ -1,5 +1,6 @@
 package com.agonyforge.mud.demo.cli.question;
 
+import com.agonyforge.mud.core.cli.AbstractQuestion;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
-public abstract class BaseQuestion extends com.agonyforge.mud.core.cli.AbstractQuestion {
+public abstract class BaseQuestion extends AbstractQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseQuestion.class);
 
     private final ApplicationContext applicationContext;

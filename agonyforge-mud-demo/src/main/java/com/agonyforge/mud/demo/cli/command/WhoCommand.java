@@ -8,6 +8,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,8 +18,8 @@ import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 @Component
 public class WhoCommand extends AbstractCommand {
     @Autowired
-    public WhoCommand(RepositoryBundle repositoryBundle, CommService commService) {
-        super(repositoryBundle, commService);
+    public WhoCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+        super(repositoryBundle, commService, applicationContext);
     }
 
     @Override

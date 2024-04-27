@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.when;
 public class GetCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -83,7 +87,7 @@ public class GetCommandTest {
         ));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(repositoryBundle, commService);
+        GetCommand uut = new GetCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -112,7 +116,7 @@ public class GetCommandTest {
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(repositoryBundle, commService);
+        GetCommand uut = new GetCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -145,7 +149,7 @@ public class GetCommandTest {
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
-        GetCommand uut = new GetCommand(repositoryBundle, commService);
+        GetCommand uut = new GetCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,

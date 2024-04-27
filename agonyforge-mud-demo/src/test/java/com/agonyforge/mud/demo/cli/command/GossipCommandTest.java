@@ -16,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,9 @@ import static org.mockito.Mockito.when;
 public class GossipCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @Mock
     private CommService commService;
@@ -89,7 +93,7 @@ public class GossipCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        GossipCommand uut = new GossipCommand(repositoryBundle, commService);
+        GossipCommand uut = new GossipCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -112,7 +116,7 @@ public class GossipCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        GossipCommand uut = new GossipCommand(repositoryBundle, commService);
+        GossipCommand uut = new GossipCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

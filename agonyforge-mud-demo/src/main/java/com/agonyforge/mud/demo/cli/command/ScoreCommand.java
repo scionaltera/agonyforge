@@ -9,6 +9,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class ScoreCommand extends AbstractCommand {
     private final CharacterSheetFormatter characterSheetFormatter;
 
     @Autowired
-    public ScoreCommand(RepositoryBundle repositoryBundle, CommService commService, CharacterSheetFormatter characterSheetFormatter) {
-        super(repositoryBundle, commService);
+    public ScoreCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext, CharacterSheetFormatter characterSheetFormatter) {
+        super(repositoryBundle, commService, applicationContext);
         this.characterSheetFormatter = characterSheetFormatter;
     }
 

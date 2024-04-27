@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,9 @@ import static org.mockito.Mockito.when;
 public class RemoveCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -80,7 +84,7 @@ public class RemoveCommandTest {
         ));
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -102,7 +106,7 @@ public class RemoveCommandTest {
         ));
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -127,7 +131,7 @@ public class RemoveCommandTest {
         when(target.getShortDescription()).thenReturn("a test hat");
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -154,7 +158,7 @@ public class RemoveCommandTest {
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService);
+        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
