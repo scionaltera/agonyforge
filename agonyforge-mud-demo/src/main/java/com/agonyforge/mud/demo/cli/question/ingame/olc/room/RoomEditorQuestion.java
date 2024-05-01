@@ -25,6 +25,7 @@ import java.util.Locale;
 public class RoomEditorQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomEditorQuestion.class);
     private static final String REDIT_STATE = "REDIT.STATE";
+    private static final String REDIT_MODEL = "REDIT.MODEL";
 
     private final MenuPane menuPane = new MenuPane();
 
@@ -40,7 +41,7 @@ public class RoomEditorQuestion extends BaseQuestion {
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
         MudCharacter ch = getCharacter(wsContext, output, false).orElseThrow();
-        MudRoom room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+        MudRoom room = getRoomModel(wsContext, ch);
 
         if (!wsContext.getAttributes().containsKey(REDIT_STATE)) {
             populateMenuItems(ch, room);
@@ -59,33 +60,39 @@ public class RoomEditorQuestion extends BaseQuestion {
         String nextQuestion = "roomEditorQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(wsContext, output, false).orElseThrow();
-        MudRoom room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+        MudRoom room = getRoomModel(wsContext, ch);
 
         if (!wsContext.getAttributes().containsKey(REDIT_STATE)) {
             String choice = input.getInput().toUpperCase(Locale.ROOT);
 
             switch (choice) {
                 case "T" -> {
-                    output.append("[green]Editing title: ");
                     wsContext.getAttributes().put(REDIT_STATE, "ROOM.TITLE");
                 }
                 case "D" -> {
-                    output.append("[green]Editing description: ");
                     wsContext.getAttributes().put(REDIT_STATE, "ROOM.DESCRIPTION");
                 }
-                case "E" -> {
-                    output.append("[green]Exiting...");
-                    nextQuestion = "commandQuestion";
+                case "S" -> {
+                    getRepositoryBundle().getRoomRepository().save(room);
+                    output.append("[green]Saved changes...");
+
                     wsContext.getAttributes().remove(REDIT_STATE);
+                    wsContext.getAttributes().remove(REDIT_MODEL);
+                    nextQuestion = "commandQuestion";
+                }
+                case "Q" -> {
+                    output.append("[red]Abandoned changes...");
+
+                    wsContext.getAttributes().remove(REDIT_STATE);
+                    wsContext.getAttributes().remove(REDIT_MODEL);
+                    nextQuestion = "commandQuestion";
                 }
             }
         } else if ("ROOM.TITLE".equals(wsContext.getAttributes().get(REDIT_STATE))) {
             room.setName(input.getInput());
-            getRepositoryBundle().getRoomRepository().save(room);
             wsContext.getAttributes().remove(REDIT_STATE);
         } else if ("ROOM.DESCRIPTION".equals(wsContext.getAttributes().get(REDIT_STATE))) {
             room.setDescription(input.getInput());
-            getRepositoryBundle().getRoomRepository().save(room);
             wsContext.getAttributes().remove(REDIT_STATE);
         }
 
@@ -94,12 +101,22 @@ public class RoomEditorQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
+    private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
+        if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
+            MudRoom room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+            wsContext.getAttributes().put(REDIT_MODEL, room);
+        }
+
+        return (MudRoom)wsContext.getAttributes().get(REDIT_MODEL);
+    }
+
     private void populateMenuItems(MudCharacter ch, MudRoom room) {
         menuPane.getItems().clear();
 
         menuPane.getItems().add(new MenuItem("T", "Title: " + room.getName()));
         menuPane.getItems().add(new MenuItem("D", "Description: " + room.getDescription()));
 
-        menuPane.getItems().add(new MenuItem("E", "Exit"));
+        menuPane.getItems().add(new MenuItem("S", "Save"));
+        menuPane.getItems().add(new MenuItem("Q", "Quit without saving"));
     }
 }
