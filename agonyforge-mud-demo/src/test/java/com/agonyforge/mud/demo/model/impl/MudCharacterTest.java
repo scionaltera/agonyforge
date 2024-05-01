@@ -24,6 +24,8 @@ public class MudCharacterTest {
         proto.setUser("principal");
         proto.setId(UUID.randomUUID());
         proto.setName("Scion");
+        proto.setSpeciesId(UUID.randomUUID());
+        proto.setProfessionId(UUID.randomUUID());
 
         MudCharacter instance = proto.buildInstance();
 
@@ -37,6 +39,8 @@ public class MudCharacterTest {
         assertEquals(100L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
         assertEquals(proto.getUser(), instance.getUser());
+        assertEquals(proto.getSpeciesId(), instance.getSpeciesId());
+        assertEquals(proto.getProfessionId(), instance.getProfessionId());
         assertThrows(IllegalStateException.class, instance::buildInstance);
     }
 
