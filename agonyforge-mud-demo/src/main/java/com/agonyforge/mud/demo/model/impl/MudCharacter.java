@@ -192,6 +192,8 @@ public class MudCharacter implements Persistent {
         instance.setName(getName());
         instance.setPronoun(getPronoun());
         instance.setWearSlots(getWearSlots());
+        instance.setSpeciesId(getSpeciesId());
+        instance.setProfessionId(getProfessionId());
 
         Arrays.stream(Stat.values())
             .forEach(stat -> {
