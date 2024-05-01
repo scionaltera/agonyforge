@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.question;
+package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
@@ -11,11 +11,11 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-
+import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudSpecies;
+import com.agonyforge.mud.demo.model.impl.MudProfession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +28,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_SPECIES;
+import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PROFESSION;
 
 @Component
-public class CharacterSpeciesQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterSpeciesQuestion.class);
+public class CharacterProfessionQuestion extends BaseQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterProfessionQuestion.class);
 
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
-    public CharacterSpeciesQuestion(ApplicationContext applicationContext, RepositoryBundle repositoryBundle) {
+    public CharacterProfessionQuestion(ApplicationContext applicationContext, RepositoryBundle repositoryBundle) {
         super(applicationContext, repositoryBundle);
 
-        menuPane.setTitle(new MenuTitle("Choose Your Species"));
+        menuPane.setTitle(new MenuTitle("Choose Your Profession"));
         menuPane.setPrompt(new MenuPrompt());
     }
 
@@ -55,7 +55,7 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
     public Response answer(WebSocketContext webSocketContext, Input input) {
         populateMenuItems();
 
-        String nextQuestion = "characterSpeciesQuestion";
+        String nextQuestion = "characterProfessionQuestion";
         Output output = new Output();
         String choice = input.getInput().toUpperCase();
         Optional<MenuItem> itemOptional = menuPane.getItems()
@@ -72,17 +72,17 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
 
             if (chOptional.isPresent()) {
                 MudCharacter ch = chOptional.get();
-                MudSpecies species = (MudSpecies)item.getItem();
+                MudProfession profession = (MudProfession)item.getItem();
 
-                ch.setSpeciesId(species.getId());
+                ch.setProfessionId(profession.getId());
 
-                Arrays.stream(Stat.values()).forEach(stat -> ch.setSpeciesStat(stat, species.getStat(stat)));
-                Arrays.stream(Effort.values()).forEach(effort -> ch.setSpeciesEffort(effort, species.getEffort(effort)));
+                Arrays.stream(Stat.values()).forEach(stat -> ch.setProfessionStat(stat, profession.getStat(stat)));
+                Arrays.stream(Effort.values()).forEach(effort -> ch.setProfessionEffort(effort, profession.getEffort(effort)));
 
                 getRepositoryBundle().getCharacterRepository().save(ch);
             }
 
-            nextQuestion = "characterProfessionQuestion";
+            nextQuestion = "characterMenuQuestion";
         }
 
         Question next = getQuestion(nextQuestion);
@@ -93,32 +93,32 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
     private void populateMenuItems() {
         menuPane.getItems().clear();
 
-        getRepositoryBundle().getSpeciesRepository().getByType(TYPE_SPECIES)
+        getRepositoryBundle().getProfessionRepository().getByType(TYPE_PROFESSION)
             .stream()
-            .sorted(Comparator.comparing(MudSpecies::getName, String::compareToIgnoreCase))
-            .forEach(species -> {
+            .sorted(Comparator.comparing(MudProfession::getName, String::compareToIgnoreCase))
+            .forEach(profession -> {
                 List<String> buffs = new ArrayList<>();
 
                 Arrays.stream(Stat.values())
-                        .filter(stat -> species.getStat(stat) != 0)
-                        .forEach(stat -> buffs.add(String.format("%s %s%d",
-                            stat.getAbbreviation(),
-                            species.getStat(stat) >= 0 ? "+" : "-",
-                            species.getStat(stat))));
+                    .filter(stat -> profession.getStat(stat) != 0)
+                    .forEach(stat -> buffs.add(String.format("%s %s%d",
+                        stat.getAbbreviation(),
+                        profession.getStat(stat) >= 0 ? "+" : "-",
+                        profession.getStat(stat))));
 
                 Arrays.stream(Effort.values())
-                    .filter(effort -> species.getEffort(effort) != 0)
+                    .filter(effort -> profession.getEffort(effort) != 0)
                     .forEach(effort -> buffs.add(String.format("%s %s%d",
                         effort.getName(),
-                        species.getEffort(effort) >= 0 ? "+" : "-",
-                        species.getEffort(effort))));
+                        profession.getEffort(effort) >= 0 ? "+" : "-",
+                        profession.getEffort(effort))));
 
                 menuPane.getItems().add(new MenuItem(
-                    Integer.toString(menuPane.getItems().size() + 1),
-                    // the formatting below is fragile and will need to be adjusted when you add
-                    // any species with a name longer than "Human"
-                    String.format("%6s: %s", species.getName(), String.join(", ", buffs)),
-                    species
+                   Integer.toString(menuPane.getItems().size() + 1),
+                   // the formatting below is fragile and will need to be adjusted when you add
+                   // any profession with a name longer than "Human"
+                   String.format("%6s: %s", profession.getName(), String.join(", ", buffs)),
+                   profession
                 ));
             });
     }

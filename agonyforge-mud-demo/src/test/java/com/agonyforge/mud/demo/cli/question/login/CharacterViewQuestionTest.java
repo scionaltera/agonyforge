@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.question;
+package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.demo.cli.question.CharacterViewQuestion.START_ROOM;
+import static com.agonyforge.mud.demo.cli.question.login.CharacterViewQuestion.START_ROOM;
 import static com.agonyforge.mud.demo.config.ProfessionLoader.DEFAULT_PROFESSION_ID;
 import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
