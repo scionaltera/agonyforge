@@ -45,7 +45,7 @@ public class RoomEditorQuestion extends BaseQuestion {
 
         if (!wsContext.getAttributes().containsKey(REDIT_STATE)) {
             populateMenuItems(ch, room);
-            return menuPane.render(Color.YELLOW, Color.GREEN);
+            return menuPane.render(Color.GREEN, Color.CYAN);
         } else if ("ROOM.TITLE".equals(wsContext.getAttributes().get(REDIT_STATE))) {
             output.append("[green]New title: ");
         } else if ("ROOM.DESCRIPTION".equals(wsContext.getAttributes().get(REDIT_STATE))) {
