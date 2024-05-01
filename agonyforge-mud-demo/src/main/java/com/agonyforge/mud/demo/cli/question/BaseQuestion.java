@@ -37,8 +37,12 @@ public abstract class BaseQuestion extends AbstractQuestion {
     }
 
     protected Optional<MudCharacter> getCharacter(WebSocketContext wsContext, Output output) {
+        return getCharacter(wsContext, output, true);
+    }
+
+    protected Optional<MudCharacter> getCharacter(WebSocketContext wsContext, Output output, boolean prototype) {
         UUID chId = (UUID) wsContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = getRepositoryBundle().getCharacterRepository().getById(chId, true);
+        Optional<MudCharacter> chOptional = getRepositoryBundle().getCharacterRepository().getById(chId, prototype);
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
