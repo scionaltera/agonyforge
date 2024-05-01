@@ -15,7 +15,7 @@ import java.util.List;
 
 @Component
 public class RoomEditorCommand extends AbstractCommand {
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     @Autowired
     public RoomEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
@@ -28,26 +28,7 @@ public class RoomEditorCommand extends AbstractCommand {
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
         // TODO find room to edit
-
->>>>>>> Stashed changes
-=======
-        // TODO find room to edit
-
->>>>>>> Stashed changes
-=======
-        // TODO find room to edit
-
->>>>>>> Stashed changes
-=======
-        // TODO find room to edit
-
->>>>>>> Stashed changes
         return applicationContext.getBean("roomEditorQuestion", Question.class);
     }
 }
