@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Component
 public class RoomEditorQuestion extends BaseQuestion {
@@ -115,6 +117,15 @@ public class RoomEditorQuestion extends BaseQuestion {
 
         menuPane.getItems().add(new MenuItem("T", "Title: " + room.getName()));
         menuPane.getItems().add(new MenuItem("D", "Description: " + room.getDescription()));
+
+        // TODO move exits into a sub-menu in a different Question?
+        List<MenuItem> exits = room.getExits().stream()
+                .map(direction -> new MenuItem(
+                    direction.toUpperCase(Locale.ROOT).substring(0, 1),
+                    String.format("%s to %d", direction, room.getExit(direction).getDestinationId()))
+                )
+                .toList();
+        menuPane.getItems().addAll(exits);
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
         menuPane.getItems().add(new MenuItem("Q", "Quit without saving"));
