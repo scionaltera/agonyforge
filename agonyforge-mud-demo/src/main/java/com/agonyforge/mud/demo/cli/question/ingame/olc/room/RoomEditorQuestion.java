@@ -23,7 +23,15 @@ import java.util.Locale;
 
 @Component
 public class RoomEditorQuestion extends BaseQuestion {
+    // REDIT.STATE holds the current state of the editor:
+    // empty -> user needs to select a menu item
+    // ROOM.TITLE -> user needs to type a room title
+    // ROOM.DESCRIPTION -> user needs to type a room description
     static final String REDIT_STATE = "REDIT.STATE";
+
+    // REDIT.MODEL holds a copy of the room object that we are editing.
+    // When we exit the editor this object will either be saved over the
+    // one in the database or abandoned.
     static final String REDIT_MODEL = "REDIT.MODEL";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomEditorQuestion.class);

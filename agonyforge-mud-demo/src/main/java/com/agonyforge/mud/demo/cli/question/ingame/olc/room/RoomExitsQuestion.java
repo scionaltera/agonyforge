@@ -30,6 +30,10 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQue
 @Component
 public class RoomExitsQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomExitsQuestion.class);
+
+    // REDIT.EXIT holds the direction of the exit we are editing. The user picks a direction
+    // from the menu, and is asked for a room number to assign that direction to. When they
+    // type in the number we need both that and the direction in order to link up the exit.
     private static final String REDIT_EXIT = "REDIT.EXIT";
 
     private final MenuPane menuPane = new MenuPane();
@@ -49,7 +53,7 @@ public class RoomExitsQuestion extends BaseQuestion {
         MudRoom room = getRoomModel(wsContext, ch);
 
         if (wsContext.getAttributes().containsKey(REDIT_STATE) && wsContext.getAttributes().get(REDIT_STATE).toString().startsWith("ROOM.EXITS")) {
-            output.append("Destination for exit %s: ", wsContext.getAttributes().get(REDIT_EXIT));
+            output.append("Destination room ID for exit %s, or 0 to delete: ", wsContext.getAttributes().get(REDIT_EXIT));
             return output;
         } else {
             populateMenuItems(room);
@@ -80,7 +84,7 @@ public class RoomExitsQuestion extends BaseQuestion {
                 wsContext.getAttributes().remove(REDIT_STATE);
                 wsContext.getAttributes().remove(REDIT_EXIT);
             } catch (NumberFormatException e) {
-                output.append("[red]Please enter a room number, or 0.");
+                output.append("[red]Please enter a room number, or 0 to delete the exit.");
             }
         } else {
             String choice = input.getInput().toUpperCase(Locale.ROOT).substring(0, 1);
@@ -99,6 +103,8 @@ public class RoomExitsQuestion extends BaseQuestion {
 
                     wsContext.getAttributes().put(REDIT_STATE, "ROOM.EXITS");
                     wsContext.getAttributes().put(REDIT_EXIT, direction);
+                } else {
+                    output.append("[red]Please choose a menu item.");
                 }
             }
         }
