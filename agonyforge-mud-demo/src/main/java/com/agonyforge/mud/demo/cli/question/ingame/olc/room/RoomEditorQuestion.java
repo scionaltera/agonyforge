@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Locale;
 
 @Component
@@ -71,7 +70,6 @@ public class RoomEditorQuestion extends BaseQuestion {
                 case "T" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.TITLE");
                 case "D" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.DESCRIPTION");
                 case "E" -> {
-//                    output.append("[green]Editing exits...");
                     nextQuestion = "roomExitsQuestion";
                 }
                 case "S" -> {

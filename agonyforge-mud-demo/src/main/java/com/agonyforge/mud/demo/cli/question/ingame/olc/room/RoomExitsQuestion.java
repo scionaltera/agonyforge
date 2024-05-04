@@ -21,15 +21,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_STATE;
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class RoomExitsQuestion extends BaseQuestion {
@@ -37,7 +33,6 @@ public class RoomExitsQuestion extends BaseQuestion {
     private static final String REDIT_EXIT = "REDIT.EXIT";
 
     private final MenuPane menuPane = new MenuPane();
-    private final Map<String, Direction> directionMap = new HashMap<>();
 
     public RoomExitsQuestion(ApplicationContext applicationContext,
                              RepositoryBundle repositoryBundle) {
@@ -45,9 +40,6 @@ public class RoomExitsQuestion extends BaseQuestion {
 
         menuPane.setTitle(new MenuTitle("Room Exits"));
         menuPane.setPrompt(new MenuPrompt());
-
-        Arrays.stream(Direction.values())
-            .forEach(direction -> directionMap.put(direction.name().substring(0, 1), direction));
     }
 
     @Override
@@ -95,10 +87,19 @@ public class RoomExitsQuestion extends BaseQuestion {
 
             if ("Q".equals(choice)) {
                 nextQuestion = "roomEditorQuestion";
-            } else if (directionMap.containsKey(choice)) {
-                Direction dir = directionMap.get(choice);
-                wsContext.getAttributes().put(REDIT_STATE, "ROOM.EXITS");
-                wsContext.getAttributes().put(REDIT_EXIT, dir);
+            } else {
+                Optional<MenuItem> itemOptional = menuPane.getItems().stream()
+                    .filter(item -> choice.equals(item.getKey()))
+                    .map(item -> (MenuItem)item)
+                    .findFirst();
+
+                if (itemOptional.isPresent()) {
+                    MenuItem item = itemOptional.get();
+                    Direction direction = (Direction)item.getItem();
+
+                    wsContext.getAttributes().put(REDIT_STATE, "ROOM.EXITS");
+                    wsContext.getAttributes().put(REDIT_EXIT, direction);
+                }
             }
         }
 
@@ -119,20 +120,21 @@ public class RoomExitsQuestion extends BaseQuestion {
     private void populateMenuItems(MudRoom room) {
         menuPane.getItems().clear();
 
-        List<MenuItem> menuItems = Arrays.stream(Direction.values())
-            .map(direction -> {
-                MudRoom.Exit exit = room.getExit(direction.getName());
+        for (int i = 0; i < Direction.values().length; i++) {
+            Direction direction = Direction.values()[i];
+            MudRoom.Exit exit = room.getExit(direction.getName());
 
-                return new MenuItem(
-                    direction.getName().toUpperCase(Locale.ROOT).substring(0, 1),
-                    String.format("%s %s",
-                        StringUtils.capitalize(direction.getName()),
-                        exit != null ? "to " + exit.getDestinationId() : "")
-                );
-            })
-            .toList();
+            MenuItem item = new MenuItem(
+                Integer.toString(i + 1),
+                String.format("%s %s",
+                    StringUtils.capitalize(direction.getName()),
+                    exit != null ? "to " + exit.getDestinationId() : ""),
+                direction
+            );
 
-        menuPane.getItems().addAll(menuItems);
+            menuPane.getItems().add(item);
+        }
+
         menuPane.getItems().add(new MenuItem("Q", "Quit"));
     }
 }
