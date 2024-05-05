@@ -26,7 +26,7 @@ public class Output {
     }
 
     public Output append(String output, Object ... args) {
-        lines.add(String.format(output, args));
+        lines.add(String.format(output, args).replaceAll("\\s\\s", " &nbsp;"));
 
         return this;
     }

@@ -77,8 +77,14 @@ public class RoomExitsQuestion extends BaseQuestion {
                     room.removeExit(dir.getName());
                     output.append("[red]Removed exit: %s", dir);
                 } else {
-                    room.setExit(dir.getName(), new MudRoom.Exit(choice));
-                    output.append("[green]Updated exit: %s -> %d", dir, choice);
+                    Optional<MudRoom> destinationOptional = getRepositoryBundle().getRoomRepository().getById(choice);
+
+                    if (destinationOptional.isPresent()) {
+                        room.setExit(dir.getName(), new MudRoom.Exit(choice));
+                        output.append("[green]Updated exit: %s -> %d", dir, choice);
+                    } else {
+                        output.append("[red]Room %d doesn't exist. Please create it first.", choice);
+                    }
                 }
 
                 wsContext.getAttributes().remove(REDIT_STATE);
