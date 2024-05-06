@@ -132,6 +132,11 @@ public class CommService extends EchoService {
      */
     public void sendTo(MudCharacter ch, Output message) {
         Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getWebSocketSession());
+
+        if (!"commandQuestion".equals(attributes.get("MUD.QUESTION"))) {
+            return;
+        }
+
         WebSocketContext targetWsContext = WebSocketContext.build(
             new StompPrincipal(ch.getUser()),
             ch.getWebSocketSession(),
