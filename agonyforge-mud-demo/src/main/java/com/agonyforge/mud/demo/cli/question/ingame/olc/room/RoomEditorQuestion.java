@@ -14,8 +14,10 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
+import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +38,17 @@ public class RoomEditorQuestion extends BaseQuestion {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomEditorQuestion.class);
 
+    private final CommService commService;
+
     private final MenuPane menuPane = new MenuPane();
 
+    @Autowired
     public RoomEditorQuestion(ApplicationContext applicationContext,
-                              RepositoryBundle repositoryBundle) {
+                              RepositoryBundle repositoryBundle,
+                              CommService commService) {
         super(applicationContext, repositoryBundle);
+
+        this.commService = commService;
 
         menuPane.setTitle(new MenuTitle("Room Editor"));
         menuPane.setPrompt(new MenuPrompt());
@@ -87,6 +95,9 @@ public class RoomEditorQuestion extends BaseQuestion {
                     wsContext.getAttributes().remove(REDIT_STATE);
                     wsContext.getAttributes().remove(REDIT_MODEL);
                     nextQuestion = "commandQuestion";
+
+                    commService.sendToRoom(wsContext, ch.getRoomId(),
+                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
                 }
                 case "Q" -> {
                     output.append("[red]Abandoned changes.");
@@ -94,6 +105,9 @@ public class RoomEditorQuestion extends BaseQuestion {
                     wsContext.getAttributes().remove(REDIT_STATE);
                     wsContext.getAttributes().remove(REDIT_MODEL);
                     nextQuestion = "commandQuestion";
+
+                    commService.sendToRoom(wsContext, ch.getRoomId(),
+                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
                 }
             }
         } else if ("ROOM.TITLE".equals(wsContext.getAttributes().get(REDIT_STATE))) {

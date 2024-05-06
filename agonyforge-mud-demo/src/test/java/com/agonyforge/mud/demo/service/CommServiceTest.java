@@ -83,13 +83,13 @@ public class CommServiceTest {
     void setUp() {
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_QUESTION, "nextQuestion");
+        attributes.put(MUD_QUESTION, "commandQuestion");
 
         when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output(Arrays.asList("", "[default]> ")));
         lenient().when(sessionAttributeService.getSessionAttributes(eq(wsSessionId))).thenReturn(attributes);
         lenient().when(sessionAttributeService.getSessionAttributes(eq(targetWsSessionId))).thenReturn(attributes);
         lenient().when(sessionAttributeService.getSessionAttributes(eq(otherWsSessionId))).thenReturn(attributes);
-        when(applicationContext.getBean(eq("nextQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
         lenient().when(webSocketContext.getSessionId()).thenReturn(wsSessionId);
 

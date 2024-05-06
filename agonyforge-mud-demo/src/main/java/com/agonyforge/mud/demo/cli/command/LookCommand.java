@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -23,6 +24,7 @@ public class LookCommand extends AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(LookCommand.class);
 
     public static Output doLook(RepositoryBundle repositoryBundle,
+                                SessionAttributeService sessionAttributeService,
                                 MudCharacter ch,
                                 MudRoom room) {
 
@@ -36,7 +38,17 @@ public class LookCommand extends AbstractCommand {
         repositoryBundle.getCharacterRepository().getByRoom(room.getId())
             .stream()
             .filter(target -> !target.equals(ch))
-            .forEach(target -> output.append("[green]%s is here.", target.getName()));
+            .forEach(target -> {
+                String question = (String)sessionAttributeService.getSessionAttributes(target.getWebSocketSession()).get("MUD.QUESTION");
+                String action;
+
+                switch (question) {
+                    case "roomEditorQuestion" -> action = "busy editing something";
+                    default -> action = "here";
+                }
+
+                output.append("[green]%s is %s.", target.getName(), action);
+            });
 
         repositoryBundle.getItemRepository().getByRoom(room.getId())
             .forEach(target -> output.append("[green]%s",
@@ -45,9 +57,16 @@ public class LookCommand extends AbstractCommand {
         return output;
     }
 
+    private final SessionAttributeService sessionAttributeService;
+
     @Autowired
-    public LookCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+    public LookCommand(RepositoryBundle repositoryBundle,
+                       CommService commService,
+                       ApplicationContext applicationContext,
+                       SessionAttributeService sessionAttributeService) {
         super(repositoryBundle, commService, applicationContext);
+
+        this.sessionAttributeService = sessionAttributeService;
     }
 
     @Override
@@ -68,7 +87,7 @@ public class LookCommand extends AbstractCommand {
 
         MudRoom room = roomOptional.get();
 
-        output.append(doLook(getRepositoryBundle(), ch, room));
+        output.append(doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
 
         return question;
     }

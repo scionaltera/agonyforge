@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -26,15 +27,18 @@ public class CharacterViewQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterViewQuestion.class);
 
     private final CommService commService;
+    private final SessionAttributeService sessionAttributeService;
     private final CharacterSheetFormatter characterSheetFormatter;
 
     @Autowired
     public CharacterViewQuestion(ApplicationContext applicationContext,
                                  RepositoryBundle repositoryBundle,
                                  CommService commService,
+                                 SessionAttributeService sessionAttributeService,
                                  CharacterSheetFormatter characterSheetFormatter) {
         super(applicationContext, repositoryBundle);
         this.commService = commService;
+        this.sessionAttributeService = sessionAttributeService;
         this.characterSheetFormatter = characterSheetFormatter;
     }
 
@@ -80,7 +84,7 @@ public class CharacterViewQuestion extends BaseQuestion {
                 LOGGER.info("{} has entered the game", ch.getName());
                 commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
 
-                output.append(LookCommand.doLook(getRepositoryBundle(), ch, room));
+                output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
 
                 next = getQuestion("commandQuestion");
             }

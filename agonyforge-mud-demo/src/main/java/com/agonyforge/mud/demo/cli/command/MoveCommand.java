@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -21,14 +22,17 @@ import java.util.Optional;
 public class MoveCommand extends AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveCommand.class);
 
+    private final SessionAttributeService sessionAttributeService;
     private final Direction direction;
 
     public MoveCommand(RepositoryBundle repositoryBundle,
                        CommService commService,
+                       SessionAttributeService sessionAttributeService,
                        ApplicationContext applicationContext,
                        Direction direction) {
         super(repositoryBundle, commService, applicationContext);
 
+        this.sessionAttributeService = sessionAttributeService;
         this.direction = direction;
     }
 
@@ -76,7 +80,7 @@ public class MoveCommand extends AbstractCommand {
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("%s arrives from %s.", ch.getName(), direction.getOpposite()));
 
-        output.append(LookCommand.doLook(getRepositoryBundle(), ch, destination));
+        output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destination));
 
         return question;
     }

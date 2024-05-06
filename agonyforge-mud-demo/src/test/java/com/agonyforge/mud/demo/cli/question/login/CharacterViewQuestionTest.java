@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -53,6 +54,9 @@ public class CharacterViewQuestionTest {
 
     @Mock
     private ApplicationContext applicationContext;
+
+    @Mock
+    private SessionAttributeService sessionAttributeService;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -128,7 +132,7 @@ public class CharacterViewQuestionTest {
         when(speciesRepository.getById(eq(DEFAULT_SPECIES_ID))).thenReturn(Optional.of(species));
         when(professionRepository.getById(eq(DEFAULT_PROFESSION_ID))).thenReturn(Optional.of(profession));
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
 
         int i = 0;
@@ -166,7 +170,7 @@ public class CharacterViewQuestionTest {
     void testPromptNoCharacter() {
         when(characterRepository.getById(any(), anyBoolean())).thenReturn(Optional.empty());
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
 
         assertTrue(result.getOutput().get(0).contains("[red]"));
@@ -188,7 +192,7 @@ public class CharacterViewQuestionTest {
         when(roomRepository.getById(eq(START_ROOM))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("p"));
 
         verify(characterRepository).save(characterCaptor.capture());
@@ -210,7 +214,7 @@ public class CharacterViewQuestionTest {
     void testAnswerDelete() {
         when(applicationContext.getBean(eq("characterDeleteQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("d"));
 
         assertEquals(question, result.getNext());
@@ -222,7 +226,7 @@ public class CharacterViewQuestionTest {
     void testAnswerBack() {
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("b"));
 
         assertEquals(question, result.getNext());
@@ -232,7 +236,7 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testAnswerUnknown() {
-        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, characterSheetFormatter);
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("x"));
         Output output = result.getFeedback().orElseThrow();
 
