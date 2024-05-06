@@ -87,4 +87,23 @@ public class OutputTest {
         assertEquals(one, two);
         assertEquals(one.hashCode(), two.hashCode());
     }
+
+    @Test
+    void testNonBreakingSpaces() {
+        Output one = new Output("one two three");
+        Output two = new Output("one  two  three");
+        Output three = new Output("one  two three");
+        Output four = new Output("one    four");
+        Output five = new Output("2[+/-])  Weapons & Tools (0)");
+        Output six = new Output( "4[+/-])   Energy & Magic (0)");
+        Output seven = new Output("[white]2[+/-][black]) [white] Weapons & Tools (0)");
+
+        assertEquals("one two three", one.toString());
+        assertEquals("one&nbsp;&nbsp;two&nbsp;&nbsp;three", two.toString());
+        assertEquals("one&nbsp;&nbsp;two three", three.toString());
+        assertEquals("one&nbsp;&nbsp;&nbsp;&nbsp;four", four.toString());
+        assertEquals("2[+/-])&nbsp;&nbsp;Weapons & Tools (0)", five.toString());
+        assertEquals("4[+/-])&nbsp;&nbsp;&nbsp;Energy & Magic (0)", six.toString());
+        assertEquals("[white]2[+/-][black])&nbsp;[white]&nbsp;Weapons & Tools (0)", seven.toString());
+    }
 }

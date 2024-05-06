@@ -5,8 +5,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Output {
+    private static final Pattern MULTIPLE_SPACES = Pattern.compile("(\\s(\\[.+?])?\\s+)");
+
     private final List<String> lines = new ArrayList<>();
 
     public Output() {
@@ -26,7 +30,7 @@ public class Output {
     }
 
     public Output append(String output, Object ... args) {
-        lines.add(String.format(output, args).replaceAll("\\s\\s", " &nbsp;"));
+        lines.add(nonBreakingSpaces(String.format(output, args)));
 
         return this;
     }
@@ -68,5 +72,29 @@ public class Output {
     @Override
     public int hashCode() {
         return Objects.hash(lines);
+    }
+
+    private String nonBreakingSpaces(String line) {
+        boolean done = false;
+
+        while (!done) {
+            Matcher m = MULTIPLE_SPACES.matcher(line);
+
+            if (!m.find()) {
+                done = true;
+                continue;
+            }
+
+            String group1 = m.group(1);
+            String group2 = m.group(2) == null ? "" : m.group(2);
+
+            String replacement = String.format("&nbsp;%s%s",
+                group2,
+                "&nbsp;".repeat(group1.length() - group2.length() - 1));
+
+            line = m.replaceFirst(replacement);
+        }
+
+        return line;
     }
 }

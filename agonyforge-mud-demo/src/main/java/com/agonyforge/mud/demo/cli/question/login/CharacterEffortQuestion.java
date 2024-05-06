@@ -113,7 +113,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Effort.values())
-            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", effort.getName(), ch.getBaseEffort(effort)))));
+            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%16s (%d)", effort.getName(), ch.getBaseEffort(effort)))));
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }

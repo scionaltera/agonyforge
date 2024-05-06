@@ -117,7 +117,7 @@ public class CharacterProfessionQuestion extends BaseQuestion {
                    Integer.toString(menuPane.getItems().size() + 1),
                    // the formatting below is fragile and will need to be adjusted when you add
                    // any profession with a name longer than "Human"
-                   String.format("%6s: %s", profession.getName(), String.join(", ", buffs)),
+                   String.format("%7s: %s", profession.getName(), String.join(", ", buffs)),
                    profession
                 ));
             });
