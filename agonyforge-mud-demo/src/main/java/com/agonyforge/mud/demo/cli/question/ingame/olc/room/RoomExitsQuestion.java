@@ -57,7 +57,7 @@ public class RoomExitsQuestion extends BaseQuestion {
             return output;
         } else {
             populateMenuItems(room);
-            return menuPane.render(Color.GREEN, Color.CYAN);
+            return menuPane.render(Color.DYELLOW, Color.DWHITE);
         }
     }
 
