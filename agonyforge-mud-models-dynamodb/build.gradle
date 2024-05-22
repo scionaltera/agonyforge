@@ -1,6 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '3.2.5'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'io.spring.dependency-management' version '1.1.5'
     id 'java'
     id 'java-test-fixtures'
     id 'maven-publish'
@@ -18,7 +18,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom 'software.amazon.awssdk:bom:2.25.40'
+        mavenBom 'software.amazon.awssdk:bom:2.25.55'
     }
 }
 
@@ -34,16 +34,16 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
-    testImplementation 'org.testcontainers:testcontainers:1.19.7'
-    testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
+    testImplementation 'org.testcontainers:testcontainers:1.19.8'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.8'
     testImplementation 'org.junit.platform:junit-platform-launcher'
 
     testFixturesImplementation 'software.amazon.awssdk:dynamodb'
     testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
     testFixturesImplementation 'org.springframework.security:spring-security-test'
     testFixturesImplementation 'org.junit.jupiter:junit-jupiter-params'
-    testFixturesImplementation 'org.testcontainers:testcontainers:1.19.7'
-    testFixturesImplementation 'org.testcontainers:junit-jupiter:1.19.7'
+    testFixturesImplementation 'org.testcontainers:testcontainers:1.19.8'
+    testFixturesImplementation 'org.testcontainers:junit-jupiter:1.19.8'
     testFixturesImplementation 'org.junit.platform:junit-platform-launcher'
 }
 
