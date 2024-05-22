@@ -8,6 +8,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.service.CommService;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,9 +17,9 @@ import java.util.List;
 public class SayCommand extends AbstractCommand {
 
     @Autowired
-    public SayCommand(RepositoryBundle repositoryBundle, CommService commService) {
+    public SayCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
 
-        super(repositoryBundle, commService);
+        super(repositoryBundle, commService, applicationContext);
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,8 +19,8 @@ import java.util.Optional;
 @Component
 public class WearCommand extends AbstractCommand {
     @Autowired
-    public WearCommand(RepositoryBundle repositoryBundle, CommService commService) {
-        super(repositoryBundle, commService);
+    public WearCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+        super(repositoryBundle, commService, applicationContext);
     }
 
     @Override

@@ -136,7 +136,7 @@ function sendInput() {
         commandHistory.pop();
     }
 
-    $("#output-list").find("li:last-child").append("<pre class='yellow'>" + htmlEscape(inputBox.val()) + "</pre>");
+    $("#output-list").find("li:last-child").append("<span class='yellow'>" + htmlEscape(inputBox.val()) + "</span>");
 
     stompClient.send("/app/input", JSON.stringify({'input': inputBox.val()}));
     inputBox.val('');
@@ -153,7 +153,7 @@ function showOutput(message) {
         if ("" === message[i]) {
             outputList.append("<li>&nbsp;</li>");
         } else {
-            outputList.append("<li><pre>" + replaceColors(message[i]) + "</pre></li>");
+            outputList.append("<li><span>" + replaceColors(message[i]) + "</span></li>");
         }
     }
 

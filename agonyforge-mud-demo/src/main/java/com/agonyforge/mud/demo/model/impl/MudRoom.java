@@ -155,6 +155,10 @@ public class MudRoom implements Persistent {
         exits.put(direction, exit);
     }
 
+    public void removeExit(String direction) {
+        exits.remove(direction);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

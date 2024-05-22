@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,9 @@ import static org.mockito.Mockito.when;
 public class InventoryCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @Mock
     private MudCharacterRepository characterRepository;
@@ -85,7 +89,7 @@ public class InventoryCommandTest {
         when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(armor, item));
 
         Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(repositoryBundle, commService);
+        InventoryCommand uut = new InventoryCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -112,7 +116,7 @@ public class InventoryCommandTest {
         ));
 
         Output output = new Output();
-        InventoryCommand uut = new InventoryCommand(repositoryBundle, commService);
+        InventoryCommand uut = new InventoryCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,

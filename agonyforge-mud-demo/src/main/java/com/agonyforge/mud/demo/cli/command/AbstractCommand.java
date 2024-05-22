@@ -1,5 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
+import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.question.CommandException;
@@ -7,6 +8,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Locale;
@@ -19,11 +21,14 @@ import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 public abstract class AbstractCommand implements Command {
     private final RepositoryBundle repositoryBundle;
     private final CommService commService;
+    private final ApplicationContext applicationContext;
 
     public AbstractCommand(RepositoryBundle repositoryBundle,
-                           CommService commService) {
+                           CommService commService,
+                           ApplicationContext applicationContext) {
         this.repositoryBundle = repositoryBundle;
         this.commService = commService;
+        this.applicationContext = applicationContext;
     }
 
     protected RepositoryBundle getRepositoryBundle() {
@@ -32,6 +37,10 @@ public abstract class AbstractCommand implements Command {
 
     protected CommService getCommService() {
         return commService;
+    }
+
+    protected Question getQuestion(String name) {
+        return applicationContext.getBean(name, Question.class);
     }
 
     protected MudCharacter getCurrentCharacter(WebSocketContext webSocketContext, Output output) {

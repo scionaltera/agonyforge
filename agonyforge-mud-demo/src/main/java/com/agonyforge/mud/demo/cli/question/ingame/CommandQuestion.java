@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.question;
+package com.agonyforge.mud.demo.cli.question.ingame;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
@@ -7,6 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.Command;
+import com.agonyforge.mud.demo.cli.question.BaseQuestion;
+import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;

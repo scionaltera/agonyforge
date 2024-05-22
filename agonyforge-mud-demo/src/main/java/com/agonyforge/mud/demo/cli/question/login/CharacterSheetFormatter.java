@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.question;
+package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.demo.model.constant.Effort;

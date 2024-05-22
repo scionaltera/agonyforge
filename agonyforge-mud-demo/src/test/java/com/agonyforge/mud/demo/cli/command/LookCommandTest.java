@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,9 @@ public class LookCommandTest {
     private RepositoryBundle repositoryBundle;
 
     @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -46,6 +51,9 @@ public class LookCommandTest {
 
     @Mock
     private CommService commService;
+
+    @Mock
+    private SessionAttributeService sessionAttributeService;
 
     @Mock
     private MudCharacter ch;
@@ -84,7 +92,7 @@ public class LookCommandTest {
         ));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(repositoryBundle, commService);
+        LookCommand uut = new LookCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),
@@ -99,10 +107,12 @@ public class LookCommandTest {
     @Test
     void testExecute() {
         UUID chId = UUID.randomUUID();
+        String wsSessionId = UUID.randomUUID().toString();
         long roomId = 100L;
 
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Target");
+        when(target.getWebSocketSession()).thenReturn(wsSessionId);
         when(item.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
         when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");
@@ -111,12 +121,11 @@ public class LookCommandTest {
         when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
         when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(item));
         when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
+        when(sessionAttributeService.getSessionAttributes(wsSessionId)).thenReturn(Map.of("MUD.QUESTION", "commandQuestion"));
 
         Output output = new Output();
-        LookCommand uut = new LookCommand(repositoryBundle, commService);
+        LookCommand uut = new LookCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
         Question result = uut.execute(question,
             webSocketContext,
             List.of("LOOK"),

@@ -1,10 +1,12 @@
 package com.agonyforge.mud.demo.config;
 
+import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.demo.cli.command.MoveCommand;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Direction;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,12 +14,18 @@ import org.springframework.context.annotation.Configuration;
 public class MoveConfiguration {
     private final RepositoryBundle repositoryBundle;
     private final CommService commService;
+    private final SessionAttributeService sessionAttributeService;
+    private final ApplicationContext applicationContext;
 
     @Autowired
     public MoveConfiguration(RepositoryBundle repositoryBundle,
-                             CommService commService) {
+                             CommService commService,
+                             SessionAttributeService sessionAttributeService,
+                             ApplicationContext applicationContext) {
         this.repositoryBundle = repositoryBundle;
         this.commService = commService;
+        this.sessionAttributeService = sessionAttributeService;
+        this.applicationContext = applicationContext;
     }
 
     @Bean
@@ -25,6 +33,8 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            sessionAttributeService,
+            applicationContext,
             Direction.NORTH);
     }
 
@@ -33,6 +43,8 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            sessionAttributeService,
+            applicationContext,
             Direction.EAST);
     }
 
@@ -41,6 +53,8 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            sessionAttributeService,
+            applicationContext,
             Direction.SOUTH);
     }
 
@@ -49,6 +63,8 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            sessionAttributeService,
+            applicationContext,
             Direction.WEST);
     }
 
@@ -57,6 +73,8 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            sessionAttributeService,
+            applicationContext,
             Direction.UP);
     }
 
@@ -65,6 +83,8 @@ public class MoveConfiguration {
         return new MoveCommand(
             repositoryBundle,
             commService,
+            sessionAttributeService,
+            applicationContext,
             Direction.DOWN);
     }
 }

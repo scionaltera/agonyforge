@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.question;
+package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
@@ -11,6 +11,7 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuItem;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPane;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
+import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.slf4j.Logger;
@@ -112,7 +113,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Effort.values())
-            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", effort.getName(), ch.getBaseEffort(effort)))));
+            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%16s (%d)", effort.getName(), ch.getBaseEffort(effort)))));
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }

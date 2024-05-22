@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TimeCommandTest {
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Mock
     private RepositoryBundle repositoryBundle;
 
@@ -57,7 +61,7 @@ public class TimeCommandTest {
 
         when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
-        TimeCommand uut = new TimeCommand(repositoryBundle, commService);
+        TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
 
         assertEquals(question, result);
@@ -72,7 +76,7 @@ public class TimeCommandTest {
 
         when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
-        TimeCommand uut = new TimeCommand(repositoryBundle, commService);
+        TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
 
         assertEquals(question, result);
@@ -88,7 +92,7 @@ public class TimeCommandTest {
 
         when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
-        TimeCommand uut = new TimeCommand(repositoryBundle, commService);
+        TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
 
         assertEquals(question, result);
@@ -114,7 +118,7 @@ public class TimeCommandTest {
 
         when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
-        TimeCommand uut = new TimeCommand(repositoryBundle, commService);
+        TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
 
         assertEquals(question, result);
@@ -140,7 +144,7 @@ public class TimeCommandTest {
 
         when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
-        TimeCommand uut = new TimeCommand(repositoryBundle, commService);
+        TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
 
         assertEquals(question, result);
@@ -166,7 +170,7 @@ public class TimeCommandTest {
 
         when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
-        TimeCommand uut = new TimeCommand(repositoryBundle, commService);
+        TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
 
         assertEquals(question, result);

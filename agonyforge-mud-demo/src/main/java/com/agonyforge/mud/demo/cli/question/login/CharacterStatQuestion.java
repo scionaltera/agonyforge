@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.question;
+package com.agonyforge.mud.demo.cli.question.login;
 
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
@@ -11,6 +11,7 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuItem;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPane;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
+import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.slf4j.Logger;

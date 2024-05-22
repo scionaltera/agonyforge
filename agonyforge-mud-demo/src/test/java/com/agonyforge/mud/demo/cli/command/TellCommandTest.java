@@ -19,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TellCommandTest {
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Mock
     private RepositoryBundle repositoryBundle;
     @Mock
@@ -110,7 +114,7 @@ public class TellCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        TellCommand uut = new TellCommand(repositoryBundle, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -138,7 +142,7 @@ public class TellCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        TellCommand uut = new TellCommand(repositoryBundle, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -159,7 +163,7 @@ public class TellCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        TellCommand uut = new TellCommand(repositoryBundle, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -181,7 +185,7 @@ public class TellCommandTest {
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
 
-        TellCommand uut = new TellCommand(repositoryBundle, commService);
+        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

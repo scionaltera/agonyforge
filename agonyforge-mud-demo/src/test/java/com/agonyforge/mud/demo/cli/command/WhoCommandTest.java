@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WhoCommandTest {
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Mock
     private RepositoryBundle repositoryBundle;
 
@@ -77,7 +81,7 @@ public class WhoCommandTest {
         when(chInstance.getName()).thenReturn("Scion");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(repositoryBundle, commService);
+        WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);
@@ -100,7 +104,7 @@ public class WhoCommandTest {
         when(otherInstance.getName()).thenReturn("Spook");
         when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
 
-        WhoCommand uut = new WhoCommand(repositoryBundle, commService);
+        WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
 
         assertEquals(question, result);

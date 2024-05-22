@@ -19,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +42,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WhisperCommandTest {
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Mock
     private RepositoryBundle repositoryBundle;
 
@@ -108,7 +112,7 @@ public class WhisperCommandTest {
 
         Input input = new Input(val);
         Output output = new Output();
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -144,7 +148,7 @@ public class WhisperCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -165,7 +169,7 @@ public class WhisperCommandTest {
         Input input = new Input(val);
         Output output = new Output();
 
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);
@@ -187,7 +191,7 @@ public class WhisperCommandTest {
         ));
         when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
 
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);
 
         assertEquals(question, response);

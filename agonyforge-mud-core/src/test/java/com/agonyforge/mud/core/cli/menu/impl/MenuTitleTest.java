@@ -33,9 +33,9 @@ public class MenuTitleTest {
 
     private static Stream<Arguments> testRender() {
         return Stream.of(
-            Arguments.of(new Color[] {BLUE, RED}, "[red]* [blue] Test [red] *"),
-            Arguments.of(new Color[] {BLUE}, "[green]* [blue] Test [green] *"),
-            Arguments.of(new Color[] {}, "[green]* [yellow] Test [green] *")
+            Arguments.of(new Color[] {BLUE, RED}, "[red]*&nbsp;[blue]&nbsp;Test&nbsp;[red]&nbsp;*"),
+            Arguments.of(new Color[] {BLUE}, "[green]*&nbsp;[blue]&nbsp;Test&nbsp;[green]&nbsp;*"),
+            Arguments.of(new Color[] {}, "[green]*&nbsp;[yellow]&nbsp;Test&nbsp;[green]&nbsp;*")
         );
     }
 }

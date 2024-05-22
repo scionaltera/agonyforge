@@ -8,6 +8,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudProperty;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,8 +18,8 @@ import static com.agonyforge.mud.demo.event.WeatherListener.PROPERTY_HOUR;
 @Component
 public class TimeCommand extends AbstractCommand {
     @Autowired
-    public TimeCommand(RepositoryBundle repositoryBundle, CommService commService) {
-        super(repositoryBundle, commService);
+    public TimeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+        super(repositoryBundle, commService, applicationContext);
     }
 
     @Override
