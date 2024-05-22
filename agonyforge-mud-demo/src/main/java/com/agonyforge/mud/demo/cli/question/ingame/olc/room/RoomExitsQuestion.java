@@ -34,7 +34,7 @@ public class RoomExitsQuestion extends BaseQuestion {
     // REDIT.EXIT holds the direction of the exit we are editing. The user picks a direction
     // from the menu, and is asked for a room number to assign that direction to. When they
     // type in the number we need both that and the direction in order to link up the exit.
-    private static final String REDIT_EXIT = "REDIT.EXIT";
+    static final String REDIT_EXIT = "REDIT.EXIT";
 
     private final MenuPane menuPane = new MenuPane();
 
@@ -129,7 +129,7 @@ public class RoomExitsQuestion extends BaseQuestion {
         return (MudRoom)wsContext.getAttributes().get(REDIT_MODEL);
     }
 
-    private void populateMenuItems(MudRoom room) {
+    void populateMenuItems(MudRoom room) {
         menuPane.getItems().clear();
 
         for (int i = 0; i < Direction.values().length; i++) {
