@@ -1,5 +1,5 @@
 FROM amazoncorretto:17-alpine-jdk
-MAINTAINER Scion Altera <scion@agonyforge.com>
+LABEL maintainer="scion@agonyforge.com"
 EXPOSE 8080
 COPY agonyforge-mud-demo-*.jar /opt/app/mud.jar
 WORKDIR /opt/app
