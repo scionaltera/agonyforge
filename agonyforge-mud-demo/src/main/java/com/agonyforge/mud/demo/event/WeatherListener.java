@@ -47,7 +47,7 @@ public class WeatherListener {
     }
 
     private int advanceTime() {
-        Optional<MudProperty> mudHourOptional = mudPropertyRepository.getByName(PROPERTY_HOUR);
+        Optional<MudProperty> mudHourOptional = mudPropertyRepository.findById(PROPERTY_HOUR);
         MudProperty mudHour = mudHourOptional.orElseGet(() -> new MudProperty(PROPERTY_HOUR, "0"));
         int intHour = Integer.parseInt(mudHour.getValue()) + 1;
 

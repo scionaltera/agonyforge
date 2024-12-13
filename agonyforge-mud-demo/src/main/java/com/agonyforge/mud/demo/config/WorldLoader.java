@@ -43,7 +43,7 @@ public class WorldLoader {
 
     @PostConstruct
     public void loadWorld() {
-        if (propertyRepository.getByName(PROPERTY_HOUR).isEmpty()) {
+        if (propertyRepository.findById(PROPERTY_HOUR).isEmpty()) {
             MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "0");
 
             LOGGER.info("Setting world time");
