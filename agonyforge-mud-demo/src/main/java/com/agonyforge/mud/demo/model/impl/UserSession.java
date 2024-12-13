@@ -1,45 +1,17 @@
 package com.agonyforge.mud.demo.model.impl;
 
-import com.agonyforge.mud.models.dynamodb.Persistent;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_USER;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_SESSION;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_SESSION;
-import static com.agonyforge.mud.models.dynamodb.impl.DynamoDbConstants.ISO_8601;
-
-public class UserSession implements Persistent {
+@Entity
+@Table(name = "mud_user_session")
+public class UserSession extends Persistent {
+    @Id
     private String principalName;
     private String remoteIpAddress;
-
-    @Override
-    public Map<String, AttributeValue> freeze() {
-        Map<String, AttributeValue> map = new HashMap<>();
-        Map<String, AttributeValue> data = new HashMap<>();
-
-        data.put("remoteIpAddress", AttributeValue.builder().s(getRemoteIpAddress()).build());
-
-        map.put("pk", AttributeValue.builder().s(DB_USER + getPrincipalName()).build());
-        map.put("sk", AttributeValue.builder().s(SORT_SESSION + ISO_8601.format(new Date())).build());
-        map.put("gsi1pk", AttributeValue.builder().s(TYPE_SESSION).build());
-        map.put("data", AttributeValue.builder().m(data).build());
-
-        return map;
-    }
-
-    @Override
-    public void thaw(Map<String, AttributeValue> item) {
-        setPrincipalName(item.get("pk").s().substring(DB_USER.length()));
-
-        Map<String, AttributeValue> data = item.get("data").m();
-
-        setRemoteIpAddress(data.getOrDefault("remoteIpAddress", AttributeValue.builder().nul(true).build()).s());
-    }
 
     public String getPrincipalName() {
         return principalName;

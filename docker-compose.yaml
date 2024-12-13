@@ -18,6 +18,17 @@ services:
       - "8000:8000"
     command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
 
+  postgresql:
+    image: postgres:17
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgresql
+      POSTGRES_PASSWORD: postgresql
+      POSTGRES_DB: agonyforge
+
   # credit to https://aws.plainenglish.io/run-aws-dynamodb-locally-2788ad73c4db for this one
   aws-cli:
     image: amazon/aws-cli

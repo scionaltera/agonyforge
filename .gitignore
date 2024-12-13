@@ -3,6 +3,7 @@ SCION.md
 .gradle
 build/
 volume/
+pgdata/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
