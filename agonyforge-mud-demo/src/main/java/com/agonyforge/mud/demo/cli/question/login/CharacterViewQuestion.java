@@ -69,7 +69,7 @@ public class CharacterViewQuestion extends BaseQuestion {
 
         if ("P".equalsIgnoreCase(input.getInput())) {
             Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
-            Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().getById(START_ROOM);
+            Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(START_ROOM);
 
             if (chOptional.isPresent() && roomOptional.isPresent()) {
                 MudCharacter chPrototype = chOptional.get();

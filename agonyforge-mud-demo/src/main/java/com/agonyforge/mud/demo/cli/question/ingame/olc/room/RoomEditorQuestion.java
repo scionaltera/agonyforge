@@ -125,7 +125,7 @@ public class RoomEditorQuestion extends BaseQuestion {
 
     private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
         if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            MudRoom room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId()).orElseThrow();
             wsContext.getAttributes().put(REDIT_MODEL, room);
         }
 

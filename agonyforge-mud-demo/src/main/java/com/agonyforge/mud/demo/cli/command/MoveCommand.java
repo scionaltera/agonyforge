@@ -43,7 +43,7 @@ public class MoveCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId());
+        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId());
 
         if (roomOptional.isEmpty()) {
             output.append("[black]You are floating in the void, unable to move.");
@@ -60,7 +60,7 @@ public class MoveCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudRoom> destOptional = getRepositoryBundle().getRoomRepository().getById(exit.getDestinationId());
+        Optional<MudRoom> destOptional = getRepositoryBundle().getRoomRepository().findById(exit.getDestinationId());
 
         if (destOptional.isEmpty()) {
             output.append("[default]Alas, you cannot go that way.");

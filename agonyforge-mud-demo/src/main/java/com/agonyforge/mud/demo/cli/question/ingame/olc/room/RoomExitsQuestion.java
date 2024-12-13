@@ -77,7 +77,7 @@ public class RoomExitsQuestion extends BaseQuestion {
                     room.removeExit(dir.getName());
                     output.append("[red]Removed exit: %s", dir);
                 } else {
-                    Optional<MudRoom> destinationOptional = getRepositoryBundle().getRoomRepository().getById(choice);
+                    Optional<MudRoom> destinationOptional = getRepositoryBundle().getRoomRepository().findById(choice);
 
                     if (destinationOptional.isPresent()) {
                         room.setExit(dir.getName(), new MudRoom.Exit(choice));
@@ -122,7 +122,7 @@ public class RoomExitsQuestion extends BaseQuestion {
 
     private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
         if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            MudRoom room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId()).orElseThrow();
             wsContext.getAttributes().put(REDIT_MODEL, room);
         }
 

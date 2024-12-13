@@ -50,7 +50,7 @@ public class WorldLoader {
             propertyRepository.save(mudHour);
         }
 
-        if (zoneRepository.getById(1L).isEmpty()) {
+        if (zoneRepository.findById(1L).isEmpty()) {
             MudZone zone = new MudZone();
 
             zone.setId(1L);
@@ -60,7 +60,7 @@ public class WorldLoader {
             zoneRepository.save(zone);
         }
 
-        if (roomRepository.getById(100L).isEmpty()) {
+        if (roomRepository.findById(100L).isEmpty()) {
             MudRoom room100 = new MudRoom();
 
             room100.setId(100L);
