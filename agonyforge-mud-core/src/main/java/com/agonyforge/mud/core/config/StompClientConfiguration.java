@@ -1,6 +1,5 @@
 package com.agonyforge.mud.core.config;
 
-import com.agonyforge.mud.core.config.MqBrokerProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
