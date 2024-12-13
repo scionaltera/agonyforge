@@ -28,8 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PROFESSION;
-
 @Component
 public class CharacterProfessionQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterProfessionQuestion.class);
@@ -93,7 +91,7 @@ public class CharacterProfessionQuestion extends BaseQuestion {
     private void populateMenuItems() {
         menuPane.getItems().clear();
 
-        getRepositoryBundle().getProfessionRepository().getByType(TYPE_PROFESSION)
+        getRepositoryBundle().getProfessionRepository().findAll()
             .stream()
             .sorted(Comparator.comparing(MudProfession::getName, String::compareToIgnoreCase))
             .forEach(profession -> {

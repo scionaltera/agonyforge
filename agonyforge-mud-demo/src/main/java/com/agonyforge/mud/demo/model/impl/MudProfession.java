@@ -2,78 +2,37 @@ package com.agonyforge.mud.demo.model.impl;
 
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.models.dynamodb.Persistent;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import jakarta.persistence.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.DB_PROFESSION;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.SORT_DATA;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PROFESSION;
-
-public class MudProfession implements Persistent {
-    private UUID id;
+@Entity
+@Table(name = "mud_profession")
+public class MudProfession extends Persistent {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String name;
+
+    @ElementCollection
+    @CollectionTable(name = "mud_profession_stat_mapping",
+    joinColumns = {@JoinColumn(name = "profession_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "stat_id")
     private final Map<Stat, Integer> stats = new HashMap<>();
+
+    @ElementCollection
+    @CollectionTable(name = "mud_profession_effort_mapping",
+        joinColumns = {@JoinColumn(name = "profession_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> efforts = new HashMap<>();
 
-    public MudProfession() {
-        Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
-        Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
-    }
-
-    @Override
-    public Map<String, AttributeValue> freeze() {
-        Map<String, AttributeValue> map = new HashMap<>();
-        Map<String, AttributeValue> data = new HashMap<>();
-
-        map.put("pk", AttributeValue.builder().s(DB_PROFESSION + getId()).build());
-        map.put("sk", AttributeValue.builder().s(SORT_DATA).build());
-        map.put("gsi1pk", AttributeValue.builder().s(TYPE_PROFESSION).build());
-
-        data.put("name", AttributeValue.builder().s(getName()).build());
-
-        Map<String, AttributeValue> stats = new HashMap<>();
-        Map<String, AttributeValue> efforts = new HashMap<>();
-
-        Arrays.stream(Stat.values())
-            .forEach(stat -> stats.put(stat.getName(), AttributeValue.builder().n(Integer.toString(getStat(stat))).build()));
-        Arrays.stream(Effort.values())
-            .forEach(effort -> efforts.put(effort.getName(), AttributeValue.builder().n(Integer.toString(getEffort(effort))).build()));
-
-        data.put("stats", AttributeValue.builder().m(stats).build());
-        data.put("efforts", AttributeValue.builder().m(efforts).build());
-
-        map.put("data", AttributeValue.builder().m(data).build());
-
-        return map;
-    }
-
-    @Override
-    public void thaw(Map<String, AttributeValue> item) {
-        setId(UUID.fromString(item.get("pk").s().substring(DB_PROFESSION.length())));
-
-        Map<String, AttributeValue> data = item.get("data").m();
-        setName(data.getOrDefault("name", AttributeValue.builder().nul(true).build()).s());
-
-        Map<String, AttributeValue> stats = data.get("stats").m();
-        Map<String, AttributeValue> efforts = data.get("efforts").m();
-
-        Arrays.stream(Stat.values())
-            .forEach(stat -> setStat(stat, Integer.parseInt(stats.getOrDefault(stat.getName(), AttributeValue.builder().n("0").build()).n())));
-        Arrays.stream(Effort.values())
-            .forEach(effort -> setEffort(effort, Integer.parseInt(efforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n())));
-    }
-
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -86,7 +45,8 @@ public class MudProfession implements Persistent {
     }
 
     public int getEffort(Effort effort) {
-        return efforts.get(effort);
+        Integer value = efforts.get(effort);
+        return value == null ? 0 : value;
     }
 
     public void setEffort(Effort effort, int value) {
@@ -98,7 +58,8 @@ public class MudProfession implements Persistent {
     }
 
     public int getStat(Stat stat) {
-        return stats.get(stat);
+        Integer value = stats.get(stat);
+        return value == null ? 0 : value;
     }
 
     public void setStat(Stat stat, int value) {
