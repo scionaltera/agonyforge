@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
@@ -65,7 +66,7 @@ public class CommandQuestion extends BaseQuestion {
         }
 
         List<String> tokens = tokenize(input.getInput());
-        List<CommandReference> refs = commandRepository.getByPriority();
+        List<CommandReference> refs = commandRepository.findAll();
         Optional<CommandReference> refOptional = refs
             .stream()
             .filter(ref -> ref.getName().startsWith(tokens.get(0)))
