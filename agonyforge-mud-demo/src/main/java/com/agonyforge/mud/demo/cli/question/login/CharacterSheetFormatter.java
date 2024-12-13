@@ -27,7 +27,7 @@ public final class CharacterSheetFormatter {
 
     public void format(MudCharacter ch, Output output) {
         // TODO this is only used to get the species name, should denormalize that too maybe?
-        MudSpecies species = speciesRepository.getById(ch.getSpeciesId() != null ? ch.getSpeciesId() : DEFAULT_SPECIES_ID).orElseThrow();
+        MudSpecies species = speciesRepository.findById(ch.getSpeciesId() != null ? ch.getSpeciesId() : DEFAULT_SPECIES_ID).orElseThrow();
         MudProfession profession = professionRepository.getById(ch.getProfessionId() != null ? ch.getProfessionId() : DEFAULT_PROFESSION_ID).orElseThrow();
 
         output.append("[dcyan]CHARACTER SHEET");

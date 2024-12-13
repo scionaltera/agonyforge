@@ -40,7 +40,7 @@ public class MudCharacter implements Persistent {
     private final Map<Effort, Integer> speciesEfforts = new HashMap<>();
     private final Map<Stat, Integer> professionStats = new HashMap<>();
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
-    private UUID speciesId;
+    private Long speciesId;
     private UUID professionId;
 
     public MudCharacter() {
@@ -175,7 +175,7 @@ public class MudCharacter implements Persistent {
                 setProfessionEffort(effort, Integer.parseInt(professionEfforts.getOrDefault(effort.getName(), AttributeValue.builder().n("0").build()).n()));
             });
 
-        setSpeciesId(UUID.fromString(data.get("species").s()));
+        setSpeciesId(Long.parseLong(data.get("species").s()));
         setProfessionId(UUID.fromString(data.get("profession").s()));
     }
 
@@ -369,11 +369,11 @@ public class MudCharacter implements Persistent {
         professionEfforts.put(effort, professionEfforts.get(effort) + addend);
     }
 
-    public UUID getSpeciesId() {
+    public Long getSpeciesId() {
         return speciesId;
     }
 
-    public void setSpeciesId(UUID speciesId) {
+    public void setSpeciesId(Long speciesId) {
         this.speciesId = speciesId;
     }
 

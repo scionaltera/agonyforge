@@ -94,7 +94,7 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
     private void populateMenuItems() {
         menuPane.getItems().clear();
 
-        getRepositoryBundle().getSpeciesRepository().getByType(TYPE_SPECIES)
+        getRepositoryBundle().getSpeciesRepository().findAll()
             .stream()
             .sorted(Comparator.comparing(MudSpecies::getName, String::compareToIgnoreCase))
             .forEach(species -> {
