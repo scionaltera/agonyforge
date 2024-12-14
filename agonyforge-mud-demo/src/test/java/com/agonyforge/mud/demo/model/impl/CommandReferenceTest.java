@@ -21,9 +21,9 @@ public class CommandReferenceTest {
     void testPriority() {
         CommandReference uut = new CommandReference();
 
-        uut.setPriority("100");
+        uut.setPriority(100);
 
-        assertEquals("100", uut.getPriority());
+        assertEquals(100, uut.getPriority());
     }
 
     @Test

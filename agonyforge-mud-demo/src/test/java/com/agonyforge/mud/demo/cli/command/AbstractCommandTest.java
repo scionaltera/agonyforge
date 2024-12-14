@@ -18,13 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,10 +59,9 @@ public class AbstractCommandTest {
     private MudCharacter target;
 
     @Mock
-    private MudCharacter proto;
-
-    @Mock
     private Question question;
+
+    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -77,9 +72,9 @@ public class AbstractCommandTest {
 
     @Test
     void testGetCharacterNotFound() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.empty());
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.empty());
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -103,10 +98,10 @@ public class AbstractCommandTest {
 
     @Test
     void testGetCharacterInVoid() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(ch.getRoomId()).thenReturn(null);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -130,10 +125,10 @@ public class AbstractCommandTest {
 
     @Test
     void testGetCharacterValid() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(ch.getRoomId()).thenReturn(100L);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -162,7 +157,7 @@ public class AbstractCommandTest {
         lenient().when(ch.getName()).thenReturn("Scion");
         when(ch.getRoomId()).thenReturn(roomId);
         when(target.getName()).thenReturn("Morgan");
-        when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
+        when(characterRepository.findByRoomId(eq(roomId))).thenReturn(List.of(ch, target));
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
@@ -178,11 +173,8 @@ public class AbstractCommandTest {
     @Test
     void testFindWorldCharacter() {
         lenient().when(ch.getName()).thenReturn("Scion");
-        lenient().when(ch.isPrototype()).thenReturn(false);
-        when(proto.isPrototype()).thenReturn(true);
         when(target.getName()).thenReturn("Morgan");
-        when(target.isPrototype()).thenReturn(false);
-        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, proto, target));
+        when(characterRepository.findAll()).thenReturn(List.of(ch, target));
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
@@ -192,8 +184,6 @@ public class AbstractCommandTest {
         };
 
         assertTrue(uut.findWorldCharacter(ch, "Scion").isEmpty()); // can't find yourself
-        assertFalse(uut.findWorldCharacter(ch, "Morgan")
-            .orElseThrow()   // case-insensitive match
-            .isPrototype()); // is not prototype
+        assertFalse(uut.findWorldCharacter(ch, "Morgan").isEmpty());
     }
 }

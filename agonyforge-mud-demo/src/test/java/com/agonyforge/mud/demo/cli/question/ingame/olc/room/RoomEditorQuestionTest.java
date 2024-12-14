@@ -66,7 +66,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testPrompt() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -75,8 +75,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
         Output output = uut.prompt(wsContext);
@@ -86,7 +86,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testPromptRoomTitle() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -96,8 +96,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
         Output output = uut.prompt(wsContext);
@@ -107,7 +107,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testPromptRoomDescription() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -117,8 +117,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
         Output output = uut.prompt(wsContext);
@@ -128,7 +128,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testAnswerExits() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -137,8 +137,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
@@ -150,7 +150,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testAnswerRoomTitle() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -159,8 +159,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
@@ -173,7 +173,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testAnswerRoomDescription() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -182,8 +182,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
@@ -196,7 +196,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testAnswerSave() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -205,8 +205,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
@@ -222,7 +222,7 @@ public class RoomEditorQuestionTest {
 
     @Test
     void testAnswerQuit() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -231,8 +231,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
@@ -249,7 +249,7 @@ public class RoomEditorQuestionTest {
     @Test
     void testAnswerSetTitle() {
         String newTitle = "Fancy New Room Title";
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -259,8 +259,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
@@ -296,7 +296,7 @@ public class RoomEditorQuestionTest {
             freely without fear of risky things. They must create new dreams and films by breaking
             traditional styles. The work, which becomes a new genre itself, will be called...
             COWBOY BEBOP""";
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -306,8 +306,8 @@ public class RoomEditorQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);

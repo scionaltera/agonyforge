@@ -20,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,6 +64,8 @@ public class RemoveCommandTest {
     @Mock
     private MudItem target;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -76,9 +75,9 @@ public class RemoveCommandTest {
 
     @Test
     void testRemoveNoArg() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -98,9 +97,9 @@ public class RemoveCommandTest {
 
     @Test
     void testRemoveNoTarget() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -120,13 +119,13 @@ public class RemoveCommandTest {
 
     @Test
     void testRemoveTargetNotWorn() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(target));
+        when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(target));
         when(target.getNameList()).thenReturn(List.of("test", "hat"));
         when(target.getShortDescription()).thenReturn("a test hat");
 
@@ -145,14 +144,14 @@ public class RemoveCommandTest {
 
     @Test
     void testRemoveTarget() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
-        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(target));
+        when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(target));
         when(target.getNameList()).thenReturn(List.of("test", "hat"));
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getWorn()).thenReturn(WearSlot.HEAD);

@@ -11,7 +11,7 @@ import java.util.Objects;
 public class CommandReference extends Persistent {
     @Id
     private String name;
-    private int priority;
+    private Integer priority;
     private String beanName;
 
     public CommandReference() {

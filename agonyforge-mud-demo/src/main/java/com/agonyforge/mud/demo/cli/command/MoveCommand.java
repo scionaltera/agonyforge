@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
-// intentionally not annotation with @Component
+// intentionally not annotated with @Component
 // the movement commands are configured in MoveConfiguration since they all share the same class
 public class MoveCommand extends AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveCommand.class);

@@ -21,19 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -70,9 +65,6 @@ public class TellCommandTest {
     private MudCharacter other;
 
     @Mock
-    private MudCharacter prototype;
-
-    @Mock
     private WebSocketContext webSocketContext;
 
     @Mock
@@ -80,6 +72,8 @@ public class TellCommandTest {
 
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
+
+    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -101,16 +95,15 @@ public class TellCommandTest {
     void testExecute(String val) {
         String match = val.substring(7).stripLeading();
         List<String> tokens = tokenize(val);
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, prototype, target, other));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
         when(ch.getName()).thenReturn("Scion");
         when(target.getName()).thenReturn("Target");
-        when(prototype.isPrototype()).thenReturn(true);
 
         Input input = new Input(val);
         Output output = new Output();
@@ -121,7 +114,7 @@ public class TellCommandTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]You tell Target, '" + match + "[red]'", output.getOutput().get(0));
 
-        verify(characterRepository).getById(eq(chId), anyBoolean());
+        verify(characterRepository).findById(eq(chId));
         verify(commService).sendTo(eq(target), outputCaptor.capture());
         verifyNoMoreInteractions(commService);
 
@@ -178,12 +171,12 @@ public class TellCommandTest {
         List<String> tokens = tokenize("tell t foo");
         Input input = new Input("tell t foo");
         Output output = new Output();
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
         Question response = uut.execute(question, webSocketContext, tokens, input, output);

@@ -7,16 +7,9 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudProfession;
-import com.agonyforge.mud.demo.model.impl.MudRoom;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
-import com.agonyforge.mud.demo.model.impl.MudSpecies;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.model.repository.MudProfessionRepository;
-import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
-import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
+import com.agonyforge.mud.demo.model.repository.*;
 import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,19 +21,16 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 import static com.agonyforge.mud.demo.cli.question.login.CharacterViewQuestion.START_ROOM;
 import static com.agonyforge.mud.demo.config.ProfessionLoader.DEFAULT_PROFESSION_ID;
 import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -62,6 +52,9 @@ public class CharacterViewQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudCharacterPrototypeRepository characterPrototypeRepository;
+
+    @Mock
     private MudItemRepository itemRepository;
 
     @Mock
@@ -77,7 +70,7 @@ public class CharacterViewQuestionTest {
     private CommService commService;
 
     @Mock
-    private MudCharacter ch;
+    private MudCharacterPrototype ch;
 
     @Mock
     private MudCharacter chInstance;
@@ -105,9 +98,12 @@ public class CharacterViewQuestionTest {
 
     private CharacterSheetFormatter characterSheetFormatter;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(characterPrototypeRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(repositoryBundle.getSpeciesRepository()).thenReturn(speciesRepository);
@@ -118,19 +114,20 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testPrompt() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         String characterName = "Scion";
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_CHARACTER, chId);
+        attributes.put(MUD_PCHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(characterName);
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(ch.getSpeciesId()).thenReturn(DEFAULT_SPECIES_ID);
-        when(speciesRepository.getById(eq(DEFAULT_SPECIES_ID))).thenReturn(Optional.of(species));
-        when(professionRepository.getById(eq(DEFAULT_PROFESSION_ID))).thenReturn(Optional.of(profession));
+        when(ch.getProfessionId()).thenReturn(DEFAULT_PROFESSION_ID);
+        when(speciesRepository.findById(eq(DEFAULT_SPECIES_ID))).thenReturn(Optional.of(species));
+        when(professionRepository.findById(eq(DEFAULT_PROFESSION_ID))).thenReturn(Optional.of(profession));
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
@@ -168,8 +165,6 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testPromptNoCharacter() {
-        when(characterRepository.getById(any(), anyBoolean())).thenReturn(Optional.empty());
-
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
 
@@ -179,17 +174,19 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testAnswerPlay() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         String wsSessionId = UUID.randomUUID().toString();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_CHARACTER, chId);
+        attributes.put(MUD_PCHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
+
         when(ch.buildInstance()).thenReturn(chInstance);
-        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(START_ROOM))).thenReturn(Optional.of(room));
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(roomRepository.findById(eq(START_ROOM))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);

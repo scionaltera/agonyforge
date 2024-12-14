@@ -1,12 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.model.repository.MudProfessionRepository;
-import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
-import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
-import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
+import com.agonyforge.mud.demo.model.repository.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,7 +18,13 @@ public class RepositoryBundleTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudCharacterPrototypeRepository characterPrototypeRepository;
+
+    @Mock
     private MudItemRepository itemRepository;
+
+    @Mock
+    private MudItemPrototypeRepository itemPrototypeRepository;
 
     @Mock
     private MudRoomRepository roomRepository;
@@ -39,14 +40,18 @@ public class RepositoryBundleTest {
         RepositoryBundle uut = new RepositoryBundle(
             propertyRepository,
             characterRepository,
+            characterPrototypeRepository,
             itemRepository,
+            itemPrototypeRepository,
             roomRepository,
             speciesRepository,
             professionRepository);
 
         assertEquals(propertyRepository, uut.getPropertyRepository());
         assertEquals(characterRepository, uut.getCharacterRepository());
+        assertEquals(characterPrototypeRepository, uut.getCharacterPrototypeRepository());
         assertEquals(itemRepository, uut.getItemRepository());
+        assertEquals(itemPrototypeRepository, uut.getItemPrototypeRepository());
         assertEquals(roomRepository, uut.getRoomRepository());
         assertEquals(speciesRepository, uut.getSpeciesRepository());
         assertEquals(professionRepository, uut.getProfessionRepository());

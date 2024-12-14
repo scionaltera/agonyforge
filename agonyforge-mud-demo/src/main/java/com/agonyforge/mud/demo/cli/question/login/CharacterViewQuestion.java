@@ -82,8 +82,8 @@ public class CharacterViewQuestion extends BaseQuestion {
                 ch.setRoomId(START_ROOM); // TODO configurable start room
                 ch.setWebSocketSession(wsContext.getSessionId());
 
-                MudCharacter saved = getRepositoryBundle().getCharacterRepository().save(ch);
-                wsContext.getAttributes().put(MUD_CHARACTER, saved.getId());
+                ch = getRepositoryBundle().getCharacterRepository().save(ch);
+                wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
                 LOGGER.info("{} has entered the game", ch.getName());
                 commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);

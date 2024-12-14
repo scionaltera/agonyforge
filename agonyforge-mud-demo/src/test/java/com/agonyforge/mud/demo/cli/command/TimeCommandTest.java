@@ -59,7 +59,7 @@ public class TimeCommandTest {
         MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "0");
         Output output = new Output();
 
-        when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
+        when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
@@ -74,7 +74,7 @@ public class TimeCommandTest {
         MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "12");
         Output output = new Output();
 
-        when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
+        when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
@@ -90,7 +90,7 @@ public class TimeCommandTest {
         MudProperty mudHour = new MudProperty(PROPERTY_HOUR, hour);
         Output output = new Output();
 
-        when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
+        when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
@@ -116,7 +116,7 @@ public class TimeCommandTest {
         MudProperty mudHour = new MudProperty(PROPERTY_HOUR, hour);
         Output output = new Output();
 
-        when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
+        when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
@@ -142,7 +142,7 @@ public class TimeCommandTest {
         MudProperty mudHour = new MudProperty(PROPERTY_HOUR, hour);
         Output output = new Output();
 
-        when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
+        when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);
@@ -168,7 +168,7 @@ public class TimeCommandTest {
         MudProperty mudHour = new MudProperty(PROPERTY_HOUR, hour);
         Output output = new Output();
 
-        when(propertyRepository.getByName(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
+        when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("TIME"), new Input("time"), output);

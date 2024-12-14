@@ -20,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,6 +73,8 @@ public class MoveCommandTest {
     @Mock
     private MudRoom destination;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -85,15 +84,15 @@ public class MoveCommandTest {
 
     @Test
     void testExecute() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getRoomId()).thenReturn(100L);
-        when(roomRepository.getById(eq(100L))).thenReturn(Optional.of(room));
-        when(roomRepository.getById(eq(101L))).thenReturn(Optional.of(destination));
+        when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
+        when(roomRepository.findById(eq(101L))).thenReturn(Optional.of(destination));
         when(room.getExit(eq(Direction.WEST.getName()))).thenReturn(new MudRoom.Exit(101L));
 
         Input input = new Input("west");
@@ -103,7 +102,7 @@ public class MoveCommandTest {
 
         assertEquals(question, response);
 
-        verify(roomRepository).getById(eq(100L));
+        verify(roomRepository).findById(eq(100L));
         verify(commService, times(2)).sendToRoom(eq(webSocketContext), anyLong(), any(Output.class));
         verify(ch).setRoomId(eq(101L));
         verify(characterRepository).save(any(MudCharacter.class));
@@ -111,12 +110,12 @@ public class MoveCommandTest {
 
     @Test
     void testExecuteNoRoom() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getRoomId()).thenReturn(100L);
 
         Input input = new Input("west");
@@ -130,20 +129,20 @@ public class MoveCommandTest {
         assertEquals(question, response);
 
         verifyNoInteractions(commService);
-        verify(roomRepository).getById(eq(100L));
+        verify(roomRepository).findById(eq(100L));
         verify(characterRepository, never()).save(any(MudCharacter.class));
     }
 
     @Test
     void testExecuteNoExit() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getRoomId()).thenReturn(100L);
-        when(roomRepository.getById(eq(100L))).thenReturn(Optional.of(room));
+        when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
 
         Input input = new Input("west");
         Output output = new Output();
@@ -156,20 +155,20 @@ public class MoveCommandTest {
         assertEquals(question, response);
 
         verifyNoInteractions(commService);
-        verify(roomRepository).getById(eq(100L));
+        verify(roomRepository).findById(eq(100L));
         verify(characterRepository, never()).save(any(MudCharacter.class));
     }
 
     @Test
     void testExecuteBrokenExit() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getRoomId()).thenReturn(100L);
-        when(roomRepository.getById(eq(100L))).thenReturn(Optional.of(room));
+        when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
         when(room.getExit(eq(Direction.WEST.getName()))).thenReturn(new MudRoom.Exit(101L));
 
         Input input = new Input("west");
@@ -183,8 +182,8 @@ public class MoveCommandTest {
         assertEquals(question, response);
 
         verifyNoInteractions(commService);
-        verify(roomRepository).getById(eq(100L));
-        verify(roomRepository).getById(eq(101L));
+        verify(roomRepository).findById(eq(100L));
+        verify(roomRepository).findById(eq(101L));
         verify(characterRepository, never()).save(any(MudCharacter.class));
     }
 }

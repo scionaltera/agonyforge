@@ -19,10 +19,8 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -53,12 +51,6 @@ public class WhoCommandTest {
     private MudCharacter other;
 
     @Mock
-    private MudCharacter chInstance;
-
-    @Mock
-    private MudCharacter otherInstance;
-
-    @Mock
     private Question question;
 
     @Mock
@@ -73,13 +65,11 @@ public class WhoCommandTest {
 
     @Test
     void testExecuteOnePlayer() {
-        List<MudCharacter> characters = List.of(ch, chInstance);
+        List<MudCharacter> characters = List.of(ch);
         Output output = new Output();
 
-        when(ch.isPrototype()).thenReturn(true);
-        when(chInstance.isPrototype()).thenReturn(false);
-        when(chInstance.getName()).thenReturn("Scion");
-        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
+        when(ch.getName()).thenReturn("Scion");
+        when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
@@ -93,16 +83,12 @@ public class WhoCommandTest {
 
     @Test
     void testExecuteTwoPlayer() {
-        List<MudCharacter> characters = List.of(ch, chInstance, other, otherInstance);
+        List<MudCharacter> characters = List.of(ch, other);
         Output output = new Output();
 
-        when(ch.isPrototype()).thenReturn(true);
-        when(chInstance.isPrototype()).thenReturn(false);
-        when(chInstance.getName()).thenReturn("Scion");
-        when(other.isPrototype()).thenReturn(true);
-        when(otherInstance.isPrototype()).thenReturn(false);
-        when(otherInstance.getName()).thenReturn("Spook");
-        when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(characters);
+        when(ch.getName()).thenReturn("Scion");
+        when(other.getName()).thenReturn("Spook");
+        when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);

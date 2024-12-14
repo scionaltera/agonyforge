@@ -71,7 +71,7 @@ public class RoomExitsQuestionTest {
 
     @Test
     void testPromptMenu() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -80,8 +80,8 @@ public class RoomExitsQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
         Output output = uut.prompt(wsContext);
@@ -91,7 +91,7 @@ public class RoomExitsQuestionTest {
 
     @Test
     void testPromptExit() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -101,8 +101,8 @@ public class RoomExitsQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
         Output output = uut.prompt(wsContext);
@@ -112,7 +112,7 @@ public class RoomExitsQuestionTest {
 
     @Test
     void testAnswerExitDirection() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 150);
         long destId = RAND.nextLong(150, 200);
         Map<String, Object> attributes = new HashMap<>();
@@ -123,9 +123,9 @@ public class RoomExitsQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
-        when(roomRepository.getById(eq(destId))).thenReturn(Optional.of(destRoom));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
+        when(roomRepository.findById(eq(destId))).thenReturn(Optional.of(destRoom));
         when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
@@ -143,7 +143,7 @@ public class RoomExitsQuestionTest {
 
     @Test
     void testAnswerExitDelete() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 150);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -153,8 +153,8 @@ public class RoomExitsQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
@@ -168,7 +168,7 @@ public class RoomExitsQuestionTest {
 
     @Test
     void testAnswerChooseExit() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 150);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -177,8 +177,8 @@ public class RoomExitsQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
@@ -193,7 +193,7 @@ public class RoomExitsQuestionTest {
 
     @Test
     void testAnswerQuit() {
-        UUID chId = UUID.randomUUID();
+        Long chId = RAND.nextLong();
         long roomId = RAND.nextLong(100, 150);
         Map<String, Object> attributes = new HashMap<>();
 
@@ -202,8 +202,8 @@ public class RoomExitsQuestionTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);

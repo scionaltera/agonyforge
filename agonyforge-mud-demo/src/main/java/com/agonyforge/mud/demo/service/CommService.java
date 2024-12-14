@@ -23,7 +23,6 @@ import java.util.Map;
 public class CommService extends EchoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommService.class);
 
-
     private final MudCharacterRepository characterRepository;
 
     @Autowired
@@ -81,7 +80,7 @@ public class CommService extends EchoService {
         String zoneIdString = zoneId.toString();
         List<MudCharacter> skip = List.of(except);
 
-        characterRepository.findByRoomIdBetween(zoneId * 100, zoneId * 200 + 100)
+        characterRepository.findByRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
             .stream()
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))

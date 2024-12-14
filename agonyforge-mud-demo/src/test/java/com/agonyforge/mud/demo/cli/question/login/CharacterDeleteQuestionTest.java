@@ -6,8 +6,8 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,13 +37,13 @@ public class CharacterDeleteQuestionTest {
     private ApplicationContext applicationContext;
 
     @Mock
-    private MudCharacterRepository characterRepository;
+    private MudCharacterPrototypeRepository characterPrototypeRepository;
 
     @Mock
     private MudItemRepository itemRepository;
 
     @Mock
-    private MudCharacter ch;
+    private MudCharacterPrototype ch;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -54,22 +51,24 @@ public class CharacterDeleteQuestionTest {
     @Mock
     private Question question;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(characterPrototypeRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
     }
 
     @Test
     void testPrompt() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         String chName = "Scion";
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_CHARACTER, chId);
+        attributes.put(MUD_PCHARACTER, chId);
 
         when(webSocketContext.getAttributes()).thenReturn(attributes);
-        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getName()).thenReturn(chName);
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, repositoryBundle);
@@ -83,13 +82,13 @@ public class CharacterDeleteQuestionTest {
 
     @Test
     void testPromptNoCharacter() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_CHARACTER, chId);
+        attributes.put(MUD_PCHARACTER, chId);
 
         when(webSocketContext.getAttributes()).thenReturn(attributes);
-        when(characterRepository.getById(any(), eq(true))).thenReturn(Optional.empty());
+        when(characterPrototypeRepository.findById(any())).thenReturn(Optional.empty());
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(webSocketContext);
@@ -101,13 +100,13 @@ public class CharacterDeleteQuestionTest {
 
     @Test
     void testAnswerYes() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_CHARACTER, chId);
+        attributes.put(MUD_PCHARACTER, chId);
 
         when(webSocketContext.getAttributes()).thenReturn(attributes);
-        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, repositoryBundle);
@@ -119,18 +118,18 @@ public class CharacterDeleteQuestionTest {
         assertTrue(output.getOutput().get(0).contains("[red]"));
         assertTrue(output.getOutput().get(0).contains("deleted"));
 
-        verify(characterRepository).delete(eq(ch));
+        verify(characterPrototypeRepository).delete(eq(ch));
     }
 
     @Test
     void testAnswerNo() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_CHARACTER, chId);
+        attributes.put(MUD_PCHARACTER, chId);
 
         when(webSocketContext.getAttributes()).thenReturn(attributes);
-        when(characterRepository.getById(eq(chId), eq(true))).thenReturn(Optional.of(ch));
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, repositoryBundle);
@@ -142,6 +141,6 @@ public class CharacterDeleteQuestionTest {
         assertTrue(output.getOutput().get(0).contains("[green]"));
         assertTrue(output.getOutput().get(0).contains("safe"));
 
-        verify(characterRepository, never()).delete(eq(ch));
+        verify(characterPrototypeRepository, never()).delete(eq(ch));
     }
 }

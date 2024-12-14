@@ -55,7 +55,7 @@ public class CharacterNameQuestion extends BaseQuestion {
         ch.setPronoun(Pronoun.THEY);
         ch.setWearSlots(Arrays.stream(WearSlot.values()).toList());
 
-        getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
+        ch = getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
         wsContext.getAttributes().put(MUD_PCHARACTER, ch.getId());
 
         LOGGER.info("New character created: {}", ch.getName());
