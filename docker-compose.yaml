@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   mud:
     image: scionaltera/agonyforge-mud-demo:latest
