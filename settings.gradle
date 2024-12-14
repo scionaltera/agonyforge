@@ -1,4 +1,3 @@
 rootProject.name = 'mud'
 include 'agonyforge-mud-core'
 include 'agonyforge-mud-demo'
-include 'agonyforge-mud-models-dynamodb'
