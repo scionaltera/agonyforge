@@ -13,7 +13,7 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +40,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
+        MudCharacterPrototype ch = getCharacterPrototype(wsContext, output).orElseThrow();
 
         populateMenuItems(ch);
 
@@ -51,7 +51,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
     public Response answer(WebSocketContext webSocketContext, Input input) {
         String nextQuestion = "characterEffortQuestion";
         Output output = new Output();
-        MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
+        MudCharacterPrototype ch = getCharacterPrototype(webSocketContext, output).orElseThrow();
         String choice = input.getInput().toUpperCase(Locale.ROOT);
         int totalPoints = computeEffortPoints(ch);
 
@@ -90,20 +90,20 @@ public class CharacterEffortQuestion extends BaseQuestion {
             }
         }
 
-        getRepositoryBundle().getCharacterRepository().save(ch);
+        getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
 
         Question next = getQuestion(nextQuestion);
 
         return new Response(next, output);
     }
 
-    private int computeEffortPoints(MudCharacter ch) {
+    private int computeEffortPoints(MudCharacterPrototype ch) {
         return Arrays.stream(Effort.values())
             .map(ch::getBaseEffort)
             .reduce(0, Integer::sum);
     }
 
-    private void populateMenuItems(MudCharacter ch) {
+    private void populateMenuItems(MudCharacterPrototype ch) {
         menuPane.getItems().clear();
 
         int points = STARTING_EFFORTS - computeEffortPoints(ch);

@@ -35,7 +35,7 @@ public class LookCommand extends AbstractCommand {
             .append("[dwhite]%s", room.getDescription())
             .append("[dcyan]Exits: %s", String.join(" ", room.getExits()));
 
-        repositoryBundle.getCharacterRepository().getByRoom(room.getId())
+        repositoryBundle.getCharacterRepository().findByRoomId(room.getId())
             .stream()
             .filter(target -> !target.equals(ch))
             .forEach(target -> {

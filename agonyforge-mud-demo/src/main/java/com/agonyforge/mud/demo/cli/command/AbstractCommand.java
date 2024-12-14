@@ -13,10 +13,8 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 
 public abstract class AbstractCommand implements Command {
     private final RepositoryBundle repositoryBundle;
@@ -44,8 +42,8 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected MudCharacter getCurrentCharacter(WebSocketContext webSocketContext, Output output) {
-        UUID chId = (UUID) webSocketContext.getAttributes().get(MUD_CHARACTER);
-        Optional<MudCharacter> chOptional = getRepositoryBundle().getCharacterRepository().getById(chId, false);
+        Long chId = (Long) webSocketContext.getAttributes().get(MUD_CHARACTER);
+        Optional<MudCharacter> chOptional = getRepositoryBundle().getCharacterRepository().findById(chId);
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
@@ -86,7 +84,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudCharacter> findRoomCharacter(MudCharacter ch, String token) {
-        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().getByRoom(ch.getRoomId());
+        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().findByRoomId(ch.getRoomId());
 
         return targets
             .stream()
@@ -96,12 +94,11 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudCharacter> findWorldCharacter(MudCharacter ch, String token) {
-        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().getByType(TYPE_PC);
+        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().findAll();
 
         return targets
             .stream()
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> !tch.isPrototype())
             .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
             .findFirst();
     }

@@ -20,6 +20,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
 @Component
 public class CharacterMenuQuestion extends BaseQuestion {
@@ -60,7 +61,7 @@ public class CharacterMenuQuestion extends BaseQuestion {
             nextQuestion = "characterNameQuestion";
         } else {
             MenuItem item = itemOptional.get();
-            wsContext.getAttributes().put(MUD_CHARACTER, item.getItem());
+            wsContext.getAttributes().put(MUD_PCHARACTER, item.getItem());
             nextQuestion = "characterViewQuestion";
         }
 
@@ -73,7 +74,7 @@ public class CharacterMenuQuestion extends BaseQuestion {
         menuPane.getItems().clear();
         menuPane.getItems().add(new MenuItem("N", "New Character"));
 
-        getRepositoryBundle().getCharacterRepository().getByUser(principal.getName())
+        getRepositoryBundle().getCharacterPrototypeRepository().findByUsername(principal.getName())
             .forEach(ch -> menuPane.getItems().add(new MenuItem(
                 Integer.toString(menuPane.getItems().size()),
                 ch.getName(),

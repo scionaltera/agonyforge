@@ -89,7 +89,7 @@ public class MudItemRepository extends AbstractRepository<MudItem> {
         return Optional.empty();
     }
 
-    public List<MudItem> getByCharacter(UUID character) {
+    public List<MudItem> getByCharacter(Long character) {
         Map<String, AttributeValue> lastKeyEvaluated = null;
         List<MudItem> results = new ArrayList<>();
 

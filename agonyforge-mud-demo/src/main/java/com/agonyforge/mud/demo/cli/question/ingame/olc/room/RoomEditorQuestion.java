@@ -57,7 +57,7 @@ public class RoomEditorQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output, false).orElseThrow();
+        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
         MudRoom room = getRoomModel(wsContext, ch);
 
         if (!wsContext.getAttributes().containsKey(REDIT_STATE)) {
@@ -76,7 +76,7 @@ public class RoomEditorQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         String nextQuestion = "roomEditorQuestion";
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output, false).orElseThrow();
+        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
         MudRoom room = getRoomModel(wsContext, ch);
 
         if (!wsContext.getAttributes().containsKey(REDIT_STATE)) {

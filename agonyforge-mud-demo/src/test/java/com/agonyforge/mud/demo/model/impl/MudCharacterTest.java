@@ -21,7 +21,7 @@ public class MudCharacterTest {
     void testBuildInstance() {
         MudCharacter proto = new MudCharacter();
 
-        proto.setUser("principal");
+        proto.setUsername("principal");
         proto.setId(UUID.randomUUID());
         proto.setName("Scion");
         proto.setSpeciesId(UUID.randomUUID());
@@ -38,7 +38,7 @@ public class MudCharacterTest {
         assertEquals(proto.getId(), instance.getId());
         assertEquals(100L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
-        assertEquals(proto.getUser(), instance.getUser());
+        assertEquals(proto.getUsername(), instance.getUsername());
         assertEquals(proto.getSpeciesId(), instance.getSpeciesId());
         assertEquals(proto.getProfessionId(), instance.getProfessionId());
         assertThrows(IllegalStateException.class, instance::buildInstance);
@@ -60,11 +60,11 @@ public class MudCharacterTest {
         MudCharacter uutInst;
         String user = "user";
 
-        uut.setUser(user);
+        uut.setUsername(user);
         uutInst = uut.buildInstance();
 
-        assertEquals(user, uut.getUser());
-        assertEquals(user, uutInst.getUser());
+        assertEquals(user, uut.getUsername());
+        assertEquals(user, uutInst.getUsername());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class MudCharacterTest {
         String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
-        uut.setUser(user);
+        uut.setUsername(user);
         uutInst = uut.buildInstance();
 
         uutInst.setRoomId(100L);

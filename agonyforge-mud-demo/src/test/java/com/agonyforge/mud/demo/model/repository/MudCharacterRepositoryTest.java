@@ -33,7 +33,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         String user = UUID.randomUUID().toString();
 
         ch.setId(uuid);
-        ch.setUser(user);
+        ch.setUsername(user);
         ch.setName("Scion");
 
         uut.save(ch);
@@ -42,7 +42,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         MudCharacter result = resultOptional.orElseThrow();
 
         assertEquals(ch.getId(), result.getId());
-        assertEquals(ch.getUser(), result.getUser());
+        assertEquals(ch.getUsername(), result.getUsername());
         assertThrows(IllegalStateException.class, result::getRoomId);
         assertThrows(IllegalStateException.class, result::getWebSocketSession);
         assertEquals(ch.getName(), result.getName());
@@ -57,7 +57,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         String user = UUID.randomUUID().toString();
 
         ch.setId(uuid);
-        ch.setUser(user);
+        ch.setUsername(user);
         ch.setName("Scion");
 
         MudCharacter chInstance = ch.buildInstance();
@@ -71,7 +71,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         MudCharacter result = resultOptional.orElseThrow();
 
         assertEquals(ch.getId(), result.getId());
-        assertEquals(ch.getUser(), result.getUser());
+        assertEquals(ch.getUsername(), result.getUsername());
         assertEquals(ch.getName(), result.getName());
 
         assertEquals(chInstance.getRoomId(), result.getRoomId());
@@ -96,7 +96,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         String user = UUID.randomUUID().toString();
 
         ch.setId(uuid);
-        ch.setUser(user);
+        ch.setUsername(user);
         ch.setName("Scion");
 
         MudCharacter chInstance = ch.buildInstance();
@@ -112,7 +112,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         assertEquals(1, results.size());
 
         assertEquals(ch.getId(), result.getId());
-        assertEquals(ch.getUser(), result.getUser());
+        assertEquals(ch.getUsername(), result.getUsername());
         assertEquals(ch.getName(), result.getName());
         assertEquals(ch.isPrototype(), result.isPrototype());
     }
@@ -128,11 +128,11 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         String user2 = UUID.randomUUID().toString();
 
         ch.setId(uuid);
-        ch.setUser(user);
+        ch.setUsername(user);
         ch.setName("Scion");
 
         ch2.setId(uuid2);
-        ch2.setUser(user2);
+        ch2.setUsername(user2);
         ch2.setName("Spook");
 
         MudCharacter chInstance1 = ch.buildInstance();
@@ -153,7 +153,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         assertEquals(1, results.size());
 
         assertEquals(chInstance1.getId(), result.getId());
-        assertEquals(chInstance1.getUser(), result.getUser());
+        assertEquals(chInstance1.getUsername(), result.getUsername());
         assertEquals(chInstance1.getName(), result.getName());
         assertEquals(chInstance1.isPrototype(), result.isPrototype());
     }
@@ -167,7 +167,7 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         String name = "Scion";
 
         ch.setId(uuid);
-        ch.setUser(user);
+        ch.setUsername(user);
         ch.setName(name);
 
         MudCharacter chInstance = ch.buildInstance();
@@ -185,12 +185,12 @@ public class MudCharacterRepositoryTest extends DynamoDbLocalInitializingTest {
         MudCharacter result2 = results.get(1);
 
         assertEquals(ch.getId(), result1.getId());
-        assertEquals(ch.getUser(), result1.getUser());
+        assertEquals(ch.getUsername(), result1.getUsername());
         assertEquals(ch.getName(), result1.getName());
         assertTrue(result1.isPrototype());
 
         assertEquals(ch.getId(), result2.getId());
-        assertEquals(ch.getUser(), result2.getUser());
+        assertEquals(ch.getUsername(), result2.getUsername());
         assertEquals(ch.getName(), result2.getName());
         assertEquals(chInstance.getRoomId(), result2.getRoomId());
         assertEquals(chInstance.getWebSocketSession(), result2.getWebSocketSession());

@@ -103,7 +103,7 @@ public class CharacterNameQuestionTest {
         MudCharacter ch = characterCaptor.getValue();
 
         assertNotNull(ch.getId());
-        assertEquals(principal.getName(), ch.getUser());
+        assertEquals(principal.getName(), ch.getUsername());
         assertEquals(userInput, ch.getName());
         assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
     }

@@ -10,6 +10,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
 public class CharacterViewQuestion extends BaseQuestion {
@@ -45,10 +48,10 @@ public class CharacterViewQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
+        Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
 
         if (chOptional.isPresent()) {
-            MudCharacter ch = chOptional.get();
+            MudCharacterPrototype ch = chOptional.get();
 
             characterSheetFormatter.format(ch, output);
 
@@ -68,18 +71,19 @@ public class CharacterViewQuestion extends BaseQuestion {
         Question next = this;
 
         if ("P".equalsIgnoreCase(input.getInput())) {
-            Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
+            Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
             Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(START_ROOM);
 
             if (chOptional.isPresent() && roomOptional.isPresent()) {
-                MudCharacter chPrototype = chOptional.get();
+                MudCharacterPrototype chPrototype = chOptional.get();
                 MudCharacter ch = chPrototype.buildInstance();
                 MudRoom room = roomOptional.get();
 
                 ch.setRoomId(START_ROOM); // TODO configurable start room
                 ch.setWebSocketSession(wsContext.getSessionId());
 
-                getRepositoryBundle().getCharacterRepository().save(ch);
+                MudCharacter saved = getRepositoryBundle().getCharacterRepository().save(ch);
+                wsContext.getAttributes().put(MUD_CHARACTER, saved.getId());
 
                 LOGGER.info("{} has entered the game", ch.getName());
                 commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
