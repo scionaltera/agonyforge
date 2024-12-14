@@ -62,7 +62,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudItem> findInventoryItem(MudCharacter ch, String token) {
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByCharacter(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().getByChId(ch.getId());
 
         return items
             .stream()
@@ -73,7 +73,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudItem> findRoomItem(MudCharacter ch, String token) {
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByRoom(ch.getRoomId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().getByRoomId(ch.getRoomId());
 
         return items
             .stream()

@@ -50,7 +50,7 @@ public class LookCommand extends AbstractCommand {
                 output.append("[green]%s is %s.", target.getName(), action);
             });
 
-        repositoryBundle.getItemRepository().getByRoom(room.getId())
+        repositoryBundle.getItemRepository().getByRoomId(room.getId())
             .forEach(target -> output.append("[green]%s",
                 StringUtils.capitalize(target.getLongDescription())));
 

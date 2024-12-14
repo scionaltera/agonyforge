@@ -10,6 +10,7 @@ public class RepositoryBundle {
     private final MudCharacterRepository characterRepository;
     private final MudCharacterPrototypeRepository characterPrototypeRepository;
     private final MudItemRepository itemRepository;
+    private final MudItemPrototypeRepository itemPrototypeRepository;
     private final MudRoomRepository roomRepository;
     private final MudSpeciesRepository speciesRepository;
     private final MudProfessionRepository professionRepository;
@@ -19,6 +20,7 @@ public class RepositoryBundle {
                             MudCharacterRepository characterRepository,
                             MudCharacterPrototypeRepository characterPrototypeRepository,
                             MudItemRepository itemRepository,
+                            MudItemPrototypeRepository itemPrototypeRepository,
                             MudRoomRepository roomRepository,
                             MudSpeciesRepository speciesRepository,
                             MudProfessionRepository professionRepository) {
@@ -26,6 +28,7 @@ public class RepositoryBundle {
         this.characterRepository = characterRepository;
         this.characterPrototypeRepository = characterPrototypeRepository;
         this.itemRepository = itemRepository;
+        this.itemPrototypeRepository = itemPrototypeRepository;
         this.roomRepository = roomRepository;
         this.speciesRepository = speciesRepository;
         this.professionRepository = professionRepository;
@@ -45,6 +48,10 @@ public class RepositoryBundle {
 
     public MudItemRepository getItemRepository() {
         return itemRepository;
+    }
+
+    public MudItemPrototypeRepository getItemPrototypeRepository() {
+        return itemPrototypeRepository;
     }
 
     public MudRoomRepository getRoomRepository() {

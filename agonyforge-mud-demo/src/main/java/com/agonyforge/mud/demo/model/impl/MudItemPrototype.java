@@ -6,28 +6,38 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "mud_item")
-public class MudItem extends Persistent {
+@Table(name = "mud_pitem")
+public class MudItemPrototype extends Persistent {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "instance_id")
-    private Long instanceId = null;
     private Long id;
-    private Long roomId;
-    private Long chId;
+    private String containerType;
+    private String containerId;
 
     @ElementCollection
-    @CollectionTable(name = "mud_item_namelist_mapping",
-    joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "instance_id")})
+    @CollectionTable(name = "mud_pitem_namelist_mapping",
+    joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "id")})
     private List<String> nameList = new ArrayList<>();
     private String shortDescription;
     private String longDescription;
 
     @ElementCollection
-    @CollectionTable(name = "mud_item_wearslot_mapping",
-    joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "instance_id")})
+    @CollectionTable(name = "mud_pitem_wearslot_mapping",
+    joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "id")})
     private Set<WearSlot> wearSlots = new HashSet<>();
     private WearSlot worn;
+
+    public MudItem buildInstance() {
+        MudItem instance = new MudItem();
+
+        instance.setId(getId());
+        instance.setNameList(new ArrayList<>(getNameList()));
+        instance.setShortDescription(getShortDescription());
+        instance.setLongDescription(getLongDescription());
+        instance.setWearSlots(getWearSlots());
+        instance.setWorn(getWorn());
+
+        return instance;
+    }
 
     public Long getId() {
         return id;
@@ -35,30 +45,6 @@ public class MudItem extends Persistent {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCharacterId() {
-        return chId;
-    }
-
-    public void setCharacterId(Long characterId) {
-        if (roomId != null) {
-            roomId = null;
-        }
-
-        chId = characterId;
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        if (chId != null) {
-            chId = null;
-        }
-
-        this.roomId = roomId;
     }
 
     public List<String> getNameList() {
@@ -104,7 +90,7 @@ public class MudItem extends Persistent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudItem mudItem)) return false;
+        if (!(o instanceof MudItemPrototype mudItem)) return false;
         return Objects.equals(getId(), mudItem.getId());
     }
 
