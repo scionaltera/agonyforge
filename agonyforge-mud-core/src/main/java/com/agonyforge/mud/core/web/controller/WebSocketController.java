@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,6 +26,7 @@ import static com.agonyforge.mud.core.config.RemoteIpHandshakeInterceptor.SESSIO
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
+@Transactional
 @Controller
 public class WebSocketController {
     public static final String WS_SESSION_ID = "WS.SESSION.ID";

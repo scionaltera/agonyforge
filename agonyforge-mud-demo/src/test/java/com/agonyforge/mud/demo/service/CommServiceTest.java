@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -61,7 +61,7 @@ public class CommServiceTest {
     private MudCharacter other;
 
     @Mock
-    private MudCharacter prototype;
+    private MudCharacterPrototype prototype;
 
     @Mock
     private Question question;
@@ -93,25 +93,23 @@ public class CommServiceTest {
 
         lenient().when(webSocketContext.getSessionId()).thenReturn(wsSessionId);
 
-        lenient().when(characterRepository.getByRoom(eq(100L))).thenReturn(List.of(ch, target));
-        lenient().when(characterRepository.getByType(eq(TYPE_PC))).thenReturn(List.of(ch, target, other, prototype));
+        lenient().when(characterRepository.findByRoomId(eq(100L))).thenReturn(List.of(ch, target));
+        lenient().when(characterRepository.findByRoomIdBetween(eq(100L), eq(200L))).thenReturn(List.of(ch, target));
+        lenient().when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
 
-        lenient().when(ch.getUser()).thenReturn(principal);
+        lenient().when(ch.getUsername()).thenReturn(principal);
         when(ch.getWebSocketSession()).thenReturn(wsSessionId);
         lenient().when(ch.getRoomId()).thenReturn(100L);
 
-        lenient().when(target.getUser()).thenReturn(targetPrincipal);
+        lenient().when(target.getUsername()).thenReturn(targetPrincipal);
         lenient().when(target.getWebSocketSession()).thenReturn(targetWsSessionId);
         lenient().when(target.getRoomId()).thenReturn(100L);
 
-        lenient().when(other.getUser()).thenReturn(otherPrincipal);
+        lenient().when(other.getUsername()).thenReturn(otherPrincipal);
         lenient().when(other.getWebSocketSession()).thenReturn(otherWsSessionId);
         lenient().when(other.getRoomId()).thenReturn(200L);
 
-        lenient().when(prototype.isPrototype()).thenReturn(true);
-        lenient().when(prototype.getUser()).thenReturn(otherPrincipal);
-        lenient().when(prototype.getWebSocketSession()).thenThrow(new IllegalStateException());
-        lenient().when(prototype.getRoomId()).thenThrow(new IllegalStateException());
+        lenient().when(prototype.getUsername()).thenReturn(otherPrincipal);
     }
 
     @Test
@@ -238,7 +236,7 @@ public class CommServiceTest {
 
         Output message = new Output("message");
 
-        uut.sendToTargets(List.of(ch, target, prototype), message);
+        uut.sendToTargets(List.of(ch, target), message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
             eq(principal),

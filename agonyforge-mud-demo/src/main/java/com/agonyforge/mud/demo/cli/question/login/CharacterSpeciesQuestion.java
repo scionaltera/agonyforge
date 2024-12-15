@@ -15,7 +15,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.impl.MudSpecies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_SPECIES;
 
 @Component
 public class CharacterSpeciesQuestion extends BaseQuestion {
@@ -69,10 +67,10 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
             output.append("[red]Please choose one of the menu options.");
         } else {
             MenuItem item = itemOptional.get();
-            Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
+            Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(webSocketContext, output);
 
             if (chOptional.isPresent()) {
-                MudCharacter ch = chOptional.get();
+                MudCharacterPrototype ch = chOptional.get();
                 MudSpecies species = (MudSpecies)item.getItem();
 
                 ch.setSpeciesId(species.getId());
@@ -80,7 +78,7 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
                 Arrays.stream(Stat.values()).forEach(stat -> ch.setSpeciesStat(stat, species.getStat(stat)));
                 Arrays.stream(Effort.values()).forEach(effort -> ch.setSpeciesEffort(effort, species.getEffort(effort)));
 
-                getRepositoryBundle().getCharacterRepository().save(ch);
+                getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
             }
 
             nextQuestion = "characterProfessionQuestion";
@@ -94,7 +92,7 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
     private void populateMenuItems() {
         menuPane.getItems().clear();
 
-        getRepositoryBundle().getSpeciesRepository().getByType(TYPE_SPECIES)
+        getRepositoryBundle().getSpeciesRepository().findAll()
             .stream()
             .sorted(Comparator.comparing(MudSpecies::getName, String::compareToIgnoreCase))
             .forEach(species -> {

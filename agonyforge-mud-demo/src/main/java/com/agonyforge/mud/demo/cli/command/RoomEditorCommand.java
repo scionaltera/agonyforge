@@ -40,7 +40,7 @@ public class RoomEditorCommand extends AbstractCommand {
         if (tokens.size() > 1) {
             try {
                 Long roomId = Long.parseLong(tokens.get(1));
-                Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().getById(roomId);
+                Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(roomId);
 
                 if (roomOptional.isEmpty()) {
                     String roomIdString = tokens.get(1);
@@ -71,7 +71,7 @@ public class RoomEditorCommand extends AbstractCommand {
                 return question;
             }
         } else {
-            room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+            room = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId()).orElseThrow();
             webSocketContext.getAttributes().put(REDIT_MODEL, room);
         }
 

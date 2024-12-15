@@ -16,7 +16,7 @@ import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_SPECIES;
 
 @Component
 public class SpeciesLoader {
-    public static final UUID DEFAULT_SPECIES_ID = UUID.fromString("d41b3960-e464-4def-b5d2-1ac7abbbc5d0");
+    public static final Long DEFAULT_SPECIES_ID = 1L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpeciesLoader.class);
 
@@ -29,24 +29,21 @@ public class SpeciesLoader {
 
     @PostConstruct
     public void loadSpecies() {
-        if (speciesRepository.getByType(TYPE_SPECIES).isEmpty()) {
+        if (speciesRepository.findAll().isEmpty()) {
             MudSpecies human = new MudSpecies();
 
-            human.setId(DEFAULT_SPECIES_ID);
             human.setName("Human");
             human.setStat(Stat.INT, 1);
             human.setStat(Stat.CHA, 1);
 
             MudSpecies elf = new MudSpecies();
 
-            elf.setId(UUID.randomUUID());
             elf.setName("Elf");
             elf.setStat(Stat.DEX, 1);
             elf.setStat(Stat.CHA, 1);
 
             MudSpecies dwarf = new MudSpecies();
 
-            dwarf.setId(UUID.randomUUID());
             dwarf.setName("Dwarf");
             dwarf.setStat(Stat.STR, 1);
             dwarf.setStat(Stat.CON, 1);

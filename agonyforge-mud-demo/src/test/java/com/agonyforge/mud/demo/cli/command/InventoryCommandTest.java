@@ -19,10 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,6 +64,8 @@ public class InventoryCommandTest {
     @Mock
     private MudItem armor;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -76,17 +75,17 @@ public class InventoryCommandTest {
 
     @Test
     void testInventory() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         String itemName = "a scurrilous test";
 
         when(ch.getId()).thenReturn(chId);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(item.getShortDescription()).thenReturn(itemName);
         when(armor.getWorn()).thenReturn(WearSlot.BODY);
-        when(itemRepository.getByCharacter(eq(chId))).thenReturn(List.of(armor, item));
+        when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(armor, item));
 
         Output output = new Output();
         InventoryCommand uut = new InventoryCommand(repositoryBundle, commService, applicationContext);
@@ -97,7 +96,7 @@ public class InventoryCommandTest {
             new Input("i"),
             output);
 
-        verify(itemRepository).getByCharacter(eq(chId));
+        verify(itemRepository).getByChId(eq(chId));
 
         assertEquals(question, result);
         assertEquals(2, output.getOutput().size());
@@ -107,10 +106,10 @@ public class InventoryCommandTest {
 
     @Test
     void testInventoryEmpty() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(ch.getId()).thenReturn(chId);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -124,7 +123,7 @@ public class InventoryCommandTest {
             new Input("i"),
             output);
 
-        verify(itemRepository).getByCharacter(eq(chId));
+        verify(itemRepository).getByChId(eq(chId));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You are carrying:"));

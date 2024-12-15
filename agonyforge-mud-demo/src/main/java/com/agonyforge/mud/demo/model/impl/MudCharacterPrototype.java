@@ -6,63 +6,55 @@ import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
-@Table(name = "mud_character")
-public class MudCharacter extends Persistent {
+@Table(name = "mud_pcharacter")
+public class MudCharacterPrototype extends Persistent {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long prototypeId;
     private String username;
-    private String webSocketSession;
-    private Long roomId;
     private String name;
     private Pronoun pronoun;
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_wearslot_mapping",
+    @CollectionTable(name = "mud_pcharacter_wearslot_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     private List<WearSlot> wearSlots = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_stat_mapping",
+    @CollectionTable(name = "mud_pcharacter_stat_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "stat_id")
     private final Map<Stat, Integer> stats = new HashMap<>();
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_effort_mapping",
+    @CollectionTable(name = "mud_pcharacter_effort_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> efforts = new HashMap<>();
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_speciesstats_mapping",
+    @CollectionTable(name = "mud_pcharacter_speciesstats_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "stat_id")
     private final Map<Stat, Integer> speciesStats = new HashMap<>();
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_specieseffort_mapping",
+    @CollectionTable(name = "mud_pcharacter_specieseffort_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> speciesEfforts = new HashMap<>();
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_professionstats_mapping",
+    @CollectionTable(name = "mud_pcharacter_professionstats_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "stat_id")
     private final Map<Stat, Integer> professionStats = new HashMap<>();
 
     @ElementCollection
-    @CollectionTable(name = "mud_character_professioneffort_mapping",
+    @CollectionTable(name = "mud_pcharacter_professioneffort_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
@@ -70,13 +62,40 @@ public class MudCharacter extends Persistent {
     private Long speciesId;
     private Long professionId;
 
-    public MudCharacter() {
+    public MudCharacterPrototype() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
         Arrays.stream(Stat.values()).forEach((stat) -> speciesStats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> speciesEfforts.put(effort, 0));
         Arrays.stream(Stat.values()).forEach((stat) -> professionStats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> professionEfforts.put(effort, 0));
+    }
+
+    public MudCharacter buildInstance() {
+        MudCharacter instance = new MudCharacter();
+
+        instance.setPrototypeId(getId());
+        instance.setUsername(getUsername());
+        instance.setName(getName());
+        instance.setPronoun(getPronoun());
+        instance.setWearSlots(getWearSlots());
+        instance.setSpeciesId(getSpeciesId());
+        instance.setProfessionId(getProfessionId());
+
+        Arrays.stream(Stat.values())
+            .forEach(stat -> {
+                instance.setBaseStat(stat, getBaseStat(stat));
+                instance.setSpeciesStat(stat, getSpeciesStat(stat));
+                instance.setProfessionStat(stat, getProfessionStat(stat));
+            });
+        Arrays.stream(Effort.values())
+            .forEach(effort -> {
+                instance.setBaseEffort(effort, getBaseEffort(effort));
+                instance.setSpeciesEffort(effort, getSpeciesEffort(effort));
+                instance.setProfessionEffort(effort, getProfessionEffort(effort));
+            });
+
+        return instance;
     }
 
     public Long getId() {
@@ -87,42 +106,12 @@ public class MudCharacter extends Persistent {
         this.id = id;
     }
 
-    public Long getPrototypeId() {
-        return prototypeId;
-    }
-
-    public void setPrototypeId(Long prototypeId) {
-        this.prototypeId = prototypeId;
-    }
-
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String user) {
-        this.username = user;
-    }
-
-    public String getWebSocketSession() {
-        return webSocketSession;
-    }
-
-    public void setWebSocketSession(String webSocketSession) {
-        this.webSocketSession = webSocketSession;
-    }
-
-    public Long getZoneId() {
-        String roomIdString = getRoomId().toString();
-
-        return Long.valueOf(roomIdString.substring(0, roomIdString.length() - 2));
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -252,8 +241,8 @@ public class MudCharacter extends Persistent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudCharacter)) return false;
-        MudCharacter that = (MudCharacter) o;
+        if (!(o instanceof MudCharacterPrototype)) return false;
+        MudCharacterPrototype that = (MudCharacterPrototype) o;
         return Objects.equals(getId(), that.getId());
     }
 

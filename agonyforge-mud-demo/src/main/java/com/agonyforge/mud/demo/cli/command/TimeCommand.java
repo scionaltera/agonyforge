@@ -26,7 +26,7 @@ public class TimeCommand extends AbstractCommand {
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudProperty mudHour = getRepositoryBundle()
             .getPropertyRepository()
-            .getByName(PROPERTY_HOUR)
+            .findById(PROPERTY_HOUR)
             .orElseThrow();
 
         int hour = Integer.parseInt(mudHour.getValue());

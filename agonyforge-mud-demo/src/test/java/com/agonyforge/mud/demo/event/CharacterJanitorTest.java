@@ -15,10 +15,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,9 +45,11 @@ public class CharacterJanitorTest {
     @Mock
     private MudCharacter ch;
 
+    private final Random random = new Random();
+
     @Test
     void testOnApplicationEvent() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
@@ -63,7 +62,7 @@ public class CharacterJanitorTest {
 
             when(event.getMessage()).thenReturn(message);
             when(simpMessageHeaderAccessor.getSessionAttributes()).thenReturn(attributes);
-            when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+            when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
             CharacterJanitor uut = new CharacterJanitor(characterRepository, commService);
 

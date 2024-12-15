@@ -15,7 +15,6 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
@@ -39,8 +38,8 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
 
         if (attributes != null) {
-            UUID chId = (UUID) attributes.get(MUD_CHARACTER);
-            Optional<MudCharacter> instanceOptional = characterRepository.getById(chId, false);
+            Long chId = (Long)attributes.get(MUD_CHARACTER);
+            Optional<MudCharacter> instanceOptional = characterRepository.findById(chId);
 
             if (instanceOptional.isPresent()) {
                 MudCharacter instance = instanceOptional.get();

@@ -18,10 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,6 +65,8 @@ public class GetCommandTest {
     @Mock
     private MudItem other;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -77,11 +76,11 @@ public class GetCommandTest {
 
     @Test
     void testGetNoArg() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Long roomId = 100L;
 
         when(ch.getRoomId()).thenReturn(roomId);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -95,7 +94,7 @@ public class GetCommandTest {
             new Input("g"),
             output);
 
-        verify(itemRepository, never()).getByRoom(eq(roomId));
+        verify(itemRepository, never()).getByRoomId(eq(roomId));
         verify(itemRepository, never()).save(any(MudItem.class));
 
         assertEquals(question, result);
@@ -104,16 +103,16 @@ public class GetCommandTest {
 
     @Test
     void testGetNoItem() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Long roomId = 100L;
 
         when(ch.getRoomId()).thenReturn(roomId);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(other.getNameList()).thenReturn(List.of("sword"));
-        when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other));
+        when(itemRepository.getByRoomId(eq(roomId))).thenReturn(List.of(other));
 
         Output output = new Output();
         GetCommand uut = new GetCommand(repositoryBundle, commService, applicationContext);
@@ -124,7 +123,7 @@ public class GetCommandTest {
             new Input("g t"),
             output);
 
-        verify(itemRepository).getByRoom(eq(roomId));
+        verify(itemRepository).getByRoomId(eq(roomId));
         verify(itemRepository, never()).save(any(MudItem.class));
 
         assertEquals(question, result);
@@ -133,20 +132,20 @@ public class GetCommandTest {
 
     @Test
     void testGet() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         Long roomId = 100L;
         String itemName = "a scurrilous test";
 
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(item.getNameList()).thenReturn(List.of("test"));
         when(item.getShortDescription()).thenReturn(itemName);
         when(other.getNameList()).thenReturn(List.of("sword"));
-        when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(other, item));
+        when(itemRepository.getByRoomId(eq(roomId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
         GetCommand uut = new GetCommand(repositoryBundle, commService, applicationContext);
@@ -157,7 +156,7 @@ public class GetCommandTest {
             new Input("g t"),
             output);
 
-        verify(itemRepository).getByRoom(eq(roomId));
+        verify(itemRepository).getByRoomId(eq(roomId));
         verify(item).setCharacterId(eq(chId));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));

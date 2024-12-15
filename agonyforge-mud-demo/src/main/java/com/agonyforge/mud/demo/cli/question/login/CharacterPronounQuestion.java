@@ -12,8 +12,8 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPane;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -62,12 +62,12 @@ public class CharacterPronounQuestion extends BaseQuestion {
             output.append("[red]Please choose one of the menu options.");
         } else {
             MenuItem item = itemOptional.get();
-            Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
+            Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(webSocketContext, output);
 
             if (chOptional.isPresent()) {
-                MudCharacter ch = chOptional.get();
+                MudCharacterPrototype ch = chOptional.get();
                 ch.setPronoun((Pronoun)item.getItem());
-                getRepositoryBundle().getCharacterRepository().save(ch);
+                getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
             }
 
             nextQuestion = "characterStatQuestion";

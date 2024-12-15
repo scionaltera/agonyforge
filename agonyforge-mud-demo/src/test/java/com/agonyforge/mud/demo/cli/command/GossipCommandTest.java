@@ -18,17 +18,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -64,6 +59,8 @@ public class GossipCommandTest {
     @Mock
     private Question question;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -84,12 +81,12 @@ public class GossipCommandTest {
     void testExecute(String val) {
         String match = val.substring(7).stripLeading();
         List<String> tokens = tokenize(val);
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         Input input = new Input(val);
         Output output = new Output();
@@ -100,7 +97,7 @@ public class GossipCommandTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[green]You gossip, '" + match + "[green]'", output.getOutput().get(0));
 
-        verify(characterRepository).getById(eq(chId), anyBoolean());
+        verify(characterRepository).findById(eq(chId));
         verify(commService).sendToAll(eq(webSocketContext), any(Output.class));
     }
 
@@ -123,7 +120,7 @@ public class GossipCommandTest {
         assertEquals(1, output.getOutput().size());
         assertEquals("[default]What would you like to gossip?", output.getOutput().get(0));
 
-        verify(characterRepository, never()).getById(any(UUID.class), anyBoolean());
+        verify(characterRepository, never()).findById(any(Long.class));
         verify(commService, never()).sendToAll(any(WebSocketContext.class), any(Output.class));
     }
 

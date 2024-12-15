@@ -52,7 +52,7 @@ public class WearCommand extends AbstractCommand {
         }
 
         // find all items already worn
-        List<MudItem> wornItems = getRepositoryBundle().getItemRepository().getByCharacter(ch.getId())
+        List<MudItem> wornItems = getRepositoryBundle().getItemRepository().getByChId(ch.getId())
             .stream()
             .filter(item -> item.getWorn() != null)
             .toList();

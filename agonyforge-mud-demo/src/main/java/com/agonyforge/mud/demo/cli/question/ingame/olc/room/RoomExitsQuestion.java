@@ -49,7 +49,7 @@ public class RoomExitsQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output, false).orElseThrow();
+        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
         MudRoom room = getRoomModel(wsContext, ch);
 
         if (wsContext.getAttributes().containsKey(REDIT_STATE) && wsContext.getAttributes().get(REDIT_STATE).toString().startsWith("ROOM.EXITS")) {
@@ -65,7 +65,7 @@ public class RoomExitsQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         String nextQuestion = "roomExitsQuestion";
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output, false).orElseThrow();
+        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
         MudRoom room = getRoomModel(wsContext, ch);
 
         if (wsContext.getAttributes().containsKey(REDIT_EXIT)) {
@@ -77,7 +77,7 @@ public class RoomExitsQuestion extends BaseQuestion {
                     room.removeExit(dir.getName());
                     output.append("[red]Removed exit: %s", dir);
                 } else {
-                    Optional<MudRoom> destinationOptional = getRepositoryBundle().getRoomRepository().getById(choice);
+                    Optional<MudRoom> destinationOptional = getRepositoryBundle().getRoomRepository().findById(choice);
 
                     if (destinationOptional.isPresent()) {
                         room.setExit(dir.getName(), new MudRoom.Exit(choice));
@@ -122,7 +122,7 @@ public class RoomExitsQuestion extends BaseQuestion {
 
     private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
         if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            MudRoom room = getRepositoryBundle().getRoomRepository().getById(ch.getRoomId()).orElseThrow();
+            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId()).orElseThrow();
             wsContext.getAttributes().put(REDIT_MODEL, room);
         }
 

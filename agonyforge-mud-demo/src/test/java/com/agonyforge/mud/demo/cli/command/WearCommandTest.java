@@ -20,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,6 +67,8 @@ public class WearCommandTest {
     @Mock
     private MudItem target;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -79,9 +78,9 @@ public class WearCommandTest {
 
     @Test
     void testWearNoArg() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -101,9 +100,9 @@ public class WearCommandTest {
 
     @Test
     void testWearNoInventoryItem() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -123,13 +122,13 @@ public class WearCommandTest {
 
     @Test
     void testWearTargetNotWearable() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
+        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
         when(target.getNameList()).thenReturn(List.of("hat"));
 
         Output output = new Output();
@@ -147,16 +146,16 @@ public class WearCommandTest {
 
     @Test
     void testWearTargetAlreadyWorn() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
+        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
@@ -174,17 +173,17 @@ public class WearCommandTest {
 
     @Test
     void testWearTargetNoAvailableSlot() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
+        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HEAD);
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -201,18 +200,18 @@ public class WearCommandTest {
 
     @Test
     void testWearTarget() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(target));
+        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
         when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -236,20 +235,20 @@ public class WearCommandTest {
 
     @Test
     void testWearTargetSecondMatch() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
+        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -273,20 +272,20 @@ public class WearCommandTest {
 
     @Test
     void testWearTargetWithOtherItem() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(ch.getId())).thenReturn(List.of(item, target));
+        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);

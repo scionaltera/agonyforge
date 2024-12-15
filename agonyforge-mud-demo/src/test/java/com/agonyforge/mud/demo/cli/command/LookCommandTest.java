@@ -20,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +70,8 @@ public class LookCommandTest {
     @Mock
     private Question question;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -82,11 +81,11 @@ public class LookCommandTest {
 
     @Test
     void testExecuteNoRoom() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         long roomId = 100L;
 
         when(ch.getRoomId()).thenReturn(roomId);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -106,7 +105,7 @@ public class LookCommandTest {
 
     @Test
     void testExecute() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         String wsSessionId = UUID.randomUUID().toString();
         long roomId = 100L;
 
@@ -117,10 +116,10 @@ public class LookCommandTest {
         when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");
         when(room.getDescription()).thenReturn("This room is a test.");
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
-        when(characterRepository.getByRoom(eq(roomId))).thenReturn(List.of(ch, target));
-        when(itemRepository.getByRoom(eq(roomId))).thenReturn(List.of(item));
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findByRoomId(eq(roomId))).thenReturn(List.of(ch, target));
+        when(itemRepository.getByRoomId(eq(roomId))).thenReturn(List.of(item));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
         when(sessionAttributeService.getSessionAttributes(wsSessionId)).thenReturn(Map.of("MUD.QUESTION", "commandQuestion"));
 

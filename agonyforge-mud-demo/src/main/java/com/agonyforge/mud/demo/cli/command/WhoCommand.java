@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
-
 @Component
 public class WhoCommand extends AbstractCommand {
     @Autowired
@@ -24,9 +22,8 @@ public class WhoCommand extends AbstractCommand {
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().getByType(TYPE_PC)
+        List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().findAll()
             .stream()
-            .filter(ch -> !ch.isPrototype())
             .toList();
 
         output

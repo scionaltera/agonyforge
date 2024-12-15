@@ -6,16 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.UUID;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class MudProfessionTest {
+    private final Random random = new Random();
+
     @Test
     void testId() {
         MudProfession uut = new MudProfession();
-        UUID id = UUID.randomUUID();
+        Long id = random.nextLong();
 
         uut.setId(id);
 

@@ -19,10 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,6 +63,8 @@ public class EquipmentCommandTest {
     @Mock
     private MudItem junk;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -75,9 +74,9 @@ public class EquipmentCommandTest {
 
     @Test
     void testEquipmentNone() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -98,13 +97,13 @@ public class EquipmentCommandTest {
 
     @Test
     void testEquipment() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByCharacter(eq(ch.getId()))).thenReturn(List.of(junk, item));
+        when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(junk, item));
         when(item.getWorn()).thenReturn(WearSlot.HEAD);
         when(item.getShortDescription()).thenReturn("a rubber chicken");
 

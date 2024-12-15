@@ -7,7 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +25,8 @@ import org.springframework.context.ApplicationContext;
 import java.security.Principal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -51,17 +52,21 @@ public class CharacterNameQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudCharacterPrototypeRepository characterPrototypeRepository;
+
+    @Mock
     private MudItemRepository itemRepository;
 
     @Mock
     private WebSocketContext webSocketContext;
 
     @Captor
-    private ArgumentCaptor<MudCharacter> characterCaptor;
+    private ArgumentCaptor<MudCharacterPrototype> characterPrototypeCaptor;
 
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
+        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(characterPrototypeRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
     }
 
@@ -87,6 +92,11 @@ public class CharacterNameQuestionTest {
         when(applicationContext.getBean(eq("characterPronounQuestion"), eq(Question.class))).thenReturn(question);
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
+        when(characterPrototypeRepository.save(any(MudCharacterPrototype.class))).thenAnswer(i -> {
+            MudCharacterPrototype prototype = i.getArgument(0);
+            prototype.setId(1L);
+            return prototype;
+        });
 
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
         Input input = new Input(userInput);
@@ -98,12 +108,12 @@ public class CharacterNameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals(String.format("[default]Hello, [white]%s[default]!", userInput), output.getOutput().get(0));
 
-        verify(characterRepository).save(characterCaptor.capture());
+        verify(characterPrototypeRepository).save(characterPrototypeCaptor.capture());
 
-        MudCharacter ch = characterCaptor.getValue();
+        MudCharacterPrototype ch = characterPrototypeCaptor.getValue();
 
-        assertNotNull(ch.getId());
-        assertEquals(principal.getName(), ch.getUser());
+        assertEquals(1L, ch.getId());
+        assertEquals(principal.getName(), ch.getUsername());
         assertEquals(userInput, ch.getName());
         assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
     }

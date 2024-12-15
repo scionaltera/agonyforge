@@ -2,14 +2,8 @@ package com.agonyforge.mud.demo.config;
 
 import com.agonyforge.mud.demo.model.constant.Direction;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudItem;
-import com.agonyforge.mud.demo.model.impl.MudProperty;
-import com.agonyforge.mud.demo.model.impl.MudRoom;
-import com.agonyforge.mud.demo.model.impl.MudZone;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
-import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
-import com.agonyforge.mud.demo.model.repository.MudZoneRepository;
+import com.agonyforge.mud.demo.model.impl.*;
+import com.agonyforge.mud.demo.model.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 import static com.agonyforge.mud.demo.event.WeatherListener.PROPERTY_HOUR;
 
@@ -28,29 +22,32 @@ public class WorldLoader {
     private final MudPropertyRepository propertyRepository;
     private final MudZoneRepository zoneRepository;
     private final MudRoomRepository roomRepository;
+    private final MudItemPrototypeRepository itemPrototypeRepository;
     private final MudItemRepository itemRepository;
 
     @Autowired
     public WorldLoader(MudPropertyRepository propertyRepository,
                        MudZoneRepository zoneRepository,
                        MudRoomRepository roomRepository,
+                       MudItemPrototypeRepository itemPrototypeRepository,
                        MudItemRepository itemRepository) {
         this.propertyRepository = propertyRepository;
         this.zoneRepository = zoneRepository;
         this.roomRepository = roomRepository;
+        this.itemPrototypeRepository = itemPrototypeRepository;
         this.itemRepository = itemRepository;
     }
 
     @PostConstruct
     public void loadWorld() {
-        if (propertyRepository.getByName(PROPERTY_HOUR).isEmpty()) {
+        if (propertyRepository.findById(PROPERTY_HOUR).isEmpty()) {
             MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "0");
 
             LOGGER.info("Setting world time");
             propertyRepository.save(mudHour);
         }
 
-        if (zoneRepository.getById(1L).isEmpty()) {
+        if (zoneRepository.findById(1L).isEmpty()) {
             MudZone zone = new MudZone();
 
             zone.setId(1L);
@@ -60,7 +57,7 @@ public class WorldLoader {
             zoneRepository.save(zone);
         }
 
-        if (roomRepository.getById(100L).isEmpty()) {
+        if (roomRepository.findById(100L).isEmpty()) {
             MudRoom room100 = new MudRoom();
 
             room100.setId(100L);
@@ -81,35 +78,38 @@ public class WorldLoader {
             roomRepository.saveAll(List.of(room100, room101));
         }
 
-        if (itemRepository.getByRoom(100L).isEmpty()) {
-            MudItem item = new MudItem();
+        if (itemRepository.getByRoomId(100L).isEmpty()) {
+            MudItemPrototype item = new MudItemPrototype();
             MudItem itemInstance;
 
-            item.setId(UUID.randomUUID());
+            item.setId(100L);
             item.setNameList(List.of("spoon"));
             item.setShortDescription("a spoon");
             item.setLongDescription("A spoon is floating in midair here.");
+
+            item = itemPrototypeRepository.save(item);
 
             itemInstance = item.buildInstance();
 
             itemInstance.setRoomId(100L);
 
-            MudItem hat = new MudItem();
+            MudItemPrototype hat = new MudItemPrototype();
             MudItem hatInstance;
 
-            hat.setId(UUID.randomUUID());
+            hat.setId(101L);
             hat.setNameList(List.of("hat", "floppy"));
             hat.setShortDescription("a floppy hat");
             hat.setLongDescription("A floppy hat has been dropped here.");
-            hat.setWearSlots(List.of(WearSlot.HEAD));
+            hat.setWearSlots(Set.of(WearSlot.HEAD));
+
+            hat = itemPrototypeRepository.save(hat);
 
             hatInstance = hat.buildInstance();
             hatInstance.setRoomId(101L);
 
             LOGGER.info("Creating default items");
             itemRepository.saveAll(List.of(
-                item, itemInstance, 
-                hat, hatInstance
+                itemInstance, hatInstance
             ));
         }
     }

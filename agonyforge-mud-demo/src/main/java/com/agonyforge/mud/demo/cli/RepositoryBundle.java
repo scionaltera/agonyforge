@@ -1,11 +1,6 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.model.repository.MudProfessionRepository;
-import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
-import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
-import com.agonyforge.mud.demo.model.repository.MudSpeciesRepository;
+import com.agonyforge.mud.demo.model.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +8,9 @@ import org.springframework.stereotype.Component;
 public class RepositoryBundle {
     private final MudPropertyRepository propertyRepository;
     private final MudCharacterRepository characterRepository;
+    private final MudCharacterPrototypeRepository characterPrototypeRepository;
     private final MudItemRepository itemRepository;
+    private final MudItemPrototypeRepository itemPrototypeRepository;
     private final MudRoomRepository roomRepository;
     private final MudSpeciesRepository speciesRepository;
     private final MudProfessionRepository professionRepository;
@@ -21,13 +18,17 @@ public class RepositoryBundle {
     @Autowired
     public RepositoryBundle(MudPropertyRepository propertyRepository,
                             MudCharacterRepository characterRepository,
+                            MudCharacterPrototypeRepository characterPrototypeRepository,
                             MudItemRepository itemRepository,
+                            MudItemPrototypeRepository itemPrototypeRepository,
                             MudRoomRepository roomRepository,
                             MudSpeciesRepository speciesRepository,
                             MudProfessionRepository professionRepository) {
         this.propertyRepository = propertyRepository;
         this.characterRepository = characterRepository;
+        this.characterPrototypeRepository = characterPrototypeRepository;
         this.itemRepository = itemRepository;
+        this.itemPrototypeRepository = itemPrototypeRepository;
         this.roomRepository = roomRepository;
         this.speciesRepository = speciesRepository;
         this.professionRepository = professionRepository;
@@ -41,8 +42,16 @@ public class RepositoryBundle {
         return characterRepository;
     }
 
+    public MudCharacterPrototypeRepository getCharacterPrototypeRepository() {
+        return characterPrototypeRepository;
+    }
+
     public MudItemRepository getItemRepository() {
         return itemRepository;
+    }
+
+    public MudItemPrototypeRepository getItemPrototypeRepository() {
+        return itemPrototypeRepository;
     }
 
     public MudRoomRepository getRoomRepository() {

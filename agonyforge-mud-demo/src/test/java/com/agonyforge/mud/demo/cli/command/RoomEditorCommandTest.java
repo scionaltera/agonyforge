@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
@@ -69,6 +68,8 @@ public class RoomEditorCommandTest {
     @Mock
     private MudRoom room;
 
+    private final Random random = new Random();
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -77,17 +78,17 @@ public class RoomEditorCommandTest {
 
     @Test
     void testExecuteNoArgs() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
 
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getRoomId()).thenReturn(roomId);
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
@@ -100,17 +101,17 @@ public class RoomEditorCommandTest {
 
     @Test
     void testExecuteExistingRoom() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
 
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getRoomId()).thenReturn(roomId);
-        when(roomRepository.getById(eq(roomId))).thenReturn(Optional.of(room));
+        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
@@ -123,14 +124,14 @@ public class RoomEditorCommandTest {
 
     @Test
     void testExecuteNewRoom() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
 
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getRoomId()).thenReturn(roomId);
 
@@ -146,13 +147,13 @@ public class RoomEditorCommandTest {
 
     @Test
     void testInvalidArgument() {
-        UUID chId = UUID.randomUUID();
+        Long chId = random.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(characterRepository.getById(eq(chId), eq(false))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getRoomId()).thenReturn(roomId);
 

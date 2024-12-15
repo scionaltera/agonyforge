@@ -19,12 +19,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-import static com.agonyforge.mud.demo.model.impl.ModelConstants.TYPE_PC;
-
 @Component
 public class CommService extends EchoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommService.class);
-
 
     private final MudCharacterRepository characterRepository;
 
@@ -50,9 +47,8 @@ public class CommService extends EchoService {
     public void sendToAll(WebSocketContext wsContext, Output message, MudCharacter ... except) {
         List<MudCharacter> skip = List.of(except);
 
-        characterRepository.getByType(TYPE_PC)
+        characterRepository.findAll()
             .stream()
-            .filter(ch -> !ch.isPrototype())
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
@@ -67,9 +63,8 @@ public class CommService extends EchoService {
     public void sendToAll(Output message, MudCharacter ... except) {
         List<MudCharacter> skip = List.of(except);
 
-        characterRepository.getByType(TYPE_PC)
+        characterRepository.findAll()
             .stream()
-            .filter(ch -> !ch.isPrototype())
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }
@@ -85,9 +80,8 @@ public class CommService extends EchoService {
         String zoneIdString = zoneId.toString();
         List<MudCharacter> skip = List.of(except);
 
-        characterRepository.getByType(TYPE_PC)
+        characterRepository.findByRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
             .stream()
-            .filter(ch -> !ch.isPrototype())
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .filter(ch -> zoneIdString.equals(ch.getRoomId().toString().substring(0, zoneIdString.length())))
@@ -104,7 +98,7 @@ public class CommService extends EchoService {
      */
     public void sendToRoom(WebSocketContext wsContext, Long roomId, Output message, MudCharacter ... except) {
         List<MudCharacter> skip = List.of(except);
-        characterRepository.getByRoom(roomId)
+        characterRepository.findByRoomId(roomId)
             .stream()
             .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
@@ -120,7 +114,6 @@ public class CommService extends EchoService {
     public void sendToTargets(List<MudCharacter> targets, Output message) {
         targets
             .stream()
-            .filter(ch -> !ch.isPrototype())
             .forEach(ch -> sendTo(ch, message));
     }
 
@@ -138,7 +131,7 @@ public class CommService extends EchoService {
         }
 
         WebSocketContext targetWsContext = WebSocketContext.build(
-            new StompPrincipal(ch.getUser()),
+            new StompPrincipal(ch.getUsername()),
             ch.getWebSocketSession(),
             attributes);
 

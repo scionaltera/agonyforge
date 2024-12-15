@@ -8,46 +8,41 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class MudCharacterTest {
+    private final Random random = new Random();
+
     @Test
     void testBuildInstance() {
-        MudCharacter proto = new MudCharacter();
+        MudCharacterPrototype proto = new MudCharacterPrototype();
 
-        proto.setUser("principal");
-        proto.setId(UUID.randomUUID());
+        proto.setUsername("principal");
+        proto.setId(random.nextLong());
         proto.setName("Scion");
-        proto.setSpeciesId(UUID.randomUUID());
-        proto.setProfessionId(UUID.randomUUID());
+        proto.setSpeciesId(random.nextLong());
+        proto.setProfessionId(random.nextLong());
 
         MudCharacter instance = proto.buildInstance();
 
         instance.setRoomId(100L);
 
-        assertTrue(proto.isPrototype());
-        assertThrows(IllegalStateException.class, proto::getRoomId);
-
-        assertFalse(instance.isPrototype());
-        assertEquals(proto.getId(), instance.getId());
+        assertEquals(proto.getId(), instance.getPrototypeId());
         assertEquals(100L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
-        assertEquals(proto.getUser(), instance.getUser());
+        assertEquals(proto.getUsername(), instance.getUsername());
         assertEquals(proto.getSpeciesId(), instance.getSpeciesId());
         assertEquals(proto.getProfessionId(), instance.getProfessionId());
-        assertThrows(IllegalStateException.class, instance::buildInstance);
     }
 
     @Test
     void testId() {
         MudCharacter uut = new MudCharacter();
-        UUID id = UUID.randomUUID();
+        Long id = random.nextLong();
 
         uut.setId(id);
 
@@ -56,57 +51,54 @@ public class MudCharacterTest {
 
     @Test
     void testUser() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
         MudCharacter uutInst;
         String user = "user";
 
-        uut.setUser(user);
+        uut.setUsername(user);
         uutInst = uut.buildInstance();
 
-        assertEquals(user, uut.getUser());
-        assertEquals(user, uutInst.getUser());
+        assertEquals(user, uut.getUsername());
+        assertEquals(user, uutInst.getUsername());
     }
 
     @Test
     void testWebSocketSession() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
         MudCharacter uutInst;
         String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
-        uut.setUser(user);
+        uut.setUsername(user);
         uutInst = uut.buildInstance();
 
         uutInst.setRoomId(100L);
         uutInst.setWebSocketSession(webSocketSession);
 
-        assertThrows(IllegalStateException.class, uut::getWebSocketSession);
         assertEquals(webSocketSession, uutInst.getWebSocketSession());
     }
 
     @Test
     void testZoneId() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
         MudCharacter uutInst;
         Long roomId = 100L;
 
         uutInst = uut.buildInstance();
         uutInst.setRoomId(roomId);
 
-        assertThrows(IllegalStateException.class, uut::getZoneId);
         assertEquals(1L, uutInst.getZoneId());
     }
 
     @Test
     void testRoomId() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
         MudCharacter uutInst;
         Long roomId = 100L;
 
         uutInst = uut.buildInstance();
         uutInst.setRoomId(roomId);
 
-        assertThrows(IllegalStateException.class, uut::getRoomId);
         assertEquals(roomId, uutInst.getRoomId());
     }
 

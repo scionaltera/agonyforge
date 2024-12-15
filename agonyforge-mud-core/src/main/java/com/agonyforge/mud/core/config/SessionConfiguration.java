@@ -31,6 +31,7 @@ import static org.springframework.session.hazelcast.HazelcastIndexedSessionRepos
 public class SessionConfiguration {
     public static final String MUD_QUESTION = "MUD.QUESTION";
     public static final String MUD_CHARACTER = "MUD.CHARACTER";
+    public static final String MUD_PCHARACTER = "MUD.PCHARACTER";
 
     @Bean
     @SpringSessionHazelcastInstance
