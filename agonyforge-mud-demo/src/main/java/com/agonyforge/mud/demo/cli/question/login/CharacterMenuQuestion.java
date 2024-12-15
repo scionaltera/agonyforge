@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import java.security.Principal;
 import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
 @Component
@@ -77,7 +76,7 @@ public class CharacterMenuQuestion extends BaseQuestion {
         getRepositoryBundle().getCharacterPrototypeRepository().findByUsername(principal.getName())
             .forEach(ch -> menuPane.getItems().add(new MenuItem(
                 Integer.toString(menuPane.getItems().size()),
-                ch.getName(),
+                String.format("%s%s", ch.getName(), ch.getComplete() ? "" : " [dred]*[red]INCOMPLETE[dred]*"),
                 ch.getId())));
     }
 }

@@ -21,6 +21,7 @@ public class MudCharacterTest {
     void testBuildInstance() {
         MudCharacterPrototype proto = new MudCharacterPrototype();
 
+        proto.setComplete(true);
         proto.setUsername("principal");
         proto.setId(random.nextLong());
         proto.setName("Scion");
@@ -55,6 +56,7 @@ public class MudCharacterTest {
         MudCharacter uutInst;
         String user = "user";
 
+        uut.setComplete(true);
         uut.setUsername(user);
         uutInst = uut.buildInstance();
 
@@ -69,6 +71,7 @@ public class MudCharacterTest {
         String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
+        uut.setComplete(true);
         uut.setUsername(user);
         uutInst = uut.buildInstance();
 
@@ -84,6 +87,7 @@ public class MudCharacterTest {
         MudCharacter uutInst;
         Long roomId = 100L;
 
+        uut.setComplete(true);
         uutInst = uut.buildInstance();
         uutInst.setRoomId(roomId);
 
@@ -96,6 +100,7 @@ public class MudCharacterTest {
         MudCharacter uutInst;
         Long roomId = 100L;
 
+        uut.setComplete(true);
         uutInst = uut.buildInstance();
         uutInst.setRoomId(roomId);
 
