@@ -24,8 +24,9 @@ import java.util.Locale;
 
 @Component
 public class CharacterEffortQuestion extends BaseQuestion {
+    public static final int STARTING_EFFORTS = 4;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterEffortQuestion.class);
-    private static final int STARTING_EFFORTS = 4;
 
     private final MenuPane menuPane = new MenuPane();
 

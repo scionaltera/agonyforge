@@ -25,8 +25,9 @@ import java.util.Locale;
 
 @Component
 public class CharacterStatQuestion extends BaseQuestion {
+    public static final int STARTING_STATS = 6;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterStatQuestion.class);
-    private static final int STARTING_STATS = 6;
 
     private final MenuPane menuPane = new MenuPane();
 

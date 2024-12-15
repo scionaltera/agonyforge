@@ -23,7 +23,6 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 import static com.agonyforge.mud.demo.cli.question.login.CharacterViewQuestion.START_ROOM;
 import static com.agonyforge.mud.demo.config.ProfessionLoader.DEFAULT_PROFESSION_ID;
