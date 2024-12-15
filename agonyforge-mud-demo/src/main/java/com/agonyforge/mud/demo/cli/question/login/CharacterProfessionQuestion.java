@@ -77,6 +77,9 @@ public class CharacterProfessionQuestion extends BaseQuestion {
                 Arrays.stream(Stat.values()).forEach(stat -> ch.setProfessionStat(stat, profession.getStat(stat)));
                 Arrays.stream(Effort.values()).forEach(effort -> ch.setProfessionEffort(effort, profession.getEffort(effort)));
 
+                // this is the last question, so the character is complete now
+                ch.setComplete(true);
+
                 getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
             }
 

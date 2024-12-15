@@ -56,7 +56,13 @@ public class CharacterViewQuestion extends BaseQuestion {
             characterSheetFormatter.format(ch, output);
 
             output.append("");
-            output.append("[green]P[black]) Play as this character");
+
+            if (!ch.getComplete()) {
+                output.append("[blue]E[black]) Edit this character");
+            } else {
+                output.append("[green]P[black]) Play as this character");
+            }
+
             output.append("[red]D[black]) Delete this character");
             output.append("[dwhite]B[black]) Go back");
             output.append("[black]Please [white]make your selection[black]: ");
@@ -69,29 +75,36 @@ public class CharacterViewQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         Output output = new Output();
         Question next = this;
+        Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
 
         if ("P".equalsIgnoreCase(input.getInput())) {
-            Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
             Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(START_ROOM);
 
             if (chOptional.isPresent() && roomOptional.isPresent()) {
                 MudCharacterPrototype chPrototype = chOptional.get();
-                MudCharacter ch = chPrototype.buildInstance();
-                MudRoom room = roomOptional.get();
 
-                ch.setRoomId(START_ROOM); // TODO configurable start room
-                ch.setWebSocketSession(wsContext.getSessionId());
+                if (!chPrototype.getComplete()) {
+                    output.append("[red]This character is not finished yet. You should character creation first.");
+                } else {
+                    MudCharacter ch = chPrototype.buildInstance();
+                    MudRoom room = roomOptional.get();
 
-                ch = getRepositoryBundle().getCharacterRepository().save(ch);
-                wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
+                    ch.setRoomId(START_ROOM); // TODO configurable start room
+                    ch.setWebSocketSession(wsContext.getSessionId());
 
-                LOGGER.info("{} has entered the game", ch.getName());
-                commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
+                    ch = getRepositoryBundle().getCharacterRepository().save(ch);
+                    wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
-                output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
+                    LOGGER.info("{} has entered the game", ch.getName());
+                    commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
 
-                next = getQuestion("commandQuestion");
+                    output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
+
+                    next = getQuestion("commandQuestion");
+                }
             }
+        } else if ("E".equalsIgnoreCase(input.getInput())) {
+            next = getQuestion("characterPronounQuestion");
         } else if ("D".equalsIgnoreCase(input.getInput())) {
             next = getQuestion("characterDeleteQuestion");
         } else if ("B".equalsIgnoreCase(input.getInput())) {

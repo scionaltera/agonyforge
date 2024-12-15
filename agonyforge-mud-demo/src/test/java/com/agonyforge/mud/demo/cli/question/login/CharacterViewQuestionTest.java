@@ -121,6 +121,7 @@ public class CharacterViewQuestionTest {
 
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(ch.getComplete()).thenReturn(true);
         when(ch.getName()).thenReturn(characterName);
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(ch.getSpeciesId()).thenReturn(DEFAULT_SPECIES_ID);
@@ -182,6 +183,7 @@ public class CharacterViewQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
+        when(ch.getComplete()).thenReturn(true);
         when(ch.buildInstance()).thenReturn(chInstance);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -232,6 +234,15 @@ public class CharacterViewQuestionTest {
 
     @Test
     void testAnswerUnknown() {
+        Long chId = random.nextLong();
+        String wsSessionId = UUID.randomUUID().toString();
+        Map<String, Object> attributes = new HashMap<>();
+
+        attributes.put(MUD_PCHARACTER, chId);
+
+        when(wsContext.getAttributes()).thenReturn(attributes);
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("x"));
         Output output = result.getFeedback().orElseThrow();

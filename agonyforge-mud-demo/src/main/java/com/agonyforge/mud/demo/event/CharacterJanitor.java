@@ -37,7 +37,7 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
 
-        if (attributes != null) {
+        if (attributes != null && attributes.containsKey(MUD_CHARACTER)) {
             Long chId = (Long)attributes.get(MUD_CHARACTER);
             Optional<MudCharacter> instanceOptional = characterRepository.findById(chId);
 

@@ -14,6 +14,7 @@ public class MudCharacterPrototype extends Persistent {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Boolean isComplete = false;
     private String username;
     private String name;
     private Pronoun pronoun;
@@ -72,6 +73,10 @@ public class MudCharacterPrototype extends Persistent {
     }
 
     public MudCharacter buildInstance() {
+        if (getComplete() == null || !getComplete()) {
+            throw new IllegalStateException("Cannot build an incomplete instance of a character.");
+        }
+
         MudCharacter instance = new MudCharacter();
 
         instance.setPrototypeId(getId());
@@ -104,6 +109,14 @@ public class MudCharacterPrototype extends Persistent {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(Boolean complete) {
+        isComplete = complete;
     }
 
     public String getUsername() {
