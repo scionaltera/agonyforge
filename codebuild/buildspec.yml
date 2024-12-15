@@ -30,7 +30,6 @@ phases:
           echo "publishing JARs to GitHub"
           
           ./gradlew :agonyforge-mud-core:publish
-          ./gradlew :agonyforge-mud-models-dynamodb:publish
         
           echo "pushing SNAPSHOT container to GitHub"
         
