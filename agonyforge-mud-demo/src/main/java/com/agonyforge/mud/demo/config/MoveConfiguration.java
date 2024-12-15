@@ -87,4 +87,44 @@ public class MoveConfiguration {
             applicationContext,
             Direction.DOWN);
     }
+
+    @Bean
+    public MoveCommand northeastCommand() {
+        return new MoveCommand(
+            repositoryBundle,
+            commService,
+            sessionAttributeService,
+            applicationContext,
+            Direction.NORTHEAST);
+    }
+
+    @Bean
+    public MoveCommand northwestCommand() {
+        return new MoveCommand(
+            repositoryBundle,
+            commService,
+            sessionAttributeService,
+            applicationContext,
+            Direction.NORTHWEST);
+    }
+
+    @Bean
+    public MoveCommand southeastCommand() {
+        return new MoveCommand(
+            repositoryBundle,
+            commService,
+            sessionAttributeService,
+            applicationContext,
+            Direction.SOUTHEAST);
+    }
+
+    @Bean
+    public MoveCommand southwestCommand() {
+        return new MoveCommand(
+            repositoryBundle,
+            commService,
+            sessionAttributeService,
+            applicationContext,
+            Direction.SOUTHWEST);
+    }
 }

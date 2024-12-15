@@ -36,6 +36,15 @@ public class CommandLoader {
             refs.add(new CommandReference(1, "UP", "upCommand"));
             refs.add(new CommandReference(1, "DOWN", "downCommand"));
 
+            refs.add(new CommandReference(2, "NORTHEAST", "northeastCommand"));
+            refs.add(new CommandReference(2, "NORTHWEST", "northwestCommand"));
+            refs.add(new CommandReference(2, "SOUTHEAST", "southeastCommand"));
+            refs.add(new CommandReference(2, "SOUTHWEST", "southwestCommand"));
+            refs.add(new CommandReference(2, "NE", "northeastCommand"));
+            refs.add(new CommandReference(2, "NW", "northwestCommand"));
+            refs.add(new CommandReference(2, "SE", "southeastCommand"));
+            refs.add(new CommandReference(2, "SW", "southwestCommand"));
+
             refs.add(new CommandReference(5, "LOOK", "lookCommand"));
             refs.add(new CommandReference(5, "WHO", "whoCommand"));
             refs.add(new CommandReference(5, "SCORE", "scoreCommand"));
