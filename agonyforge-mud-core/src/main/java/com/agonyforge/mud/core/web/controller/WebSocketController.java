@@ -29,8 +29,6 @@ import static org.springframework.web.socket.server.support.HttpSessionHandshake
 @Transactional
 @Controller
 public class WebSocketController {
-    public static final String WS_SESSION_ID = "WS.SESSION.ID";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
     private final ApplicationContext applicationContext;

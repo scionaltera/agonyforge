@@ -6,7 +6,11 @@ public enum Direction {
     SOUTH("south", "north"),
     WEST("west", "east"),
     UP("up", "down"),
-    DOWN("down", "up");
+    DOWN("down", "up"),
+    NORTHEAST("northeast", "southwest"),
+    NORTHWEST("northwest", "southeast"),
+    SOUTHEAST("southeast", "northwest"),
+    SOUTHWEST("southwest", "northeast");
 
     private final String name;
     private final String opposite;
