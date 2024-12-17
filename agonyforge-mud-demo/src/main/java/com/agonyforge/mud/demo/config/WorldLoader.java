@@ -108,9 +108,7 @@ public class WorldLoader {
             hatInstance.setRoomId(101L);
 
             LOGGER.info("Creating default items");
-            itemRepository.saveAll(List.of(
-                itemInstance, hatInstance
-            ));
+            itemRepository.saveAll(List.of(itemInstance, hatInstance));
         }
     }
 }

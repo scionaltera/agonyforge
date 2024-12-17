@@ -95,8 +95,10 @@ public class RoomExitsQuestion extends BaseQuestion {
         } else {
             String choice = input.getInput().toUpperCase(Locale.ROOT).substring(0, 1);
 
-            if ("Q".equals(choice)) {
+            if ("X".equals(choice)) {
                 nextQuestion = "roomEditorQuestion";
+                wsContext.getAttributes().remove(REDIT_STATE);
+                wsContext.getAttributes().remove(REDIT_EXIT);
             } else {
                 Optional<MenuItem> itemOptional = menuPane.getItems().stream()
                     .filter(item -> choice.equals(item.getKey()))
@@ -146,6 +148,6 @@ public class RoomExitsQuestion extends BaseQuestion {
             menuPane.getItems().add(item);
         }
 
-        menuPane.getItems().add(new MenuItem("Q", "Quit"));
+        menuPane.getItems().add(new MenuItem("X", "Exit"));
     }
 }

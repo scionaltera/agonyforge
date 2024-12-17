@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.model.impl;
 
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.*;
 
@@ -19,6 +20,7 @@ public class MudItem extends Persistent {
     @ElementCollection
     @CollectionTable(name = "mud_item_namelist_mapping",
     joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "instance_id")})
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> nameList = new ArrayList<>();
     private String shortDescription;
     private String longDescription;
@@ -26,6 +28,7 @@ public class MudItem extends Persistent {
     @ElementCollection
     @CollectionTable(name = "mud_item_wearslot_mapping",
     joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "instance_id")})
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<WearSlot> wearSlots = new HashSet<>();
     private WearSlot worn;
 
@@ -35,6 +38,14 @@ public class MudItem extends Persistent {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
     }
 
     public Long getCharacterId() {

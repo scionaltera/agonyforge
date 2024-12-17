@@ -10,8 +10,6 @@ import java.util.*;
 public class MudItemPrototype extends Persistent {
     @Id
     private Long id;
-    private String containerType;
-    private String containerId;
 
     @ElementCollection
     @CollectionTable(name = "mud_pitem_namelist_mapping",
@@ -24,7 +22,6 @@ public class MudItemPrototype extends Persistent {
     @CollectionTable(name = "mud_pitem_wearslot_mapping",
     joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "id")})
     private Set<WearSlot> wearSlots = new HashSet<>();
-    private WearSlot worn;
 
     public MudItem buildInstance() {
         MudItem instance = new MudItem();
@@ -34,7 +31,6 @@ public class MudItemPrototype extends Persistent {
         instance.setShortDescription(getShortDescription());
         instance.setLongDescription(getLongDescription());
         instance.setWearSlots(getWearSlots());
-        instance.setWorn(getWorn());
 
         return instance;
     }
@@ -77,14 +73,6 @@ public class MudItemPrototype extends Persistent {
 
     public void setWearSlots(Set<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
-    }
-
-    public WearSlot getWorn() {
-        return worn;
-    }
-
-    public void setWorn(WearSlot worn) {
-        this.worn = worn;
     }
 
     @Override

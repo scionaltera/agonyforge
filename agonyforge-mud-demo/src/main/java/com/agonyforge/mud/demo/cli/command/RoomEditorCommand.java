@@ -53,7 +53,7 @@ public class RoomEditorCommand extends AbstractCommand {
                     room.setId(roomId);
                     room.setZoneId(zoneId);
                     room.setName("Unfinished Room");
-                    room.setDescription("A newly constructed room. The drywall and plaster haven't quite dried. It still needs a coat of paint.");
+                    room.setDescription("A newly constructed room. It still needs a coat of paint.");
 
                     getRepositoryBundle().getRoomRepository().save(room);
                 } else {

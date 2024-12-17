@@ -43,7 +43,7 @@ public class LookCommand extends AbstractCommand {
                 String action;
 
                 switch (question) {
-                    case "roomEditorQuestion" -> action = "busy editing something";
+                    case "roomEditorQuestion" -> action = "busy altering the threads of time and space";
                     default -> action = "here";
                 }
 
@@ -51,7 +51,8 @@ public class LookCommand extends AbstractCommand {
             });
 
         repositoryBundle.getItemRepository().getByRoomId(room.getId())
-            .forEach(target -> output.append("[green]%s",
+            .forEach(target -> output.append("[green](%d) %s",
+                target.getId(),
                 StringUtils.capitalize(target.getLongDescription())));
 
         return output;

@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.cli.question.ingame;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.*;
 
@@ -65,7 +65,7 @@ public class CommandQuestion extends BaseQuestion {
             return new Response(this, output);
         }
 
-        List<String> tokens = tokenize(input.getInput());
+        List<String> tokens = Tokenizer.tokenize(input.getInput());
         List<CommandReference> refs = commandRepository.findAll(Sort.by(Sort.Order.asc("priority")));
         Optional<CommandReference> refOptional = refs
             .stream()
@@ -92,30 +92,5 @@ public class CommandQuestion extends BaseQuestion {
             output.append("[default]Huh?");
             return new Response(this, output);
         }
-    }
-
-    private List<String> tokenize(String escaped) {
-        List<String> tokens = new ArrayList<>();
-        StringBuilder buf = new StringBuilder();
-        boolean isQuoting = false;
-
-        String input = HtmlUtils.htmlUnescape(escaped);
-
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) == '"') {
-                isQuoting = !isQuoting;
-            } else if (!isQuoting && input.charAt(i) == ' ') {
-                tokens.add(buf.toString().toUpperCase(Locale.ROOT));
-                buf.setLength(0);
-            } else {
-                buf.append(input.charAt(i));
-            }
-        }
-
-        if (!buf.isEmpty()) {
-            tokens.add(buf.toString().toUpperCase(Locale.ROOT));
-        }
-
-        return tokens;
     }
 }
