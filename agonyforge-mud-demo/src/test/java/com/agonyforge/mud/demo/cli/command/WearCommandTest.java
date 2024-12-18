@@ -130,6 +130,7 @@ public class WearCommandTest {
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
         when(target.getNameList()).thenReturn(List.of("hat"));
+        when(target.getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -153,9 +154,6 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
-        when(target.getShortDescription()).thenReturn("a test hat");
-        when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
@@ -168,7 +166,7 @@ public class WearCommandTest {
             output);
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You are already wearing a test hat"));
+        assertTrue(output.getOutput().get(0).contains("You aren't carrying anything like that."));
     }
 
     @Test
@@ -180,10 +178,9 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
-        when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HEAD);
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -211,7 +208,7 @@ public class WearCommandTest {
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -244,11 +241,10 @@ public class WearCommandTest {
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
-        when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -281,11 +277,10 @@ public class WearCommandTest {
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
-        when(item.getNameList()).thenReturn(List.of("rubber", "chicken"));
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
+        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);

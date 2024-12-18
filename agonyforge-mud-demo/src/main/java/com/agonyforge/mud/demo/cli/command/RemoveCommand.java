@@ -32,7 +32,7 @@ public class RemoveCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
+        Optional<MudItem> targetOptional = findWornItem(ch, tokens.get(1));
 
         if (targetOptional.isEmpty()) {
             output.append("[default]You aren't wearing anything like that.");

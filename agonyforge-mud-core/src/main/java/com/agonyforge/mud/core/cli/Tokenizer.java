@@ -12,13 +12,13 @@ public class Tokenizer {
         StringBuilder buf = new StringBuilder();
         boolean isQuoting = false;
 
-        String input = HtmlUtils.htmlUnescape(escaped);
+        String input = HtmlUtils.htmlUnescape(escaped).trim();
 
         for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) == '"') {
                 isQuoting = !isQuoting;
             } else if (!isQuoting && input.charAt(i) == ' ') {
-                tokens.add(buf.toString().toUpperCase(Locale.ROOT));
+                addTokenIfNotBlank(tokens, buf);
                 buf.setLength(0);
             } else {
                 buf.append(input.charAt(i));
@@ -26,9 +26,17 @@ public class Tokenizer {
         }
 
         if (!buf.isEmpty()) {
-            tokens.add(buf.toString().toUpperCase(Locale.ROOT));
+            addTokenIfNotBlank(tokens, buf);
         }
 
         return tokens;
+    }
+
+    private static void addTokenIfNotBlank(List<String> tokens, StringBuilder buf) {
+        String token = buf.toString().trim().toUpperCase(Locale.ROOT);
+
+        if (!token.isBlank()) {
+            tokens.add(token);
+        }
     }
 }

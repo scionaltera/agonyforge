@@ -139,7 +139,7 @@ public class RoomEditorQuestionTest {
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
         Response response = uut.answer(wsContext, new Input("e"));
@@ -210,35 +210,9 @@ public class RoomEditorQuestionTest {
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
-        Response response = uut.answer(wsContext, new Input("s"));
+        Response response = uut.answer(wsContext, new Input("x"));
 
         verify(roomRepository).save(eq(room));
-
-        assertEquals(question, response.getNext());
-        assertTrue(response.getFeedback().isPresent());
-        assertFalse(attributes.containsKey(REDIT_STATE));
-        assertFalse(attributes.containsKey(REDIT_MODEL));
-    }
-
-    @Test
-    void testAnswerQuit() {
-        Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 200);
-        Map<String, Object> attributes = new HashMap<>();
-
-        attributes.put(MUD_CHARACTER, chId);
-
-        when(ch.getRoomId()).thenReturn(roomId);
-        when(wsContext.getAttributes()).thenReturn(attributes);
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
-        when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
-
-        RoomEditorQuestion uut = new RoomEditorQuestion(applicationContext, repositoryBundle, commService);
-        Response response = uut.answer(wsContext, new Input("q"));
-
-        verify(roomRepository, never()).save(eq(room));
 
         assertEquals(question, response.getNext());
         assertTrue(response.getFeedback().isPresent());

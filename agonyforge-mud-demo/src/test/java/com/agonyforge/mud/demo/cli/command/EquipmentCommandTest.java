@@ -118,6 +118,6 @@ public class EquipmentCommandTest {
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You are using"));
-        assertTrue(output.getOutput().get(1).contains("&lt;worn on head>\ta rubber chicken"));
+        assertTrue(output.getOutput().get(1).contains("&lt;worn on head&gt;\ta rubber chicken"));
     }
 }

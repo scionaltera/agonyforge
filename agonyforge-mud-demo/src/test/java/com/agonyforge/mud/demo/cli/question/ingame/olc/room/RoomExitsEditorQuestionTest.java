@@ -126,7 +126,7 @@ public class RoomExitsEditorQuestionTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(roomRepository.findById(eq(destId))).thenReturn(Optional.of(destRoom));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input(Long.toString(destId)));
@@ -155,7 +155,7 @@ public class RoomExitsEditorQuestionTest {
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("0"));
@@ -179,7 +179,7 @@ public class RoomExitsEditorQuestionTest {
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         uut.populateMenuItems(room);
@@ -207,7 +207,7 @@ public class RoomExitsEditorQuestionTest {
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
-        Response response = uut.answer(wsContext, new Input("q"));
+        Response response = uut.answer(wsContext, new Input("x"));
 
         assertTrue(response.getFeedback().isPresent());
         assertEquals(question, response.getNext());

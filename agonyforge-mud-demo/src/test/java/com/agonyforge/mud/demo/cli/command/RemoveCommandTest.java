@@ -118,31 +118,6 @@ public class RemoveCommandTest {
     }
 
     @Test
-    void testRemoveTargetNotWorn() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(target));
-        when(target.getNameList()).thenReturn(List.of("test", "hat"));
-        when(target.getShortDescription()).thenReturn("a test hat");
-
-        Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("REMOVE", "HAT"),
-            new Input("rem hat"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You aren't wearing a test hat"));
-    }
-
-    @Test
     void testRemoveTarget() {
         Long chId = random.nextLong();
 
