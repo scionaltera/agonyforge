@@ -84,7 +84,7 @@ public class RoomEditorQuestion extends BaseQuestion {
             switch (choice) {
                 case "T" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.TITLE");
                 case "D" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.DESCRIPTION");
-                case "E" -> nextQuestion = "roomExitsQuestion";
+                case "E" -> nextQuestion = "roomExitsEditorQuestion";
                 case "X" -> {
                     getRepositoryBundle().getRoomRepository().save(room);
                     output.append("[green]Saved changes.");

@@ -63,7 +63,7 @@ public class RoomExitsEditorQuestion extends BaseQuestion {
 
     @Override
     public Response answer(WebSocketContext wsContext, Input input) {
-        String nextQuestion = "roomExitsQuestion";
+        String nextQuestion = "roomExitsEditorQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
         MudRoom room = getRoomModel(wsContext, ch);

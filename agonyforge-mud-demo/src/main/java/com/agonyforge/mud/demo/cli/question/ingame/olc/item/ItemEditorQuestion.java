@@ -88,7 +88,7 @@ public class ItemEditorQuestion extends BaseQuestion {
                 case "N" -> wsContext.getAttributes().put(IEDIT_STATE, "IEDIT.NAMES");
                 case "S" -> wsContext.getAttributes().put(IEDIT_STATE, "IEDIT.SHORT_DESC");
                 case "L" -> wsContext.getAttributes().put(IEDIT_STATE, "IEDIT.LONG_DESC");
-                case "W" -> nextQuestion = "itemWearSlotsQuestion";
+                case "W" -> nextQuestion = "itemWearSlotsEditorQuestion";
                 case "X" -> {
                     getRepositoryBundle().getItemPrototypeRepository().save(itemProto);
                     output.append("[green]Saved changes.");

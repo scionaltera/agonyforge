@@ -63,7 +63,7 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
 
     @Override
     public Response answer(WebSocketContext wsContext, Input input) {
-        String nextQuestion = "itemWearSlotsQuestion";
+        String nextQuestion = "itemWearSlotsEditorQuestion";
         Output output = new Output();
         String choice = input.getInput().toUpperCase(Locale.ROOT);
 
