@@ -2,11 +2,11 @@ plugins {
     id 'java'
 }
 
-task deleteLocalstackVolume(type:Delete) {
-    delete "volume"
+task deletePostgreSqlData(type:Delete) {
+    delete "pgdata"
 }
 
-clean.dependsOn deleteLocalstackVolume
+clean.dependsOn deletePostgreSqlData
 
 jar {
     enabled = false

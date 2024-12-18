@@ -31,7 +31,11 @@ public class PurgeCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudItem> targetOptional = findRoomItem(ch, tokens.get(1));
+        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
+
+        if (targetOptional.isEmpty()) {
+            targetOptional = findRoomItem(ch, tokens.get(1));
+        }
 
         if (targetOptional.isEmpty()) {
             output.append("[default]You don't see anything like that.\n");

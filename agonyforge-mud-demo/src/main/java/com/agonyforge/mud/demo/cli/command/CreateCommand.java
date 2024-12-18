@@ -32,8 +32,14 @@ public class CreateCommand extends AbstractCommand {
             return question;
         }
 
-        Long id = Long.parseLong(tokens.get(1));
-        Optional<MudItemPrototype> itemProto = getRepositoryBundle().getItemPrototypeRepository().findById(id);
+        Optional<MudItemPrototype> itemProto = Optional.empty();
+
+        try {
+            Long id = Long.parseLong(tokens.get(1));
+            itemProto = getRepositoryBundle().getItemPrototypeRepository().findById(id);
+        } catch (NumberFormatException e) {
+            // TODO search for item prototypes by name?
+        }
 
         if (itemProto.isEmpty()) {
             output.append("[red]There is no item with that ID.");

@@ -13,7 +13,6 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +50,10 @@ public class ItemWearSlotsQuestion extends BaseQuestion {
 
             if (itemProto.getWearSlots().contains(slot)) {
                 itemProto.getWearSlots().remove(slot);
-                LOGGER.info("Removing wear slot {}", slot);
             } else {
                 itemProto.getWearSlots().add(slot);
-                LOGGER.info("Adding wear slot {}", slot);
             }
 
-            itemProto.setShortDescription(itemProto.getShortDescription() + "!");
             itemProto = getRepositoryBundle().getItemPrototypeRepository().save(itemProto);
         }
 
