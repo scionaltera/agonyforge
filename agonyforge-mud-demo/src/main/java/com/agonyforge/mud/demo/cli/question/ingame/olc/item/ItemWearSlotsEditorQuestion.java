@@ -27,14 +27,14 @@ import java.util.Optional;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQuestion.IEDIT_STATE;
 
 @Component
-public class ItemWearSlotsQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemWearSlotsQuestion.class);
+public class ItemWearSlotsEditorQuestion extends BaseQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemWearSlotsEditorQuestion.class);
 
     static final String IEDIT_SLOT = "IEDIT.WEAR_SLOT";
 
     private final MenuPane menuPane = new MenuPane();
 
-    public ItemWearSlotsQuestion(ApplicationContext applicationContext, RepositoryBundle repositoryBundle) {
+    public ItemWearSlotsEditorQuestion(ApplicationContext applicationContext, RepositoryBundle repositoryBundle) {
         super(applicationContext, repositoryBundle);
 
         menuPane.setTitle(new MenuTitle("Item Wear Slots"));

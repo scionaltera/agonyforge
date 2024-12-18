@@ -28,8 +28,8 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQue
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_STATE;
 
 @Component
-public class RoomExitsQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomExitsQuestion.class);
+public class RoomExitsEditorQuestion extends BaseQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomExitsEditorQuestion.class);
 
     // REDIT.EXIT holds the direction of the exit we are editing. The user picks a direction
     // from the menu, and is asked for a room number to assign that direction to. When they
@@ -38,8 +38,8 @@ public class RoomExitsQuestion extends BaseQuestion {
 
     private final MenuPane menuPane = new MenuPane();
 
-    public RoomExitsQuestion(ApplicationContext applicationContext,
-                             RepositoryBundle repositoryBundle) {
+    public RoomExitsEditorQuestion(ApplicationContext applicationContext,
+                                   RepositoryBundle repositoryBundle) {
         super(applicationContext, repositoryBundle);
 
         menuPane.setTitle(new MenuTitle("Room Exits"));

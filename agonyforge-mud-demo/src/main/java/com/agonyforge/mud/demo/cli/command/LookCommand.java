@@ -42,9 +42,10 @@ public class LookCommand extends AbstractCommand {
                 String question = (String)sessionAttributeService.getSessionAttributes(target.getWebSocketSession()).get("MUD.QUESTION");
                 String action;
 
-                switch (question) {
-                    case "roomEditorQuestion" -> action = "busy altering the threads of time and space";
-                    default -> action = "here";
+                if (question.endsWith("EditorQuestion")) {
+                    action = "busy, altering the threads of time and space";
+                } else {
+                    action = "here";
                 }
 
                 output.append("[green]%s is %s.", target.getName(), action);
