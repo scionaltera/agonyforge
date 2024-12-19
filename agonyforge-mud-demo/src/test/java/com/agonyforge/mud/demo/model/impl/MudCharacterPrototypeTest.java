@@ -15,12 +15,35 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class MudCharacterTest {
+public class MudCharacterPrototypeTest {
     private final Random random = new Random();
 
     @Test
+    void testBuildInstance() {
+        MudCharacterPrototype proto = new MudCharacterPrototype();
+
+        proto.setComplete(true);
+        proto.setUsername("principal");
+        proto.setId(random.nextLong());
+        proto.setName("Scion");
+        proto.setSpeciesId(random.nextLong());
+        proto.setProfessionId(random.nextLong());
+
+        MudCharacter instance = proto.buildInstance();
+
+        instance.setRoomId(100L);
+
+        assertEquals(proto.getId(), instance.getPrototypeId());
+        assertEquals(100L, instance.getRoomId());
+        assertEquals(proto.getName(), instance.getName());
+        assertEquals(proto.getUsername(), instance.getUsername());
+        assertEquals(proto.getSpeciesId(), instance.getSpeciesId());
+        assertEquals(proto.getProfessionId(), instance.getProfessionId());
+    }
+
+    @Test
     void testId() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
         Long id = random.nextLong();
 
         uut.setId(id);
@@ -29,59 +52,39 @@ public class MudCharacterTest {
     }
 
     @Test
-    void testPrototypeId() {
-        MudCharacter uut = new MudCharacter();
-        Long prototypeId = random.nextLong();
-
-        uut.setPrototypeId(prototypeId);
-
-        assertEquals(prototypeId, uut.getPrototypeId());
-    }
-
-    @Test
     void testUsername() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
+        MudCharacter uutInst;
         String user = "user";
 
+        uut.setComplete(true);
         uut.setUsername(user);
+        uutInst = uut.buildInstance();
 
         assertEquals(user, uut.getUsername());
+        assertEquals(user, uutInst.getUsername());
     }
 
     @Test
     void testWebSocketSession() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
+        MudCharacter uutInst;
         String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
-        uut.setWebSocketSession(webSocketSession);
+        uut.setComplete(true);
+        uut.setUsername(user);
+        uutInst = uut.buildInstance();
 
-        assertEquals(webSocketSession, uut.getWebSocketSession());
-    }
+        uutInst.setRoomId(100L);
+        uutInst.setWebSocketSession(webSocketSession);
 
-    @Test
-    void testZoneId() {
-        MudCharacter uut = new MudCharacter();
-        Long roomId = 100L;
-
-        uut.setRoomId(roomId);
-
-        assertEquals(1L, uut.getZoneId());
-    }
-
-    @Test
-    void testRoomId() {
-        MudCharacter uut = new MudCharacter();
-        Long roomId = 100L;
-
-        uut.setRoomId(roomId);
-
-        assertEquals(roomId, uut.getRoomId());
+        assertEquals(webSocketSession, uutInst.getWebSocketSession());
     }
 
     @Test
     void testName() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
         String name = "name";
 
         uut.setName(name);
@@ -91,8 +94,8 @@ public class MudCharacterTest {
 
     @Test
     void testPronoun() {
-        MudCharacter uut = new MudCharacter();
-        Pronoun pronoun = Pronoun.THEY;
+        MudCharacterPrototype uut = new MudCharacterPrototype();
+        Pronoun pronoun = Pronoun.IT;
 
         uut.setPronoun(pronoun);
 
@@ -101,7 +104,7 @@ public class MudCharacterTest {
 
     @Test
     void testWearSlots() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setWearSlots(List.of(WearSlot.HEAD));
 
@@ -110,7 +113,7 @@ public class MudCharacterTest {
 
     @Test
     void testCombinedStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseStat(Stat.STR, 2);
         uut.setSpeciesStat(Stat.STR, 3);
@@ -121,7 +124,7 @@ public class MudCharacterTest {
 
     @Test
     void testBaseStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseStat(Stat.STR, 1);
 
@@ -130,7 +133,7 @@ public class MudCharacterTest {
 
     @Test
     void testSetAndAddBaseStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseStat(Stat.STR, 3);
         uut.setBaseStat(Stat.DEX, 3);
@@ -147,7 +150,7 @@ public class MudCharacterTest {
 
     @Test
     void testSpeciesStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setSpeciesStat(Stat.STR, 1);
 
@@ -156,7 +159,7 @@ public class MudCharacterTest {
 
     @Test
     void testSetAndAddSpeciesStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setSpeciesStat(Stat.STR, 3);
         uut.setSpeciesStat(Stat.DEX, 3);
@@ -173,7 +176,7 @@ public class MudCharacterTest {
 
     @Test
     void testProfessionStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setProfessionStat(Stat.STR, 1);
 
@@ -182,7 +185,7 @@ public class MudCharacterTest {
 
     @Test
     void testSetAndAddProfessionStats() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setProfessionStat(Stat.STR, 3);
         uut.setProfessionStat(Stat.DEX, 3);
@@ -199,7 +202,7 @@ public class MudCharacterTest {
 
     @Test
     void testDefense() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseStat(Stat.CON, 3);
         uut.setSpeciesStat(Stat.CON, 2);
@@ -211,7 +214,7 @@ public class MudCharacterTest {
 
     @Test
     void testCombinedEfforts() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseEffort(Effort.BASIC, 2);
         uut.setSpeciesEffort(Effort.BASIC, 3);
@@ -222,7 +225,7 @@ public class MudCharacterTest {
 
     @Test
     void testBaseEfforts() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseEffort(Effort.GUNS, 1);
 
@@ -231,7 +234,7 @@ public class MudCharacterTest {
 
     @Test
     void testSetAndAddBaseEffort() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setBaseEffort(Effort.BASIC, 3);
         uut.setBaseEffort(Effort.GUNS, 3);
@@ -248,7 +251,7 @@ public class MudCharacterTest {
 
     @Test
     void testSpeciesEfforts() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setSpeciesEffort(Effort.GUNS, 1);
 
@@ -257,7 +260,7 @@ public class MudCharacterTest {
 
     @Test
     void testSetAndAddSpeciesEffort() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setSpeciesEffort(Effort.BASIC, 3);
         uut.setSpeciesEffort(Effort.GUNS, 3);
@@ -274,16 +277,16 @@ public class MudCharacterTest {
 
     @Test
     void testProfessionEfforts() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
-        uut.setSpeciesEffort(Effort.GUNS, 1);
+        uut.setProfessionEffort(Effort.GUNS, 1);
 
-        assertEquals(1, uut.getSpeciesEffort(Effort.GUNS));
+        assertEquals(1, uut.getProfessionEffort(Effort.GUNS));
     }
 
     @Test
     void testSetAndAddProfessionEffort() {
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setProfessionEffort(Effort.BASIC, 3);
         uut.setProfessionEffort(Effort.GUNS, 3);
@@ -301,7 +304,7 @@ public class MudCharacterTest {
     @Test
     void testSpeciesId() {
         Long id = random.nextLong();
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setSpeciesId(id);
 
@@ -311,7 +314,7 @@ public class MudCharacterTest {
     @Test
     void testProfessionId() {
         Long id = random.nextLong();
-        MudCharacter uut = new MudCharacter();
+        MudCharacterPrototype uut = new MudCharacterPrototype();
 
         uut.setProfessionId(id);
 
