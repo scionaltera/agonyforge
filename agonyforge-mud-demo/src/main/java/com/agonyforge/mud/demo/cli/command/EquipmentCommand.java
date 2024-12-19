@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.List;
 import java.util.function.Function;
@@ -40,7 +41,7 @@ public class EquipmentCommand extends AbstractCommand {
         } else {
             inventory.entrySet()
                 .stream()
-                .sorted()
+                .sorted(Comparator.comparingInt(entry -> entry.getKey().ordinal()))
                 .forEach(entry -> output.append("[default]&lt;%s&gt;\t%s",
                     entry.getKey().getPhrase(), entry.getValue().getShortDescription()));
         }

@@ -73,7 +73,7 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
             wsContext.getAttributes().remove(IEDIT_SLOT);
         } else {
             Optional<MenuItem> itemOptional = menuPane.getItems().stream()
-                .filter(item -> choice.equals(item.getKey()))
+                .filter(item -> choice.equals(item.getKey().trim()))
                 .map(item -> (MenuItem)item)
                 .findFirst();
 
@@ -96,15 +96,16 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
     void populateMenuItems(MudItemPrototype item) {
         menuPane.getItems().clear();
 
-        List<MenuItem> menuItems = Arrays.stream(WearSlot.values()).sequential()
+        List<MenuItem> menuItems = Arrays.stream(WearSlot.values())
+            .sequential()
             .map(slot -> new MenuItem(
-                Integer.toString(slot.ordinal()),
-                String.format("%s [%s]%s", slot.getName(), item.getWearSlots().contains(slot) ? "green" : "red", item.getWearSlots().contains(slot)),
+                String.format("%-2d", slot.ordinal()),
+                String.format("%-15s [%s]%s", slot.getName(), item.getWearSlots().contains(slot) ? "green" : "red", item.getWearSlots().contains(slot)),
                 slot))
                 .toList();
 
         menuPane.getItems().addAll(menuItems);
 
-        menuPane.getItems().add(new MenuItem("X", "Exit"));
+        menuPane.getItems().add(new MenuItem("X ", "Exit"));
     }
 }
