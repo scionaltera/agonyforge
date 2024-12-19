@@ -1,6 +1,9 @@
 package com.agonyforge.mud.demo.model.constant;
 
-public enum WearSlot {
+import com.agonyforge.mud.demo.model.util.BaseEnumSetConverter;
+import com.agonyforge.mud.demo.model.util.PersistentEnum;
+
+public enum WearSlot implements PersistentEnum {
     FINGER_LEFT("left finger", "worn on left finger"),
     FINGER_RIGHT("right finger", "worn on right finger"),
     NECK("neck", "worn on neck"),
@@ -17,7 +20,7 @@ public enum WearSlot {
     EYES("eyes", "worn on eyes"),
     FACE("face", "worn on face"),
     ANKLE_LEFT("left ankle", "worn on left ankle"),
-    ANKLE_RIGHT("right ankle", "work on right ankle"),
+    ANKLE_RIGHT("right ankle", "worn on right ankle"),
     HELD_LEFT("left hand", "held in left hand"),
     HELD_RIGHT("right hand", "held in right hand");
 
@@ -35,5 +38,11 @@ public enum WearSlot {
 
     public String getPhrase() {
         return phrase;
+    }
+
+    public static class Converter extends BaseEnumSetConverter<WearSlot> {
+        public Converter() {
+            super(WearSlot.class);
+        }
     }
 }

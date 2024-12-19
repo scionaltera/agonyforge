@@ -34,7 +34,7 @@ public class InventoryCommand extends AbstractCommand {
             items
                 .stream()
                 .filter(item -> item.getWorn() == null)
-                .forEach(item -> output.append(item.getShortDescription()));
+                .forEach(item -> output.append(String.format("(%s) %s", item.getId(), item.getShortDescription())));
         }
 
         return question;

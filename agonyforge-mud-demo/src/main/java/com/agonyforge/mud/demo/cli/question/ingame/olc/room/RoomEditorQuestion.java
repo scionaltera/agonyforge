@@ -25,11 +25,10 @@ import java.util.Locale;
 
 @Component
 public class RoomEditorQuestion extends BaseQuestion {
-    // REDIT.MODEL holds a copy of the room object that we are editing.
-    // When we exit the editor this object will either be saved over the
-    // one in the database or abandoned.
+    // REDIT.MODEL holds the ID of the room object that we are editing.
     public static final String REDIT_MODEL = "REDIT.MODEL";
 
+    // TODO this could be an enum
     // REDIT.STATE holds the current state of the editor:
     // empty -> user needs to select a menu item
     // ROOM.TITLE -> user needs to type a room title
@@ -85,22 +84,10 @@ public class RoomEditorQuestion extends BaseQuestion {
             switch (choice) {
                 case "T" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.TITLE");
                 case "D" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.DESCRIPTION");
-                case "E" -> {
-                    nextQuestion = "roomExitsQuestion";
-                }
-                case "S" -> {
+                case "E" -> nextQuestion = "roomExitsEditorQuestion";
+                case "X" -> {
                     getRepositoryBundle().getRoomRepository().save(room);
                     output.append("[green]Saved changes.");
-
-                    wsContext.getAttributes().remove(REDIT_STATE);
-                    wsContext.getAttributes().remove(REDIT_MODEL);
-                    nextQuestion = "commandQuestion";
-
-                    commService.sendToRoom(wsContext, ch.getRoomId(),
-                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
-                }
-                case "Q" -> {
-                    output.append("[red]Abandoned changes.");
 
                     wsContext.getAttributes().remove(REDIT_STATE);
                     wsContext.getAttributes().remove(REDIT_MODEL);
@@ -135,10 +122,11 @@ public class RoomEditorQuestion extends BaseQuestion {
     private void populateMenuItems(MudRoom room) {
         menuPane.getItems().clear();
 
+        menuPane.getTitle().setTitle(String.format("Room Editor - %s", room.getId()));
         menuPane.getItems().add(new MenuItem("T", "Title: " + room.getName()));
         menuPane.getItems().add(new MenuItem("D", "Description: " + room.getDescription()));
         menuPane.getItems().add(new MenuItem("E", "Exits"));
-        menuPane.getItems().add(new MenuItem("S", "Save"));
-        menuPane.getItems().add(new MenuItem("Q", "Quit without saving"));
+
+        menuPane.getItems().add(new MenuItem("X", "Save"));
     }
 }

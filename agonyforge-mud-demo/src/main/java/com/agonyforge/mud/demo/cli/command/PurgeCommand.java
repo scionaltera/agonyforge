@@ -5,7 +5,6 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
@@ -17,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class RemoveCommand extends AbstractCommand {
+public class PurgeCommand extends AbstractCommand {
     @Autowired
-    public RemoveCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+    public PurgeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
     }
 
@@ -27,37 +26,28 @@ public class RemoveCommand extends AbstractCommand {
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
-        if (tokens.size() == 1) {
-            output.append("[default]What would you like to remove?");
+        if (tokens.size() != 2) {
+            output.append("[default]What would you like to purge?\n");
             return question;
         }
 
-        Optional<MudItem> targetOptional = findWornItem(ch, tokens.get(1));
+        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
 
         if (targetOptional.isEmpty()) {
-            output.append("[default]You aren't wearing anything like that.");
+            targetOptional = findRoomItem(ch, tokens.get(1));
+        }
+
+        if (targetOptional.isEmpty()) {
+            output.append("[default]You don't see anything like that.\n");
             return question;
         }
 
         MudItem target = targetOptional.get();
+        getRepositoryBundle().getItemRepository().delete(target);
 
-        if (target.getWorn() == null) {
-            output.append("[default]You aren't wearing %s[default].", target.getShortDescription());
-            return question;
-        }
-
-        WearSlot targetSlot = target.getWorn();
-        target.setWorn(null);
-        getRepositoryBundle().getItemRepository().save(target);
-
-        output.append("[default]You remove %s[default].", target.getShortDescription());
+        output.append("[yellow]You snap your fingers, and %s disappears!", target.getShortDescription());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[default]%s removes %s[default] from %s %s.",
-                ch.getName(),
-                target.getShortDescription(),
-                ch.getPronoun().getPossessive(),
-                targetSlot.getName()
-            ));
+            new Output("[yellow]%s snaps %s fingers, and %s disappears!", ch.getName(), ch.getPronoun().getPossessive(), target.getShortDescription()));
 
         return question;
     }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public class WorldLoader {
             hat.setNameList(List.of("hat", "floppy"));
             hat.setShortDescription("a floppy hat");
             hat.setLongDescription("A floppy hat has been dropped here.");
-            hat.setWearSlots(Set.of(WearSlot.HEAD));
+            hat.setWearSlots(EnumSet.of(WearSlot.HEAD));
 
             hat = itemPrototypeRepository.save(hat);
 
@@ -108,9 +109,7 @@ public class WorldLoader {
             hatInstance.setRoomId(101L);
 
             LOGGER.info("Creating default items");
-            itemRepository.saveAll(List.of(
-                itemInstance, hatInstance
-            ));
+            itemRepository.saveAll(List.of(itemInstance, hatInstance));
         }
     }
 }

@@ -66,6 +66,19 @@ public abstract class AbstractCommand implements Command {
 
         return items
             .stream()
+            .filter(item -> item.getWorn() == null)
+            .filter(item -> item.getNameList()
+                .stream()
+                .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
+            .findFirst();
+    }
+
+    protected Optional<MudItem> findWornItem(MudCharacter ch, String token) {
+        List<MudItem> items = getRepositoryBundle().getItemRepository().getByChId(ch.getId());
+
+        return items
+            .stream()
+            .filter(item -> item.getWorn() != null)
             .filter(item -> item.getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))

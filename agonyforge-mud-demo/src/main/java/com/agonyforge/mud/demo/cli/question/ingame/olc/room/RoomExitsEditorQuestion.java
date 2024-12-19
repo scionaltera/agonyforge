@@ -28,8 +28,8 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQue
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_STATE;
 
 @Component
-public class RoomExitsQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomExitsQuestion.class);
+public class RoomExitsEditorQuestion extends BaseQuestion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomExitsEditorQuestion.class);
 
     // REDIT.EXIT holds the direction of the exit we are editing. The user picks a direction
     // from the menu, and is asked for a room number to assign that direction to. When they
@@ -38,8 +38,8 @@ public class RoomExitsQuestion extends BaseQuestion {
 
     private final MenuPane menuPane = new MenuPane();
 
-    public RoomExitsQuestion(ApplicationContext applicationContext,
-                             RepositoryBundle repositoryBundle) {
+    public RoomExitsEditorQuestion(ApplicationContext applicationContext,
+                                   RepositoryBundle repositoryBundle) {
         super(applicationContext, repositoryBundle);
 
         menuPane.setTitle(new MenuTitle("Room Exits"));
@@ -63,7 +63,7 @@ public class RoomExitsQuestion extends BaseQuestion {
 
     @Override
     public Response answer(WebSocketContext wsContext, Input input) {
-        String nextQuestion = "roomExitsQuestion";
+        String nextQuestion = "roomExitsEditorQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
         MudRoom room = getRoomModel(wsContext, ch);
@@ -95,8 +95,10 @@ public class RoomExitsQuestion extends BaseQuestion {
         } else {
             String choice = input.getInput().toUpperCase(Locale.ROOT).substring(0, 1);
 
-            if ("Q".equals(choice)) {
+            if ("X".equals(choice)) {
                 nextQuestion = "roomEditorQuestion";
+                wsContext.getAttributes().remove(REDIT_STATE);
+                wsContext.getAttributes().remove(REDIT_EXIT);
             } else {
                 Optional<MenuItem> itemOptional = menuPane.getItems().stream()
                     .filter(item -> choice.equals(item.getKey()))
@@ -146,6 +148,6 @@ public class RoomExitsQuestion extends BaseQuestion {
             menuPane.getItems().add(item);
         }
 
-        menuPane.getItems().add(new MenuItem("Q", "Quit"));
+        menuPane.getItems().add(new MenuItem("X", "Exit"));
     }
 }

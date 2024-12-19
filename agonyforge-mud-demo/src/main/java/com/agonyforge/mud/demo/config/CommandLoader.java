@@ -66,6 +66,10 @@ public class CommandLoader {
             refs.add(new CommandReference(15, "TIME", "timeCommand"));
 
             refs.add(new CommandReference(20, "REDIT", "roomEditorCommand"));
+            refs.add(new CommandReference(20, "IEDIT", "itemEditorCommand"));
+
+            refs.add(new CommandReference(30, "CREATE", "createCommand"));
+            refs.add(new CommandReference(30, "PURGE", "purgeCommand"));
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs);

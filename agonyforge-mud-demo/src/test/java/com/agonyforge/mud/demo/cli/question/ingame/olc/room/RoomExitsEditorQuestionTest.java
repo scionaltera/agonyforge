@@ -24,13 +24,13 @@ import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_STATE;
-import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomExitsQuestion.REDIT_EXIT;
+import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomExitsEditorQuestion.REDIT_EXIT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RoomExitsQuestionTest {
+public class RoomExitsEditorQuestionTest {
     private static final Random RAND = new Random();
 
     @Mock
@@ -83,7 +83,7 @@ public class RoomExitsQuestionTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
-        RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
+        RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Output output = uut.prompt(wsContext);
 
         assertTrue(output.getOutput().get(1).contains("*****"));
@@ -104,7 +104,7 @@ public class RoomExitsQuestionTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
-        RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
+        RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Output output = uut.prompt(wsContext);
 
         assertTrue(output.getOutput().get(0).contains("Destination room ID"));
@@ -126,9 +126,9 @@ public class RoomExitsQuestionTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(roomRepository.findById(eq(destId))).thenReturn(Optional.of(destRoom));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
-        RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
+        RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input(Long.toString(destId)));
 
         verify(room).setExit(eq("north"), exitCaptor.capture());
@@ -155,9 +155,9 @@ public class RoomExitsQuestionTest {
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
-        RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
+        RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("0"));
 
         verify(room).removeExit(eq("north"));
@@ -179,9 +179,9 @@ public class RoomExitsQuestionTest {
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
-        when(applicationContext.getBean(eq("roomExitsQuestion"), eq(Question.class))).thenReturn(question);
+        when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
-        RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
+        RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         uut.populateMenuItems(room);
         Response response = uut.answer(wsContext, new Input("1"));
 
@@ -206,8 +206,8 @@ public class RoomExitsQuestionTest {
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
-        RoomExitsQuestion uut = new RoomExitsQuestion(applicationContext, repositoryBundle);
-        Response response = uut.answer(wsContext, new Input("q"));
+        RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
+        Response response = uut.answer(wsContext, new Input("x"));
 
         assertTrue(response.getFeedback().isPresent());
         assertEquals(question, response.getNext());

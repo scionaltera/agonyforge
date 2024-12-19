@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -74,7 +74,7 @@ public class MudItemTest {
     void testWearSlots() {
         MudItem uut = new MudItem();
 
-        uut.setWearSlots(Set.of(WearSlot.HEAD));
+        uut.setWearSlots(EnumSet.of(WearSlot.HEAD));
 
         assertEquals(1, uut.getWearSlots().size());
         assertTrue(uut.getWearSlots().contains(WearSlot.HEAD));

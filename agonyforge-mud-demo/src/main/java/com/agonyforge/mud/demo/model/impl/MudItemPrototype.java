@@ -2,39 +2,36 @@ package com.agonyforge.mud.demo.model.impl;
 
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 @Entity
 @Table(name = "mud_pitem")
 public class MudItemPrototype extends Persistent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MudItemPrototype.class);
+
     @Id
     private Long id;
-    private String containerType;
-    private String containerId;
 
-    @ElementCollection
-    @CollectionTable(name = "mud_pitem_namelist_mapping",
-    joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "id")})
-    private List<String> nameList = new ArrayList<>();
+    @Transient
+    private List<String> transientNameList = new ArrayList<>();
+    private String nameList;
     private String shortDescription;
     private String longDescription;
 
-    @ElementCollection
-    @CollectionTable(name = "mud_pitem_wearslot_mapping",
-    joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "id")})
-    private Set<WearSlot> wearSlots = new HashSet<>();
-    private WearSlot worn;
+    @Convert(converter = WearSlot.Converter.class)
+    private EnumSet<WearSlot> wearSlots = EnumSet.noneOf(WearSlot.class);
 
     public MudItem buildInstance() {
         MudItem instance = new MudItem();
 
         instance.setId(getId());
-        instance.setNameList(new ArrayList<>(getNameList()));
+        instance.setNameList(getNameList());
         instance.setShortDescription(getShortDescription());
         instance.setLongDescription(getLongDescription());
         instance.setWearSlots(getWearSlots());
-        instance.setWorn(getWorn());
 
         return instance;
     }
@@ -48,11 +45,21 @@ public class MudItemPrototype extends Persistent {
     }
 
     public List<String> getNameList() {
-        return nameList;
+        if (!transientNameList.isEmpty()) {
+            return new ArrayList<>(transientNameList);
+        }
+
+        return nameList == null ? List.of() : Arrays.stream(nameList.split(",")).toList();
     }
 
-    public void setNameList(List<String> nameList) {
-        this.nameList = nameList;
+    public void setNameList(List<String> names) {
+        transientNameList = new ArrayList<>(names);
+        nameList = String.join(",", transientNameList);
+    }
+
+    @PostLoad
+    private void loadNameList() {
+        transientNameList = nameList == null ? List.of() : Arrays.stream(nameList.split(",")).toList();
     }
 
     public String getShortDescription() {
@@ -71,20 +78,12 @@ public class MudItemPrototype extends Persistent {
         this.longDescription = longDescription;
     }
 
-    public Set<WearSlot> getWearSlots() {
-        return new HashSet<>(wearSlots);
+    public EnumSet<WearSlot> getWearSlots() {
+        return wearSlots;
     }
 
-    public void setWearSlots(Set<WearSlot> wearSlots) {
+    public void setWearSlots(EnumSet<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
-    }
-
-    public WearSlot getWorn() {
-        return worn;
-    }
-
-    public void setWorn(WearSlot worn) {
-        this.worn = worn;
     }
 
     @Override
