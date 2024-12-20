@@ -1,37 +1,42 @@
 [![Discord](https://img.shields.io/discord/1145891199346024512?label=discord)](https://discord.gg/6DHKrMJCJE)
 
 # Agony Forge
-**Build a game, not an antique.**  
-Agony Forge is a framework for building web based Multi User Domains, or MUDs. Think Spring Boot for building a MUD. It's free and open source. The main goal for Agony Forge is to make it easy for retro gaming enthusiasts to bring the feeling of MUDs back in the 90s forward to the modern day.
-## Core Module
-Agony Forge provides a core module that handles security, session management, server clustering, and WebSocket transport for connections between players' browsers and the MUD server. It also provides a small set of standard objects that can be pulled in as a dependency via Gradle or Maven and used to build a standard Spring Boot application.
+**An open source MUD.**  
+Agony Forge is a web based Multi User Domain, or MUD. It is written using Java and Spring Boot using modern security and technology to provide an experience that feels like a telnet session from the 90s in your browser.
 
-The core module provides the basic features that most any MUD would need:
+## Core Module
+The core module in Agony Forge provides a lightweight framework that handles security, session management, server clustering, and WebSocket transport for connections between players' browsers and the MUD server. It also provides a small set of standard objects and utilities to use as a platform for building a game.
+
+The core module provides these functionalities:
+* Low level management for network connections
 * Framework for interpreting user commands
-* Simple menuing system
-* Basic timers
-* Messages from the server to clients
-* Colors
+* Customizable menu framework
+* Timer events
+* Messaging from server to players
+* Interpretation of color codes
 * Flexible dice rolling
   
-## Demo MUD
-The second module is a demo MUD to demonstrate the framework's capabilities and to guide development in useful directions. At the moment it is in early development and not hosted online, but if you're feeling adventurous you can clone it and try it out on your own computer. It's still a little challenging to set up, but this process will get easier soon.
+## Agony Forge MUD
+The second module is the MUD. It uses the core module and builds a game around them. It is also where new core features are incubated and developed before they get extracted back into the core module.
+
+Here is where you will find:
+* Rooms, Objects and Mobs
+* Commands, menus and in-game editors
+* Persistence of objects to the database
+
+## Quick Start
 
 ```bash
 $ git clone git@github.com:scionaltera/agonyforge.git
 $ cd agonyforge
 $ cp mud.EXAMPLE.env mud.env
-# set up an OAuth2 application in GitHub, see wiki for details!
+# set up an OAuth2 application in GitHub
+# add GitHub details to mud.env, see wiki for details!
 $ ./gradlew clean build
 $ docker-compose up
 # go to http://localhost:8080 to see the MUD!
 ```
 
-Please check the [Wiki](https://github.com/scionaltera/agonyforge/wiki/How-to-Develop) for much more detailed setup instructions. If you get stuck, feel free to ask for help on our Discord by clicking the badge at the top of this README.
-
-After it matures a little, I am excited to get it [online](https://agonyforge.com) and let people play it there. Here's what it looks like.
+Please check the [Wiki](https://github.com/scionaltera/agonyforge/wiki/How-to-Develop) for more detailed setup instructions. If you get stuck, feel free to ask for help in the GitHub Discussions on our Discord by clicking the badge at the top of this README.
 
 ![A screenshot of a simple Agony Forge play session](docs/images/screenshot.png)
-
-## History
-Agony Forge is not an old project, having just started in November 2022, but it has a long history. I've been writing code for over 20 years, and I've been working on 100% from-scratch MUD codebases for nearly that long. After many years of writing and rewriting due to changing technologies and changing ideas, it occurred to me that separating the framework from the game was the best path forward. That way the different games I'd like to write could all share the same foundation, and your game could too.

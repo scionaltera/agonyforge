@@ -2,9 +2,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <#if title??>
-        <title>${title} - Agony Forge</title>
+        <title>Agony Forge MUD - ${title}</title>
     <#else>
-        <title>Agony Forge</title>
+        <title>Agony Forge MUD</title>
     </#if>
     <link rel="icon" href="<@spring.url '/img/favicon.ico'/>">
     <link rel="stylesheet" href="<@spring.url '/webjars/bootstrap/css/bootstrap.min.css'/>">
