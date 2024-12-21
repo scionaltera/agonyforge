@@ -76,7 +76,10 @@ public class CharacterMenuQuestion extends BaseQuestion {
         getRepositoryBundle().getCharacterPrototypeRepository().findByUsername(principal.getName())
             .forEach(ch -> menuPane.getItems().add(new MenuItem(
                 Integer.toString(menuPane.getItems().size()),
-                String.format("%s%s", ch.getName(), ch.getComplete() ? "" : " [dred]*[red]INCOMPLETE[dred]*"),
+                String.format("%s%s%s",
+                    ch.getId() == 1L ? "[yellow]" : "[white]",
+                    ch.getName(),
+                    ch.getComplete() ? "" : " [dred]*[red]INCOMPLETE[dred]*"),
                 ch.getId())));
     }
 }
