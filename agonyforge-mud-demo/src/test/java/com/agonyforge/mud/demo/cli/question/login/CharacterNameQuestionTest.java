@@ -8,9 +8,11 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
+import com.agonyforge.mud.demo.model.repository.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,10 +43,16 @@ public class CharacterNameQuestionTest {
     private RepositoryBundle repositoryBundle;
 
     @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
     private Principal principal;
 
     @Mock
     private Question question;
+
+    @Mock
+    private Role role;
 
     @Mock
     private ApplicationContext applicationContext;
@@ -72,7 +81,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testPrompt() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Output result = uut.prompt(webSocketContext);
 
         assertEquals(1, result.getOutput().size());
@@ -92,13 +101,14 @@ public class CharacterNameQuestionTest {
         when(applicationContext.getBean(eq("characterPronounQuestion"), eq(Question.class))).thenReturn(question);
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
+        when(roleRepository.findByName(eq("Player"))).thenReturn(Optional.of(role));
         when(characterPrototypeRepository.save(any(MudCharacterPrototype.class))).thenAnswer(i -> {
             MudCharacterPrototype prototype = i.getArgument(0);
             prototype.setId(1L);
             return prototype;
         });
 
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Input input = new Input(userInput);
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -124,7 +134,7 @@ public class CharacterNameQuestionTest {
         "S"
     })
     void testAnswerTooShort(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Input input = new Input(userInput);
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -139,7 +149,7 @@ public class CharacterNameQuestionTest {
 
     @Test
     void testAnswerTooLong() {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Input input = new Input("S".repeat(13));
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();
@@ -158,7 +168,7 @@ public class CharacterNameQuestionTest {
         "Sc1on"
     })
     void testAnswerInvalidLetters(String userInput) {
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 
@@ -173,7 +183,7 @@ public class CharacterNameQuestionTest {
     @Test
     void testAnswerNoCaps() {
         String userInput = "scion";
-        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle);
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Response result = uut.answer(webSocketContext, new Input(userInput));
         Output output = result.getFeedback().orElseThrow();
 

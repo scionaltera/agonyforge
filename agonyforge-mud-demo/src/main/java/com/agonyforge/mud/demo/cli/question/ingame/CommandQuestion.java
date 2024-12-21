@@ -66,11 +66,7 @@ public class CommandQuestion extends BaseQuestion {
         }
 
         List<String> tokens = Tokenizer.tokenize(input.getInput());
-        List<CommandReference> refs = commandRepository.findAll(Sort.by(Sort.Order.asc("priority")));
-        Optional<CommandReference> refOptional = refs
-            .stream()
-            .filter(ref -> ref.getName().startsWith(tokens.get(0)))
-            .findFirst();
+        Optional<CommandReference> refOptional = commandRepository.findFirstByNameStartingWith(tokens.get(0), Sort.by(Sort.Order.asc("priority")));
 
         if (refOptional.isEmpty()) {
             output.append("[default]Huh?");
@@ -81,16 +77,23 @@ public class CommandQuestion extends BaseQuestion {
 
         try {
             Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
-            Question next = command.execute(this, webSocketContext, tokens, input, output);
-            return new Response(next, output);
+            MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
+
+            if (1L == ch.getId() || ch.getRoles().stream().anyMatch(role -> role.getCommands().contains(ref))) {
+                Question next = command.execute(this, webSocketContext, tokens, input, output);
+                return new Response(next, output);
+            }
+
+            LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getUsername(), ch.getName(), ref.getName());
         } catch (CommandException e) {
             LOGGER.warn("Command failed: {}", e.getMessage());
-            output.append("[red]Oops! Something went wrong...");
+            output.append("[red]Oops! Something went wrong... the error has been reported!");
             return new Response(this, output);
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("No Command found for beanName: {}", ref.getBeanName());
-            output.append("[default]Huh?");
-            return new Response(this, output);
         }
+
+        output.append("[default]Huh?");
+        return new Response(this, output);
     }
 }
