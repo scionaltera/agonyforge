@@ -5,30 +5,32 @@
 <#include "inc/header.inc.ftlh">
 <body>
 <main class="container-fluid">
+    <div id="logo" class="row">
+        <div class="col-1"></div>
+        <div class="col-10 text-center">
+            <img src="img/agony-forge-logo.png" class="img-fluid" alt="ASCII Art logo reading 'AGONY FORGE'"/>
+        </div>
+        <div class="col-1"></div>
+    </div>
     <section class="row">
-        <header>INDEX</header>
-    </section>
-    <section class="row">
-        <section class="col-12">
+        <section class="col-12 d-flex justify-content-center gap-3">
+            <@anonymous "OAUTH2_USER">
+            <form action="<@spring.url '/oauth2/authorization/github' />" method="get">
+                <button type="submit" class="btn btn-lg btn-success">Log In</button>
+            </form>
+            </@anonymous>
             <@secure "OAUTH2_USER">
-            <p>You are logged in.
-            </p>
             <form action="<@spring.url '/play' />" method="get">
-                <button type="submit" class="btn btn-outline-primary">Play</button>
+                <button type="submit" class="btn btn-lg btn-primary">Play</button>
             </form>
             <form action="<@spring.url '/logout' />" method="post">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn btn-outline-danger">Log Out</button>
+                <button type="submit" class="btn btn-lg btn-danger">Log Out</button>
             </form>
             </@secure>
-            <@anonymous "OAUTH2_USER">
-            <p>You are not logged in.</p>
-            <form action="<@spring.url '/oauth2/authorization/github' />" method="get">
-                <button type="submit" class="btn btn-outline-primary">Play</button>
-            </form>
-            </@anonymous>
         </section>
     </section>
+    <#include "inc/footer.inc.ftlh">
 </main>
 <#include "inc/scripts.inc.ftlh">
 </body>

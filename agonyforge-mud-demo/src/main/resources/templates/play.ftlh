@@ -20,7 +20,7 @@
 <@anonymous "OAUTH2_USER">
     <main class="container-fluid">
         <form action="<@spring.url '/oauth2/authorization/github' />" method="get">
-            <button type="submit" class="btn btn-outline-primary">Play</button>
+            <button type="submit" class="btn btn-success">Log In</button>
         </form>
     </main>
 </@anonymous>
