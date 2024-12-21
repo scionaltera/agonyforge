@@ -19,6 +19,9 @@ public class MudCharacterPrototype extends Persistent {
     private String name;
     private Pronoun pronoun;
 
+    @ManyToMany()
+    private Set<Role> roles = new HashSet<>();
+
     @ElementCollection
     @CollectionTable(name = "mud_pcharacter_wearslot_mapping",
     joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
@@ -83,6 +86,7 @@ public class MudCharacterPrototype extends Persistent {
         instance.setUsername(getUsername());
         instance.setName(getName());
         instance.setPronoun(getPronoun());
+        instance.setRoles(getRoles());
         instance.setWearSlots(getWearSlots());
         instance.setSpeciesId(getSpeciesId());
         instance.setProfessionId(getProfessionId());
@@ -141,6 +145,14 @@ public class MudCharacterPrototype extends Persistent {
 
     public void setPronoun(Pronoun pronoun) {
         this.pronoun = pronoun;
+    }
+
+    public Set<Role> getRoles() {
+        return new HashSet<>(roles);
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = new HashSet<>(roles);
     }
 
     public List<WearSlot> getWearSlots() {

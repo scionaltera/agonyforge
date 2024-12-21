@@ -6,12 +6,7 @@ import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "mud_character")
@@ -25,6 +20,9 @@ public class MudCharacter extends Persistent {
     private Long roomId;
     private String name;
     private Pronoun pronoun;
+
+    @ManyToMany
+    private Set<Role> roles = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "mud_character_wearslot_mapping",
@@ -139,6 +137,14 @@ public class MudCharacter extends Persistent {
 
     public void setPronoun(Pronoun pronoun) {
         this.pronoun = pronoun;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public List<WearSlot> getWearSlots() {

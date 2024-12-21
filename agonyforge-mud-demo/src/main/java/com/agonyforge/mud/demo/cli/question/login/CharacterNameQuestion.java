@@ -6,6 +6,8 @@ import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.Role;
+import com.agonyforge.mud.demo.model.repository.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.agonyforge.mud.core.cli.Question;
@@ -18,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
@@ -25,10 +28,15 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER
 public class CharacterNameQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterNameQuestion.class);
 
+    private final RoleRepository roleRepository;
+
     @Autowired
     public CharacterNameQuestion(ApplicationContext applicationContext,
-                                 RepositoryBundle repositoryBundle) {
+                                 RepositoryBundle repositoryBundle,
+                                 RoleRepository roleRepository) {
         super(applicationContext, repositoryBundle);
+
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -49,9 +57,11 @@ public class CharacterNameQuestion extends BaseQuestion {
         }
 
         MudCharacterPrototype ch = new MudCharacterPrototype();
+        Role playerRole = roleRepository.findByName("Player").orElseThrow();
 
         ch.setUsername(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
+        ch.setRoles(Set.of(playerRole));
         ch.setPronoun(Pronoun.THEY);
         ch.setWearSlots(Arrays.stream(WearSlot.values()).toList());
 
