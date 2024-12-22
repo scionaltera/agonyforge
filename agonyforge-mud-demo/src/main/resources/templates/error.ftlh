@@ -1,5 +1,4 @@
 <#import "/spring.ftl" as spring>
-<#include "inc/security.inc.ftlh">
 <!DOCTYPE html>
 <html lang="en-US">
 <#assign title="Error">
@@ -15,7 +14,7 @@
     </div>
     <section class="row">
         <section class="col-12 text-center">
-            <p>${errorAttributes.status}: ${errorAttributes.error}</p>
+            <p>${error.status}: ${error.error}</p>
         </section>
     </section>
     <#include "inc/footer.inc.ftlh">
