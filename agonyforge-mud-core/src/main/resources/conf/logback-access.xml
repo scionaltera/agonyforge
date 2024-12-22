@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <conversionRule conversionWord="h" class="ch.qos.logback.access.common.pattern.RemoteHostConverter" />
+    <conversionRule conversionWord="l" class="ch.qos.logback.access.common.pattern.NAConverter" />
+    <conversionRule conversionWord="u" class="ch.qos.logback.access.common.pattern.RemoteUserConverter" />
+    <conversionRule conversionWord="t" class="ch.qos.logback.access.common.pattern.DateConverter" />
+    <conversionRule conversionWord="r" class="ch.qos.logback.access.common.pattern.RequestURLConverter" />
+    <conversionRule conversionWord="s" class="ch.qos.logback.access.common.pattern.StatusCodeConverter" />
+    <conversionRule conversionWord="b" class="ch.qos.logback.access.common.pattern.ContentLengthConverter" />
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <appender name="CONSOLE" class="com.agonyforge.mud.core.logging.AccessLogAppender" >
+        <encoder class="ch.qos.logback.access.common.PatternLayoutEncoder">
+            <pattern>%h "%r" %s %b</pattern>
+        </encoder>
+    </appender>
+
+    <appender-ref ref="CONSOLE"/>
+</configuration>
