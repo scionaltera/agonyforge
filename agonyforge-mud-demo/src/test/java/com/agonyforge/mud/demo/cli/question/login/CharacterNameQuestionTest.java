@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,6 +69,9 @@ public class CharacterNameQuestionTest {
 
     @Mock
     private WebSocketContext webSocketContext;
+
+    @Mock
+    private MudCharacterPrototype chProto;
 
     @Captor
     private ArgumentCaptor<MudCharacterPrototype> characterPrototypeCaptor;
@@ -191,6 +195,24 @@ public class CharacterNameQuestionTest {
 
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]Names must begin with a capital letter.", output.getOutput().get(0));
+
+        verify(webSocketContext, never()).getAttributes();
+    }
+
+    @Test
+    void testAnswerNotUnique() {
+        CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
+        Input input = new Input("Scion");
+
+        when(characterPrototypeRepository.findByName(eq("Scion"))).thenReturn(List.of(chProto));
+
+        Response result = uut.answer(webSocketContext, input);
+        Output output = result.getFeedback().orElseThrow();
+
+        assertEquals(uut, result.getNext());
+
+        assertEquals(1, output.getOutput().size());
+        assertEquals("[red]Somebody else is already using that name. Please try a different one.", output.getOutput().get(0));
 
         verify(webSocketContext, never()).getAttributes();
     }
