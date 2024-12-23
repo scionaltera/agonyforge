@@ -79,7 +79,7 @@ public class CommandQuestion extends BaseQuestion {
             Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
             MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
 
-            if (1L == ch.getId() || ch.getRoles().stream().anyMatch(role -> role.getCommands().contains(ref))) {
+            if (1L == ch.getPrototypeId() || ch.getRoles().stream().anyMatch(role -> role.getCommands().contains(ref))) {
                 Question next = command.execute(this, webSocketContext, tokens, input, output);
                 return new Response(next, output);
             }
