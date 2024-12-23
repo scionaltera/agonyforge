@@ -13,15 +13,17 @@ public class CommandReference extends Persistent {
     private String name;
     private Integer priority;
     private String beanName;
+    private String description;
 
     public CommandReference() {
         // this method intentionally left blank
     }
 
-    public CommandReference(int priority, String name, String beanName) {
+    public CommandReference(int priority, String name, String beanName, String description) {
         this.name = name;
         this.priority = priority;
         this.beanName = beanName;
+        this.description = description;
     }
 
     public String getName() {
@@ -46,6 +48,14 @@ public class CommandReference extends Persistent {
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

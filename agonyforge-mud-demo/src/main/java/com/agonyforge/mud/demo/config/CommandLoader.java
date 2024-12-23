@@ -32,47 +32,49 @@ public class CommandLoader {
         if (commandRepository.findAll().isEmpty()) {
             Map<String, CommandReference> refs = new HashMap<>();
 
-            refs.put("NORTH", new CommandReference(1, "NORTH", "northCommand"));
-            refs.put("EAST", new CommandReference(1, "EAST", "eastCommand"));
-            refs.put("SOUTH", new CommandReference(1, "SOUTH", "southCommand"));
-            refs.put("WEST", new CommandReference(1, "WEST", "westCommand"));
-            refs.put("UP", new CommandReference(1, "UP", "upCommand"));
-            refs.put("DOWN", new CommandReference(1, "DOWN", "downCommand"));
+            refs.put("NORTH", new CommandReference(1, "NORTH", "northCommand", "Move north."));
+            refs.put("EAST", new CommandReference(1, "EAST", "eastCommand", "Move east."));
+            refs.put("SOUTH", new CommandReference(1, "SOUTH", "southCommand", "Move south."));
+            refs.put("WEST", new CommandReference(1, "WEST", "westCommand", "Move west."));
+            refs.put("UP", new CommandReference(1, "UP", "upCommand", "Move up."));
+            refs.put("DOWN", new CommandReference(1, "DOWN", "downCommand", "Move down."));
 
-            refs.put("NORTHEAST", new CommandReference(2, "NORTHEAST", "northeastCommand"));
-            refs.put("NORTHWEST", new CommandReference(2, "NORTHWEST", "northwestCommand"));
-            refs.put("SOUTHEAST", new CommandReference(2, "SOUTHEAST", "southeastCommand"));
-            refs.put("SOUTHWEST", new CommandReference(2, "SOUTHWEST", "southwestCommand"));
-            refs.put("NE", new CommandReference(2, "NE", "northeastCommand"));
-            refs.put("NW", new CommandReference(2, "NW", "northwestCommand"));
-            refs.put("SE", new CommandReference(2, "SE", "southeastCommand"));
-            refs.put("SW", new CommandReference(2, "SW", "southwestCommand"));
+            refs.put("NORTHEAST", new CommandReference(2, "NORTHEAST", "northeastCommand", "Move northeast."));
+            refs.put("NORTHWEST", new CommandReference(2, "NORTHWEST", "northwestCommand", "Move northwest."));
+            refs.put("SOUTHEAST", new CommandReference(2, "SOUTHEAST", "southeastCommand", "Move southeast."));
+            refs.put("SOUTHWEST", new CommandReference(2, "SOUTHWEST", "southwestCommand", "Move southwest."));
+            refs.put("NE", new CommandReference(2, "NE", "northeastCommand", "Move northeast."));
+            refs.put("NW", new CommandReference(2, "NW", "northwestCommand", "Move northwest."));
+            refs.put("SE", new CommandReference(2, "SE", "southeastCommand", "Move southeast."));
+            refs.put("SW", new CommandReference(2, "SW", "southwestCommand", "Move southwest."));
 
-            refs.put("LOOK", new CommandReference(5, "LOOK", "lookCommand"));
-            refs.put("WHO", new CommandReference(5, "WHO", "whoCommand"));
-            refs.put("SCORE", new CommandReference(5, "SCORE", "scoreCommand"));
-            refs.put("EQUIPMENT", new CommandReference(5, "EQUIPMENT", "equipmentCommand"));
-            refs.put("INVENTORY", new CommandReference(5, "INVENTORY", "inventoryCommand"));
+            refs.put("HELP", new CommandReference(4, "HELP", "helpCommand", "Get help with commands."));
 
-            refs.put("DROP", new CommandReference(10, "DROP", "dropCommand"));
-            refs.put("GET", new CommandReference(10, "GET", "getCommand"));
-            refs.put("GIVE", new CommandReference(10, "GIVE", "giveCommand"));
-            refs.put("REMOVE", new CommandReference(10, "REMOVE", "removeCommand"));
-            refs.put("WEAR", new CommandReference(10, "WEAR", "wearCommand"));
-            refs.put("GOSSIP", new CommandReference(10, "GOSSIP", "gossipCommand"));
-            refs.put("SAY", new CommandReference(10, "SAY", "sayCommand"));
-            refs.put("SHOUT", new CommandReference(10, "SHOUT", "shoutCommand"));
-            refs.put("TELL", new CommandReference(10, "TELL", "tellCommand"));
-            refs.put("WHISPER", new CommandReference(10, "WHISPER", "whisperCommand"));
+            refs.put("LOOK", new CommandReference(5, "LOOK", "lookCommand", "Look at things in the world."));
+            refs.put("WHO", new CommandReference(5, "WHO", "whoCommand", "See who is playing."));
+            refs.put("SCORE", new CommandReference(5, "SCORE", "scoreCommand", "See your character sheet."));
+            refs.put("EQUIPMENT", new CommandReference(5, "EQUIPMENT", "equipmentCommand", "See what you're wearing."));
+            refs.put("INVENTORY", new CommandReference(5, "INVENTORY", "inventoryCommand", "See what you're carrying."));
 
-            refs.put("ROLL", new CommandReference(15, "ROLL", "rollCommand"));
-            refs.put("TIME", new CommandReference(15, "TIME", "timeCommand"));
+            refs.put("DROP", new CommandReference(10, "DROP", "dropCommand", "Drop an item."));
+            refs.put("GET", new CommandReference(10, "GET", "getCommand", "Pick up an item."));
+            refs.put("GIVE", new CommandReference(10, "GIVE", "giveCommand", "Give an item to someone."));
+            refs.put("REMOVE", new CommandReference(10, "REMOVE", "removeCommand", "Stop wearing an item."));
+            refs.put("WEAR", new CommandReference(10, "WEAR", "wearCommand", "Wear an item that you're carrying."));
+            refs.put("GOSSIP", new CommandReference(10, "GOSSIP", "gossipCommand", "Talk on the worldwide channel."));
+            refs.put("SAY", new CommandReference(10, "SAY", "sayCommand", "Talk in the room you're in."));
+            refs.put("SHOUT", new CommandReference(10, "SHOUT", "shoutCommand", "Talk in the area you're in."));
+            refs.put("TELL", new CommandReference(10, "TELL", "tellCommand", "Say something privately to someone anywhere in the world."));
+            refs.put("WHISPER", new CommandReference(10, "WHISPER", "whisperCommand", "Say something privately to someone in the same room."));
 
-            refs.put("REDIT", new CommandReference(20, "REDIT", "roomEditorCommand"));
-            refs.put("IEDIT", new CommandReference(20, "IEDIT", "itemEditorCommand"));
+            refs.put("ROLL", new CommandReference(15, "ROLL", "rollCommand", "Roll some dice."));
+            refs.put("TIME", new CommandReference(15, "TIME", "timeCommand", "See what time it is."));
 
-            refs.put("CREATE", new CommandReference(30, "CREATE", "createCommand"));
-            refs.put("PURGE", new CommandReference(30, "PURGE", "purgeCommand"));
+            refs.put("REDIT", new CommandReference(20, "REDIT", "roomEditorCommand", "Edit a room."));
+            refs.put("IEDIT", new CommandReference(20, "IEDIT", "itemEditorCommand", "Edit an item."));
+
+            refs.put("CREATE", new CommandReference(30, "CREATE", "createCommand", "Create an item."));
+            refs.put("PURGE", new CommandReference(30, "PURGE", "purgeCommand", "Destroy an item."));
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs.values());
@@ -96,6 +98,7 @@ public class CommandLoader {
             player.getCommands().add(refs.get("SE"));
             player.getCommands().add(refs.get("SW"));
 
+            player.getCommands().add(refs.get("HELP"));
             player.getCommands().add(refs.get("LOOK"));
             player.getCommands().add(refs.get("WHO"));
             player.getCommands().add(refs.get("SCORE"));
