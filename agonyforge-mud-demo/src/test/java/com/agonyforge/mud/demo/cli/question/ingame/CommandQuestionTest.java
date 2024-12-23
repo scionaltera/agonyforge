@@ -113,7 +113,7 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getId()).thenReturn(1L);
+        when(ch.getPrototypeId()).thenReturn(1L);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
@@ -136,7 +136,7 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getId()).thenReturn(2L);
+        when(ch.getPrototypeId()).thenReturn(2L);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
@@ -229,7 +229,7 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getId()).thenReturn(1L);
+        when(ch.getPrototypeId()).thenReturn(1L);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);

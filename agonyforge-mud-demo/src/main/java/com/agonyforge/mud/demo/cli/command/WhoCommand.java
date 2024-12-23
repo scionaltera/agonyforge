@@ -30,7 +30,7 @@ public class WhoCommand extends AbstractCommand {
             .append("[black]=== [white]Who is Playing [black]===")
             .append("");
 
-        characters.forEach(ch -> output.append("[%s]%s", ch.getId() == 1L ? "yellow" : "white", ch.getName()));
+        characters.forEach(ch -> output.append("[%s]%s", ch.getPrototypeId() == 1L ? "yellow" : "white", ch.getName()));
 
         output
             .append("")

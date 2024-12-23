@@ -59,7 +59,7 @@ public final class CharacterSheetFormatter {
         MudProfession profession = professionRepository.findById(ch.getProfessionId() != null ? ch.getProfessionId() : DEFAULT_PROFESSION_ID).orElseThrow();
 
         output.append("[dcyan]CHARACTER SHEET");
-        output.append("[default]Name: [%s]%s", ch.getId() == 1L ? "yellow" : "cyan", ch.getName());
+        output.append("[default]Name: [%s]%s", ch.getPrototypeId() == 1L ? "yellow" : "cyan", ch.getName());
         output.append("[default]Pronouns: [cyan]%s/%s", ch.getPronoun().getSubject(), ch.getPronoun().getObject());
         output.append("[default]Species: [cyan]%s", species.getName());
         output.append("[default]Profession: [cyan]%s", profession.getName());
