@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
@@ -16,6 +17,7 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler csrfRequestHandler = new CsrfTokenRequestAttributeHandler();
         http
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers(
@@ -24,15 +26,18 @@ public class WebSecurityConfiguration {
                     "/img/*",
                     "/css/*",
                     "/js/*",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/csrf"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
+            .csrf((csrf) -> csrf.csrfTokenRequestHandler(csrfRequestHandler))
             .oauth2Login((oauth) -> oauth
                 .loginPage("/")
                 .defaultSuccessUrl("/play"))
             .logout((logout) -> logout
                 .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
             )
             .sessionManagement((sessionMgmt) -> sessionMgmt
                 .invalidSessionUrl("/")

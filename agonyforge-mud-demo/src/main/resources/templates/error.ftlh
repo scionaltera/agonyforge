@@ -5,13 +5,7 @@
 <#include "inc/header.inc.ftlh">
 <body>
 <main class="container-fluid">
-    <div id="logo" class="row">
-        <div class="col-1"></div>
-        <div class="col-10 text-center">
-            <img src="img/agony-forge-logo.png" class="img-fluid" alt="ASCII Art logo reading 'AGONY FORGE'"/>
-        </div>
-        <div class="col-1"></div>
-    </div>
+    <#include "inc/logo.inc.ftlh">
     <section class="row">
         <section class="col-12 text-center">
             <p>${error.status}: ${error.error}</p>

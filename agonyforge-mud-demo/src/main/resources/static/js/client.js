@@ -65,10 +65,15 @@ $(document).on("keyup", function(event) {
 });
 
 function connect() {
+    const token = $("meta[name='_csrf']").attr("content");
+    const header = $("meta[name='_csrf_header']").attr("content");
+
     socket = new SockJS('/mud');
     stompClient = webstomp.over(socket, { heartbeat: false, protocols: ['v12.stomp']});
     stompClient.connect(
-        {},
+        {
+            [header]: token,
+        },
         function(frame) { // connectCallback
             console.log('Connected: ' + frame);
             showOutput(["[green]Connected to server."]);
