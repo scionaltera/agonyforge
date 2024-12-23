@@ -11,6 +11,7 @@ public class TomcatConfiguration implements WebServerFactoryCustomizer<TomcatSer
     public void customize(TomcatServletWebServerFactory factory) {
         LogbackValve valve = new LogbackValve();
         valve.setQuiet(false);
+        valve.setAsyncSupported(true);
 
         factory.addEngineValves(valve);
         factory.addContextValves(valve);
