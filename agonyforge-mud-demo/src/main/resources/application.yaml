@@ -8,6 +8,8 @@ spring:
 #        format_sql: true
 
 server:
+  error:
+    path: /error
   tomcat:
     accesslog:
       enabled: true
@@ -20,10 +22,8 @@ logging:
       agonyforge:
         mud:
           core:
+            # displays access logs in the regular logs
+            # may cause performance issues if used on servers with lots of traffic
             logging: DEBUG
-#    org:
-#      apache:
-#        tomcat: DEBUG
-#        catalina: DEBUG
 #      hibernate:
 #        type: TRACE

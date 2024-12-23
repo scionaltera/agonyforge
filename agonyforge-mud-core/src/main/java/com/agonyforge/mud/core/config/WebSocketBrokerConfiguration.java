@@ -2,6 +2,7 @@ package com.agonyforge.mud.core.config;
 
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -17,10 +18,14 @@ import org.springframework.session.web.socket.config.annotation.AbstractSessionW
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> {
     private final MqBrokerProperties brokerProperties;
+
+    @Value("#{environment.CORS_ALLOWED_ORIGINS}")
+    private String corsAllowedOrigins;
 
     @Autowired
     public WebSocketBrokerConfiguration(MqBrokerProperties brokerProperties) {
@@ -42,6 +47,7 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
 
         registry
             .addEndpoint("/mud")
+            .setAllowedOrigins(corsAllowedOrigins)
             .setHandshakeHandler(new SessionIdUpdatingHandshakeHandler())
             .withSockJS()
             .setInterceptors(
