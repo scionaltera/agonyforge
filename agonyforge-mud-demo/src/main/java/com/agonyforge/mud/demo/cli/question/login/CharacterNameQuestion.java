@@ -5,6 +5,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.RoleRepository;
@@ -20,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
@@ -54,6 +56,12 @@ public class CharacterNameQuestion extends BaseQuestion {
             return new Response(this, new Output("[red]Names may only have letters in them."));
         } else if (!input.getInput().matches("[A-Z][A-Za-z]+")) {
             return new Response(this, new Output("[red]Names must begin with a capital letter."));
+        }
+
+        List<MudCharacterPrototype> existing = getRepositoryBundle().getCharacterPrototypeRepository().findByName(input.getInput());
+
+        if (!existing.isEmpty()) {
+            return new Response(this, new Output("[red]Somebody else is already using that name. Please try a different one."));
         }
 
         MudCharacterPrototype ch = new MudCharacterPrototype();
