@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -115,6 +113,8 @@ public class CommandLoader {
             player.getCommands().add(refs.get("SHOUT"));
             player.getCommands().add(refs.get("TELL"));
             player.getCommands().add(refs.get("WHISPER"));
+
+            player.getCommands().add(refs.get("TIME"));
 
             roleRepository.save(player);
         }
