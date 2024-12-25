@@ -2,12 +2,6 @@ plugins {
     id 'java'
 }
 
-task deletePostgreSqlData(type:Delete) {
-    delete "pgdata"
-}
-
-clean.dependsOn deletePostgreSqlData
-
 jar {
     enabled = false
 }
