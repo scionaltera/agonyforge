@@ -72,7 +72,9 @@ public class WebSocketController {
             httpSessionId,
             wsContext.getPrincipal().getName());
 
-        return greeting.append(initialQuestion.prompt(wsContext));
+        return new Output()
+            .append(greeting)
+            .append(initialQuestion.prompt(wsContext));
     }
 
     @MessageMapping("/input")
