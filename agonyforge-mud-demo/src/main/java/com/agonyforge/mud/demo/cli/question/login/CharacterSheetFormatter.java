@@ -37,7 +37,7 @@ public final class CharacterSheetFormatter {
         output.append("[default]Species: [cyan]%s", species.getName());
         output.append("[default]Profession: [cyan]%s", profession.getName());
         output.append("");
-        output.append("[cyan]Stats   [magenta]Efforts");
+        output.append("[cyan]Stats  [magenta]Efforts");
         for (int i = 0; i < Math.max(Stat.values().length, Effort.values().length); i++) {
             Stat stat = Stat.values().length > i ? Stat.values()[i] : null;
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;
@@ -64,7 +64,7 @@ public final class CharacterSheetFormatter {
         output.append("[default]Species: [cyan]%s", species.getName());
         output.append("[default]Profession: [cyan]%s", profession.getName());
         output.append("");
-        output.append("[cyan]Stats   [magenta]Efforts");
+        output.append("[cyan]Stats  [magenta]Efforts");
         for (int i = 0; i < Math.max(Stat.values().length, Effort.values().length); i++) {
             Stat stat = Stat.values().length > i ? Stat.values()[i] : null;
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;
