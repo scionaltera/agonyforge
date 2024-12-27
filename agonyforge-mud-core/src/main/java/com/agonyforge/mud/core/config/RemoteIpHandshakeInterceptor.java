@@ -19,7 +19,7 @@ public class RemoteIpHandshakeInterceptor implements HandshakeInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteIpHandshakeInterceptor.class);
 
-    private String remoteIpHeader;
+    private final String remoteIpHeader;
 
     public RemoteIpHandshakeInterceptor(String remoteIpHeader) {
         this.remoteIpHeader = remoteIpHeader;
@@ -34,9 +34,7 @@ public class RemoteIpHandshakeInterceptor implements HandshakeInterceptor {
                     try {
                         InetAddress inetAddress = InetAddress.getByName(address);
 
-                        if (!inetAddress.isSiteLocalAddress()) {
-                            return inetAddress.getHostAddress();
-                        }
+                        return inetAddress.getHostAddress();
                     } catch (UnknownHostException e) {
                         LOGGER.debug("Failed to resolve IP for address: {}", address);
                     }
