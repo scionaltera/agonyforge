@@ -110,8 +110,7 @@ public class CharacterStatQuestion extends BaseQuestion {
 
         int points = STARTING_STATS - computeStatPoints(ch);
 
-        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from a stat."));
-        menuPane.getItems().add(new MenuItem(" ", "[default]For example, '3+' to raise CON or '6-' to lower CHA."));
+        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from a stat. For example, '3+' to raise CON or '6-' to lower CHA."));
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Stat.values())

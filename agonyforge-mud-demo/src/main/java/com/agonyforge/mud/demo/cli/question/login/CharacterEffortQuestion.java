@@ -109,8 +109,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
 
         int points = STARTING_EFFORTS - computeEffortPoints(ch);
 
-        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from an effort."));
-        menuPane.getItems().add(new MenuItem(" ", "[default]For example, '1+' to raise 'Basic' or '5-' to lower 'Ultimate'."));
+        menuPane.getItems().add(new MenuItem(" ", "[default]Enter the menu number and a plus (+) or minus (-) to add or subtract from an effort. For example, '1+' to raise 'Basic' or '5-' to lower 'Ultimate'."));
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Effort.values())

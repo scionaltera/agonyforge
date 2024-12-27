@@ -15,6 +15,8 @@ public class MudRoom extends Persistent {
     private Long id;
     private Long zoneId;
     private String name;
+
+    @Lob
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL)

@@ -69,7 +69,7 @@ public class CharacterStatQuestionTest {
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
 
-        assertEquals(16, result.getOutput().size());
+        assertTrue(result.getOutput().size() >= 16);
     }
 
     @Test

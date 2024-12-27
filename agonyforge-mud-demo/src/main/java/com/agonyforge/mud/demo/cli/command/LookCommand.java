@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.cli.StringTool;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
@@ -32,7 +33,7 @@ public class LookCommand extends AbstractCommand {
 
         output
             .append("[yellow](%d) %s", room.getId(), room.getName())
-            .append("[dwhite]%s", room.getDescription())
+            .append(StringTool.softWrap(room.getDescription(), StringTool.WORD_WRAP))
             .append("[dcyan]Exits: %s", String.join(" ", room.getExits()));
 
         repositoryBundle.getCharacterRepository().findByRoomId(room.getId())
@@ -42,7 +43,7 @@ public class LookCommand extends AbstractCommand {
                 String question = (String)sessionAttributeService.getSessionAttributes(target.getWebSocketSession()).get("MUD.QUESTION");
                 String action;
 
-                if (question.endsWith("EditorQuestion")) {
+                if (question != null && question.endsWith("EditorQuestion")) {
                     action = "busy, altering the threads of time and space";
                 } else {
                     action = "here";

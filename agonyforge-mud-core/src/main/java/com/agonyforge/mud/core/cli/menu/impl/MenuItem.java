@@ -1,5 +1,6 @@
 package com.agonyforge.mud.core.cli.menu.impl;
 
+import com.agonyforge.mud.core.cli.StringTool;
 import com.agonyforge.mud.core.cli.menu.AbstractMenuItem;
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.web.model.Output;
@@ -25,7 +26,7 @@ public class MenuItem extends AbstractMenuItem {
         Color primary = colors.length > 0 ? colors[0] : YELLOW;
         Color secondary = colors.length > 1 ? colors[1] : GREEN;
 
-        menu.append(primary + getKey() + secondary + ") " + primary + getDescription());
+        menu.append(StringTool.softWrap(getKey() + secondary + ") " + primary + getDescription(), StringTool.WORD_WRAP, primary));
 
         return menu;
     }
