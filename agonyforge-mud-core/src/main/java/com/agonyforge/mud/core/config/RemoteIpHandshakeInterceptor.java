@@ -18,20 +18,23 @@ public class RemoteIpHandshakeInterceptor implements HandshakeInterceptor {
     public static final String SESSION_REMOTE_IP_KEY = "MUD.REMOTE.IP";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteIpHandshakeInterceptor.class);
-    private static final String X_FORWARDED_FOR_HEADER = "x-forwarded-for"; // TODO externalize configuration, allow a list of headers and trusted proxies
+
+    private final String remoteIpHeader;
+
+    public RemoteIpHandshakeInterceptor(String remoteIpHeader) {
+        this.remoteIpHeader = remoteIpHeader;
+    }
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         Optional
-            .ofNullable(request.getHeaders().get(X_FORWARDED_FOR_HEADER))
+            .ofNullable(request.getHeaders().get(remoteIpHeader))
             .ifPresent(headers -> headers.forEach(header -> Arrays.stream(header.split(","))
                 .map(address -> {
                     try {
                         InetAddress inetAddress = InetAddress.getByName(address);
 
-                        if (!inetAddress.isSiteLocalAddress()) {
-                            return inetAddress.getHostAddress();
-                        }
+                        return inetAddress.getHostAddress();
                     } catch (UnknownHostException e) {
                         LOGGER.debug("Failed to resolve IP for address: {}", address);
                     }

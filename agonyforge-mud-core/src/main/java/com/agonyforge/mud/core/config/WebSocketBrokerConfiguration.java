@@ -27,6 +27,9 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
     @Value("#{environment.CORS_ALLOWED_ORIGINS}")
     private String corsAllowedOrigins;
 
+    @Value("#{environment.PROXY_REMOTE_IP_HEADER}")
+    private String remoteIpHeader;
+
     @Autowired
     public WebSocketBrokerConfiguration(MqBrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
@@ -53,7 +56,7 @@ public class WebSocketBrokerConfiguration extends AbstractSessionWebSocketMessag
             .setInterceptors(
                 httpSessionHandshakeInterceptor,
                 new SessionIdCopyingHandshakeInterceptor(),
-                new RemoteIpHandshakeInterceptor());
+                new RemoteIpHandshakeInterceptor(remoteIpHeader));
     }
 
     @Override
