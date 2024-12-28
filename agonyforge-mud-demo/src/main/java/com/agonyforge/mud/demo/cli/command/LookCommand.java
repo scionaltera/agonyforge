@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -40,16 +41,22 @@ public class LookCommand extends AbstractCommand {
             .stream()
             .filter(target -> !target.equals(ch))
             .forEach(target -> {
-                String question = (String)sessionAttributeService.getSessionAttributes(target.getWebSocketSession()).get("MUD.QUESTION");
+                Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(target.getWebSocketSession());
+                String question = (String)attributes.get("MUD.QUESTION");
                 String action;
+                String flags = "";
+
+                if (attributes.isEmpty()) {
+                    flags += "[dred]([red]LINKDEAD[dred])";
+                }
 
                 if (question != null && question.endsWith("EditorQuestion")) {
-                    action = "busy, altering the threads of time and space";
+                    action = "busy altering the threads of time and space";
                 } else {
                     action = "here";
                 }
 
-                output.append("[green]%s is %s.", target.getName(), action);
+                output.append("[green]%s is %s. %s", target.getName(), action, flags);
             });
 
         repositoryBundle.getItemRepository().getByRoomId(room.getId())
