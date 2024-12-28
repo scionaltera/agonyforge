@@ -84,7 +84,9 @@ public class CharacterViewQuestion extends BaseQuestion {
                 MudCharacterPrototype chPrototype = chOptional.get();
 
                 if (!chPrototype.getComplete()) {
-                    output.append("[red]This character is not finished yet. You should character creation first.");
+                    output.append("[red]This character is not finished yet. You must go through character creation first.");
+                } else if (getRepositoryBundle().getCharacterRepository().findByName(chPrototype.getName()).isPresent()) {
+                    output.append("[red]This character is already playing. Try a different one, or create a new one.");
                 } else {
                     MudCharacter ch = chPrototype.buildInstance();
                     MudRoom room = roomOptional.get();
