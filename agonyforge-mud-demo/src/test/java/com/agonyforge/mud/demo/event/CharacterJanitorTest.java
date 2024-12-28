@@ -1,5 +1,7 @@
 package com.agonyforge.mud.demo.event;
 
+import com.agonyforge.mud.core.service.SessionAttributeService;
+import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -16,19 +18,20 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CharacterJanitorTest {
     @Mock
     private MudCharacterRepository characterRepository;
+
+    @Mock
+    private SessionAttributeService sessionAttributeService;
 
     @Mock
     private CommService commService;
@@ -44,6 +47,12 @@ public class CharacterJanitorTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private MudCharacter other;
+
+    @Mock
+    private TimerEvent timerEvent;
 
     private final Random random = new Random();
 
@@ -64,12 +73,28 @@ public class CharacterJanitorTest {
             when(simpMessageHeaderAccessor.getSessionAttributes()).thenReturn(attributes);
             when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
-            CharacterJanitor uut = new CharacterJanitor(characterRepository, commService);
+            CharacterJanitor uut = new CharacterJanitor(sessionAttributeService, characterRepository, commService);
 
             uut.onApplicationEvent(event);
 
             verify(characterRepository).delete(ch);
             verify(commService).sendToAll(any(WebSocketContext.class), any(Output.class), eq(ch));
         }
+    }
+
+    @Test
+    void testOnTimerEvent() {
+        CharacterJanitor uut = new CharacterJanitor(sessionAttributeService, characterRepository, commService);
+
+        when(timerEvent.getFrequency()).thenReturn(TimeUnit.MINUTES);
+        when(ch.getWebSocketSession()).thenReturn("abc");
+        when(other.getWebSocketSession()).thenReturn("def");
+        when(characterRepository.findAll()).thenReturn(List.of(ch, other));
+
+        uut.onTimerEvent(timerEvent);
+
+        verify(sessionAttributeService, times(2)).getSessionAttributes(anyString());
+        verify(characterRepository, times(2)).delete(any(MudCharacter.class));
+        verify(commService, times(2)).sendToAll(any(Output.class), any(MudCharacter.class));
     }
 }

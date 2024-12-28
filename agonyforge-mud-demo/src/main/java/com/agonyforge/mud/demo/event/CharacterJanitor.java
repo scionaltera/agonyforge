@@ -1,5 +1,7 @@
 package com.agonyforge.mud.demo.event;
 
+import com.agonyforge.mud.core.service.SessionAttributeService;
+import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -9,12 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
@@ -22,12 +28,15 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 public class CharacterJanitor implements ApplicationListener<SessionDisconnectEvent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterJanitor.class);
 
+    private final SessionAttributeService sessionAttributeService;
     private final MudCharacterRepository characterRepository;
     private final CommService commService;
 
     @Autowired
-    public CharacterJanitor(MudCharacterRepository characterRepository,
+    public CharacterJanitor(SessionAttributeService sessionAttributeService,
+                            MudCharacterRepository characterRepository,
                             CommService commService) {
+        this.sessionAttributeService = sessionAttributeService;
         this.characterRepository = characterRepository;
         this.commService = commService;
     }
@@ -54,5 +63,31 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
                     new Output("[yellow]%s has left the game!", instance.getName()), instance);
             }
         }
+    }
+
+    @EventListener
+    public void onTimerEvent(TimerEvent event) {
+        if (!TimeUnit.MINUTES.equals(event.getFrequency())) {
+            return;
+        }
+
+        List<MudCharacter> allCharacters = characterRepository.findAll();
+        List<MudCharacter> disconnected = new ArrayList<>();
+
+        allCharacters.forEach(ch -> {
+            Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getWebSocketSession());
+
+            if (attributes.isEmpty()) {
+                disconnected.add(ch);
+            }
+        });
+
+        disconnected.forEach(ch -> {
+            // TODO copy relevant differences in instance back to prototype
+            characterRepository.delete(ch);
+
+            LOGGER.info("{} has left the game.", ch.getName());
+            commService.sendToAll(new Output("[yellow]%s has left the game!", ch.getName()), ch);
+        });
     }
 }
