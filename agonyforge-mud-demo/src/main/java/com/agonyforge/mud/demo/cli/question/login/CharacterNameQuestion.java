@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
@@ -71,7 +72,7 @@ public class CharacterNameQuestion extends BaseQuestion {
         ch.setName(input.getInput());
         ch.setRoles(Set.of(playerRole));
         ch.setPronoun(Pronoun.THEY);
-        ch.setWearSlots(Arrays.stream(WearSlot.values()).toList());
+        ch.setWearSlots(Arrays.stream(WearSlot.values()).collect(Collectors.toSet()));
 
         ch = getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
         wsContext.getAttributes().put(MUD_PCHARACTER, ch.getId());

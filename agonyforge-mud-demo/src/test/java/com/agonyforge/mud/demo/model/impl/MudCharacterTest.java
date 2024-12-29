@@ -8,11 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class MudCharacterTest {
@@ -103,9 +104,9 @@ public class MudCharacterTest {
     void testWearSlots() {
         MudCharacter uut = new MudCharacter();
 
-        uut.setWearSlots(List.of(WearSlot.HEAD));
+        uut.setWearSlots(Set.of(WearSlot.HEAD));
 
-        assertEquals(WearSlot.HEAD, uut.getWearSlots().get(0));
+        assertTrue(uut.getWearSlots().contains(WearSlot.HEAD));
     }
 
     @Test
