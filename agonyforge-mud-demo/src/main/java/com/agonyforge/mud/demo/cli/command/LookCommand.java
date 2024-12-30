@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.cli.StringTool;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
@@ -34,7 +33,7 @@ public class LookCommand extends AbstractCommand {
 
         output
             .append("[yellow](%d) %s", room.getId(), room.getName())
-            .append(StringTool.softWrap(room.getDescription(), StringTool.WORD_WRAP))
+            .append("[default]%s", room.getDescription())
             .append("[dcyan]Exits: %s", String.join(" ", room.getExits()));
 
         repositoryBundle.getCharacterRepository().findByRoomId(room.getId())
