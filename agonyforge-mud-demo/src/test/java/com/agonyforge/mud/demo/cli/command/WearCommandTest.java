@@ -204,7 +204,7 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
-        when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HEAD));
+        when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
@@ -239,7 +239,7 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
-        when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
+        when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
@@ -275,7 +275,7 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
-        when(ch.getWearSlots()).thenReturn(List.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
+        when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
