@@ -3,7 +3,6 @@ package com.agonyforge.mud.demo.cli.question.ingame.olc.room;
 import com.agonyforge.mud.core.cli.Color;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
-import com.agonyforge.mud.core.cli.StringTool;
 import com.agonyforge.mud.core.cli.menu.impl.MenuItem;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPane;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;

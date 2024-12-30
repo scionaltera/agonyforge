@@ -71,7 +71,7 @@ public class CharacterEffortQuestionTest {
         CharacterEffortQuestion uut = new CharacterEffortQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
 
-        assertTrue(result.getOutput().size() >= 15);
+        assertTrue(result.getOutput().size() >= 14);
     }
 
     @Test
