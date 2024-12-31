@@ -92,7 +92,7 @@ public class CharacterViewQuestion extends BaseQuestion {
                     MudRoom room = roomOptional.get();
 
                     ch.setRoomId(START_ROOM); // TODO configurable start room
-                    ch.setWebSocketSession(wsContext.getSessionId());
+                    ch.getPlayer().setWebSocketSession(wsContext.getSessionId());
 
                     ch = getRepositoryBundle().getCharacterRepository().save(ch);
                     wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());

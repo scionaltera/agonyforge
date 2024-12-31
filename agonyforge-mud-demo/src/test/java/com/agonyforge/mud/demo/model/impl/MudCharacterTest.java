@@ -42,22 +42,24 @@ public class MudCharacterTest {
     @Test
     void testUsername() {
         MudCharacter uut = new MudCharacter();
+        uut.setPlayer(new PlayerComponent());
         String user = "user";
 
-        uut.setUsername(user);
+        uut.getPlayer().setUsername(user);
 
-        assertEquals(user, uut.getUsername());
+        assertEquals(user, uut.getPlayer().getUsername());
     }
 
     @Test
     void testWebSocketSession() {
         MudCharacter uut = new MudCharacter();
+        uut.setPlayer(new PlayerComponent());
         String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
-        uut.setWebSocketSession(webSocketSession);
+        uut.getPlayer().setWebSocketSession(webSocketSession);
 
-        assertEquals(webSocketSession, uut.getWebSocketSession());
+        assertEquals(webSocketSession, uut.getPlayer().getWebSocketSession());
     }
 
     @Test

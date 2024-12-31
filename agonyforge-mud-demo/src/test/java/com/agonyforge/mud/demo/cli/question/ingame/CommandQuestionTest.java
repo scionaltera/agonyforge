@@ -10,6 +10,7 @@ import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -52,6 +53,9 @@ public class CommandQuestionTest {
 
     @Mock
     private CommandRepository commandRepository;
+
+    @Mock
+    private PlayerComponent playerComponent;
 
     @Mock
     private MudCharacter ch;
@@ -137,6 +141,7 @@ public class CommandQuestionTest {
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
         when(ch.getPrototypeId()).thenReturn(2L);
+        when(ch.getPlayer()).thenReturn(playerComponent);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);

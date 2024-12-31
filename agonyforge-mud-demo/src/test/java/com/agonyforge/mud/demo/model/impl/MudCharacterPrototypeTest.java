@@ -22,9 +22,10 @@ public class MudCharacterPrototypeTest {
     @Test
     void testBuildInstance() {
         MudCharacterPrototype proto = new MudCharacterPrototype();
+        proto.setPlayer(new PlayerComponent());
 
         proto.setComplete(true);
-        proto.setUsername("principal");
+        proto.getPlayer().setUsername("principal");
         proto.setId(random.nextLong());
         proto.setName("Scion");
         proto.setSpeciesId(random.nextLong());
@@ -37,7 +38,7 @@ public class MudCharacterPrototypeTest {
         assertEquals(proto.getId(), instance.getPrototypeId());
         assertEquals(100L, instance.getRoomId());
         assertEquals(proto.getName(), instance.getName());
-        assertEquals(proto.getUsername(), instance.getUsername());
+        assertEquals(proto.getPlayer().getUsername(), instance.getPlayer().getUsername());
         assertEquals(proto.getSpeciesId(), instance.getSpeciesId());
         assertEquals(proto.getProfessionId(), instance.getProfessionId());
     }
@@ -55,32 +56,36 @@ public class MudCharacterPrototypeTest {
     @Test
     void testUsername() {
         MudCharacterPrototype uut = new MudCharacterPrototype();
+        uut.setPlayer(new PlayerComponent());
+
         MudCharacter uutInst;
         String user = "user";
 
         uut.setComplete(true);
-        uut.setUsername(user);
+        uut.getPlayer().setUsername(user);
         uutInst = uut.buildInstance();
 
-        assertEquals(user, uut.getUsername());
-        assertEquals(user, uutInst.getUsername());
+        assertEquals(user, uut.getPlayer().getUsername());
+        assertEquals(user, uutInst.getPlayer().getUsername());
     }
 
     @Test
     void testWebSocketSession() {
         MudCharacterPrototype uut = new MudCharacterPrototype();
+        uut.setPlayer(new PlayerComponent());
+
         MudCharacter uutInst;
         String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
         uut.setComplete(true);
-        uut.setUsername(user);
+        uut.getPlayer().setUsername(user);
         uutInst = uut.buildInstance();
 
         uutInst.setRoomId(100L);
-        uutInst.setWebSocketSession(webSocketSession);
+        uutInst.getPlayer().setWebSocketSession(webSocketSession);
 
-        assertEquals(webSocketSession, uutInst.getWebSocketSession());
+        assertEquals(webSocketSession, uutInst.getPlayer().getWebSocketSession());
     }
 
     @Test

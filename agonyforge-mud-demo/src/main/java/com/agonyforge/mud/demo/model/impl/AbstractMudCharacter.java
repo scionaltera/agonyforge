@@ -9,8 +9,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @MappedSuperclass
-public abstract class AbstractMudCharacter extends Persistent {
-    private String username;
+public abstract class AbstractMudCharacter extends AbstractMudObject {
     private String name;
     private Pronoun pronoun;
     private Long speciesId;
@@ -61,14 +60,6 @@ public abstract class AbstractMudCharacter extends Persistent {
     @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getName() {
         return name;

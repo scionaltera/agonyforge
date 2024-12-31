@@ -9,6 +9,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -51,6 +52,9 @@ public class LookCommandTest {
 
     @Mock
     private SessionAttributeService sessionAttributeService;
+
+    @Mock
+    private PlayerComponent playerComponent;
 
     @Mock
     private MudCharacter ch;
@@ -110,8 +114,9 @@ public class LookCommandTest {
         long roomId = 100L;
 
         when(ch.getRoomId()).thenReturn(roomId);
+        when(playerComponent.getWebSocketSession()).thenReturn(wsSessionId);
+        when(target.getPlayer()).thenReturn(playerComponent);
         when(target.getName()).thenReturn("Target");
-        when(target.getWebSocketSession()).thenReturn(wsSessionId);
         when(item.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
         when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");

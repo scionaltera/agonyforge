@@ -8,6 +8,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -71,6 +72,9 @@ public class CharacterNameQuestionTest {
     private WebSocketContext webSocketContext;
 
     @Mock
+    private PlayerComponent playerComponent;
+
+    @Mock
     private MudCharacterPrototype chProto;
 
     @Captor
@@ -127,7 +131,7 @@ public class CharacterNameQuestionTest {
         MudCharacterPrototype ch = characterPrototypeCaptor.getValue();
 
         assertEquals(1L, ch.getId());
-        assertEquals(principal.getName(), ch.getUsername());
+        assertEquals(principal.getName(), ch.getPlayer().getUsername());
         assertEquals(userInput, ch.getName());
         assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
     }

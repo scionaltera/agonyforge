@@ -72,6 +72,9 @@ public class CharacterViewQuestionTest {
     private MudCharacterPrototype ch;
 
     @Mock
+    private PlayerComponent playerComponent;
+
+    @Mock
     private MudCharacter chInstance;
 
     @Mock
@@ -183,6 +186,7 @@ public class CharacterViewQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
+        when(chInstance.getPlayer()).thenReturn(playerComponent);
         when(ch.getComplete()).thenReturn(true);
         when(ch.buildInstance()).thenReturn(chInstance);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -199,7 +203,7 @@ public class CharacterViewQuestionTest {
         MudCharacter instance = characterCaptor.getValue();
 
         verify(instance).setRoomId(eq(100L));
-        verify(instance).setWebSocketSession(eq(wsSessionId));
+        verify(playerComponent).setWebSocketSession(eq(wsSessionId));
 
         Output announcement = outputCaptor.getValue();
 

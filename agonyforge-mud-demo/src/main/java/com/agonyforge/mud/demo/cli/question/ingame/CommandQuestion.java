@@ -84,7 +84,7 @@ public class CommandQuestion extends BaseQuestion {
                 return new Response(next, output);
             }
 
-            LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getUsername(), ch.getName(), ref.getName());
+            LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getPlayer().getUsername(), ch.getName(), ref.getName());
         } catch (CommandException e) {
             LOGGER.warn("Command failed: {}", e.getMessage());
             output.append("[red]Oops! Something went wrong... the error has been reported!");

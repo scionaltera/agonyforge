@@ -9,7 +9,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 @MappedSuperclass
-public abstract class AbstractMudItem extends Persistent {
+public abstract class AbstractMudItem extends AbstractMudObject {
     @Transient
     private List<String> transientNameList = new ArrayList<>();
 

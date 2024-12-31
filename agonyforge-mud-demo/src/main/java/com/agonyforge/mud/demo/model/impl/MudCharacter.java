@@ -10,7 +10,6 @@ public class MudCharacter extends AbstractMudCharacter {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long prototypeId;
-    private String webSocketSession;
     private Long roomId;
 
     public Long getId() {
@@ -27,14 +26,6 @@ public class MudCharacter extends AbstractMudCharacter {
 
     public void setPrototypeId(Long prototypeId) {
         this.prototypeId = prototypeId;
-    }
-
-    public String getWebSocketSession() {
-        return webSocketSession;
-    }
-
-    public void setWebSocketSession(String webSocketSession) {
-        this.webSocketSession = webSocketSession;
     }
 
     public Long getZoneId() {

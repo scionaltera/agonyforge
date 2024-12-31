@@ -40,7 +40,7 @@ public class LookCommand extends AbstractCommand {
             .stream()
             .filter(target -> !target.equals(ch))
             .forEach(target -> {
-                Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(target.getWebSocketSession());
+                Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(target.getPlayer().getWebSocketSession());
                 String question = (String)attributes.get("MUD.QUESTION");
                 String action;
                 String flags = "";

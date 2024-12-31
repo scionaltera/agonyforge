@@ -7,8 +7,6 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.MessageHeaders;
@@ -21,8 +19,6 @@ import java.util.Map;
 
 @Component
 public class CommService extends EchoService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommService.class);
-
     private final MudCharacterRepository characterRepository;
 
     @Autowired
@@ -49,7 +45,7 @@ public class CommService extends EchoService {
 
         characterRepository.findAll()
             .stream()
-            .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }
@@ -82,7 +78,7 @@ public class CommService extends EchoService {
 
         characterRepository.findByRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
             .stream()
-            .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .filter(ch -> zoneIdString.equals(ch.getRoomId().toString().substring(0, zoneIdString.length())))
             .forEach(ch -> sendTo(ch, message));
@@ -100,7 +96,7 @@ public class CommService extends EchoService {
         List<MudCharacter> skip = List.of(except);
         characterRepository.findByRoomId(roomId)
             .stream()
-            .filter(ch -> !wsContext.getSessionId().equals(ch.getWebSocketSession()))
+            .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }
@@ -113,7 +109,6 @@ public class CommService extends EchoService {
      */
     public void sendToTargets(List<MudCharacter> targets, Output message) {
         targets
-            .stream()
             .forEach(ch -> sendTo(ch, message));
     }
 
@@ -124,19 +119,19 @@ public class CommService extends EchoService {
      * @param message The message to send.
      */
     public void sendTo(MudCharacter ch, Output message) {
-        Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getWebSocketSession());
+        Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getPlayer().getWebSocketSession());
 
         if (!"commandQuestion".equals(attributes.get("MUD.QUESTION"))) {
             return;
         }
 
         WebSocketContext targetWsContext = WebSocketContext.build(
-            new StompPrincipal(ch.getUsername()),
-            ch.getWebSocketSession(),
+            new StompPrincipal(ch.getPlayer().getUsername()),
+            ch.getPlayer().getWebSocketSession(),
             attributes);
 
         Output messageWithPrompt = appendPrompt(targetWsContext, message);
-        MessageHeaders messageHeaders = buildMessageHeaders(ch.getWebSocketSession());
+        MessageHeaders messageHeaders = buildMessageHeaders(ch.getPlayer().getWebSocketSession());
 
         simpMessagingTemplate.convertAndSendToUser(
             targetWsContext.getPrincipal().getName(),

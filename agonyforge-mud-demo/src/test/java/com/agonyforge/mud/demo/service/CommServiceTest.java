@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,9 @@ public class CommServiceTest {
     private MudCharacter other;
 
     @Mock
+    private PlayerComponent chPlayer, targetPlayer, otherPlayer, protoPlayer;
+
+    @Mock
     private MudCharacterPrototype prototype;
 
     @Mock
@@ -97,19 +101,27 @@ public class CommServiceTest {
         lenient().when(characterRepository.findByRoomIdBetween(eq(100L), eq(200L))).thenReturn(List.of(ch, target));
         lenient().when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
 
-        lenient().when(ch.getUsername()).thenReturn(principal);
-        when(ch.getWebSocketSession()).thenReturn(wsSessionId);
+        lenient().when(ch.getPlayer()).thenReturn(chPlayer);
+        lenient().when(target.getPlayer()).thenReturn(targetPlayer);
+        lenient().when(other.getPlayer()).thenReturn(otherPlayer);
+
+        lenient().when(ch.getPlayer()).thenReturn(chPlayer);
+        lenient().when(chPlayer.getUsername()).thenReturn(principal);
+        lenient().when(chPlayer.getWebSocketSession()).thenReturn(wsSessionId);
         lenient().when(ch.getRoomId()).thenReturn(100L);
 
-        lenient().when(target.getUsername()).thenReturn(targetPrincipal);
-        lenient().when(target.getWebSocketSession()).thenReturn(targetWsSessionId);
+        lenient().when(target.getPlayer()).thenReturn(targetPlayer);
+        lenient().when(targetPlayer.getUsername()).thenReturn(targetPrincipal);
+        lenient().when(targetPlayer.getWebSocketSession()).thenReturn(targetWsSessionId);
         lenient().when(target.getRoomId()).thenReturn(100L);
 
-        lenient().when(other.getUsername()).thenReturn(otherPrincipal);
-        lenient().when(other.getWebSocketSession()).thenReturn(otherWsSessionId);
+        lenient().when(other.getPlayer()).thenReturn(otherPlayer);
+        lenient().when(otherPlayer.getUsername()).thenReturn(otherPrincipal);
+        lenient().when(otherPlayer.getWebSocketSession()).thenReturn(otherWsSessionId);
         lenient().when(other.getRoomId()).thenReturn(200L);
 
-        lenient().when(prototype.getUsername()).thenReturn(otherPrincipal);
+        lenient().when(prototype.getPlayer()).thenReturn(protoPlayer);
+        lenient().when(protoPlayer.getUsername()).thenReturn(otherPrincipal);
     }
 
     @Test

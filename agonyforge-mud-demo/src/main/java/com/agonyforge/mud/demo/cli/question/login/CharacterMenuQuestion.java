@@ -73,7 +73,7 @@ public class CharacterMenuQuestion extends BaseQuestion {
         menuPane.getItems().clear();
         menuPane.getItems().add(new MenuItem("N", "New Character"));
 
-        getRepositoryBundle().getCharacterPrototypeRepository().findByUsername(principal.getName())
+        getRepositoryBundle().getCharacterPrototypeRepository().findByPlayerUsername(principal.getName())
             .forEach(ch -> {
                 boolean playing = getRepositoryBundle().getCharacterRepository().findByName(ch.getName()).isPresent();
                 menuPane.getItems().add(new MenuItem(

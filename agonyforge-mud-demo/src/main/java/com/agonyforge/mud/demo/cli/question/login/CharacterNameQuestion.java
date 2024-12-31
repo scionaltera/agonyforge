@@ -5,8 +5,8 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.RoleRepository;
 import org.slf4j.Logger;
@@ -68,7 +68,8 @@ public class CharacterNameQuestion extends BaseQuestion {
         MudCharacterPrototype ch = new MudCharacterPrototype();
         Role playerRole = roleRepository.findByName("Player").orElseThrow();
 
-        ch.setUsername(wsContext.getPrincipal().getName());
+        ch.setPlayer(new PlayerComponent());
+        ch.getPlayer().setUsername(wsContext.getPrincipal().getName());
         ch.setName(input.getInput());
         ch.setRoles(Set.of(playerRole));
         ch.setPronoun(Pronoun.THEY);
