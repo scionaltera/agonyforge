@@ -9,11 +9,22 @@ public class AbstractMudObject extends Persistent {
     @OneToOne(cascade = CascadeType.ALL)
     private PlayerComponent player = null;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private CharacterComponent character = null;
+
     public PlayerComponent getPlayer() {
         return player;
     }
 
     public void setPlayer(PlayerComponent player) {
         this.player = player;
+    }
+
+    public CharacterComponent getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(CharacterComponent character) {
+        this.character = character;
     }
 }
