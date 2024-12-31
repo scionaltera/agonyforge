@@ -8,6 +8,9 @@ import java.util.*;
 
 @Entity
 public class MudCharacterPrototype extends AbstractMudCharacter {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private Boolean isComplete = false;
 
     public MudCharacter buildInstance() {
@@ -40,6 +43,14 @@ public class MudCharacterPrototype extends AbstractMudCharacter {
             });
 
         return instance;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Boolean getComplete() {

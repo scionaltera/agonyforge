@@ -10,9 +10,6 @@ import java.util.*;
 
 @MappedSuperclass
 public abstract class AbstractMudCharacter extends Persistent {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
     private String username;
     private String name;
     private Pronoun pronoun;
@@ -64,14 +61,6 @@ public abstract class AbstractMudCharacter extends Persistent {
     @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

@@ -6,12 +6,20 @@ import java.util.*;
 
 @Entity
 public class MudCharacter extends AbstractMudCharacter {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private Long prototypeId;
     private String webSocketSession;
     private Long roomId;
 
-    @ManyToMany
-    private Set<Role> roles = new HashSet<>();
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getPrototypeId() {
         return prototypeId;
