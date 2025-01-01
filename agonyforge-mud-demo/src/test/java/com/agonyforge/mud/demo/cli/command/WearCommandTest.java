@@ -177,6 +177,8 @@ public class WearCommandTest {
     void testWearTargetNoAvailableSlot() {
         Long chId = random.nextLong();
 
+        when(characterComponent.getWearSlots()).thenReturn(EnumSet.allOf(WearSlot.class));
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -209,7 +211,7 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
-        when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
@@ -245,7 +247,7 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
-        when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
@@ -282,7 +284,7 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
-        when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");

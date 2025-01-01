@@ -61,7 +61,7 @@ public class WearCommand extends AbstractCommand {
         // find all slots that the character has AND the target item has AND isn't already occupied
         List<WearSlot> candidateSlots = target.getWearSlots()
             .stream()
-            .filter(slot -> ch.getWearSlots().contains(slot))
+            .filter(slot -> ch.getCharacter().getWearSlots().contains(slot))
             .filter(slot -> wornItems.stream().noneMatch(item -> item.getWorn().equals(slot)))
             .toList();
 

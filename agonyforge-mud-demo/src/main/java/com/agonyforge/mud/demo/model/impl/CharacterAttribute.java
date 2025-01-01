@@ -13,8 +13,6 @@ public class CharacterAttribute {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer base = 0;
-    private Integer species = 0;
-    private Integer profession = 0;
 
     public Long getId() {
         return id;
@@ -30,22 +28,6 @@ public class CharacterAttribute {
 
     public void setBase(Integer base) {
         this.base = base;
-    }
-
-    public Integer getSpecies() {
-        return species;
-    }
-
-    public void setSpecies(Integer species) {
-        this.species = species;
-    }
-
-    public Integer getProfession() {
-        return profession;
-    }
-
-    public void setProfession(Integer profession) {
-        this.profession = profession;
     }
 
     @Override

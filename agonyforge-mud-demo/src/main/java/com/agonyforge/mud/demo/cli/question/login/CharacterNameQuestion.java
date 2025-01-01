@@ -3,12 +3,10 @@ package com.agonyforge.mud.demo.cli.question.login;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
+import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
-import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
-import com.agonyforge.mud.demo.model.impl.PlayerComponent;
-import com.agonyforge.mud.demo.model.impl.Role;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,7 +75,7 @@ public class CharacterNameQuestion extends BaseQuestion {
         ch.setCharacter(new CharacterComponent());
         ch.getCharacter().setName(input.getInput());
         ch.getCharacter().setPronoun(Pronoun.THEY);
-        ch.setWearSlots(Arrays.stream(WearSlot.values()).collect(Collectors.toSet()));
+        ch.getCharacter().setWearSlots(EnumSet.allOf(WearSlot.class));
 
         ch = getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
         wsContext.getAttributes().put(MUD_PCHARACTER, ch.getId());

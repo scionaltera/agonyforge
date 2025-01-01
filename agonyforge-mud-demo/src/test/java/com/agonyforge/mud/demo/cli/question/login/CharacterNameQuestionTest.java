@@ -133,7 +133,7 @@ public class CharacterNameQuestionTest {
         assertEquals(1L, ch.getId());
         assertEquals(principal.getName(), ch.getPlayer().getUsername());
         assertEquals(userInput, ch.getCharacter().getName());
-        assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
+        assertTrue(ch.getCharacter().getWearSlots().contains(WearSlot.HEAD));
     }
 
     @ParameterizedTest

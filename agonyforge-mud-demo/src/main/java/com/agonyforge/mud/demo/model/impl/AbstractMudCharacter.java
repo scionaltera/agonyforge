@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.model.impl;
 
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -17,10 +16,6 @@ public abstract class AbstractMudCharacter extends AbstractMudObject {
         Arrays.stream(Stat.values()).forEach((stat) -> professionStats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> professionEfforts.put(effort, 0));
     }
-
-    @ElementCollection
-    @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
-    private Set<WearSlot> wearSlots = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
@@ -51,14 +46,6 @@ public abstract class AbstractMudCharacter extends AbstractMudObject {
     @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
-
-    public Set<WearSlot> getWearSlots() {
-        return new HashSet<>(wearSlots);
-    }
-
-    public void setWearSlots(Set<WearSlot> wearSlots) {
-        this.wearSlots = new HashSet<>(wearSlots);
-    }
 
     public int getStat(Stat stat) {
         return stats.get(stat) + speciesStats.get(stat) + professionStats.get(stat);
