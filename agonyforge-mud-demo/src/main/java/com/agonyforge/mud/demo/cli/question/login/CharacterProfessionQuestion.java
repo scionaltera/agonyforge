@@ -70,8 +70,6 @@ public class CharacterProfessionQuestion extends BaseQuestion {
 
                 ch.getCharacter().setProfession(profession);
 
-                Arrays.stream(Effort.values()).forEach(effort -> ch.setProfessionEffort(effort, profession.getEffort(effort)));
-
                 // this is the last question, so the character is complete now
                 ch.setComplete(true);
 

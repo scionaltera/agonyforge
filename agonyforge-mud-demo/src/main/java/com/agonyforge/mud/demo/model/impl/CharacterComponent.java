@@ -86,6 +86,10 @@ public class CharacterComponent extends Persistent {
         return getBaseStat(stat) + getSpeciesStat(stat) + getProfessionStat(stat);
     }
 
+    public int getEffort(Effort effort) {
+        return getBaseEffort(effort) + getSpeciesEffort(effort) + getProfessionEffort(effort);
+    }
+
     public int getBaseStat(Stat stat) {
         return stats.getOrDefault(stat, new CharacterAttribute(0)).getBase();
     }
@@ -112,6 +116,30 @@ public class CharacterComponent extends Persistent {
 
     public int getDefense() {
         return getStat(Stat.CON);
+    }
+
+    public int getBaseEffort(Effort effort) {
+        return efforts.getOrDefault(effort, new CharacterAttribute(0)).getBase();
+    }
+
+    public void setBaseEffort(Effort effort, int value) {
+        CharacterAttribute attribute = efforts.getOrDefault(effort, new CharacterAttribute(0));
+        attribute.setBase(value);
+        efforts.put(effort, attribute);
+    }
+
+    public void addBaseEffort(Effort effort, int addend) {
+        CharacterAttribute attribute = efforts.getOrDefault(effort, new CharacterAttribute(0));
+        attribute.setBase(attribute.getBase() + addend);
+        efforts.put(effort, attribute);
+    }
+
+    public int getSpeciesEffort(Effort effort) {
+        return getSpecies().getEffort(effort);
+    }
+
+    public int getProfessionEffort(Effort effort) {
+        return getProfession().getEffort(effort);
     }
 
     @Override

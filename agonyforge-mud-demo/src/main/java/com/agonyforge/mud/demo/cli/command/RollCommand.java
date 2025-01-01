@@ -71,18 +71,18 @@ public class RollCommand extends AbstractCommand {
         output.append("[cyan]ATTEMPT: [yellow]%d [dwhite]+ [cyan]%d [dwhite]= [white]%d [dwhite]for [cyan]%s[dwhite]!",
             attemptRoll.getRoll(0), ch.getCharacter().getStat(stat), attemptRoll.getModifiedRoll(0), stat.getAbbreviation());
 
-        DiceResult effortRoll = diceService.roll(1, effort.getDie(), ch.getEffort(effort));
+        DiceResult effortRoll = diceService.roll(1, effort.getDie(), ch.getCharacter().getEffort(effort));
 
         output.append("[magenta]EFFORT: [yellow]%d [dwhite]+ [magenta]%d [dwhite]= [white]%d [dwhite]for [magenta]%s[dwhite]!",
-            effortRoll.getRoll(0), ch.getEffort(effort), effortRoll.getModifiedRoll(0), effort.getName());
+            effortRoll.getRoll(0), ch.getCharacter().getEffort(effort), effortRoll.getModifiedRoll(0), effort.getName());
 
         int total = effortRoll.getModifiedRoll(0);
 
         if (attemptRoll.getRoll(0) == 20) {
-            DiceResult ultimateRoll = diceService.roll(1, Effort.ULTIMATE.getDie(), ch.getEffort(Effort.ULTIMATE));
+            DiceResult ultimateRoll = diceService.roll(1, Effort.ULTIMATE.getDie(), ch.getCharacter().getEffort(Effort.ULTIMATE));
 
             output.append("[yellow]ULTIMATE: [yellow]%d [dwhite]+ [yellow]%d [dwhite]= [white]%s[dwhite]!",
-                ultimateRoll.getRoll(0), ch.getEffort(Effort.ULTIMATE), ultimateRoll.getModifiedRoll(0));
+                ultimateRoll.getRoll(0), ch.getCharacter().getEffort(Effort.ULTIMATE), ultimateRoll.getModifiedRoll(0));
 
             total += ultimateRoll.getModifiedRoll(0);
         }

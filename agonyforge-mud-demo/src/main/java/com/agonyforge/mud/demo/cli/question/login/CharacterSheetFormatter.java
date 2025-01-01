@@ -21,7 +21,7 @@ public final class CharacterSheetFormatter {
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;
 
             String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getCharacter().getStat(stat)) : "";
-            String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getEffort(effort)) : "";
+            String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getCharacter().getEffort(effort)) : "";
 
             output.append("%15s\t%15s", statString, effortString);
         }

@@ -37,9 +37,7 @@ public class MudCharacterPrototype extends AbstractMudCharacter {
             });
         Arrays.stream(Effort.values())
             .forEach(effort -> {
-                instance.setBaseEffort(effort, getBaseEffort(effort));
-                instance.setSpeciesEffort(effort, getSpeciesEffort(effort));
-                instance.setProfessionEffort(effort, getProfessionEffort(effort));
+                instance.getCharacter().setBaseEffort(effort, getCharacter().getBaseEffort(effort));
             });
 
         return instance;

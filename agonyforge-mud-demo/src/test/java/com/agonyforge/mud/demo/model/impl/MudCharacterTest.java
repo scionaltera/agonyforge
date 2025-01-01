@@ -208,91 +208,49 @@ public class MudCharacterTest {
 
     @Test
     void testCombinedEfforts() {
+        when(species.getEffort(eq(Effort.BASIC))).thenReturn(3);
+        when(profession.getEffort(eq(Effort.BASIC))).thenReturn(1);
+
         MudCharacter uut = new MudCharacter();
+        uut.setCharacter(new CharacterComponent());
+        uut.getCharacter().setSpecies(species);
+        uut.getCharacter().setProfession(profession);
 
-        uut.setBaseEffort(Effort.BASIC, 2);
-        uut.setSpeciesEffort(Effort.BASIC, 3);
-        uut.setProfessionEffort(Effort.BASIC, 1);
+        uut.getCharacter().setBaseEffort(Effort.BASIC, 2);
 
-        assertEquals(6, uut.getEffort(Effort.BASIC));
+        assertEquals(6, uut.getCharacter().getEffort(Effort.BASIC));
     }
 
     @Test
     void testBaseEfforts() {
         MudCharacter uut = new MudCharacter();
+        uut.setCharacter(new CharacterComponent());
 
-        uut.setBaseEffort(Effort.GUNS, 1);
+        uut.getCharacter().setBaseEffort(Effort.GUNS, 1);
 
-        assertEquals(1, uut.getBaseEffort(Effort.GUNS));
-    }
-
-    @Test
-    void testSetAndAddBaseEffort() {
-        MudCharacter uut = new MudCharacter();
-
-        uut.setBaseEffort(Effort.BASIC, 3);
-        uut.setBaseEffort(Effort.GUNS, 3);
-
-        assertEquals(3, uut.getBaseEffort(Effort.BASIC));
-        assertEquals(3, uut.getBaseEffort(Effort.GUNS));
-
-        uut.addBaseEffort(Effort.BASIC, 2);
-        uut.addBaseEffort(Effort.GUNS, -2);
-
-        assertEquals(5, uut.getBaseEffort(Effort.BASIC));
-        assertEquals(1, uut.getBaseEffort(Effort.GUNS));
+        assertEquals(1, uut.getCharacter().getBaseEffort(Effort.GUNS));
     }
 
     @Test
     void testSpeciesEfforts() {
+        when(species.getEffort(eq(Effort.GUNS))).thenReturn(1);
+
         MudCharacter uut = new MudCharacter();
+        uut.setCharacter(new CharacterComponent());
+        uut.getCharacter().setSpecies(species);
 
-        uut.setSpeciesEffort(Effort.GUNS, 1);
-
-        assertEquals(1, uut.getSpeciesEffort(Effort.GUNS));
-    }
-
-    @Test
-    void testSetAndAddSpeciesEffort() {
-        MudCharacter uut = new MudCharacter();
-
-        uut.setSpeciesEffort(Effort.BASIC, 3);
-        uut.setSpeciesEffort(Effort.GUNS, 3);
-
-        assertEquals(3, uut.getSpeciesEffort(Effort.BASIC));
-        assertEquals(3, uut.getSpeciesEffort(Effort.GUNS));
-
-        uut.addSpeciesEffort(Effort.BASIC, 2);
-        uut.addSpeciesEffort(Effort.GUNS, -2);
-
-        assertEquals(5, uut.getSpeciesEffort(Effort.BASIC));
-        assertEquals(1, uut.getSpeciesEffort(Effort.GUNS));
+        assertEquals(1, uut.getCharacter().getSpeciesEffort(Effort.GUNS));
     }
 
     @Test
     void testProfessionEfforts() {
+        when(profession.getEffort(eq(Effort.GUNS))).thenReturn(1);
+
         MudCharacter uut = new MudCharacter();
+        uut.setCharacter(new CharacterComponent());
+        uut.getCharacter().setProfession(profession);
 
-        uut.setSpeciesEffort(Effort.GUNS, 1);
-
-        assertEquals(1, uut.getSpeciesEffort(Effort.GUNS));
-    }
-
-    @Test
-    void testSetAndAddProfessionEffort() {
-        MudCharacter uut = new MudCharacter();
-
-        uut.setProfessionEffort(Effort.BASIC, 3);
-        uut.setProfessionEffort(Effort.GUNS, 3);
-
-        assertEquals(3, uut.getProfessionEffort(Effort.BASIC));
-        assertEquals(3, uut.getProfessionEffort(Effort.GUNS));
-
-        uut.addProfessionEffort(Effort.BASIC, 2);
-        uut.addProfessionEffort(Effort.GUNS, -2);
-
-        assertEquals(5, uut.getProfessionEffort(Effort.BASIC));
-        assertEquals(1, uut.getProfessionEffort(Effort.GUNS));
+        assertEquals(1, uut.getCharacter().getProfessionEffort(Effort.GUNS));
     }
 
     @Test
