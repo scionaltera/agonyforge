@@ -66,10 +66,10 @@ public class RollCommand extends AbstractCommand {
             return question;
         }
 
-        DiceResult attemptRoll = diceService.roll(1, 20, ch.getStat(stat));
+        DiceResult attemptRoll = diceService.roll(1, 20, ch.getCharacter().getStat(stat));
 
         output.append("[cyan]ATTEMPT: [yellow]%d [dwhite]+ [cyan]%d [dwhite]= [white]%d [dwhite]for [cyan]%s[dwhite]!",
-            attemptRoll.getRoll(0), ch.getStat(stat), attemptRoll.getModifiedRoll(0), stat.getAbbreviation());
+            attemptRoll.getRoll(0), ch.getCharacter().getStat(stat), attemptRoll.getModifiedRoll(0), stat.getAbbreviation());
 
         DiceResult effortRoll = diceService.roll(1, effort.getDie(), ch.getEffort(effort));
 

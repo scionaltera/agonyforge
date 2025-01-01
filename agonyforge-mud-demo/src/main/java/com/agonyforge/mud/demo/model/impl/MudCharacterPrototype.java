@@ -33,9 +33,7 @@ public class MudCharacterPrototype extends AbstractMudCharacter {
 
         Arrays.stream(Stat.values())
             .forEach(stat -> {
-                instance.setBaseStat(stat, getBaseStat(stat));
-                instance.setSpeciesStat(stat, getSpeciesStat(stat));
-                instance.setProfessionStat(stat, getProfessionStat(stat));
+                instance.getCharacter().setBaseStat(stat, getCharacter().getBaseStat(stat));
             });
         Arrays.stream(Effort.values())
             .forEach(effort -> {

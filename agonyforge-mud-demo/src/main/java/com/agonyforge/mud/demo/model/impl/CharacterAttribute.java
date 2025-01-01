@@ -14,6 +14,12 @@ public class CharacterAttribute {
     private Long id;
     private Integer base = 0;
 
+    public CharacterAttribute() {}
+
+    public CharacterAttribute(int base) {
+        this.base = base;
+    }
+
     public Long getId() {
         return id;
     }

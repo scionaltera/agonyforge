@@ -82,20 +82,36 @@ public class CharacterComponent extends Persistent {
         this.wearSlots = wearSlots;
     }
 
-    public Map<Stat, CharacterAttribute> getStats() {
-        return stats;
+    public int getStat(Stat stat) {
+        return getBaseStat(stat) + getSpeciesStat(stat) + getProfessionStat(stat);
     }
 
-    public void setStats(Map<Stat, CharacterAttribute> stats) {
-        this.stats = stats;
+    public int getBaseStat(Stat stat) {
+        return stats.getOrDefault(stat, new CharacterAttribute(0)).getBase();
     }
 
-    public Map<Effort, CharacterAttribute> getEfforts() {
-        return efforts;
+    public void setBaseStat(Stat stat, int value) {
+        CharacterAttribute attribute = stats.getOrDefault(stat, new CharacterAttribute(value));
+        attribute.setBase(value);
+        stats.put(stat, attribute);
     }
 
-    public void setEfforts(Map<Effort, CharacterAttribute> efforts) {
-        this.efforts = efforts;
+    public void addBaseStat(Stat stat, int addend) {
+        CharacterAttribute attribute = stats.getOrDefault(stat, new CharacterAttribute(0));
+        attribute.setBase(attribute.getBase() + addend);
+        stats.put(stat, attribute);
+    }
+
+    public int getSpeciesStat(Stat stat) {
+        return getSpecies().getStat(stat);
+    }
+
+    public int getProfessionStat(Stat stat) {
+        return getProfession().getStat(stat);
+    }
+
+    public int getDefense() {
+        return getStat(Stat.CON);
     }
 
     @Override

@@ -17,8 +17,6 @@ import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.impl.MudSpecies;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -31,8 +29,6 @@ import java.util.Optional;
 
 @Component
 public class CharacterSpeciesQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterSpeciesQuestion.class);
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
@@ -74,9 +70,6 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
                 MudSpecies species = (MudSpecies)item.getItem();
 
                 ch.getCharacter().setSpecies(species);
-
-                Arrays.stream(Stat.values()).forEach(stat -> ch.setSpeciesStat(stat, species.getStat(stat)));
-                Arrays.stream(Effort.values()).forEach(effort -> ch.setSpeciesEffort(effort, species.getEffort(effort)));
 
                 getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
             }

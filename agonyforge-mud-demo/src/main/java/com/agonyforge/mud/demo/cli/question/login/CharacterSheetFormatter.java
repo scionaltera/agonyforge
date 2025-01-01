@@ -20,7 +20,7 @@ public final class CharacterSheetFormatter {
             Stat stat = Stat.values().length > i ? Stat.values()[i] : null;
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;
 
-            String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getStat(stat)) : "";
+            String statString = stat != null ? String.format("[default]%s: [cyan]%d", stat.getAbbreviation(), ch.getCharacter().getStat(stat)) : "";
             String effortString = effort != null ? String.format("[default](d%-2d) %-15s: [magenta]%d", effort.getDie(), effort.getName(), ch.getEffort(effort)) : "";
 
             output.append("%15s\t%15s", statString, effortString);
@@ -28,6 +28,6 @@ public final class CharacterSheetFormatter {
 
         output.append("");
         output.append("[default]Health: [red]❤");
-        output.append("[default]DEF: [green]%d", ch.getDefense());
+        output.append("[default]DEF: [green]%d", ch.getCharacter().getDefense());
     }
 }

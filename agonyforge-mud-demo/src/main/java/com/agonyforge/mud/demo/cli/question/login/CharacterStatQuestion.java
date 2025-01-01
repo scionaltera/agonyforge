@@ -13,10 +13,7 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +23,6 @@ import java.util.Locale;
 @Component
 public class CharacterStatQuestion extends BaseQuestion {
     public static final int STARTING_STATS = 6;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterStatQuestion.class);
 
     private final MenuPane menuPane = new MenuPane();
 
@@ -63,7 +58,7 @@ public class CharacterStatQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addBaseStat(Stat.values()[i], 1);
+                    ch.getCharacter().addBaseStat(Stat.values()[i], 1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red]Oops! Try a number with a plus or minus!");
                 }
@@ -74,7 +69,7 @@ public class CharacterStatQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addBaseStat(Stat.values()[i], -1);
+                    ch.getCharacter().addBaseStat(Stat.values()[i], -1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red][red]Oops! Try a number with a plus or minus!");
                 }
@@ -101,7 +96,7 @@ public class CharacterStatQuestion extends BaseQuestion {
 
     private int computeStatPoints(MudCharacterPrototype ch) {
         return Arrays.stream(Stat.values())
-            .map(ch::getBaseStat)
+            .map(ch.getCharacter()::getBaseStat)
             .reduce(0, Integer::sum);
     }
 
@@ -114,7 +109,7 @@ public class CharacterStatQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Stat.values())
-                .forEachOrdered(stat -> menuPane.getItems().add(new MenuItem((stat.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", stat.getName(), ch.getBaseStat(stat)))));
+                .forEachOrdered(stat -> menuPane.getItems().add(new MenuItem((stat.ordinal() + 1) + "[+/-]", String.format("%15s (%d)", stat.getName(), ch.getCharacter().getBaseStat(stat)))));
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }

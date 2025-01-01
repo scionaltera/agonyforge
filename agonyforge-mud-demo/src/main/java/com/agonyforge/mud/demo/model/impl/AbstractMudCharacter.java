@@ -47,50 +47,6 @@ public abstract class AbstractMudCharacter extends AbstractMudObject {
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
 
-    public int getStat(Stat stat) {
-        return stats.get(stat) + speciesStats.get(stat) + professionStats.get(stat);
-    }
-
-    public int getBaseStat(Stat stat) {
-        return stats.get(stat);
-    }
-
-    public void setBaseStat(Stat stat, int value) {
-        stats.put(stat, value);
-    }
-
-    public void addBaseStat(Stat stat, int addend) {
-        stats.put(stat, stats.get(stat) + addend);
-    }
-
-    public int getSpeciesStat(Stat stat) {
-        return speciesStats.get(stat);
-    }
-
-    public void setSpeciesStat(Stat stat, int value) {
-        speciesStats.put(stat, value);
-    }
-
-    public void addSpeciesStat(Stat stat, int addend) {
-        speciesStats.put(stat, speciesStats.get(stat) + addend);
-    }
-
-    public int getProfessionStat(Stat stat) {
-        return professionStats.get(stat);
-    }
-
-    public void setProfessionStat(Stat stat, int value) {
-        professionStats.put(stat, value);
-    }
-
-    public void addProfessionStat(Stat stat, int addend) {
-        professionStats.put(stat, professionStats.get(stat) + addend);
-    }
-
-    public int getDefense() {
-        return getBaseStat(Stat.CON) + getSpeciesStat(Stat.CON);
-    }
-
     public int getEffort(Effort effort) {
         return efforts.get(effort) + speciesEfforts.get(effort) + professionEfforts.get(effort);
     }
