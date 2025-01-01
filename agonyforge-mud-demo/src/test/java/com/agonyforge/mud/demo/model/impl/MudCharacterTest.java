@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,7 +53,6 @@ public class MudCharacterTest {
     void testWebSocketSession() {
         MudCharacter uut = new MudCharacter();
         uut.setPlayer(new PlayerComponent());
-        String user = UUID.randomUUID().toString();
         String webSocketSession = "webSocketSession";
 
         uut.getPlayer().setWebSocketSession(webSocketSession);
@@ -85,21 +83,23 @@ public class MudCharacterTest {
     @Test
     void testName() {
         MudCharacter uut = new MudCharacter();
+        uut.setCharacter(new CharacterComponent());
         String name = "name";
 
-        uut.setName(name);
+        uut.getCharacter().setName(name);
 
-        assertEquals(name, uut.getName());
+        assertEquals(name, uut.getCharacter().getName());
     }
 
     @Test
     void testPronoun() {
         MudCharacter uut = new MudCharacter();
+        uut.setCharacter(new CharacterComponent());
         Pronoun pronoun = Pronoun.THEY;
 
-        uut.setPronoun(pronoun);
+        uut.getCharacter().setPronoun(pronoun);
 
-        assertEquals(pronoun, uut.getPronoun());
+        assertEquals(pronoun, uut.getCharacter().getPronoun());
     }
 
     @Test
@@ -302,22 +302,12 @@ public class MudCharacterTest {
     }
 
     @Test
-    void testSpeciesId() {
-        Long id = random.nextLong();
+    void testCharacterComponent() {
+        CharacterComponent component = new CharacterComponent();
         MudCharacter uut = new MudCharacter();
 
-        uut.setSpeciesId(id);
+        uut.setCharacter(component);
 
-        assertEquals(id, uut.getSpeciesId());
-    }
-
-    @Test
-    void testProfessionId() {
-        Long id = random.nextLong();
-        MudCharacter uut = new MudCharacter();
-
-        uut.setProfessionId(id);
-
-        assertEquals(id, uut.getProfessionId());
+        assertEquals(component, uut.getCharacter());
     }
 }

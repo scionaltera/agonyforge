@@ -98,7 +98,7 @@ public class ItemEditorQuestion extends BaseQuestion {
                     nextQuestion = "commandQuestion";
 
                     commService.sendToRoom(wsContext, ch.getRoomId(),
-                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
+                        new Output("[yellow]%s stops editing.", ch.getCharacter().getName()), ch);
                 }
             }
         } else if ("IEDIT.NAMES".equals(wsContext.getAttributes().get(IEDIT_STATE))) {

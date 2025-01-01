@@ -72,7 +72,7 @@ public class CharacterProfessionQuestion extends BaseQuestion {
                 MudCharacterPrototype ch = chOptional.get();
                 MudProfession profession = (MudProfession)item.getItem();
 
-                ch.setProfessionId(profession.getId());
+                ch.getCharacter().setProfession(profession);
 
                 Arrays.stream(Stat.values()).forEach(stat -> ch.setProfessionStat(stat, profession.getStat(stat)));
                 Arrays.stream(Effort.values()).forEach(effort -> ch.setProfessionEffort(effort, profession.getEffort(effort)));

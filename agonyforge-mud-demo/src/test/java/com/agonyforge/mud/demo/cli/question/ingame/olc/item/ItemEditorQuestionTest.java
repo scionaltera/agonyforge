@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -54,6 +55,9 @@ public class ItemEditorQuestionTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private Question question;
@@ -266,6 +270,8 @@ public class ItemEditorQuestionTest {
         attributes.put(IEDIT_MODEL, 42L);
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
+        when(characterComponent.getName()).thenReturn("Name");
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(12L)).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(nextQuestion);
 

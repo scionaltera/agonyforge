@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -65,6 +66,9 @@ public class WhisperCommandTest {
     private MudCharacter other;
 
     @Mock
+    private CharacterComponent characterComponent, targetCharacterComponent;
+
+    @Mock
     private WebSocketContext webSocketContext;
 
     @Mock
@@ -100,12 +104,14 @@ public class WhisperCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByRoomId(eq(100L))).thenReturn(List.of(ch, target, other));
 
-        when(ch.getName()).thenReturn("Scion");
+        when(characterComponent.getName()).thenReturn("Scion");
         when(ch.getRoomId()).thenReturn(100L);
-        when(target.getName()).thenReturn("Target");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(targetCharacterComponent.getName()).thenReturn("Target");
 
         Input input = new Input(val);
         Output output = new Output();

@@ -5,9 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.CommandReference;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.Role;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -55,6 +53,9 @@ public class HelpCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private PlayerComponent playerComponent;
+
+    @Mock
     private Role playerRole;
 
     @Mock
@@ -79,7 +80,8 @@ public class HelpCommandTest {
 
         lenient().when(commandRepository.findAll()).thenReturn(List.of(testCommandRefA, testCommandRefB));
         lenient().when(playerRole.getCommands()).thenReturn(Set.of(testCommandRefA));
-        lenient().when(ch.getRoles()).thenReturn(Set.of(playerRole));
+        lenient().when(playerComponent.getRoles()).thenReturn(Set.of(playerRole));
+        lenient().when(ch.getPlayer()).thenReturn(playerComponent);
     }
 
     @Test

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
+@SuppressWarnings("LoggingSimilarMessage")
 @Component
 public class CharacterJanitor implements ApplicationListener<SessionDisconnectEvent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterJanitor.class);
@@ -56,11 +57,11 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
                 // TODO copy relevant differences in instance back to prototype
                 characterRepository.delete(instance);
 
-                LOGGER.info("{} has left the game.", instance.getName());
+                LOGGER.info("{} has left the game.", instance.getCharacter().getName());
 
                 WebSocketContext webSocketContext = WebSocketContext.build(event.getMessage().getHeaders());
                 commService.sendToAll(webSocketContext,
-                    new Output("[yellow]%s has left the game!", instance.getName()), instance);
+                    new Output("[yellow]%s has left the game!", instance.getCharacter().getName()), instance);
             }
         }
     }
@@ -86,8 +87,8 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
             // TODO copy relevant differences in instance back to prototype
             characterRepository.delete(ch);
 
-            LOGGER.info("{} has left the game.", ch.getName());
-            commService.sendToAll(new Output("[yellow]%s has left the game!", ch.getName()), ch);
+            LOGGER.info("{} has left the game.", ch.getCharacter().getName());
+            commService.sendToAll(new Output("[yellow]%s has left the game!", ch.getCharacter().getName()), ch);
         });
     }
 }

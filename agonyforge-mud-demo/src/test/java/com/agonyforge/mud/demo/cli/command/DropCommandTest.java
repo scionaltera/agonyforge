@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -59,6 +60,9 @@ public class DropCommandTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private MudItem item;
@@ -136,6 +140,7 @@ public class DropCommandTest {
 
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId

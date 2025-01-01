@@ -47,7 +47,7 @@ public class CommandQuestion extends BaseQuestion {
         if (chOptional.isPresent()) {
             output
                 .append("")
-                .append("[green]%s[default]> ", chOptional.get().getName());
+                .append("[green]%s[default]> ", chOptional.get().getCharacter().getName());
         } else {
             output
                 .append("")
@@ -79,12 +79,12 @@ public class CommandQuestion extends BaseQuestion {
             Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
             MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
 
-            if (1L == ch.getPrototypeId() || ch.getRoles().stream().anyMatch(role -> role.getCommands().contains(ref))) {
+            if (1L == ch.getPrototypeId() || (ch.getPlayer() != null && ch.getPlayer().getRoles().stream().anyMatch(role -> role.getCommands().contains(ref)))) {
                 Question next = command.execute(this, webSocketContext, tokens, input, output);
                 return new Response(next, output);
             }
 
-            LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getPlayer().getUsername(), ch.getName(), ref.getName());
+            LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getPlayer().getUsername(), ch.getCharacter().getName(), ref.getName());
         } catch (CommandException e) {
             LOGGER.warn("Command failed: {}", e.getMessage());
             output.append("[red]Oops! Something went wrong... the error has been reported!");

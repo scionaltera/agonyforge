@@ -102,7 +102,7 @@ public abstract class AbstractCommand implements Command {
         return targets
             .stream()
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .filter(tch -> tch.getCharacter().getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
             .findFirst();
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractCommand implements Command {
         return targets
             .stream()
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .filter(tch -> tch.getCharacter().getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
             .findFirst();
     }
 }

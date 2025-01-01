@@ -76,7 +76,7 @@ public class RoomEditorCommand extends AbstractCommand {
         }
 
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s begins editing.", ch.getName()), ch);
+            new Output("[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
 
         return applicationContext.getBean("roomEditorQuestion", Question.class);
     }

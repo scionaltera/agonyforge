@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -60,6 +61,9 @@ public class RemoveCommandTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private MudItem target;
@@ -125,7 +129,8 @@ public class RemoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
+        when(characterComponent.getPronoun()).thenReturn(Pronoun.SHE);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(target));
         when(target.getNameList()).thenReturn(List.of("test", "hat"));
         when(target.getShortDescription()).thenReturn("a test hat");

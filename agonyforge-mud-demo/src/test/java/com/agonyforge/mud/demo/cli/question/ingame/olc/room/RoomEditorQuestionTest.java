@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -54,6 +55,9 @@ public class RoomEditorQuestionTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private MudRoom room;
@@ -202,6 +206,8 @@ public class RoomEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
+        when(characterComponent.getName()).thenReturn("Name");
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(roomId);
         when(wsContext.getAttributes()).thenReturn(attributes);
 

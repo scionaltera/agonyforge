@@ -52,7 +52,7 @@ public class CreateCommand extends AbstractCommand {
 
         output.append("[yellow]You wave your hand, and %s appears!", item.getShortDescription());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getName(), ch.getPronoun().getPossessive(), item.getShortDescription()));
+            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), item.getShortDescription()));
 
         return question;
     }

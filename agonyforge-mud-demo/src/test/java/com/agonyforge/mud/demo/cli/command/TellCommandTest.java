@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -65,6 +66,9 @@ public class TellCommandTest {
     private MudCharacter other;
 
     @Mock
+    private CharacterComponent chCharacterComponent, targetCharacterComponent;
+
+    @Mock
     private WebSocketContext webSocketContext;
 
     @Mock
@@ -102,8 +106,10 @@ public class TellCommandTest {
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
-        when(ch.getName()).thenReturn("Scion");
-        when(target.getName()).thenReturn("Target");
+        when(ch.getCharacter()).thenReturn(chCharacterComponent);
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(chCharacterComponent.getName()).thenReturn("Scion");
+        when(targetCharacterComponent.getName()).thenReturn("Target");
 
         Input input = new Input(val);
         Output output = new Output();

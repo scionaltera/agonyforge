@@ -44,7 +44,7 @@ public class GetCommand extends AbstractCommand {
 
         output.append("[default]You get %s[default].", target.getShortDescription());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[default]%s gets %s[default].", ch.getName(), target.getShortDescription()));
+            new Output("[default]%s gets %s[default].", ch.getCharacter().getName(), target.getShortDescription()));
 
         return question;
     }

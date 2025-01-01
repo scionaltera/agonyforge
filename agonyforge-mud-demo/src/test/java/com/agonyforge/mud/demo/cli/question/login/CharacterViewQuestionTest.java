@@ -25,8 +25,6 @@ import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 import static com.agonyforge.mud.demo.cli.question.login.CharacterViewQuestion.START_ROOM;
-import static com.agonyforge.mud.demo.config.ProfessionLoader.DEFAULT_PROFESSION_ID;
-import static com.agonyforge.mud.demo.config.SpeciesLoader.DEFAULT_SPECIES_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,6 +73,9 @@ public class CharacterViewQuestionTest {
     private PlayerComponent playerComponent;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private MudCharacter chInstance;
 
     @Mock
@@ -111,7 +112,7 @@ public class CharacterViewQuestionTest {
         lenient().when(repositoryBundle.getSpeciesRepository()).thenReturn(speciesRepository);
         lenient().when(repositoryBundle.getProfessionRepository()).thenReturn(professionRepository);
 
-        characterSheetFormatter = Mockito.spy(new CharacterSheetFormatter(speciesRepository, professionRepository));
+        characterSheetFormatter = Mockito.spy(new CharacterSheetFormatter());
     }
 
     @Test
@@ -125,12 +126,11 @@ public class CharacterViewQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getComplete()).thenReturn(true);
-        when(ch.getName()).thenReturn(characterName);
-        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
-        when(ch.getSpeciesId()).thenReturn(DEFAULT_SPECIES_ID);
-        when(ch.getProfessionId()).thenReturn(DEFAULT_PROFESSION_ID);
-        when(speciesRepository.findById(eq(DEFAULT_SPECIES_ID))).thenReturn(Optional.of(species));
-        when(professionRepository.findById(eq(DEFAULT_PROFESSION_ID))).thenReturn(Optional.of(profession));
+        when(characterComponent.getName()).thenReturn(characterName);
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(characterComponent.getPronoun()).thenReturn(Pronoun.SHE);
+        when(characterComponent.getSpecies()).thenReturn(species);
+        when(characterComponent.getProfession()).thenReturn(profession);
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Output result = uut.prompt(wsContext);
@@ -187,6 +187,8 @@ public class CharacterViewQuestionTest {
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
         when(chInstance.getPlayer()).thenReturn(playerComponent);
+        when(chInstance.getCharacter()).thenReturn(characterComponent);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getComplete()).thenReturn(true);
         when(ch.buildInstance()).thenReturn(chInstance);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -239,7 +241,6 @@ public class CharacterViewQuestionTest {
     @Test
     void testAnswerUnknown() {
         Long chId = random.nextLong();
-        String wsSessionId = UUID.randomUUID().toString();
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_PCHARACTER, chId);

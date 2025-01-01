@@ -73,7 +73,7 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
                 MudCharacterPrototype ch = chOptional.get();
                 MudSpecies species = (MudSpecies)item.getItem();
 
-                ch.setSpeciesId(species.getId());
+                ch.getCharacter().setSpecies(species);
 
                 Arrays.stream(Stat.values()).forEach(stat -> ch.setSpeciesStat(stat, species.getStat(stat)));
                 Arrays.stream(Effort.values()).forEach(effort -> ch.setSpeciesEffort(effort, species.getEffort(effort)));

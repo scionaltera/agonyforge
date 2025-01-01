@@ -132,7 +132,7 @@ public class CharacterNameQuestionTest {
 
         assertEquals(1L, ch.getId());
         assertEquals(principal.getName(), ch.getPlayer().getUsername());
-        assertEquals(userInput, ch.getName());
+        assertEquals(userInput, ch.getCharacter().getName());
         assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
     }
 
@@ -208,7 +208,7 @@ public class CharacterNameQuestionTest {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Input input = new Input("Scion");
 
-        when(characterPrototypeRepository.findByName(eq("Scion"))).thenReturn(List.of(chProto));
+        when(characterPrototypeRepository.findByCharacterName(eq("Scion"))).thenReturn(List.of(chProto));
 
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();

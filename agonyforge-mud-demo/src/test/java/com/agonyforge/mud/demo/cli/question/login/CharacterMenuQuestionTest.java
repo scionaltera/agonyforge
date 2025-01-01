@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -56,6 +57,9 @@ public class CharacterMenuQuestionTest {
     private MudCharacterPrototype mudCharacter;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private WebSocketContext webSocketContext;
 
     private final Random random = new Random();
@@ -96,7 +100,8 @@ public class CharacterMenuQuestionTest {
 
         when(principal.getName()).thenReturn(principalName);
         when(webSocketContext.getPrincipal()).thenReturn(principal);
-        when(mudCharacter.getName()).thenReturn(characterName);
+        when(characterComponent.getName()).thenReturn(characterName);
+        when(mudCharacter.getCharacter()).thenReturn(characterComponent);
         when(characterPrototypeRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
@@ -181,7 +186,8 @@ public class CharacterMenuQuestionTest {
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(mudCharacter.getId()).thenReturn(characterId);
-        when(mudCharacter.getName()).thenReturn(characterName);
+        when(characterComponent.getName()).thenReturn(characterName);
+        when(mudCharacter.getCharacter()).thenReturn(characterComponent);
         when(characterPrototypeRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
         when(applicationContext.getBean(eq("characterViewQuestion"), eq(Question.class))).thenReturn(question);
 

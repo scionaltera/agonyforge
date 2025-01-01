@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -60,6 +61,9 @@ public class WearCommandTest {
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private MudItem item;
@@ -199,13 +203,14 @@ public class WearCommandTest {
     void testWearTarget() {
         Long chId = random.nextLong();
 
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
         when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HEAD));
-        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
+        when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
         when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
@@ -234,13 +239,14 @@ public class WearCommandTest {
     void testWearTargetSecondMatch() {
         Long chId = random.nextLong();
 
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
-        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
+        when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));
@@ -270,13 +276,14 @@ public class WearCommandTest {
     void testWearTargetWithOtherItem() {
         Long chId = random.nextLong();
 
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getWearSlots()).thenReturn(Set.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
-        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
+        when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getShortDescription()).thenReturn("a test hat");
         when(target.getNameList()).thenReturn(List.of("hat"));

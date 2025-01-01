@@ -29,7 +29,7 @@ public class CharacterDeleteQuestion extends BaseQuestion {
 
         return chOptional.map(mudCharacter -> new Output(
                 "[red]Are you SURE you want to delete %s? [white][y/N][red]: ",
-                mudCharacter.getName()))
+                mudCharacter.getCharacter().getName()))
             .orElse(output);
     }
 

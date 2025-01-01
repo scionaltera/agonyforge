@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -55,6 +56,9 @@ public class SayCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private WebSocketContext webSocketContext;
 
     @Mock
@@ -87,6 +91,8 @@ public class SayCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(characterComponent.getName()).thenReturn("Name");
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getRoomId()).thenReturn(100L);
 

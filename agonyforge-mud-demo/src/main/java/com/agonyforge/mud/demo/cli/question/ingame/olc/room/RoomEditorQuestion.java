@@ -94,7 +94,7 @@ public class RoomEditorQuestion extends BaseQuestion {
                     nextQuestion = "commandQuestion";
 
                     commService.sendToRoom(wsContext, ch.getRoomId(),
-                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
+                        new Output("[yellow]%s stops editing.", ch.getCharacter().getName()), ch);
                 }
             }
         } else if ("ROOM.TITLE".equals(wsContext.getAttributes().get(REDIT_STATE))) {

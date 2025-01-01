@@ -55,7 +55,7 @@ public class LookCommand extends AbstractCommand {
                     action = "here";
                 }
 
-                output.append("[green]%s is %s. %s", target.getName(), action, flags);
+                output.append("[green]%s is %s. %s", target.getCharacter().getName(), action, flags);
             });
 
         repositoryBundle.getItemRepository().getByRoomId(room.getId())
@@ -89,7 +89,7 @@ public class LookCommand extends AbstractCommand {
 
         if (roomOptional.isEmpty()) {
             output.append("[black]You are floating in the void...");
-            LOGGER.error("{} is floating in the void!", ch.getName());
+            LOGGER.error("{} is floating in the void!", ch.getCharacter().getName());
 
             return question;
         }

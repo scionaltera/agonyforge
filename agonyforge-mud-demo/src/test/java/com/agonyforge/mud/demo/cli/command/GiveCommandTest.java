@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -63,6 +64,9 @@ public class GiveCommandTest {
 
     @Mock
     private MudCharacter target;
+
+    @Mock
+    private CharacterComponent chCharacterComponent, targetCharacterComponent;
 
     @Mock
     private MudItem item;
@@ -199,11 +203,13 @@ public class GiveCommandTest {
         Long targetId = random.nextLong();
         Long roomId = 100L;
 
+        when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getId()).thenReturn(chId);
         when(ch.getRoomId()).thenReturn(roomId);
-        when(ch.getName()).thenReturn("Scion");
+        when(chCharacterComponent.getName()).thenReturn("Scion");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(target.getId()).thenReturn(targetId);
-        when(target.getName()).thenReturn("Spook");
+        when(targetCharacterComponent.getName()).thenReturn("Spook");
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByRoomId(eq(roomId))).thenReturn(List.of(target, ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(

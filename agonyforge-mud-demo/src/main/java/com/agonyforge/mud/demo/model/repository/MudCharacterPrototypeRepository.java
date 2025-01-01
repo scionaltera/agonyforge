@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MudCharacterPrototypeRepository extends JpaRepository<MudCharacterPrototype, Long> {
     List<MudCharacterPrototype> findByPlayerUsername(String username);
-    List<MudCharacterPrototype> findByName(String name);
+    List<MudCharacterPrototype> findByCharacterName(String name);
 }

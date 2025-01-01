@@ -36,7 +36,7 @@ public class GossipCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         output.append("[green]You gossip, '%s[green]'", message);
-        getCommService().sendToAll(webSocketContext, new Output("[green]%s gossips, '%s[green]'", ch.getName(), message));
+        getCommService().sendToAll(webSocketContext, new Output("[green]%s gossips, '%s[green]'", ch.getCharacter().getName(), message));
 
         return question;
     }

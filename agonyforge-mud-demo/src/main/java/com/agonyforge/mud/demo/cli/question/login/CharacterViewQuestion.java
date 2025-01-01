@@ -85,7 +85,7 @@ public class CharacterViewQuestion extends BaseQuestion {
 
                 if (!chPrototype.getComplete()) {
                     output.append("[red]This character is not finished yet. You must go through character creation first.");
-                } else if (getRepositoryBundle().getCharacterRepository().findByName(chPrototype.getName()).isPresent()) {
+                } else if (getRepositoryBundle().getCharacterRepository().findByCharacterName(chPrototype.getCharacter().getName()).isPresent()) {
                     output.append("[red]This character is already playing. Try a different one, or create a new one.");
                 } else {
                     MudCharacter ch = chPrototype.buildInstance();
@@ -97,8 +97,8 @@ public class CharacterViewQuestion extends BaseQuestion {
                     ch = getRepositoryBundle().getCharacterRepository().save(ch);
                     wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
-                    LOGGER.info("{} has entered the game", ch.getName());
-                    commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
+                    LOGGER.info("{} has entered the game", ch.getCharacter().getName());
+                    commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getCharacter().getName()), ch);
 
                     output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
 

@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Direction;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -68,6 +69,9 @@ public class MoveCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private MudRoom room;
 
     @Mock
@@ -90,6 +94,7 @@ public class MoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(100L);
         when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
         when(roomRepository.findById(eq(101L))).thenReturn(Optional.of(destination));
@@ -116,6 +121,7 @@ public class MoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(100L);
 
         Input input = new Input("west");

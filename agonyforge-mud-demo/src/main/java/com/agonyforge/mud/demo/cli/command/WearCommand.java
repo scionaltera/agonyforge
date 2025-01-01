@@ -77,9 +77,9 @@ public class WearCommand extends AbstractCommand {
         output.append("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot.getName());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("[default]%s wears %s[default] on %s %s.",
-                ch.getName(),
+                ch.getCharacter().getName(),
                 target.getShortDescription(),
-                ch.getPronoun().getPossessive(),
+                ch.getCharacter().getPronoun().getPossessive(),
                 targetSlot
             ));
 

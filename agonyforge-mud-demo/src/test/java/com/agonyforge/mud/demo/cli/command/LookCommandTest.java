@@ -6,10 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
-import com.agonyforge.mud.demo.model.impl.MudRoom;
-import com.agonyforge.mud.demo.model.impl.PlayerComponent;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -63,6 +60,9 @@ public class LookCommandTest {
     private MudCharacter target;
 
     @Mock
+    private CharacterComponent characterComponent, targetCharacterComponent;
+
+    @Mock
     private MudItem item;
 
     @Mock
@@ -88,6 +88,7 @@ public class LookCommandTest {
         Long chId = random.nextLong();
         long roomId = 100L;
 
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -116,7 +117,8 @@ public class LookCommandTest {
         when(ch.getRoomId()).thenReturn(roomId);
         when(playerComponent.getWebSocketSession()).thenReturn(wsSessionId);
         when(target.getPlayer()).thenReturn(playerComponent);
-        when(target.getName()).thenReturn("Target");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(target.getCharacter().getName()).thenReturn("Target");
         when(item.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
         when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");

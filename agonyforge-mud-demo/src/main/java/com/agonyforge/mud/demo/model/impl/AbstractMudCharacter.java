@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.model.impl;
 
 import com.agonyforge.mud.demo.model.constant.Effort;
-import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
@@ -10,11 +9,6 @@ import java.util.*;
 
 @MappedSuperclass
 public abstract class AbstractMudCharacter extends AbstractMudObject {
-    private String name;
-    private Pronoun pronoun;
-    private Long speciesId;
-    private Long professionId;
-
     public AbstractMudCharacter() {
         Arrays.stream(Stat.values()).forEach((stat) -> stats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> efforts.put(effort, 0));
@@ -23,9 +17,6 @@ public abstract class AbstractMudCharacter extends AbstractMudObject {
         Arrays.stream(Stat.values()).forEach((stat) -> professionStats.put(stat, 0));
         Arrays.stream(Effort.values()).forEach((effort) -> professionEfforts.put(effort, 0));
     }
-
-    @ManyToMany()
-    private Set<Role> roles = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
@@ -60,30 +51,6 @@ public abstract class AbstractMudCharacter extends AbstractMudObject {
     @CollectionTable(joinColumns = {@JoinColumn(name = "character_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "effort_id")
     private final Map<Effort, Integer> professionEfforts = new HashMap<>();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Pronoun getPronoun() {
-        return pronoun;
-    }
-
-    public void setPronoun(Pronoun pronoun) {
-        this.pronoun = pronoun;
-    }
-
-    public Set<Role> getRoles() {
-        return new HashSet<>(roles);
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = new HashSet<>(roles);
-    }
 
     public Set<WearSlot> getWearSlots() {
         return new HashSet<>(wearSlots);
@@ -175,21 +142,5 @@ public abstract class AbstractMudCharacter extends AbstractMudObject {
 
     public void addProfessionEffort(Effort effort, int addend) {
         professionEfforts.put(effort, professionEfforts.get(effort) + addend);
-    }
-
-    public Long getSpeciesId() {
-        return speciesId;
-    }
-
-    public void setSpeciesId(Long speciesId) {
-        this.speciesId = speciesId;
-    }
-
-    public Long getProfessionId() {
-        return professionId;
-    }
-
-    public void setProfessionId(Long professionId) {
-        this.professionId = professionId;
     }
 }

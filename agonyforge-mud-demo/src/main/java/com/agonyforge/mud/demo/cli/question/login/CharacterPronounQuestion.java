@@ -17,16 +17,12 @@ import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 @Component
 public class CharacterPronounQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterPronounQuestion.class);
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
@@ -66,7 +62,7 @@ public class CharacterPronounQuestion extends BaseQuestion {
 
             if (chOptional.isPresent()) {
                 MudCharacterPrototype ch = chOptional.get();
-                ch.setPronoun((Pronoun)item.getItem());
+                ch.getCharacter().setPronoun((Pronoun)item.getItem());
                 getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
             }
 

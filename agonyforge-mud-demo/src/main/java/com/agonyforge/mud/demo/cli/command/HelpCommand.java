@@ -36,7 +36,7 @@ public class HelpCommand extends AbstractCommand {
         if (ch.getPrototypeId() == 1L) {
             commands = new HashSet<>(commandRepository.findAll());
         } else {
-            commands = ch.getRoles()
+            commands = ch.getPlayer().getRoles()
                 .stream()
                 .flatMap(role -> role.getCommands().stream())
                 .collect(Collectors.toSet());

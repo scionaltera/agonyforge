@@ -53,9 +53,9 @@ public class RemoveCommand extends AbstractCommand {
         output.append("[default]You remove %s[default].", target.getShortDescription());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("[default]%s removes %s[default] from %s %s.",
-                ch.getName(),
+                ch.getCharacter().getName(),
                 target.getShortDescription(),
-                ch.getPronoun().getPossessive(),
+                ch.getCharacter().getPronoun().getPossessive(),
                 targetSlot.getName()
             ));
 

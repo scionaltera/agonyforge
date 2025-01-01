@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -57,6 +58,9 @@ public class AbstractCommandTest {
 
     @Mock
     private MudCharacter target;
+
+    @Mock
+    private CharacterComponent characterComponent, targetCharacterComponent;
 
     @Mock
     private Question question;
@@ -154,9 +158,9 @@ public class AbstractCommandTest {
     void testFindRoomCharacter() {
         Long roomId = 100L;
 
-        lenient().when(ch.getName()).thenReturn("Scion");
         when(ch.getRoomId()).thenReturn(roomId);
-        when(target.getName()).thenReturn("Morgan");
+        when(targetCharacterComponent.getName()).thenReturn("Morgan");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(characterRepository.findByRoomId(eq(roomId))).thenReturn(List.of(ch, target));
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
@@ -172,8 +176,9 @@ public class AbstractCommandTest {
 
     @Test
     void testFindWorldCharacter() {
-        lenient().when(ch.getName()).thenReturn("Scion");
-        when(target.getName()).thenReturn("Morgan");
+        when(targetCharacterComponent.getName()).thenReturn("Morgan");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(target.getCharacter().getName()).thenReturn("Morgan");
         when(characterRepository.findAll()).thenReturn(List.of(ch, target));
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {

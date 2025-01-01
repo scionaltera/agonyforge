@@ -6,6 +6,7 @@ import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Random;
@@ -19,17 +20,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MudCharacterPrototypeTest {
     private final Random random = new Random();
 
+    @Mock
+    private MudSpecies species;
+
+    @Mock
+    private MudProfession profession;
+
     @Test
     void testBuildInstance() {
         MudCharacterPrototype proto = new MudCharacterPrototype();
         proto.setPlayer(new PlayerComponent());
+        proto.setCharacter(new CharacterComponent());
 
         proto.setComplete(true);
         proto.getPlayer().setUsername("principal");
         proto.setId(random.nextLong());
-        proto.setName("Scion");
-        proto.setSpeciesId(random.nextLong());
-        proto.setProfessionId(random.nextLong());
+        proto.getCharacter().setName("Scion");
+        proto.getCharacter().setSpecies(species);
+        proto.getCharacter().setProfession(profession);
 
         MudCharacter instance = proto.buildInstance();
 
@@ -37,10 +45,10 @@ public class MudCharacterPrototypeTest {
 
         assertEquals(proto.getId(), instance.getPrototypeId());
         assertEquals(100L, instance.getRoomId());
-        assertEquals(proto.getName(), instance.getName());
+        assertEquals(proto.getCharacter().getName(), instance.getCharacter().getName());
         assertEquals(proto.getPlayer().getUsername(), instance.getPlayer().getUsername());
-        assertEquals(proto.getSpeciesId(), instance.getSpeciesId());
-        assertEquals(proto.getProfessionId(), instance.getProfessionId());
+        assertEquals(proto.getCharacter().getSpecies(), instance.getCharacter().getSpecies());
+        assertEquals(proto.getCharacter().getProfession(), instance.getCharacter().getProfession());
     }
 
     @Test
@@ -57,6 +65,7 @@ public class MudCharacterPrototypeTest {
     void testUsername() {
         MudCharacterPrototype uut = new MudCharacterPrototype();
         uut.setPlayer(new PlayerComponent());
+        uut.setCharacter(new CharacterComponent());
 
         MudCharacter uutInst;
         String user = "user";
@@ -73,6 +82,7 @@ public class MudCharacterPrototypeTest {
     void testWebSocketSession() {
         MudCharacterPrototype uut = new MudCharacterPrototype();
         uut.setPlayer(new PlayerComponent());
+        uut.setCharacter(new CharacterComponent());
 
         MudCharacter uutInst;
         String user = UUID.randomUUID().toString();
@@ -91,21 +101,23 @@ public class MudCharacterPrototypeTest {
     @Test
     void testName() {
         MudCharacterPrototype uut = new MudCharacterPrototype();
+        uut.setCharacter(new CharacterComponent());
         String name = "name";
 
-        uut.setName(name);
+        uut.getCharacter().setName(name);
 
-        assertEquals(name, uut.getName());
+        assertEquals(name, uut.getCharacter().getName());
     }
 
     @Test
     void testPronoun() {
         MudCharacterPrototype uut = new MudCharacterPrototype();
+        uut.setCharacter(new CharacterComponent());
         Pronoun pronoun = Pronoun.IT;
 
-        uut.setPronoun(pronoun);
+        uut.getCharacter().setPronoun(pronoun);
 
-        assertEquals(pronoun, uut.getPronoun());
+        assertEquals(pronoun, uut.getCharacter().getPronoun());
     }
 
     @Test
@@ -308,22 +320,12 @@ public class MudCharacterPrototypeTest {
     }
 
     @Test
-    void testSpeciesId() {
-        Long id = random.nextLong();
+    void testCharacterComponent() {
+        CharacterComponent component = new CharacterComponent();
         MudCharacterPrototype uut = new MudCharacterPrototype();
 
-        uut.setSpeciesId(id);
+        uut.setCharacter(component);
 
-        assertEquals(id, uut.getSpeciesId());
-    }
-
-    @Test
-    void testProfessionId() {
-        Long id = random.nextLong();
-        MudCharacterPrototype uut = new MudCharacterPrototype();
-
-        uut.setProfessionId(id);
-
-        assertEquals(id, uut.getProfessionId());
+        assertEquals(component, uut.getCharacter());
     }
 }

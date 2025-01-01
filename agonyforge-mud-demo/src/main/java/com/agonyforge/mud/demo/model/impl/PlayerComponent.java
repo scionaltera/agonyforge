@@ -1,11 +1,10 @@
 package com.agonyforge.mud.demo.model.impl;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class PlayerComponent extends Persistent {
@@ -14,6 +13,9 @@ public class PlayerComponent extends Persistent {
     private Long id;
     private String username;
     private String webSocketSession;
+
+    @ManyToMany()
+    private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -37,6 +39,14 @@ public class PlayerComponent extends Persistent {
 
     public void setWebSocketSession(String webSocketSession) {
         this.webSocketSession = webSocketSession;
+    }
+
+    public Set<Role> getRoles() {
+        return new HashSet<>(roles);
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

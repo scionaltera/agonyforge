@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface MudCharacterRepository extends JpaRepository<MudCharacter, Long> {
-    Optional<MudCharacter> findByName(String name);
+    Optional<MudCharacter> findByCharacterName(String name);
     List<MudCharacter> findByRoomId(Long roomId);
     List<MudCharacter> findByRoomIdBetween(Long firstRoomId, Long lastRoomId);
 }

@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -66,6 +67,9 @@ public class RoomEditorCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private MudRoom room;
 
     private final Random random = new Random();
@@ -87,6 +91,7 @@ public class RoomEditorCommandTest {
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(roomId);
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
@@ -110,6 +115,7 @@ public class RoomEditorCommandTest {
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(roomId);
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
@@ -133,6 +139,7 @@ public class RoomEditorCommandTest {
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getRoomId()).thenReturn(roomId);
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);

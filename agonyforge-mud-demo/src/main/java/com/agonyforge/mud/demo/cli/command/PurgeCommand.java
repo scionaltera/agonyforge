@@ -47,7 +47,10 @@ public class PurgeCommand extends AbstractCommand {
 
         output.append("[yellow]You snap your fingers, and %s disappears!", target.getShortDescription());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s snaps %s fingers, and %s disappears!", ch.getName(), ch.getPronoun().getPossessive(), target.getShortDescription()));
+            new Output("[yellow]%s snaps %s fingers, and %s disappears!",
+                ch.getCharacter().getName(),
+                ch.getCharacter().getPronoun().getPossessive(),
+                target.getShortDescription()));
 
         return question;
     }
