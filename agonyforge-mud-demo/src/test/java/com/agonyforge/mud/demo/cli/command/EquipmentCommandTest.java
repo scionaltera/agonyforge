@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -63,6 +64,9 @@ public class EquipmentCommandTest {
     @Mock
     private MudItem junk;
 
+    @Mock
+    private ItemComponent itemComponent;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -104,8 +108,9 @@ public class EquipmentCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(junk, item));
+        when(item.getItem()).thenReturn(itemComponent);
         when(item.getWorn()).thenReturn(WearSlot.HEAD);
-        when(item.getShortDescription()).thenReturn("a rubber chicken");
+        when(item.getItem().getShortDescription()).thenReturn("a rubber chicken");
 
         Output output = new Output();
         EquipmentCommand uut = new EquipmentCommand(repositoryBundle, commService, applicationContext);

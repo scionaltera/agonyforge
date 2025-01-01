@@ -41,14 +41,14 @@ public class WearCommand extends AbstractCommand {
 
         MudItem target = targetOptional.get();
 
-        if (target.getWearSlots().isEmpty()) {
+        if (target.getItem().getWearSlots().isEmpty()) {
             output.append("[default]You can't wear that.");
             return question;
         }
 
         if (target.getWorn() != null) {
             LOGGER.error("Item in inventory is also being worn! instance:{} proto:{}", target.getInstanceId(), target.getId());
-            output.append("[default]You are already wearing %s[default].", target.getShortDescription());
+            output.append("[default]You are already wearing %s[default].", target.getItem().getShortDescription());
             return question;
         }
 
@@ -59,7 +59,7 @@ public class WearCommand extends AbstractCommand {
             .toList();
 
         // find all slots that the character has AND the target item has AND isn't already occupied
-        List<WearSlot> candidateSlots = target.getWearSlots()
+        List<WearSlot> candidateSlots = target.getItem().getWearSlots()
             .stream()
             .filter(slot -> ch.getCharacter().getWearSlots().contains(slot))
             .filter(slot -> wornItems.stream().noneMatch(item -> item.getWorn().equals(slot)))
@@ -74,11 +74,11 @@ public class WearCommand extends AbstractCommand {
         target.setWorn(targetSlot);
         getRepositoryBundle().getItemRepository().save(target);
 
-        output.append("[default]You wear %s[default] on your %s.", target.getShortDescription(), targetSlot.getName());
+        output.append("[default]You wear %s[default] on your %s.", target.getItem().getShortDescription(), targetSlot.getName());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
             new Output("[default]%s wears %s[default] on %s %s.",
                 ch.getCharacter().getName(),
-                target.getShortDescription(),
+                target.getItem().getShortDescription(),
                 ch.getCharacter().getPronoun().getPossessive(),
                 targetSlot
             ));

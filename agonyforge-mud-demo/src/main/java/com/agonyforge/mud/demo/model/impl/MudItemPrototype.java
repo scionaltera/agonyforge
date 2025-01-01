@@ -6,18 +6,19 @@ import java.util.*;
 
 @Entity
 @Table(name = "mud_pitem")
-public class MudItemPrototype extends AbstractMudItem {
+public class MudItemPrototype extends AbstractMudObject {
     @Id
     private Long id;
 
     public MudItem buildInstance() {
         MudItem instance = new MudItem();
+        instance.setItem(new ItemComponent());
 
         instance.setId(getId());
-        instance.setNameList(getNameList());
-        instance.setShortDescription(getShortDescription());
-        instance.setLongDescription(getLongDescription());
-        instance.setWearSlots(getWearSlots());
+        instance.getItem().setNameList(getItem().getNameList());
+        instance.getItem().setShortDescription(getItem().getShortDescription());
+        instance.getItem().setLongDescription(getItem().getLongDescription());
+        instance.getItem().setWearSlots(getItem().getWearSlots());
 
         return instance;
     }

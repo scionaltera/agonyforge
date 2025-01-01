@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -71,6 +72,9 @@ public class WearCommandTest {
     @Mock
     private MudItem target;
 
+    @Mock
+    private ItemComponent targetItemComponent;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -133,8 +137,9 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
-        when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
+        when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
+        when(target.getItem().getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -185,8 +190,9 @@ public class WearCommandTest {
         ));
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(item.getWorn()).thenReturn(WearSlot.HEAD);
-        when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+        when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
+        when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -213,9 +219,10 @@ public class WearCommandTest {
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
-        when(target.getShortDescription()).thenReturn("a test hat");
-        when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+        when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getItem().getShortDescription()).thenReturn("a test hat");
+        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
+        when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -246,13 +253,15 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+
         when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
-        when(target.getShortDescription()).thenReturn("a test hat");
-        when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
+        when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getItem().getShortDescription()).thenReturn("a test hat");
+        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
+        when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -287,9 +296,10 @@ public class WearCommandTest {
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
-        when(target.getShortDescription()).thenReturn("a test hat");
-        when(target.getNameList()).thenReturn(List.of("hat"));
-        when(target.getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+        when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getItem().getShortDescription()).thenReturn("a test hat");
+        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
+        when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);

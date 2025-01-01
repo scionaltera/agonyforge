@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -69,6 +70,9 @@ public class GetCommandTest {
     @Mock
     private MudItem other;
 
+    @Mock
+    private ItemComponent itemComponent, otherItemComponent;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -115,7 +119,8 @@ public class GetCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(other.getNameList()).thenReturn(List.of("sword"));
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
         when(itemRepository.getByRoomId(eq(roomId))).thenReturn(List.of(other));
 
         Output output = new Output();
@@ -147,9 +152,11 @@ public class GetCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(item.getNameList()).thenReturn(List.of("test"));
-        when(item.getShortDescription()).thenReturn(itemName);
-        when(other.getNameList()).thenReturn(List.of("sword"));
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getNameList()).thenReturn(Set.of("test"));
+        when(item.getItem().getShortDescription()).thenReturn(itemName);
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
         when(itemRepository.getByRoomId(eq(roomId))).thenReturn(List.of(other, item));
 
         Output output = new Output();

@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
 import com.agonyforge.mud.demo.model.repository.MudItemPrototypeRepository;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ public class ItemWearSlotsEditorQuestionTest {
     private MudItemPrototype itemProto;
 
     @Mock
+    private ItemComponent itemComponent;
+
+    @Mock
     private Question question;
 
     @Mock
@@ -57,9 +61,10 @@ public class ItemWearSlotsEditorQuestionTest {
         attributes.put(IEDIT_MODEL, 42L);
 
         when(repositoryBundle.getItemPrototypeRepository()).thenReturn(itemPrototypeRepository);
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(itemProto.getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
+        when(itemProto.getItem().getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
 
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
@@ -82,10 +87,11 @@ public class ItemWearSlotsEditorQuestionTest {
         attributes.put(IEDIT_SLOT, eyes);
 
         when(repositoryBundle.getItemPrototypeRepository()).thenReturn(itemPrototypeRepository);
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(itemPrototypeRepository.save(eq(itemProto))).thenReturn(itemProto);
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(itemProto.getWearSlots()).thenReturn(slots);
+        when(itemProto.getItem().getWearSlots()).thenReturn(slots);
 
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
@@ -106,10 +112,11 @@ public class ItemWearSlotsEditorQuestionTest {
         attributes.put(IEDIT_SLOT, eyes);
 
         when(repositoryBundle.getItemPrototypeRepository()).thenReturn(itemPrototypeRepository);
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(itemPrototypeRepository.save(eq(itemProto))).thenReturn(itemProto);
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(itemProto.getWearSlots()).thenReturn(slots);
+        when(itemProto.getItem().getWearSlots()).thenReturn(slots);
 
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
@@ -126,7 +133,8 @@ public class ItemWearSlotsEditorQuestionTest {
 
         when(applicationContext.getBean(eq("itemWearSlotsEditorQuestion"), eq(Question.class))).thenReturn(question);
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(itemProto.getWearSlots()).thenReturn(slots);
+        when(itemProto.getItem()).thenReturn(itemComponent);
+        when(itemComponent.getWearSlots()).thenReturn(slots);
 
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         uut.populateMenuItems(itemProto);
@@ -144,7 +152,8 @@ public class ItemWearSlotsEditorQuestionTest {
         Map<String, Object> attributes = new HashMap<>();
 
         when(applicationContext.getBean(eq("itemWearSlotsEditorQuestion"), eq(Question.class))).thenReturn(question);
-        when(itemProto.getWearSlots()).thenReturn(slots);
+        when(itemProto.getItem()).thenReturn(itemComponent);
+        when(itemComponent.getWearSlots()).thenReturn(slots);
 
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         uut.populateMenuItems(itemProto);

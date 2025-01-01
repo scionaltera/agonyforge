@@ -81,12 +81,15 @@ public class WorldLoader {
 
         if (itemRepository.getByRoomId(100L).isEmpty()) {
             MudItemPrototype item = new MudItemPrototype();
+
+            item.setItem(new ItemComponent());
+
             MudItem itemInstance;
 
             item.setId(100L);
-            item.setNameList(List.of("spoon"));
-            item.setShortDescription("a spoon");
-            item.setLongDescription("A spoon is floating in midair here.");
+            item.getItem().setNameList(Set.of("spoon"));
+            item.getItem().setShortDescription("a spoon");
+            item.getItem().setLongDescription("A spoon is floating in midair here.");
 
             item = itemPrototypeRepository.save(item);
 
@@ -95,13 +98,16 @@ public class WorldLoader {
             itemInstance.setRoomId(100L);
 
             MudItemPrototype hat = new MudItemPrototype();
+
+            hat.setItem(new ItemComponent());
+
             MudItem hatInstance;
 
             hat.setId(101L);
-            hat.setNameList(List.of("hat", "floppy"));
-            hat.setShortDescription("a floppy hat");
-            hat.setLongDescription("A floppy hat has been dropped here.");
-            hat.setWearSlots(EnumSet.of(WearSlot.HEAD));
+            hat.getItem().setNameList(Set.of("hat", "floppy"));
+            hat.getItem().setShortDescription("a floppy hat");
+            hat.getItem().setLongDescription("A floppy hat has been dropped here.");
+            hat.getItem().setWearSlots(EnumSet.of(WearSlot.HEAD));
 
             hat = itemPrototypeRepository.save(hat);
 

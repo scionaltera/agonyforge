@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -20,11 +20,12 @@ public class MudItemTest {
     @Test
     void testBuildInstance() {
         MudItemPrototype proto = new MudItemPrototype();
+        proto.setItem(new ItemComponent());
 
         proto.setId(random.nextLong());
-        proto.setNameList(List.of("sword"));
-        proto.setShortDescription("a sword");
-        proto.setLongDescription("A sword has been dropped on the ground here.");
+        proto.getItem().setNameList(Set.of("sword"));
+        proto.getItem().setShortDescription("a sword");
+        proto.getItem().setLongDescription("A sword has been dropped on the ground here.");
 
         MudItem instance = proto.buildInstance();
 
@@ -32,9 +33,9 @@ public class MudItemTest {
 
         assertEquals(proto.getId(), instance.getId());
         assertEquals(100L, instance.getRoomId());
-        assertEquals(proto.getNameList(), instance.getNameList());
-        assertEquals(proto.getShortDescription(), instance.getShortDescription());
-        assertEquals(proto.getLongDescription(), instance.getLongDescription());
+        assertEquals(proto.getItem().getNameList(), instance.getItem().getNameList());
+        assertEquals(proto.getItem().getShortDescription(), instance.getItem().getShortDescription());
+        assertEquals(proto.getItem().getLongDescription(), instance.getItem().getLongDescription());
     }
 
     @Test
@@ -50,34 +51,38 @@ public class MudItemTest {
     @Test
     void testNameList() {
         MudItem uut = new MudItem();
-        List<String> nameList = List.of("sword");
+        uut.setItem(new ItemComponent());
 
-        uut.setNameList(nameList);
+        Set<String> nameList = Set.of("sword");
+        uut.getItem().setNameList(nameList);
 
-        assertEquals(nameList, uut.getNameList());
+        assertEquals(nameList, uut.getItem().getNameList());
     }
 
     @Test
     void testDescription() {
         MudItem uut = new MudItem();
+        uut.setItem(new ItemComponent());
+
         String shortDescription = "a sword";
         String longDescription = "A sword has been dropped on the ground here.";
 
-        uut.setShortDescription(shortDescription);
-        uut.setLongDescription(longDescription);
+        uut.getItem().setShortDescription(shortDescription);
+        uut.getItem().setLongDescription(longDescription);
 
-        assertEquals(shortDescription, uut.getShortDescription());
-        assertEquals(longDescription, uut.getLongDescription());
+        assertEquals(shortDescription, uut.getItem().getShortDescription());
+        assertEquals(longDescription, uut.getItem().getLongDescription());
     }
 
     @Test
     void testWearSlots() {
         MudItem uut = new MudItem();
+        uut.setItem(new ItemComponent());
 
-        uut.setWearSlots(EnumSet.of(WearSlot.HEAD));
+        uut.getItem().setWearSlots(EnumSet.of(WearSlot.HEAD));
 
-        assertEquals(1, uut.getWearSlots().size());
-        assertTrue(uut.getWearSlots().contains(WearSlot.HEAD));
+        assertEquals(1, uut.getItem().getWearSlots().size());
+        assertTrue(uut.getItem().getWearSlots().contains(WearSlot.HEAD));
     }
 
     @Test
@@ -92,6 +97,8 @@ public class MudItemTest {
     @Test
     void testRoomId() {
         MudItemPrototype uut = new MudItemPrototype();
+        uut.setItem(new ItemComponent());
+
         MudItem uutInstance;
         Long roomId = 100L;
 
@@ -105,6 +112,8 @@ public class MudItemTest {
     @Test
     void testCharacterId() {
         MudItemPrototype uut = new MudItemPrototype();
+        uut.setItem(new ItemComponent());
+
         MudItem uutInstance;
         Long chId = random.nextLong();
 

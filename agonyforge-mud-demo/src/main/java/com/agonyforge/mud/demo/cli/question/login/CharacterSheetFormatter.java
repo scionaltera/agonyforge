@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public final class CharacterSheetFormatter {
-    public void format(AbstractMudCharacter ch, Output output) {
+    public void format(AbstractMudObject ch, Output output) {
         output.append("[dcyan]CHARACTER SHEET");
         output.append("[default]Name: [cyan]%s", ch.getCharacter().getName());
         output.append("[default]Pronouns: [cyan]%s/%s", ch.getCharacter().getPronoun().getSubject(), ch.getCharacter().getPronoun().getObject());

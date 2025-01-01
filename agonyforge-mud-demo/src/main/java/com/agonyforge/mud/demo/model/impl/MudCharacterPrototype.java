@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-public class MudCharacterPrototype extends AbstractMudCharacter {
+public class MudCharacterPrototype extends AbstractMudObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

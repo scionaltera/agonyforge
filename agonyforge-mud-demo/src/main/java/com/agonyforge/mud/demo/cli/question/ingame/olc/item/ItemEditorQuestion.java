@@ -16,12 +16,11 @@ import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
 import com.agonyforge.mud.demo.service.CommService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Locale;
 
 @Component
@@ -37,8 +36,6 @@ public class ItemEditorQuestion extends BaseQuestion {
     // IEDIT.LONG_DESC -> user needs to type a long description
     // IEDIT.WEAR_SLOT -> user needs to pick a wear slot
     static final String IEDIT_STATE = "IEDIT.STATE";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemEditorQuestion.class);
 
     private final CommService commService;
     private final MenuPane menuPane = new MenuPane();
@@ -102,13 +99,13 @@ public class ItemEditorQuestion extends BaseQuestion {
                 }
             }
         } else if ("IEDIT.NAMES".equals(wsContext.getAttributes().get(IEDIT_STATE))) {
-            itemProto.setNameList(Tokenizer.tokenize(input.getInput()));
+            itemProto.getItem().setNameList(new HashSet<>(Tokenizer.tokenize(input.getInput())));
             wsContext.getAttributes().remove(IEDIT_STATE);
         } else if ("IEDIT.SHORT_DESC".equals(wsContext.getAttributes().get(IEDIT_STATE))) {
-            itemProto.setShortDescription(input.getInput());
+            itemProto.getItem().setShortDescription(input.getInput());
             wsContext.getAttributes().remove(IEDIT_STATE);
         } else if ("IEDIT.LONG_DESC".equals(wsContext.getAttributes().get(IEDIT_STATE))) {
-            itemProto.setLongDescription(input.getInput());
+            itemProto.getItem().setLongDescription(input.getInput());
             wsContext.getAttributes().remove(IEDIT_STATE);
         }
 
@@ -121,9 +118,9 @@ public class ItemEditorQuestion extends BaseQuestion {
         menuPane.getItems().clear();
 
         menuPane.getTitle().setTitle(String.format("Item Editor - %d", itemProto.getId()));
-        menuPane.getItems().add(new MenuItem("N", "Name List: " + itemProto.getNameList()));
-        menuPane.getItems().add(new MenuItem("S", "Short Description: " + itemProto.getShortDescription()));
-        menuPane.getItems().add(new MenuItem("L", "Long Description: " + itemProto.getLongDescription()));
+        menuPane.getItems().add(new MenuItem("N", "Name List: " + itemProto.getItem().getNameList()));
+        menuPane.getItems().add(new MenuItem("S", "Short Description: " + itemProto.getItem().getShortDescription()));
+        menuPane.getItems().add(new MenuItem("L", "Long Description: " + itemProto.getItem().getLongDescription()));
         menuPane.getItems().add(new MenuItem("W", "Wear Slots"));
 
         menuPane.getItems().add(new MenuItem("X", "Save"));

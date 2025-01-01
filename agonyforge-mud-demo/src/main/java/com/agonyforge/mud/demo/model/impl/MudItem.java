@@ -7,7 +7,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "mud_item")
-public class MudItem extends AbstractMudItem {
+public class MudItem extends AbstractMudObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "instance_id")

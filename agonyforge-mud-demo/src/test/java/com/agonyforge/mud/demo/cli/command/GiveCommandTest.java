@@ -5,8 +5,8 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -73,6 +73,9 @@ public class GiveCommandTest {
 
     @Mock
     private MudItem other;
+
+    @Mock
+    private ItemComponent itemComponent, otherItemComponent;
 
     private final Random random = new Random();
 
@@ -146,7 +149,8 @@ public class GiveCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(other.getNameList()).thenReturn(List.of("test"));
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("test"));
         when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(other));
 
         Output output = new Output();
@@ -176,8 +180,10 @@ public class GiveCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(item.getNameList()).thenReturn(List.of("spoon"));
-        when(other.getNameList()).thenReturn(List.of("test"));
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getNameList()).thenReturn(Set.of("spoon"));
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("test"));
         when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();
@@ -215,9 +221,12 @@ public class GiveCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(item.getNameList()).thenReturn(List.of("spoon"));
-        when(item.getShortDescription()).thenReturn("a spoon");
-        when(other.getNameList()).thenReturn(List.of("test"));
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getNameList()).thenReturn(Set.of("spoon"));
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getShortDescription()).thenReturn("a spoon");
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("test"));
         when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(other, item));
 
         Output output = new Output();

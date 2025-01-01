@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -62,6 +63,9 @@ public class InventoryCommandTest {
     private MudItem item;
 
     @Mock
+    private ItemComponent itemComponent;
+
+    @Mock
     private MudItem armor;
 
     private final Random random = new Random();
@@ -83,7 +87,8 @@ public class InventoryCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(item.getShortDescription()).thenReturn(itemName);
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getShortDescription()).thenReturn(itemName);
         when(armor.getWorn()).thenReturn(WearSlot.BODY);
         when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(armor, item));
 

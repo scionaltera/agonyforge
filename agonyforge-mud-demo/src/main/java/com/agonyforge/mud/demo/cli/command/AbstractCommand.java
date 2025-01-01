@@ -67,7 +67,7 @@ public abstract class AbstractCommand implements Command {
         return items
             .stream()
             .filter(item -> item.getWorn() == null)
-            .filter(item -> item.getNameList()
+            .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
@@ -79,7 +79,7 @@ public abstract class AbstractCommand implements Command {
         return items
             .stream()
             .filter(item -> item.getWorn() != null)
-            .filter(item -> item.getNameList()
+            .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
@@ -90,7 +90,7 @@ public abstract class AbstractCommand implements Command {
 
         return items
             .stream()
-            .filter(item -> item.getNameList()
+            .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();

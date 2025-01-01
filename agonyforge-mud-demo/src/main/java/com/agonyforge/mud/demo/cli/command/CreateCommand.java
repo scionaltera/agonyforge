@@ -50,9 +50,9 @@ public class CreateCommand extends AbstractCommand {
         item.setCharacterId(ch.getId());
         item = getRepositoryBundle().getItemRepository().save(item);
 
-        output.append("[yellow]You wave your hand, and %s appears!", item.getShortDescription());
+        output.append("[yellow]You wave your hand, and %s appears!", item.getItem().getShortDescription());
         getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), item.getShortDescription()));
+            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), item.getItem().getShortDescription()));
 
         return question;
     }

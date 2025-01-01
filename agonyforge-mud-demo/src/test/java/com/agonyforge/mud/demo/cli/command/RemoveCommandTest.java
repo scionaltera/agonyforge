@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -67,6 +68,9 @@ public class RemoveCommandTest {
 
     @Mock
     private MudItem target;
+
+    @Mock
+    private ItemComponent itemComponent;
 
     private final Random random = new Random();
 
@@ -132,8 +136,9 @@ public class RemoveCommandTest {
         when(characterComponent.getPronoun()).thenReturn(Pronoun.SHE);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(target));
-        when(target.getNameList()).thenReturn(List.of("test", "hat"));
-        when(target.getShortDescription()).thenReturn("a test hat");
+        when(target.getItem()).thenReturn(itemComponent);
+        when(target.getItem().getNameList()).thenReturn(Set.of("test", "hat"));
+        when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();

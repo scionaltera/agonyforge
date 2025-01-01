@@ -43,7 +43,7 @@ public class EquipmentCommand extends AbstractCommand {
                 .stream()
                 .sorted(Comparator.comparingInt(entry -> entry.getKey().ordinal()))
                 .forEach(entry -> output.append("[default]&lt;%s&gt;\t%s",
-                    entry.getKey().getPhrase(), entry.getValue().getShortDescription()));
+                    entry.getKey().getPhrase(), entry.getValue().getItem().getShortDescription()));
         }
 
         return question;
