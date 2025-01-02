@@ -98,7 +98,7 @@ public class WorldLoader {
             MudRoom room100 = roomRepository.findById(100L).orElseThrow();
             MudRoom room101 = roomRepository.findById(101L).orElseThrow();
 
-            MudItemPrototype item = new MudItemPrototype();
+            MudItemTemplate item = new MudItemTemplate();
 
             item.setId(100L);
             item.setItem(new ItemComponent());
@@ -111,7 +111,7 @@ public class WorldLoader {
             MudItem itemInstance = item.buildInstance();
             itemInstance = itemRepository.save(itemInstance);
 
-            MudItemPrototype hat = new MudItemPrototype();
+            MudItemTemplate hat = new MudItemTemplate();
 
             hat.setId(101L);
             hat.setItem(new ItemComponent());

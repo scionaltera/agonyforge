@@ -3,7 +3,6 @@ package com.agonyforge.mud.demo.cli.question.login;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
-import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -19,11 +18,9 @@ import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
@@ -59,13 +56,13 @@ public class CharacterNameQuestion extends BaseQuestion {
             return new Response(this, new Output("[red]Names must begin with a capital letter."));
         }
 
-        List<MudCharacterPrototype> existing = getRepositoryBundle().getCharacterPrototypeRepository().findByCharacterName(input.getInput());
+        List<MudCharacterTemplate> existing = getRepositoryBundle().getCharacterPrototypeRepository().findByCharacterName(input.getInput());
 
         if (!existing.isEmpty()) {
             return new Response(this, new Output("[red]Somebody else is already using that name. Please try a different one."));
         }
 
-        MudCharacterPrototype ch = new MudCharacterPrototype();
+        MudCharacterTemplate ch = new MudCharacterTemplate();
         Role playerRole = roleRepository.findByName("Player").orElseThrow();
 
         ch.setPlayer(new PlayerComponent());

@@ -66,7 +66,7 @@ public class CommServiceTest {
     private LocationComponent chLocation, targetLocation, otherLocation;
 
     @Mock
-    private MudCharacterPrototype prototype;
+    private MudCharacterTemplate prototype;
 
     @Mock
     private MudRoom room, otherRoom;

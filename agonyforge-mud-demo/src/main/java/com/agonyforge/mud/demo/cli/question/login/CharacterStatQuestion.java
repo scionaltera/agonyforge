@@ -13,7 +13,7 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class CharacterStatQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacterPrototype ch = getCharacterPrototype(wsContext, output).orElseThrow();
+        MudCharacterTemplate ch = getCharacterPrototype(wsContext, output).orElseThrow();
 
         populateMenuItems(ch);
 
@@ -48,7 +48,7 @@ public class CharacterStatQuestion extends BaseQuestion {
     public Response answer(WebSocketContext webSocketContext, Input input) {
         String nextQuestion = "characterStatQuestion";
         Output output = new Output();
-        MudCharacterPrototype ch = getCharacterPrototype(webSocketContext, output).orElseThrow();
+        MudCharacterTemplate ch = getCharacterPrototype(webSocketContext, output).orElseThrow();
         String choice = input.getInput().toUpperCase(Locale.ROOT);
         int totalPoints = computeStatPoints(ch);
 
@@ -94,13 +94,13 @@ public class CharacterStatQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    private int computeStatPoints(MudCharacterPrototype ch) {
+    private int computeStatPoints(MudCharacterTemplate ch) {
         return Arrays.stream(Stat.values())
             .map(ch.getCharacter()::getBaseStat)
             .reduce(0, Integer::sum);
     }
 
-    private void populateMenuItems(MudCharacterPrototype ch) {
+    private void populateMenuItems(MudCharacterTemplate ch) {
         menuPane.getItems().clear();
 
         int points = STARTING_STATS - computeStatPoints(ch);

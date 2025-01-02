@@ -7,7 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +32,7 @@ public class CreateCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudItemPrototype> itemProto = Optional.empty();
+        Optional<MudItemTemplate> itemProto = Optional.empty();
 
         try {
             Long id = Long.parseLong(tokens.get(1));

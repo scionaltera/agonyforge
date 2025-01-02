@@ -11,7 +11,7 @@ public class MudCharacter extends AbstractMudObject {
     private Long id;
 
     @ManyToOne
-    private MudCharacterPrototype template;
+    private MudCharacterTemplate template;
 
     public Long getId() {
         return id;
@@ -27,11 +27,11 @@ public class MudCharacter extends AbstractMudObject {
         return Long.valueOf(roomIdString.substring(0, roomIdString.length() - 2));
     }
 
-    public MudCharacterPrototype getTemplate() {
+    public MudCharacterTemplate getTemplate() {
         return template;
     }
 
-    public void setTemplate(MudCharacterPrototype template) {
+    public void setTemplate(MudCharacterTemplate template) {
         this.template = template;
     }
 

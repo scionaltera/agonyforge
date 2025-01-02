@@ -63,7 +63,7 @@ public class LookCommandTest {
     private CharacterComponent targetCharacterComponent;
 
     @Mock
-    private MudItemPrototype itemProto;
+    private MudItemTemplate itemProto;
 
     @Mock
     private MudItem item;

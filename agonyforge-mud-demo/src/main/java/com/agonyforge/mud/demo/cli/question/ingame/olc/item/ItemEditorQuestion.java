@@ -14,7 +14,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -55,7 +55,7 @@ public class ItemEditorQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudItemPrototype itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
+        MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
 
         if (!wsContext.getAttributes().containsKey(IEDIT_STATE)) {
             populateMenuItems(itemProto);
@@ -76,7 +76,7 @@ public class ItemEditorQuestion extends BaseQuestion {
         String nextQuestion = "itemEditorQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
-        MudItemPrototype itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
+        MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
 
         if (!wsContext.getAttributes().containsKey(IEDIT_STATE)) {
             String choice = input.getInput().toUpperCase(Locale.ROOT);
@@ -114,7 +114,7 @@ public class ItemEditorQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    private void populateMenuItems(MudItemPrototype itemProto) {
+    private void populateMenuItems(MudItemTemplate itemProto) {
         menuPane.getItems().clear();
 
         menuPane.getTitle().setTitle(String.format("Item Editor - %d", itemProto.getId()));

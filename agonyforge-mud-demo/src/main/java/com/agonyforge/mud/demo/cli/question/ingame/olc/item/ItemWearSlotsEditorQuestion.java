@@ -13,7 +13,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +39,7 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
 
     @Override
     public Output prompt(WebSocketContext wsContext) {
-        MudItemPrototype itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get("IEDIT.MODEL")).orElseThrow();
+        MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get("IEDIT.MODEL")).orElseThrow();
 
         if (wsContext.getAttributes().containsKey(IEDIT_STATE) && wsContext.getAttributes().get(IEDIT_STATE).toString().equals(IEDIT_SLOT)) {
             WearSlot slot = (WearSlot)wsContext.getAttributes().get(IEDIT_SLOT);
@@ -89,7 +89,7 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    void populateMenuItems(MudItemPrototype item) {
+    void populateMenuItems(MudItemTemplate item) {
         menuPane.getItems().clear();
 
         List<MenuItem> menuItems = Arrays.stream(WearSlot.values())

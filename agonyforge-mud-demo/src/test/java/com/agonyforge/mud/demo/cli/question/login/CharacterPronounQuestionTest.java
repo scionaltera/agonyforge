@@ -8,7 +8,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -55,7 +55,7 @@ public class CharacterPronounQuestionTest {
     private WebSocketContext webSocketContext;
 
     @Mock
-    private MudCharacterPrototype chProto;
+    private MudCharacterTemplate chProto;
 
     @Mock
     private CharacterComponent characterComponent;

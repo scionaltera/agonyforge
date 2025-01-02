@@ -58,7 +58,7 @@ public class InventoryCommandTest {
     private MudCharacter ch;
 
     @Mock
-    private MudItemPrototype itemProto;
+    private MudItemTemplate itemProto;
 
     @Mock
     private MudItem item;

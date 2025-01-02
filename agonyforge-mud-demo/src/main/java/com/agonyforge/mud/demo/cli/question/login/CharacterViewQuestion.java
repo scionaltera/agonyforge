@@ -10,7 +10,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
@@ -48,10 +48,10 @@ public class CharacterViewQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
+        Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(wsContext, output);
 
         if (chOptional.isPresent()) {
-            MudCharacterPrototype ch = chOptional.get();
+            MudCharacterTemplate ch = chOptional.get();
 
             characterSheetFormatter.format(ch, output);
 
@@ -75,13 +75,13 @@ public class CharacterViewQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         Output output = new Output();
         Question next = this;
-        Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
+        Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(wsContext, output);
 
         if ("P".equalsIgnoreCase(input.getInput())) {
             Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(START_ROOM);
 
             if (chOptional.isPresent() && roomOptional.isPresent()) {
-                MudCharacterPrototype chPrototype = chOptional.get();
+                MudCharacterTemplate chPrototype = chOptional.get();
 
                 if (!chPrototype.getComplete()) {
                     output.append("[red]This character is not finished yet. You must go through character creation first.");

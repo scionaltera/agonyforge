@@ -59,7 +59,7 @@ public class CommandQuestionTest {
     private CharacterComponent characterComponent;
 
     @Mock
-    private MudCharacterPrototype chProto;
+    private MudCharacterTemplate chProto;
 
     @Mock
     private MudCharacter ch;

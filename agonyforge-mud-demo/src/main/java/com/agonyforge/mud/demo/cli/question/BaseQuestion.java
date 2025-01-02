@@ -6,7 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -50,9 +50,9 @@ public abstract class BaseQuestion extends AbstractQuestion {
         return chOptional;
     }
 
-    protected Optional<MudCharacterPrototype> getCharacterPrototype(WebSocketContext wsContext, Output output) {
+    protected Optional<MudCharacterTemplate> getCharacterPrototype(WebSocketContext wsContext, Output output) {
         Long chId = (Long) wsContext.getAttributes().get(MUD_PCHARACTER);
-        Optional<MudCharacterPrototype> chOptional = getRepositoryBundle().getCharacterPrototypeRepository().findById(chId);
+        Optional<MudCharacterTemplate> chOptional = getRepositoryBundle().getCharacterPrototypeRepository().findById(chId);
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character prototype by ID: {}", chId);

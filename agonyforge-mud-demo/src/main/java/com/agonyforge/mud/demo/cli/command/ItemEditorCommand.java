@@ -7,7 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -47,12 +47,12 @@ public class ItemEditorCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudItemPrototype> itemProto = findItemToEdit(ch, tokens.get(1));
+        Optional<MudItemTemplate> itemProto = findItemToEdit(ch, tokens.get(1));
 
         if (itemProto.isEmpty()) {
             try {
                 Long id = Long.parseLong(tokens.get(1));
-                MudItemPrototype itemPrototype = new MudItemPrototype();
+                MudItemTemplate itemPrototype = new MudItemTemplate();
 
                 itemPrototype.setId(id);
 
@@ -70,7 +70,7 @@ public class ItemEditorCommand extends AbstractCommand {
         return applicationContext.getBean("itemEditorQuestion", Question.class);
     }
 
-    private Optional<MudItemPrototype> findItemToEdit(MudCharacter ch, String token) {
+    private Optional<MudItemTemplate> findItemToEdit(MudCharacter ch, String token) {
         try {
             Long id = Long.parseLong(token);
 

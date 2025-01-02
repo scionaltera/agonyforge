@@ -7,7 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -54,7 +54,7 @@ public class CharacterMenuQuestionTest {
     private MudItemRepository itemRepository;
 
     @Mock
-    private MudCharacterPrototype mudCharacter;
+    private MudCharacterTemplate mudCharacter;
 
     @Mock
     private CharacterComponent characterComponent;

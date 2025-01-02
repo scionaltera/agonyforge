@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-public class MudItemPrototype extends AbstractMudObject {
+public class MudItemTemplate extends AbstractMudObject {
     @Id
     private Long id;
 
@@ -34,7 +34,7 @@ public class MudItemPrototype extends AbstractMudObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudItemPrototype mudItem)) return false;
+        if (!(o instanceof MudItemTemplate mudItem)) return false;
         return Objects.equals(getId(), mudItem.getId());
     }
 

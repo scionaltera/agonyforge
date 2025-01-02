@@ -67,7 +67,7 @@ public class CharacterViewQuestionTest {
     private CommService commService;
 
     @Mock
-    private MudCharacterPrototype ch;
+    private MudCharacterTemplate ch;
 
     @Mock
     private PlayerComponent playerComponent;

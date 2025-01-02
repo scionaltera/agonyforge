@@ -46,7 +46,7 @@ public class ItemEditorQuestionTest {
     private MudItemPrototypeRepository itemPrototypeRepository;
 
     @Mock
-    private MudItemPrototype itemProto;
+    private MudItemTemplate itemProto;
 
     @Mock
     private ItemComponent itemComponent;

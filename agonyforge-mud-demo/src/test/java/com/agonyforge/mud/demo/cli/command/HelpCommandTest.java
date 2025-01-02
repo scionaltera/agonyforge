@@ -50,7 +50,7 @@ public class HelpCommandTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterPrototype chProto;
+    private MudCharacterTemplate chProto;
 
     @Mock
     private MudCharacter ch;

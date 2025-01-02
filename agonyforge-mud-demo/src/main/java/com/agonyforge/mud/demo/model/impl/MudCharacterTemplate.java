@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-public class MudCharacterPrototype extends AbstractMudObject {
+public class MudCharacterTemplate extends AbstractMudObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -63,8 +63,8 @@ public class MudCharacterPrototype extends AbstractMudObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudCharacterPrototype)) return false;
-        MudCharacterPrototype that = (MudCharacterPrototype) o;
+        if (!(o instanceof MudCharacterTemplate)) return false;
+        MudCharacterTemplate that = (MudCharacterTemplate) o;
         return Objects.equals(getId(), that.getId());
     }
 

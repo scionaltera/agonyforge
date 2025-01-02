@@ -8,7 +8,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.ItemComponent;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import com.agonyforge.mud.demo.model.repository.MudItemPrototypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +43,7 @@ public class ItemWearSlotsEditorQuestionTest {
     private WebSocketContext wsContext;
 
     @Mock
-    private MudItemPrototype itemProto;
+    private MudItemTemplate itemProto;
 
     @Mock
     private ItemComponent itemComponent;
