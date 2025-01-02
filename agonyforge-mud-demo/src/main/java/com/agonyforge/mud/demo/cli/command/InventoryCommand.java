@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.BooleanUtils.forEach;
+
 @Component
 public class InventoryCommand extends AbstractCommand {
     @Autowired
@@ -28,13 +30,14 @@ public class InventoryCommand extends AbstractCommand {
 
         output.append("[default]You are carrying:");
 
-        if (items.isEmpty()) {
+        List<MudItem> held = items
+            .stream()
+            .filter(item -> item.getLocation().getWorn() == null).toList();
+
+        if (held.isEmpty()) {
             output.append("[default]Nothing.");
         } else {
-            items
-                .stream()
-                .filter(item -> item.getLocation().getWorn() == null)
-                .forEach(item -> output.append(String.format("(%s) %s", item.getId(), item.getItem().getShortDescription())));
+            held.forEach(item -> output.append(String.format("(%s) %s", item.getTemplate().getId(), item.getItem().getShortDescription())));
         }
 
         return question;

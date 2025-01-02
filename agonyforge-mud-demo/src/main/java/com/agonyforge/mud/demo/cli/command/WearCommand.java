@@ -47,7 +47,7 @@ public class WearCommand extends AbstractCommand {
         }
 
         if (target.getLocation().getWorn() != null) {
-            LOGGER.error("Item in inventory is also being worn! instance:{} proto:{}", target.getInstanceId(), target.getId());
+            LOGGER.error("Item in inventory is also being worn! instance:{} proto:{}", target.getTemplate().getId(), target.getId());
             output.append("[default]You are already wearing %s[default].", target.getItem().getShortDescription());
             return question;
         }

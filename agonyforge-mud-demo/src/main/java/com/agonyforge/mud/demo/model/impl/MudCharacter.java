@@ -9,7 +9,9 @@ public class MudCharacter extends AbstractMudObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long prototypeId;
+
+    @ManyToOne
+    private MudCharacterPrototype template;
 
     public Long getId() {
         return id;
@@ -19,18 +21,18 @@ public class MudCharacter extends AbstractMudObject {
         this.id = id;
     }
 
-    public Long getPrototypeId() {
-        return prototypeId;
-    }
-
-    public void setPrototypeId(Long prototypeId) {
-        this.prototypeId = prototypeId;
-    }
-
     public Long getZoneId() {
         String roomIdString = getLocation().getRoom().getId().toString();
 
         return Long.valueOf(roomIdString.substring(0, roomIdString.length() - 2));
+    }
+
+    public MudCharacterPrototype getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(MudCharacterPrototype template) {
+        this.template = template;
     }
 
     @Override

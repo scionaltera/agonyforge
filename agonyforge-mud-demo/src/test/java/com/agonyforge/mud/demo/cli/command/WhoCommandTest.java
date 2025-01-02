@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -46,6 +47,9 @@ public class WhoCommandTest {
     private CommService commService;
 
     @Mock
+    private MudCharacterPrototype chProto, oProto;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -73,6 +77,7 @@ public class WhoCommandTest {
         Output output = new Output();
 
         when(chCharacterComponent.getName()).thenReturn("Scion");
+        when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(characterRepository.findAll()).thenReturn(characters);
 
@@ -93,7 +98,9 @@ public class WhoCommandTest {
 
         when(chCharacterComponent.getName()).thenReturn("Scion");
         when(otherCharacterComponent.getName()).thenReturn("Spook");
+        when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
+        when(other.getTemplate()).thenReturn(oProto);
         when(other.getCharacter()).thenReturn(otherCharacterComponent);
         when(characterRepository.findAll()).thenReturn(characters);
 

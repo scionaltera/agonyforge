@@ -53,7 +53,7 @@ public class GiveCommand extends AbstractCommand {
         MudCharacter target = targetOptional.get();
 
         if (item.getLocation().getWorn() != null) {
-            LOGGER.error("Worn item was found in inventory! id:{} proto:{}", item.getInstanceId(), item.getId());
+            LOGGER.error("Worn item was found in inventory! id:{} proto:{}", item.getTemplate().getId(), item.getId());
             output.append("[default]You need to remove it first.");
             return question;
         }

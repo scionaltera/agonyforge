@@ -2,16 +2,16 @@ package com.agonyforge.mud.demo.model.impl;
 
 import jakarta.persistence.*;
 
-import java.util.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "mud_item")
 public class MudItem extends AbstractMudObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "instance_id")
-    private Long instanceId;
     private Long id;
+
+    @ManyToOne
+    private MudItemPrototype template;
 
     public Long getId() {
         return id;
@@ -21,23 +21,23 @@ public class MudItem extends AbstractMudObject {
         this.id = id;
     }
 
-    public Long getInstanceId() {
-        return instanceId;
+    public MudItemPrototype getTemplate() {
+        return template;
     }
 
-    public void setInstanceId(Long instanceId) {
-        this.instanceId = instanceId;
+    public void setTemplate(MudItemPrototype template) {
+        this.template = template;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MudItem mudItem)) return false;
-        return Objects.equals(getInstanceId(), mudItem.getInstanceId());
+        if (o == null || getClass() != o.getClass()) return false;
+        MudItem mudItem = (MudItem) o;
+        return Objects.equals(id, mudItem.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getInstanceId());
+        return Objects.hashCode(id);
     }
 }

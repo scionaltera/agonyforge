@@ -60,7 +60,10 @@ public class LookCommandTest {
     private MudCharacter target;
 
     @Mock
-    private CharacterComponent characterComponent, targetCharacterComponent;
+    private CharacterComponent targetCharacterComponent;
+
+    @Mock
+    private MudItemPrototype itemProto;
 
     @Mock
     private MudItem item;
@@ -133,6 +136,8 @@ public class LookCommandTest {
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(target.getCharacter().getName()).thenReturn("Target");
         when(item.getItem()).thenReturn(itemComponent);
+        when(item.getTemplate()).thenReturn(itemProto);
+        when(item.getTemplate().getId()).thenReturn(100L);
         when(itemComponent.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
         when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");

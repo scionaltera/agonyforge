@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumSet;
@@ -39,6 +40,7 @@ public class WorldLoader {
         this.itemRepository = itemRepository;
     }
 
+    @Transactional
     @PostConstruct
     public void loadWorld() {
         loadProperties();
@@ -95,30 +97,24 @@ public class WorldLoader {
         if (itemRepository.findById(100L).isEmpty()) {
             MudRoom room100 = roomRepository.findById(100L).orElseThrow();
             MudRoom room101 = roomRepository.findById(101L).orElseThrow();
+
             MudItemPrototype item = new MudItemPrototype();
 
-            item.setItem(new ItemComponent());
-
-            MudItem itemInstance;
-
             item.setId(100L);
+            item.setItem(new ItemComponent());
             item.getItem().setNameList(Set.of("spoon"));
             item.getItem().setShortDescription("a spoon");
             item.getItem().setLongDescription("A spoon is floating in midair here.");
 
             item = itemPrototypeRepository.save(item);
 
-            itemInstance = item.buildInstance();
-
-            itemInstance.getLocation().setRoom(room100);
+            MudItem itemInstance = item.buildInstance();
+            itemInstance = itemRepository.save(itemInstance);
 
             MudItemPrototype hat = new MudItemPrototype();
 
-            hat.setItem(new ItemComponent());
-
-            MudItem hatInstance;
-
             hat.setId(101L);
+            hat.setItem(new ItemComponent());
             hat.getItem().setNameList(Set.of("hat", "floppy"));
             hat.getItem().setShortDescription("a floppy hat");
             hat.getItem().setLongDescription("A floppy hat has been dropped here.");
@@ -126,10 +122,14 @@ public class WorldLoader {
 
             hat = itemPrototypeRepository.save(hat);
 
-            hatInstance = hat.buildInstance();
-            hatInstance.getLocation().setRoom(room101);
+            MudItem hatInstance = hat.buildInstance();
+            hatInstance = itemRepository.save(hatInstance);
 
             LOGGER.info("Creating default items");
+
+            itemInstance.getLocation().setRoom(room100);
+            hatInstance.getLocation().setRoom(room101);
+
             itemRepository.saveAll(List.of(itemInstance, hatInstance));
         }
     }

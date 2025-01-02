@@ -60,7 +60,7 @@ public class LookCommand extends AbstractCommand {
 
         repositoryBundle.getItemRepository().findByLocationRoom(room)
             .forEach(target -> output.append("[green](%d) %s",
-                target.getId(),
+                target.getTemplate().getId(),
                 StringUtils.capitalize(target.getItem().getLongDescription())));
 
         return output;

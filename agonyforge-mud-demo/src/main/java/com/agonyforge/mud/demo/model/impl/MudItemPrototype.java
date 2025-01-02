@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "mud_pitem")
 public class MudItemPrototype extends AbstractMudObject {
     @Id
     private Long id;
@@ -15,7 +14,7 @@ public class MudItemPrototype extends AbstractMudObject {
         instance.setItem(new ItemComponent());
         instance.setLocation(new LocationComponent());
 
-        instance.setId(getId());
+        instance.setTemplate(this);
         instance.getItem().setNameList(getItem().getNameList());
         instance.getItem().setShortDescription(getItem().getShortDescription());
         instance.getItem().setLongDescription(getItem().getLongDescription());

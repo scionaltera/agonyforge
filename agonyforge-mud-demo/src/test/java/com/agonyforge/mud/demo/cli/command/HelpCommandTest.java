@@ -50,6 +50,9 @@ public class HelpCommandTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudCharacterPrototype chProto;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -92,7 +95,8 @@ public class HelpCommandTest {
 
     @Test
     void testHelpSuper() {
-        when(ch.getPrototypeId()).thenReturn(1L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(1L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 
@@ -110,7 +114,8 @@ public class HelpCommandTest {
 
     @Test
     void testHelpPlayer() {
-        when(ch.getPrototypeId()).thenReturn(2L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(2L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 

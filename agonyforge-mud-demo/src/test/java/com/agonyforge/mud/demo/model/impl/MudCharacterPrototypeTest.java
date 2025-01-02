@@ -48,7 +48,7 @@ public class MudCharacterPrototypeTest {
 
         instance.getLocation().setRoom(room);
 
-        assertEquals(proto.getId(), instance.getPrototypeId());
+        assertEquals(proto.getId(), instance.getTemplate().getId());
         assertEquals(room, instance.getLocation().getRoom());
         assertEquals(proto.getCharacter().getName(), instance.getCharacter().getName());
         assertEquals(proto.getPlayer().getUsername(), instance.getPlayer().getUsername());

@@ -58,6 +58,9 @@ public class InventoryCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private MudItemPrototype itemProto;
+
+    @Mock
     private MudItem item;
 
     @Mock
@@ -92,6 +95,8 @@ public class InventoryCommandTest {
         ));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
+        when(itemProto.getId()).thenReturn(102L);
+        when(item.getTemplate()).thenReturn(itemProto);
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getItem()).thenReturn(itemComponent);
         when(item.getItem().getShortDescription()).thenReturn(itemName);
