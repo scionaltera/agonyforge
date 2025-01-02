@@ -40,16 +40,18 @@ public class DropCommand extends AbstractCommand {
 
         MudItem target = targetOptional.get();
 
-        if (target.getWorn() != null) {
+        if (target.getLocation().getWorn() != null) {
             output.append("[default]You need to remove it first.");
             return question;
         }
 
-        target.setRoomId(ch.getRoomId());
+        target.getLocation().setWorn(null);
+        target.getLocation().setHeld(null);
+        target.getLocation().setRoom(ch.getLocation().getRoom());
         getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You drop %s[default].", target.getItem().getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
             new Output("[default]%s drops %s[default].", ch.getCharacter().getName(), target.getItem().getShortDescription()));
 
         return question;

@@ -13,6 +13,7 @@ public class MudItemPrototype extends AbstractMudObject {
     public MudItem buildInstance() {
         MudItem instance = new MudItem();
         instance.setItem(new ItemComponent());
+        instance.setLocation(new LocationComponent());
 
         instance.setId(getId());
         instance.getItem().setNameList(getItem().getNameList());

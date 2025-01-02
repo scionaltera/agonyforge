@@ -89,9 +89,9 @@ public class CharacterViewQuestion extends BaseQuestion {
                     output.append("[red]This character is already playing. Try a different one, or create a new one.");
                 } else {
                     MudCharacter ch = chPrototype.buildInstance();
-                    MudRoom room = roomOptional.get();
+                    MudRoom startRoom = roomOptional.get();
 
-                    ch.setRoomId(START_ROOM); // TODO configurable start room
+                    ch.getLocation().setRoom(startRoom); // TODO configurable start room
                     ch.getPlayer().setWebSocketSession(wsContext.getSessionId());
 
                     ch = getRepositoryBundle().getCharacterRepository().save(ch);
@@ -100,7 +100,7 @@ public class CharacterViewQuestion extends BaseQuestion {
                     LOGGER.info("{} has entered the game", ch.getCharacter().getName());
                     commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getCharacter().getName()), ch);
 
-                    output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
+                    output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, startRoom));
 
                     next = getQuestion("commandQuestion");
                 }

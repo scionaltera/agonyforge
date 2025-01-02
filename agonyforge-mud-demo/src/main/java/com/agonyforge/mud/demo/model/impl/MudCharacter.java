@@ -10,7 +10,6 @@ public class MudCharacter extends AbstractMudObject {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long prototypeId;
-    private Long roomId;
 
     public Long getId() {
         return id;
@@ -29,24 +28,15 @@ public class MudCharacter extends AbstractMudObject {
     }
 
     public Long getZoneId() {
-        String roomIdString = getRoomId().toString();
+        String roomIdString = getLocation().getRoom().getId().toString();
 
         return Long.valueOf(roomIdString.substring(0, roomIdString.length() - 2));
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudCharacter)) return false;
-        MudCharacter that = (MudCharacter) o;
+        if (!(o instanceof MudCharacter that)) return false;
         return Objects.equals(getId(), that.getId());
     }
 

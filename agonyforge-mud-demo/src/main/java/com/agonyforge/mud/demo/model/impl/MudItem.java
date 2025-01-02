@@ -1,6 +1,5 @@
 package com.agonyforge.mud.demo.model.impl;
 
-import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -13,10 +12,6 @@ public class MudItem extends AbstractMudObject {
     @Column(name = "instance_id")
     private Long instanceId;
     private Long id;
-    private Long roomId;
-    private Long chId;
-
-    private WearSlot worn;
 
     public Long getId() {
         return id;
@@ -32,38 +27,6 @@ public class MudItem extends AbstractMudObject {
 
     public void setInstanceId(Long instanceId) {
         this.instanceId = instanceId;
-    }
-
-    public Long getCharacterId() {
-        return chId;
-    }
-
-    public void setCharacterId(Long characterId) {
-        if (roomId != null) {
-            roomId = null;
-        }
-
-        chId = characterId;
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        if (chId != null) {
-            chId = null;
-        }
-
-        this.roomId = roomId;
-    }
-
-    public WearSlot getWorn() {
-        return worn;
-    }
-
-    public void setWorn(WearSlot worn) {
-        this.worn = worn;
     }
 
     @Override

@@ -41,13 +41,22 @@ public class WorldLoader {
 
     @PostConstruct
     public void loadWorld() {
+        loadProperties();
+        loadZones();
+        loadRooms();
+        loadItems();
+    }
+
+    private void loadProperties() {
         if (propertyRepository.findById(PROPERTY_HOUR).isEmpty()) {
             MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "0");
 
             LOGGER.info("Setting world time");
             propertyRepository.save(mudHour);
         }
+    }
 
+    private void loadZones() {
         if (zoneRepository.findById(1L).isEmpty()) {
             MudZone zone = new MudZone();
 
@@ -57,7 +66,9 @@ public class WorldLoader {
             LOGGER.info("Creating default zone");
             zoneRepository.save(zone);
         }
+    }
 
+    private void loadRooms() {
         if (roomRepository.findById(100L).isEmpty()) {
             MudRoom room100 = new MudRoom();
 
@@ -78,8 +89,12 @@ public class WorldLoader {
             LOGGER.info("Creating default rooms");
             roomRepository.saveAll(List.of(room100, room101));
         }
+    }
 
-        if (itemRepository.getByRoomId(100L).isEmpty()) {
+    private void loadItems() {
+        if (itemRepository.findById(100L).isEmpty()) {
+            MudRoom room100 = roomRepository.findById(100L).orElseThrow();
+            MudRoom room101 = roomRepository.findById(101L).orElseThrow();
             MudItemPrototype item = new MudItemPrototype();
 
             item.setItem(new ItemComponent());
@@ -95,7 +110,7 @@ public class WorldLoader {
 
             itemInstance = item.buildInstance();
 
-            itemInstance.setRoomId(100L);
+            itemInstance.getLocation().setRoom(room100);
 
             MudItemPrototype hat = new MudItemPrototype();
 
@@ -112,7 +127,7 @@ public class WorldLoader {
             hat = itemPrototypeRepository.save(hat);
 
             hatInstance = hat.buildInstance();
-            hatInstance.setRoomId(101L);
+            hatInstance.getLocation().setRoom(room101);
 
             LOGGER.info("Creating default items");
             itemRepository.saveAll(List.of(itemInstance, hatInstance));

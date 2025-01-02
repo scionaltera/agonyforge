@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -60,6 +61,9 @@ public class RoomEditorQuestionTest {
     private CharacterComponent characterComponent;
 
     @Mock
+    private LocationComponent locationComponent;
+
+    @Mock
     private MudRoom room;
 
     @BeforeEach
@@ -76,7 +80,9 @@ public class RoomEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -97,7 +103,9 @@ public class RoomEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_STATE, "ROOM.TITLE");
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -118,7 +126,9 @@ public class RoomEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_STATE, "ROOM.DESCRIPTION");
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -138,7 +148,9 @@ public class RoomEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -160,7 +172,9 @@ public class RoomEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -183,7 +197,9 @@ public class RoomEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -206,9 +222,11 @@ public class RoomEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
         when(characterComponent.getName()).thenReturn("Name");
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -236,7 +254,9 @@ public class RoomEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_STATE, "ROOM.TITLE");
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -283,7 +303,9 @@ public class RoomEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_STATE, "ROOM.DESCRIPTION");
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));

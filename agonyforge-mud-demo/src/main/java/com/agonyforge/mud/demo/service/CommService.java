@@ -76,11 +76,11 @@ public class CommService extends EchoService {
         String zoneIdString = zoneId.toString();
         List<MudCharacter> skip = List.of(except);
 
-        characterRepository.findByRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
+        characterRepository.findByLocationRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
             .stream()
             .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
-            .filter(ch -> zoneIdString.equals(ch.getRoomId().toString().substring(0, zoneIdString.length())))
+            .filter(ch -> zoneIdString.equals(ch.getLocation().getRoom().getId().toString().substring(0, zoneIdString.length())))
             .forEach(ch -> sendTo(ch, message));
     }
 
@@ -94,7 +94,7 @@ public class CommService extends EchoService {
      */
     public void sendToRoom(WebSocketContext wsContext, Long roomId, Output message, MudCharacter ... except) {
         List<MudCharacter> skip = List.of(except);
-        characterRepository.findByRoomId(roomId)
+        characterRepository.findByLocationRoomId(roomId)
             .stream()
             .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))

@@ -76,6 +76,9 @@ public class CharacterViewQuestionTest {
     private CharacterComponent characterComponent;
 
     @Mock
+    private LocationComponent locationComponent;
+
+    @Mock
     private MudCharacter chInstance;
 
     @Mock
@@ -188,6 +191,7 @@ public class CharacterViewQuestionTest {
 
         when(chInstance.getPlayer()).thenReturn(playerComponent);
         when(chInstance.getCharacter()).thenReturn(characterComponent);
+        when(chInstance.getLocation()).thenReturn(locationComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getComplete()).thenReturn(true);
         when(ch.buildInstance()).thenReturn(chInstance);
@@ -204,7 +208,7 @@ public class CharacterViewQuestionTest {
 
         MudCharacter instance = characterCaptor.getValue();
 
-        verify(instance).setRoomId(eq(100L));
+        verify(instance.getLocation()).setRoom(eq(room));
         verify(playerComponent).setWebSocketSession(eq(wsSessionId));
 
         Output announcement = outputCaptor.getValue();

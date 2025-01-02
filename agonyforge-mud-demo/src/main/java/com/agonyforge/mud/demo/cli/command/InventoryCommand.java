@@ -24,7 +24,7 @@ public class InventoryCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByChId(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().findByLocationHeld(ch);
 
         output.append("[default]You are carrying:");
 
@@ -33,7 +33,7 @@ public class InventoryCommand extends AbstractCommand {
         } else {
             items
                 .stream()
-                .filter(item -> item.getWorn() == null)
+                .filter(item -> item.getLocation().getWorn() == null)
                 .forEach(item -> output.append(String.format("(%s) %s", item.getId(), item.getItem().getShortDescription())));
         }
 

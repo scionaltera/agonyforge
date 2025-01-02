@@ -5,7 +5,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
 
 @MappedSuperclass
-public class AbstractMudObject extends Persistent {
+public abstract class AbstractMudObject extends Persistent {
     @OneToOne(cascade = CascadeType.ALL)
     private PlayerComponent player = null;
 
@@ -14,6 +14,9 @@ public class AbstractMudObject extends Persistent {
 
     @OneToOne(cascade = CascadeType.ALL)
     private ItemComponent item = null;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private LocationComponent location = null;
 
     public PlayerComponent getPlayer() {
         return player;
@@ -37,5 +40,13 @@ public class AbstractMudObject extends Persistent {
 
     public void setItem(ItemComponent item) {
         this.item = item;
+    }
+
+    public LocationComponent getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationComponent location) {
+        this.location = location;
     }
 }

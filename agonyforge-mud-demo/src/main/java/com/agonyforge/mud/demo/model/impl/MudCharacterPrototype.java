@@ -21,6 +21,7 @@ public class MudCharacterPrototype extends AbstractMudObject {
         MudCharacter instance = new MudCharacter();
         instance.setPlayer(new PlayerComponent());
         instance.setCharacter(new CharacterComponent());
+        instance.setLocation(new LocationComponent());
 
         instance.setPrototypeId(getId());
         instance.getCharacter().setName(getCharacter().getName());

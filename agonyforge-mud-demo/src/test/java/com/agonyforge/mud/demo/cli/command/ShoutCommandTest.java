@@ -6,7 +6,9 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -59,7 +61,13 @@ public class ShoutCommandTest {
     private CharacterComponent characterComponent;
 
     @Mock
+    private LocationComponent chLocationComponent;
+
+    @Mock
     private WebSocketContext webSocketContext;
+
+    @Mock
+    private MudRoom room;
 
     @Mock
     private Question question;
@@ -92,6 +100,8 @@ public class ShoutCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterComponent.getName()).thenReturn("Steve");
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getZoneId()).thenReturn(1L);

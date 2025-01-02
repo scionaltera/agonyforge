@@ -6,10 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.ItemComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -75,6 +72,12 @@ public class WearCommandTest {
     @Mock
     private ItemComponent targetItemComponent;
 
+    @Mock
+    private LocationComponent itemLocationComponent, targetLocationComponent, chLocationComponent;
+
+    @Mock
+    private MudRoom room;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -92,6 +95,8 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -114,6 +119,8 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -136,10 +143,13 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
+        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(target));
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem()).thenReturn(targetItemComponent);
         when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -162,8 +172,11 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
-        when(target.getWorn()).thenReturn(WearSlot.HEAD);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(target));
+        when(target.getLocation()).thenReturn(targetLocationComponent);
+        when(target.getLocation().getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -188,11 +201,15 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
-        when(item.getWorn()).thenReturn(WearSlot.HEAD);
+        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
+        when(item.getLocation()).thenReturn(itemLocationComponent);
+        when(item.getLocation().getWorn()).thenReturn(WearSlot.HEAD);
         when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -216,13 +233,17 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(target));
+        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(target));
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -233,7 +254,9 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
-        verify(target).setWorn(any(WearSlot.class));
+        verify(targetLocationComponent).setHeld(eq(ch));
+        verify(targetLocationComponent).setRoom(eq(null));
+        verify(targetLocationComponent).setWorn(any(WearSlot.class));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),
@@ -254,11 +277,16 @@ public class WearCommandTest {
             MUD_CHARACTER, chId
         ));
 
-        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
+        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
-        when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
+        when(item.getLocation()).thenReturn(itemLocationComponent);
+        when(item.getLocation().getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
@@ -272,7 +300,7 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
-        verify(target).setWorn(eq(WearSlot.HEAD));
+        verify(targetLocationComponent).setWorn(eq(WearSlot.HEAD));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),
@@ -292,11 +320,16 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByChId(ch.getId())).thenReturn(List.of(item, target));
+        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
-        when(item.getWorn()).thenReturn(WearSlot.HELD_LEFT);
+        when(item.getLocation()).thenReturn(itemLocationComponent);
+        when(item.getLocation().getWorn()).thenReturn(WearSlot.HELD_LEFT);
         when(target.getItem()).thenReturn(targetItemComponent);
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
@@ -310,7 +343,7 @@ public class WearCommandTest {
             new Input("wea ha"),
             output);
 
-        verify(target).setWorn(any(WearSlot.class));
+        verify(targetLocationComponent).setWorn(any(WearSlot.class));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),

@@ -6,10 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.ItemComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemPrototypeRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -55,6 +52,9 @@ public class ItemEditorQuestionTest {
     private ItemComponent itemComponent;
 
     @Mock
+    private MudRoom room;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -62,6 +62,9 @@ public class ItemEditorQuestionTest {
 
     @Mock
     private CharacterComponent characterComponent;
+
+    @Mock
+    private LocationComponent locationComponent;
 
     @Mock
     private Question question;
@@ -279,6 +282,9 @@ public class ItemEditorQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(characterComponent.getName()).thenReturn("Name");
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(12L)).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(nextQuestion);
@@ -287,7 +293,7 @@ public class ItemEditorQuestionTest {
         Response response = uut.answer(wsContext, new Input("x"));
 
         verify(itemPrototypeRepository).save(eq(itemProto));
-        verify(commService).sendToRoom(eq(wsContext), eq(0L), any(Output.class), eq(ch));
+        verify(commService).sendToRoom(eq(wsContext), eq(100L), any(Output.class), eq(ch));
 
         assertNull(attributes.get(IEDIT_MODEL));
         assertNull(attributes.get(IEDIT_STATE));

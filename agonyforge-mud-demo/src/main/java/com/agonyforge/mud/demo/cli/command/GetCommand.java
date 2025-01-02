@@ -39,11 +39,13 @@ public class GetCommand extends AbstractCommand {
         }
 
         MudItem target = targetOptional.get();
-        target.setCharacterId(ch.getId());
+        target.getLocation().setWorn(null);
+        target.getLocation().setHeld(ch);
+        target.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You get %s[default].", target.getItem().getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
             new Output("[default]%s gets %s[default].", ch.getCharacter().getName(), target.getItem().getShortDescription()));
 
         return question;

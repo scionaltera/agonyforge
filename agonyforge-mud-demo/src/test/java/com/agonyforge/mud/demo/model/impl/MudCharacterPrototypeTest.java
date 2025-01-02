@@ -28,6 +28,9 @@ public class MudCharacterPrototypeTest {
     @Mock
     private MudProfession profession;
 
+    @Mock
+    private MudRoom room;
+
     @Test
     void testBuildInstance() {
         MudCharacterPrototype proto = new MudCharacterPrototype();
@@ -43,10 +46,10 @@ public class MudCharacterPrototypeTest {
 
         MudCharacter instance = proto.buildInstance();
 
-        instance.setRoomId(100L);
+        instance.getLocation().setRoom(room);
 
         assertEquals(proto.getId(), instance.getPrototypeId());
-        assertEquals(100L, instance.getRoomId());
+        assertEquals(room, instance.getLocation().getRoom());
         assertEquals(proto.getCharacter().getName(), instance.getCharacter().getName());
         assertEquals(proto.getPlayer().getUsername(), instance.getPlayer().getUsername());
         assertEquals(proto.getCharacter().getSpecies(), instance.getCharacter().getSpecies());
@@ -96,7 +99,7 @@ public class MudCharacterPrototypeTest {
         uut.getPlayer().setUsername(user);
         uutInst = uut.buildInstance();
 
-        uutInst.setRoomId(100L);
+        uutInst.getLocation().setRoom(room);
         uutInst.getPlayer().setWebSocketSession(webSocketSession);
 
         assertEquals(webSocketSession, uutInst.getPlayer().getWebSocketSession());

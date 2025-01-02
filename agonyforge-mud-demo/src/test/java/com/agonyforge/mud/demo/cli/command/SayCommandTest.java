@@ -6,6 +6,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -50,6 +52,9 @@ public class SayCommandTest {
     private MudRoomRepository roomRepository;
 
     @Mock
+    private MudRoom room;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -57,6 +62,9 @@ public class SayCommandTest {
 
     @Mock
     private CharacterComponent characterComponent;
+
+    @Mock
+    private LocationComponent chLocationComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -91,10 +99,12 @@ public class SayCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(room.getId()).thenReturn(100L);
         when(characterComponent.getName()).thenReturn("Name");
-        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getRoomId()).thenReturn(100L);
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Input input = new Input(val);
         Output output = new Output();

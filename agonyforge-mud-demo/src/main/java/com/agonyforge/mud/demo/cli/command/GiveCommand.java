@@ -52,19 +52,21 @@ public class GiveCommand extends AbstractCommand {
         MudItem item = itemOptional.get();
         MudCharacter target = targetOptional.get();
 
-        if (item.getWorn() != null) {
+        if (item.getLocation().getWorn() != null) {
             LOGGER.error("Worn item was found in inventory! id:{} proto:{}", item.getInstanceId(), item.getId());
             output.append("[default]You need to remove it first.");
             return question;
         }
 
-        item.setCharacterId(target.getId());
+        item.getLocation().setWorn(null);
+        item.getLocation().setHeld(target);
+        item.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(item);
 
         output.append("[default]You give %s[default] to %s.", item.getItem().getShortDescription(), target.getCharacter().getName());
         getCommService().sendTo(target, new Output("[default]%s gives %s[default] to you.", ch.getCharacter().getName(), item.getItem().getShortDescription()));
         getCommService().sendToRoom(webSocketContext,
-            ch.getRoomId(),
+            ch.getLocation().getRoom().getId(),
             new Output("[default]%s gives %s[default] to %s.", ch.getCharacter().getName(), item.getItem().getShortDescription(), target.getCharacter().getName()),
             target);
 

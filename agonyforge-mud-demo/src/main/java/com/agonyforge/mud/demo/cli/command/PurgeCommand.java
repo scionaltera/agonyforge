@@ -46,7 +46,7 @@ public class PurgeCommand extends AbstractCommand {
         getRepositoryBundle().getItemRepository().delete(target);
 
         output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
             new Output("[yellow]%s snaps %s fingers, and %s disappears!",
                 ch.getCharacter().getName(),
                 ch.getCharacter().getPronoun().getPossessive(),

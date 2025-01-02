@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -70,6 +71,9 @@ public class RoomEditorCommandTest {
     private CharacterComponent characterComponent;
 
     @Mock
+    private LocationComponent chLocationComponent;
+
+    @Mock
     private MudRoom room;
 
     private final Random random = new Random();
@@ -91,9 +95,10 @@ public class RoomEditorCommandTest {
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getRoomId()).thenReturn(roomId);
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
@@ -116,7 +121,8 @@ public class RoomEditorCommandTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
@@ -140,7 +146,8 @@ public class RoomEditorCommandTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
@@ -162,7 +169,8 @@ public class RoomEditorCommandTest {
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();

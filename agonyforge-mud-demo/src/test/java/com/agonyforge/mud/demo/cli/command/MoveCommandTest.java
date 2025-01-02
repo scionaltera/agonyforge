@@ -6,8 +6,10 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.constant.Direction;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -24,17 +26,11 @@ import org.springframework.context.ApplicationContext;
 import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MoveCommandTest {
@@ -72,6 +68,9 @@ public class MoveCommandTest {
     private CharacterComponent characterComponent;
 
     @Mock
+    private LocationComponent chLocationComponent;
+
+    @Mock
     private MudRoom room;
 
     @Mock
@@ -95,8 +94,9 @@ public class MoveCommandTest {
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getRoomId()).thenReturn(100L);
-        when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(roomRepository.findById(eq(101L))).thenReturn(Optional.of(destination));
         when(room.getExit(eq(Direction.WEST.getName()))).thenReturn(new MudRoom.Exit(101L));
 
@@ -107,9 +107,9 @@ public class MoveCommandTest {
 
         assertEquals(question, response);
 
-        verify(roomRepository).findById(eq(100L));
+        verify(chLocationComponent, atLeastOnce()).getRoom();
         verify(commService, times(2)).sendToRoom(eq(webSocketContext), anyLong(), any(Output.class));
-        verify(ch).setRoomId(eq(101L));
+        verify(ch.getLocation()).setRoom(eq(destination));
         verify(characterRepository).save(any(MudCharacter.class));
     }
 
@@ -121,22 +121,29 @@ public class MoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getRoomId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(null);
 
         Input input = new Input("west");
         Output output = new Output();
         MoveCommand uut = new MoveCommand(repositoryBundle, commService, sessionAttributeService, applicationContext, Direction.WEST);
-        Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
-        assertEquals(1, output.getOutput().size());
-        assertTrue(output.getOutput().get(0).contains("floating in the void"));
+        try {
+            Question response = uut.execute(question, webSocketContext, List.of("WEST"), input, output);
 
-        assertEquals(question, response);
+            assertEquals(1, output.getOutput().size());
+            assertTrue(output.getOutput().get(0).contains("floating aimlessly in the void"));
 
-        verifyNoInteractions(commService);
-        verify(roomRepository).findById(eq(100L));
-        verify(characterRepository, never()).save(any(MudCharacter.class));
+            assertEquals(question, response);
+
+            verifyNoInteractions(commService);
+            verify(chLocationComponent, atLeastOnce()).getRoom();
+            verify(characterRepository, never()).save(any(MudCharacter.class));
+        } catch (CommandException e) {
+            return;
+        }
+
+        fail();
     }
 
     @Test
@@ -147,8 +154,8 @@ public class MoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getRoomId()).thenReturn(100L);
-        when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Input input = new Input("west");
         Output output = new Output();
@@ -161,7 +168,7 @@ public class MoveCommandTest {
         assertEquals(question, response);
 
         verifyNoInteractions(commService);
-        verify(roomRepository).findById(eq(100L));
+        verify(chLocationComponent, atLeastOnce()).getRoom();
         verify(characterRepository, never()).save(any(MudCharacter.class));
     }
 
@@ -173,8 +180,10 @@ public class MoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getRoomId()).thenReturn(100L);
-        when(roomRepository.findById(eq(100L))).thenReturn(Optional.of(room));
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(roomRepository.findById(eq(101L))).thenReturn(Optional.empty());
         when(room.getExit(eq(Direction.WEST.getName()))).thenReturn(new MudRoom.Exit(101L));
 
         Input input = new Input("west");
@@ -188,7 +197,6 @@ public class MoveCommandTest {
         assertEquals(question, response);
 
         verifyNoInteractions(commService);
-        verify(roomRepository).findById(eq(100L));
         verify(roomRepository).findById(eq(101L));
         verify(characterRepository, never()).save(any(MudCharacter.class));
     }

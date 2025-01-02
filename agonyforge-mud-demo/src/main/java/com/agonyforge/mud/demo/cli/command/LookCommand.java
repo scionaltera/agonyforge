@@ -36,7 +36,7 @@ public class LookCommand extends AbstractCommand {
             .append("[default]%s", room.getDescription())
             .append("[dcyan]Exits: %s", String.join(" ", room.getExits()));
 
-        repositoryBundle.getCharacterRepository().findByRoomId(room.getId())
+        repositoryBundle.getCharacterRepository().findByLocationRoom(room)
             .stream()
             .filter(target -> !target.equals(ch))
             .forEach(target -> {
@@ -58,7 +58,7 @@ public class LookCommand extends AbstractCommand {
                 output.append("[green]%s is %s. %s", target.getCharacter().getName(), action, flags);
             });
 
-        repositoryBundle.getItemRepository().getByRoomId(room.getId())
+        repositoryBundle.getItemRepository().findByLocationRoom(room)
             .forEach(target -> output.append("[green](%d) %s",
                 target.getId(),
                 StringUtils.capitalize(target.getItem().getLongDescription())));
@@ -85,7 +85,7 @@ public class LookCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId());
+        Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());
 
         if (roomOptional.isEmpty()) {
             output.append("[black]You are floating in the void...");
