@@ -21,8 +21,8 @@ public enum WearSlot implements PersistentEnum {
     FACE("face", "worn on face"),
     ANKLE_LEFT("left ankle", "worn on left ankle"),
     ANKLE_RIGHT("right ankle", "worn on right ankle"),
-    HELD_LEFT("left hand", "held in left hand"),
-    HELD_RIGHT("right hand", "held in right hand");
+    HELD_OFF("off hand", "held in off hand"),
+    HELD_WEAPON("weapon hand", "held in weapon hand");
 
     private final String name;
     private final String phrase;
