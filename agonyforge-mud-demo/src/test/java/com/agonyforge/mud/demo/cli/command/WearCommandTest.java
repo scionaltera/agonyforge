@@ -281,15 +281,15 @@ public class WearCommandTest {
         when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_WEAPON, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getLocation().getWorn()).thenReturn(WearSlot.HELD_LEFT);
+        when(item.getLocation().getWorn()).thenReturn(WearSlot.HELD_OFF);
         when(target.getItem()).thenReturn(targetItemComponent);
         when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
-        when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HEAD));
+        when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HEAD));
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -324,10 +324,10 @@ public class WearCommandTest {
         when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_LEFT, WearSlot.HELD_RIGHT, WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_WEAPON, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getLocation().getWorn()).thenReturn(WearSlot.HELD_LEFT);
+        when(item.getLocation().getWorn()).thenReturn(WearSlot.HELD_OFF);
         when(target.getItem()).thenReturn(targetItemComponent);
         when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
