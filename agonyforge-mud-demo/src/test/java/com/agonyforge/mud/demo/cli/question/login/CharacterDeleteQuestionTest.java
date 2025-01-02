@@ -6,7 +6,8 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,10 @@ public class CharacterDeleteQuestionTest {
     private MudItemRepository itemRepository;
 
     @Mock
-    private MudCharacterPrototype ch;
+    private MudCharacterTemplate ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -69,7 +73,8 @@ public class CharacterDeleteQuestionTest {
 
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getName()).thenReturn(chName);
+        when(characterComponent.getName()).thenReturn(chName);
+        when(ch.getCharacter()).thenReturn(characterComponent);
 
         CharacterDeleteQuestion uut = new CharacterDeleteQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(webSocketContext);

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumSet;
@@ -39,15 +40,25 @@ public class WorldLoader {
         this.itemRepository = itemRepository;
     }
 
+    @Transactional
     @PostConstruct
     public void loadWorld() {
+        loadProperties();
+        loadZones();
+        loadRooms();
+        loadItems();
+    }
+
+    private void loadProperties() {
         if (propertyRepository.findById(PROPERTY_HOUR).isEmpty()) {
             MudProperty mudHour = new MudProperty(PROPERTY_HOUR, "0");
 
             LOGGER.info("Setting world time");
             propertyRepository.save(mudHour);
         }
+    }
 
+    private void loadZones() {
         if (zoneRepository.findById(1L).isEmpty()) {
             MudZone zone = new MudZone();
 
@@ -57,7 +68,9 @@ public class WorldLoader {
             LOGGER.info("Creating default zone");
             zoneRepository.save(zone);
         }
+    }
 
+    private void loadRooms() {
         if (roomRepository.findById(100L).isEmpty()) {
             MudRoom room100 = new MudRoom();
 
@@ -78,37 +91,45 @@ public class WorldLoader {
             LOGGER.info("Creating default rooms");
             roomRepository.saveAll(List.of(room100, room101));
         }
+    }
 
-        if (itemRepository.getByRoomId(100L).isEmpty()) {
-            MudItemPrototype item = new MudItemPrototype();
-            MudItem itemInstance;
+    private void loadItems() {
+        if (itemRepository.findById(100L).isEmpty()) {
+            MudRoom room100 = roomRepository.findById(100L).orElseThrow();
+            MudRoom room101 = roomRepository.findById(101L).orElseThrow();
+
+            MudItemTemplate item = new MudItemTemplate();
 
             item.setId(100L);
-            item.setNameList(List.of("spoon"));
-            item.setShortDescription("a spoon");
-            item.setLongDescription("A spoon is floating in midair here.");
+            item.setItem(new ItemComponent());
+            item.getItem().setNameList(Set.of("spoon"));
+            item.getItem().setShortDescription("a spoon");
+            item.getItem().setLongDescription("A spoon is floating in midair here.");
 
             item = itemPrototypeRepository.save(item);
 
-            itemInstance = item.buildInstance();
+            MudItem itemInstance = item.buildInstance();
+            itemInstance = itemRepository.save(itemInstance);
 
-            itemInstance.setRoomId(100L);
-
-            MudItemPrototype hat = new MudItemPrototype();
-            MudItem hatInstance;
+            MudItemTemplate hat = new MudItemTemplate();
 
             hat.setId(101L);
-            hat.setNameList(List.of("hat", "floppy"));
-            hat.setShortDescription("a floppy hat");
-            hat.setLongDescription("A floppy hat has been dropped here.");
-            hat.setWearSlots(EnumSet.of(WearSlot.HEAD));
+            hat.setItem(new ItemComponent());
+            hat.getItem().setNameList(Set.of("hat", "floppy"));
+            hat.getItem().setShortDescription("a floppy hat");
+            hat.getItem().setLongDescription("A floppy hat has been dropped here.");
+            hat.getItem().setWearSlots(EnumSet.of(WearSlot.HEAD));
 
             hat = itemPrototypeRepository.save(hat);
 
-            hatInstance = hat.buildInstance();
-            hatInstance.setRoomId(101L);
+            MudItem hatInstance = hat.buildInstance();
+            hatInstance = itemRepository.save(hatInstance);
 
             LOGGER.info("Creating default items");
+
+            itemInstance.getLocation().setRoom(room100);
+            hatInstance.getLocation().setRoom(room101);
+
             itemRepository.saveAll(List.of(itemInstance, hatInstance));
         }
     }

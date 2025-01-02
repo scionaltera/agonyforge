@@ -5,9 +5,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
-import com.agonyforge.mud.demo.model.impl.Role;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +18,9 @@ import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
@@ -59,28 +56,31 @@ public class CharacterNameQuestion extends BaseQuestion {
             return new Response(this, new Output("[red]Names must begin with a capital letter."));
         }
 
-        List<MudCharacterPrototype> existing = getRepositoryBundle().getCharacterPrototypeRepository().findByName(input.getInput());
+        List<MudCharacterTemplate> existing = getRepositoryBundle().getCharacterPrototypeRepository().findByCharacterName(input.getInput());
 
         if (!existing.isEmpty()) {
             return new Response(this, new Output("[red]Somebody else is already using that name. Please try a different one."));
         }
 
-        MudCharacterPrototype ch = new MudCharacterPrototype();
+        MudCharacterTemplate ch = new MudCharacterTemplate();
         Role playerRole = roleRepository.findByName("Player").orElseThrow();
 
-        ch.setUsername(wsContext.getPrincipal().getName());
-        ch.setName(input.getInput());
-        ch.setRoles(Set.of(playerRole));
-        ch.setPronoun(Pronoun.THEY);
-        ch.setWearSlots(Arrays.stream(WearSlot.values()).collect(Collectors.toSet()));
+        ch.setPlayer(new PlayerComponent());
+        ch.getPlayer().setUsername(wsContext.getPrincipal().getName());
+        ch.getPlayer().setRoles(Set.of(playerRole));
+
+        ch.setCharacter(new CharacterComponent());
+        ch.getCharacter().setName(input.getInput());
+        ch.getCharacter().setPronoun(Pronoun.THEY);
+        ch.getCharacter().setWearSlots(EnumSet.allOf(WearSlot.class));
 
         ch = getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
         wsContext.getAttributes().put(MUD_PCHARACTER, ch.getId());
 
-        LOGGER.info("New character created: {}", ch.getName());
+        LOGGER.info("New character created: {}", ch.getCharacter().getName());
 
         Question nextQuestion = getQuestion("characterPronounQuestion");
 
-        return new Response(nextQuestion, new Output("[default]Hello, [white]%s[default]!", ch.getName()));
+        return new Response(nextQuestion, new Output("[default]Hello, [white]%s[default]!", ch.getCharacter().getName()));
     }
 }

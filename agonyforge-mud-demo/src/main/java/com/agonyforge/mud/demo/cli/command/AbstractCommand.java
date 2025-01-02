@@ -53,7 +53,7 @@ public abstract class AbstractCommand implements Command {
 
         MudCharacter ch = chOptional.get();
 
-        if (ch.getRoomId() == null) {
+        if (ch.getLocation().getRoom() == null) {
             output.append("[black]You are floating aimlessly in the void.");
             throw new CommandException("Character is in the void: " + chId);
         }
@@ -62,47 +62,47 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Optional<MudItem> findInventoryItem(MudCharacter ch, String token) {
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByChId(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().findByLocationHeld(ch);
 
         return items
             .stream()
-            .filter(item -> item.getWorn() == null)
-            .filter(item -> item.getNameList()
+            .filter(item -> item.getLocation().getWorn() == null)
+            .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 
     protected Optional<MudItem> findWornItem(MudCharacter ch, String token) {
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByChId(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().findByLocationHeld(ch);
 
         return items
             .stream()
-            .filter(item -> item.getWorn() != null)
-            .filter(item -> item.getNameList()
+            .filter(item -> item.getLocation().getWorn() != null)
+            .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 
     protected Optional<MudItem> findRoomItem(MudCharacter ch, String token) {
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByRoomId(ch.getRoomId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().findByLocationRoom(ch.getLocation().getRoom());
 
         return items
             .stream()
-            .filter(item -> item.getNameList()
+            .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 
     protected Optional<MudCharacter> findRoomCharacter(MudCharacter ch, String token) {
-        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().findByRoomId(ch.getRoomId());
+        List<MudCharacter> targets = getRepositoryBundle().getCharacterRepository().findByLocationRoom(ch.getLocation().getRoom());
 
         return targets
             .stream()
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .filter(tch -> tch.getCharacter().getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
             .findFirst();
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractCommand implements Command {
         return targets
             .stream()
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> tch.getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .filter(tch -> tch.getCharacter().getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
             .findFirst();
     }
 }

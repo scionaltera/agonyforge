@@ -14,14 +14,13 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import com.agonyforge.mud.demo.service.CommService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Locale;
 
 @Component
@@ -37,8 +36,6 @@ public class ItemEditorQuestion extends BaseQuestion {
     // IEDIT.LONG_DESC -> user needs to type a long description
     // IEDIT.WEAR_SLOT -> user needs to pick a wear slot
     static final String IEDIT_STATE = "IEDIT.STATE";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemEditorQuestion.class);
 
     private final CommService commService;
     private final MenuPane menuPane = new MenuPane();
@@ -58,7 +55,7 @@ public class ItemEditorQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudItemPrototype itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
+        MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
 
         if (!wsContext.getAttributes().containsKey(IEDIT_STATE)) {
             populateMenuItems(itemProto);
@@ -79,7 +76,7 @@ public class ItemEditorQuestion extends BaseQuestion {
         String nextQuestion = "itemEditorQuestion";
         Output output = new Output();
         MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
-        MudItemPrototype itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
+        MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get(IEDIT_MODEL)).orElseThrow();
 
         if (!wsContext.getAttributes().containsKey(IEDIT_STATE)) {
             String choice = input.getInput().toUpperCase(Locale.ROOT);
@@ -97,18 +94,18 @@ public class ItemEditorQuestion extends BaseQuestion {
                     wsContext.getAttributes().remove(IEDIT_MODEL);
                     nextQuestion = "commandQuestion";
 
-                    commService.sendToRoom(wsContext, ch.getRoomId(),
-                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
+                    commService.sendToRoom(wsContext, ch.getLocation().getRoom().getId(),
+                        new Output("[yellow]%s stops editing.", ch.getCharacter().getName()), ch);
                 }
             }
         } else if ("IEDIT.NAMES".equals(wsContext.getAttributes().get(IEDIT_STATE))) {
-            itemProto.setNameList(Tokenizer.tokenize(input.getInput()));
+            itemProto.getItem().setNameList(new HashSet<>(Tokenizer.tokenize(input.getInput())));
             wsContext.getAttributes().remove(IEDIT_STATE);
         } else if ("IEDIT.SHORT_DESC".equals(wsContext.getAttributes().get(IEDIT_STATE))) {
-            itemProto.setShortDescription(input.getInput());
+            itemProto.getItem().setShortDescription(input.getInput());
             wsContext.getAttributes().remove(IEDIT_STATE);
         } else if ("IEDIT.LONG_DESC".equals(wsContext.getAttributes().get(IEDIT_STATE))) {
-            itemProto.setLongDescription(input.getInput());
+            itemProto.getItem().setLongDescription(input.getInput());
             wsContext.getAttributes().remove(IEDIT_STATE);
         }
 
@@ -117,13 +114,13 @@ public class ItemEditorQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    private void populateMenuItems(MudItemPrototype itemProto) {
+    private void populateMenuItems(MudItemTemplate itemProto) {
         menuPane.getItems().clear();
 
         menuPane.getTitle().setTitle(String.format("Item Editor - %d", itemProto.getId()));
-        menuPane.getItems().add(new MenuItem("N", "Name List: " + itemProto.getNameList()));
-        menuPane.getItems().add(new MenuItem("S", "Short Description: " + itemProto.getShortDescription()));
-        menuPane.getItems().add(new MenuItem("L", "Long Description: " + itemProto.getLongDescription()));
+        menuPane.getItems().add(new MenuItem("N", "Name List: " + itemProto.getItem().getNameList()));
+        menuPane.getItems().add(new MenuItem("S", "Short Description: " + itemProto.getItem().getShortDescription()));
+        menuPane.getItems().add(new MenuItem("L", "Long Description: " + itemProto.getItem().getLongDescription()));
         menuPane.getItems().add(new MenuItem("W", "Wear Slots"));
 
         menuPane.getItems().add(new MenuItem("X", "Save"));

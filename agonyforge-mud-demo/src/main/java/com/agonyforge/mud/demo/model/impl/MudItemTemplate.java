@@ -5,19 +5,20 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "mud_pitem")
-public class MudItemPrototype extends AbstractMudItem {
+public class MudItemTemplate extends AbstractMudObject {
     @Id
     private Long id;
 
     public MudItem buildInstance() {
         MudItem instance = new MudItem();
+        instance.setItem(new ItemComponent());
+        instance.setLocation(new LocationComponent());
 
-        instance.setId(getId());
-        instance.setNameList(getNameList());
-        instance.setShortDescription(getShortDescription());
-        instance.setLongDescription(getLongDescription());
-        instance.setWearSlots(getWearSlots());
+        instance.setTemplate(this);
+        instance.getItem().setNameList(getItem().getNameList());
+        instance.getItem().setShortDescription(getItem().getShortDescription());
+        instance.getItem().setLongDescription(getItem().getLongDescription());
+        instance.getItem().setWearSlots(getItem().getWearSlots());
 
         return instance;
     }
@@ -33,7 +34,7 @@ public class MudItemPrototype extends AbstractMudItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudItemPrototype mudItem)) return false;
+        if (!(o instanceof MudItemTemplate mudItem)) return false;
         return Objects.equals(getId(), mudItem.getId());
     }
 

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.BooleanUtils.forEach;
+
 @Component
 public class InventoryCommand extends AbstractCommand {
     @Autowired
@@ -24,17 +26,18 @@ public class InventoryCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        List<MudItem> items = getRepositoryBundle().getItemRepository().getByChId(ch.getId());
+        List<MudItem> items = getRepositoryBundle().getItemRepository().findByLocationHeld(ch);
 
         output.append("[default]You are carrying:");
 
-        if (items.isEmpty()) {
+        List<MudItem> held = items
+            .stream()
+            .filter(item -> item.getLocation().getWorn() == null).toList();
+
+        if (held.isEmpty()) {
             output.append("[default]Nothing.");
         } else {
-            items
-                .stream()
-                .filter(item -> item.getWorn() == null)
-                .forEach(item -> output.append(String.format("(%s) %s", item.getId(), item.getShortDescription())));
+            held.forEach(item -> output.append(String.format("(%s) %s", item.getTemplate().getId(), item.getItem().getShortDescription())));
         }
 
         return question;

@@ -8,8 +8,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.cli.question.CommandException;
-import com.agonyforge.mud.demo.model.impl.CommandReference;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -54,6 +53,15 @@ public class CommandQuestionTest {
     private CommandRepository commandRepository;
 
     @Mock
+    private PlayerComponent playerComponent;
+
+    @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
+    private MudCharacterTemplate chProto;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -80,6 +88,7 @@ public class CommandQuestionTest {
             MUD_CHARACTER, chId
         ));
 
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
@@ -113,7 +122,8 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getPrototypeId()).thenReturn(1L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(1L);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
@@ -136,7 +146,10 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getPrototypeId()).thenReturn(2L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(2L);
+        when(ch.getPlayer()).thenReturn(playerComponent);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
@@ -229,7 +242,8 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getPrototypeId()).thenReturn(1L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(1L);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);

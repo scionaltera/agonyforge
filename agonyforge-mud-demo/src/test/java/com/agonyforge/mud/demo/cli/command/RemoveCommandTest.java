@@ -6,8 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -62,7 +61,19 @@ public class RemoveCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private MudItem target;
+
+    @Mock
+    private ItemComponent itemComponent;
+
+    @Mock
+    private LocationComponent chLocationComponent, targetLocationComponent;
+
+    @Mock
+    private MudRoom room;
 
     private final Random random = new Random();
 
@@ -81,6 +92,8 @@ public class RemoveCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
@@ -103,6 +116,8 @@ public class RemoveCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         Output output = new Output();
         RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
@@ -125,11 +140,17 @@ public class RemoveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getPronoun()).thenReturn(Pronoun.SHE);
-        when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(target));
-        when(target.getNameList()).thenReturn(List.of("test", "hat"));
-        when(target.getShortDescription()).thenReturn("a test hat");
-        when(target.getWorn()).thenReturn(WearSlot.HEAD);
+        when(characterComponent.getPronoun()).thenReturn(Pronoun.SHE);
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(target));
+        when(target.getItem()).thenReturn(itemComponent);
+        when(target.getItem().getNameList()).thenReturn(Set.of("test", "hat"));
+        when(target.getItem().getShortDescription()).thenReturn("a test hat");
+        when(target.getLocation()).thenReturn(targetLocationComponent);
+        when(target.getLocation().getWorn()).thenReturn(WearSlot.HEAD);
 
         Output output = new Output();
         RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
@@ -140,7 +161,9 @@ public class RemoveCommandTest {
             new Input("rem hat"),
             output);
 
-        verify(target).setWorn(eq(null));
+        verify(targetLocationComponent).setHeld(eq(ch));
+        verify(targetLocationComponent).setRoom(eq(null));
+        verify(targetLocationComponent).setWorn(eq(null));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),

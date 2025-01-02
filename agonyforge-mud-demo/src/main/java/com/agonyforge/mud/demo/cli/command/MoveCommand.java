@@ -43,11 +43,11 @@ public class MoveCommand extends AbstractCommand {
                             Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId());
+        Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());
 
         if (roomOptional.isEmpty()) {
-            output.append("[black]You are floating in the void, unable to move.");
-            LOGGER.warn("{} is in the void!", ch.getName());
+            output.append("[black]You are floating aimlessly in the void, unable to move.");
+            LOGGER.warn("{} is in the void!", ch.getCharacter().getName());
 
             return question;
         }
@@ -71,14 +71,14 @@ public class MoveCommand extends AbstractCommand {
 
         MudRoom destination = destOptional.get();
 
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("%s leaves %s.", ch.getName(), direction.getName()));
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+            new Output("%s leaves %s.", ch.getCharacter().getName(), direction.getName()));
 
-        ch.setRoomId(exit.getDestinationId());
+        ch.getLocation().setRoom(destination);
         getRepositoryBundle().getCharacterRepository().save(ch);
 
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("%s arrives from %s.", ch.getName(), direction.getOpposite()));
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+            new Output("%s arrives from %s.", ch.getCharacter().getName(), direction.getOpposite()));
 
         output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destination));
 

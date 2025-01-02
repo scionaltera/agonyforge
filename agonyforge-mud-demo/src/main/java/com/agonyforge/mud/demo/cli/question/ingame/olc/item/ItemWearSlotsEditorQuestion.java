@@ -13,9 +13,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +26,6 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQue
 
 @Component
 public class ItemWearSlotsEditorQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemWearSlotsEditorQuestion.class);
-
     static final String IEDIT_SLOT = "IEDIT.WEAR_SLOT";
 
     private final MenuPane menuPane = new MenuPane();
@@ -43,15 +39,15 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
 
     @Override
     public Output prompt(WebSocketContext wsContext) {
-        MudItemPrototype itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get("IEDIT.MODEL")).orElseThrow();
+        MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get("IEDIT.MODEL")).orElseThrow();
 
         if (wsContext.getAttributes().containsKey(IEDIT_STATE) && wsContext.getAttributes().get(IEDIT_STATE).toString().equals(IEDIT_SLOT)) {
             WearSlot slot = (WearSlot)wsContext.getAttributes().get(IEDIT_SLOT);
 
-            if (itemProto.getWearSlots().contains(slot)) {
-                itemProto.getWearSlots().remove(slot);
+            if (itemProto.getItem().getWearSlots().contains(slot)) {
+                itemProto.getItem().getWearSlots().remove(slot);
             } else {
-                itemProto.getWearSlots().add(slot);
+                itemProto.getItem().getWearSlots().add(slot);
             }
 
             itemProto = getRepositoryBundle().getItemPrototypeRepository().save(itemProto);
@@ -93,14 +89,14 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    void populateMenuItems(MudItemPrototype item) {
+    void populateMenuItems(MudItemTemplate item) {
         menuPane.getItems().clear();
 
         List<MenuItem> menuItems = Arrays.stream(WearSlot.values())
             .sequential()
             .map(slot -> new MenuItem(
                 String.format("%-2d", slot.ordinal()),
-                String.format("%-15s [%s]%s", slot.getName(), item.getWearSlots().contains(slot) ? "green" : "red", item.getWearSlots().contains(slot)),
+                String.format("%-15s [%s]%s", slot.getName(), item.getItem().getWearSlots().contains(slot) ? "green" : "red", item.getItem().getWearSlots().contains(slot)),
                 slot))
                 .toList();
 

@@ -1,22 +1,17 @@
 package com.agonyforge.mud.demo.model.impl;
 
-import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
-import java.util.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "mud_item")
-public class MudItem extends AbstractMudItem {
+public class MudItem extends AbstractMudObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "instance_id")
-    private Long instanceId;
     private Long id;
-    private Long roomId;
-    private Long chId;
 
-    private WearSlot worn;
+    @ManyToOne
+    private MudItemTemplate template;
 
     public Long getId() {
         return id;
@@ -26,55 +21,23 @@ public class MudItem extends AbstractMudItem {
         this.id = id;
     }
 
-    public Long getInstanceId() {
-        return instanceId;
+    public MudItemTemplate getTemplate() {
+        return template;
     }
 
-    public void setInstanceId(Long instanceId) {
-        this.instanceId = instanceId;
-    }
-
-    public Long getCharacterId() {
-        return chId;
-    }
-
-    public void setCharacterId(Long characterId) {
-        if (roomId != null) {
-            roomId = null;
-        }
-
-        chId = characterId;
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        if (chId != null) {
-            chId = null;
-        }
-
-        this.roomId = roomId;
-    }
-
-    public WearSlot getWorn() {
-        return worn;
-    }
-
-    public void setWorn(WearSlot worn) {
-        this.worn = worn;
+    public void setTemplate(MudItemTemplate template) {
+        this.template = template;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MudItem mudItem)) return false;
-        return Objects.equals(getInstanceId(), mudItem.getInstanceId());
+        if (o == null || getClass() != o.getClass()) return false;
+        MudItem mudItem = (MudItem) o;
+        return Objects.equals(id, mudItem.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getInstanceId());
+        return Objects.hashCode(id);
     }
 }

@@ -45,9 +45,12 @@ public class PurgeCommand extends AbstractCommand {
         MudItem target = targetOptional.get();
         getRepositoryBundle().getItemRepository().delete(target);
 
-        output.append("[yellow]You snap your fingers, and %s disappears!", target.getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s snaps %s fingers, and %s disappears!", ch.getName(), ch.getPronoun().getPossessive(), target.getShortDescription()));
+        output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s snaps %s fingers, and %s disappears!",
+                ch.getCharacter().getName(),
+                ch.getCharacter().getPronoun().getPossessive(),
+                target.getItem().getShortDescription()));
 
         return question;
     }

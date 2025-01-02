@@ -5,9 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.CommandReference;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.Role;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -52,7 +50,19 @@ public class HelpCommandTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
+    private MudCharacterTemplate chProto;
+
+    @Mock
     private MudCharacter ch;
+
+    @Mock
+    private LocationComponent chLocationComponent;
+
+    @Mock
+    private MudRoom room;
+
+    @Mock
+    private PlayerComponent playerComponent;
 
     @Mock
     private Role playerRole;
@@ -79,12 +89,16 @@ public class HelpCommandTest {
 
         lenient().when(commandRepository.findAll()).thenReturn(List.of(testCommandRefA, testCommandRefB));
         lenient().when(playerRole.getCommands()).thenReturn(Set.of(testCommandRefA));
-        lenient().when(ch.getRoles()).thenReturn(Set.of(playerRole));
+        lenient().when(playerComponent.getRoles()).thenReturn(Set.of(playerRole));
+        lenient().when(ch.getPlayer()).thenReturn(playerComponent);
     }
 
     @Test
     void testHelpSuper() {
-        when(ch.getPrototypeId()).thenReturn(1L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(1L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         HelpCommand uut = new HelpCommand(repositoryBundle, commService, applicationContext, commandRepository);
         Question result = uut.execute(question, wsContext, List.of("HELP"), new Input("help"), new Output());
@@ -100,7 +114,10 @@ public class HelpCommandTest {
 
     @Test
     void testHelpPlayer() {
-        when(ch.getPrototypeId()).thenReturn(2L);
+        when(ch.getTemplate()).thenReturn(chProto);
+        when(ch.getTemplate().getId()).thenReturn(2L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
 
         HelpCommand uut = new HelpCommand(repositoryBundle, commService, applicationContext, commandRepository);
         Question result = uut.execute(question, wsContext, List.of("HELP"), new Input("help"), new Output());

@@ -7,7 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -54,7 +55,10 @@ public class CharacterPronounQuestionTest {
     private WebSocketContext webSocketContext;
 
     @Mock
-    private MudCharacterPrototype chProto;
+    private MudCharacterTemplate chProto;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     private final Random random = new Random();
 
@@ -101,13 +105,14 @@ public class CharacterPronounQuestionTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_PCHARACTER, chId
         ));
+        when(chProto.getCharacter()).thenReturn(characterComponent);
         when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
 
         CharacterPronounQuestion uut = new CharacterPronounQuestion(applicationContext, repositoryBundle);
         Response result = uut.answer(webSocketContext, new Input("2"));
         Output output = result.getFeedback().orElseThrow();
 
-        verify(chProto).setPronoun(eq(Pronoun.SHE));
+        verify(characterComponent).setPronoun(eq(Pronoun.SHE));
         verify(characterPrototypeRepository).save(eq(chProto));
 
         assertEquals(question, result.getNext());

@@ -5,9 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -61,10 +59,22 @@ public class DropCommandTest {
     private MudCharacter ch;
 
     @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
     private MudItem item;
 
     @Mock
     private MudItem other;
+
+    @Mock
+    private ItemComponent itemComponent, otherItemComponent;
+
+    @Mock
+    private LocationComponent locationComponent, otherLocationComponent, chLocationComponent;
+
+    @Mock
+    private MudRoom room;
 
     private final Random random = new Random();
 
@@ -79,6 +89,8 @@ public class DropCommandTest {
     void testDropNoArg() {
         Long chId = random.nextLong();
 
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -104,13 +116,16 @@ public class DropCommandTest {
     void testDropNoItem() {
         Long chId = random.nextLong();
 
-        when(ch.getId()).thenReturn(chId);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(other.getNameList()).thenReturn(List.of("sword"));
-        when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(other));
+        when(other.getLocation()).thenReturn(otherLocationComponent);
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
+        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other));
 
         Output output = new Output();
         DropCommand uut = new DropCommand(repositoryBundle, commService, applicationContext);
@@ -121,7 +136,7 @@ public class DropCommandTest {
             new Input("dr t"),
             output);
 
-        verify(itemRepository).getByChId(eq(chId));
+        verify(itemRepository).findByLocationHeld(eq(ch));
         verify(itemRepository, never()).save(any(MudItem.class));
 
         assertEquals(question, result);
@@ -131,19 +146,24 @@ public class DropCommandTest {
     @Test
     void testDrop() {
         Long chId = random.nextLong();
-        Long roomId = 100L;
         String itemName = "a scurrilous test";
 
-        when(ch.getId()).thenReturn(chId);
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(item.getNameList()).thenReturn(List.of("test"));
-        when(item.getShortDescription()).thenReturn(itemName);
-        when(other.getNameList()).thenReturn(List.of("sword"));
-        when(itemRepository.getByChId(eq(chId))).thenReturn(List.of(other, item));
+        when(room.getId()).thenReturn(100L);
+        when(item.getLocation()).thenReturn(locationComponent);
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getNameList()).thenReturn(Set.of("test"));
+        when(item.getItem().getShortDescription()).thenReturn(itemName);
+        when(other.getLocation()).thenReturn(otherLocationComponent);
+        when(other.getItem()).thenReturn(otherItemComponent);
+        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
+        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other, item));
 
         Output output = new Output();
         DropCommand uut = new DropCommand(repositoryBundle, commService, applicationContext);
@@ -154,11 +174,13 @@ public class DropCommandTest {
             new Input("dr t"),
             output);
 
-        verify(itemRepository).getByChId(eq(chId));
-        verify(item).setRoomId(eq(roomId));
+        verify(itemRepository).findByLocationHeld(eq(ch));
+        verify(locationComponent).setHeld(eq(null));
+        verify(locationComponent).setRoom(eq(room));
+        verify(locationComponent).setWorn(eq(null));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));
-        verify(commService).sendToRoom(eq(webSocketContext), eq(roomId), any(Output.class));
+        verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You drop " + itemName));

@@ -93,8 +93,8 @@ public class RoomEditorQuestion extends BaseQuestion {
                     wsContext.getAttributes().remove(REDIT_MODEL);
                     nextQuestion = "commandQuestion";
 
-                    commService.sendToRoom(wsContext, ch.getRoomId(),
-                        new Output("[yellow]%s stops editing.", ch.getName()), ch);
+                    commService.sendToRoom(wsContext, ch.getLocation().getRoom().getId(),
+                        new Output("[yellow]%s stops editing.", ch.getCharacter().getName()), ch);
                 }
             }
         } else if ("ROOM.TITLE".equals(wsContext.getAttributes().get(REDIT_STATE))) {
@@ -112,7 +112,7 @@ public class RoomEditorQuestion extends BaseQuestion {
 
     private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
         if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId()).orElseThrow();
+            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getLocation().getRoom().getId()).orElseThrow();
             wsContext.getAttributes().put(REDIT_MODEL, room);
         }
 

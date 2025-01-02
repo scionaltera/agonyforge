@@ -6,7 +6,8 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -53,7 +54,10 @@ public class CharacterMenuQuestionTest {
     private MudItemRepository itemRepository;
 
     @Mock
-    private MudCharacterPrototype mudCharacter;
+    private MudCharacterTemplate mudCharacter;
+
+    @Mock
+    private CharacterComponent characterComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -86,7 +90,7 @@ public class CharacterMenuQuestionTest {
         assertEquals(7, result.getOutput().size());
         assertTrue(itemOptional.isPresent());
 
-        verify(characterPrototypeRepository).findByUsername(eq(principalName));
+        verify(characterPrototypeRepository).findByPlayerUsername(eq(principalName));
     }
 
     @Test
@@ -96,8 +100,9 @@ public class CharacterMenuQuestionTest {
 
         when(principal.getName()).thenReturn(principalName);
         when(webSocketContext.getPrincipal()).thenReturn(principal);
-        when(mudCharacter.getName()).thenReturn(characterName);
-        when(characterPrototypeRepository.findByUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
+        when(characterComponent.getName()).thenReturn(characterName);
+        when(mudCharacter.getCharacter()).thenReturn(characterComponent);
+        when(characterPrototypeRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
@@ -116,7 +121,7 @@ public class CharacterMenuQuestionTest {
         assertTrue(newCharacterLineOptional.isPresent());
         assertTrue(characterNameLineOptional.isPresent());
 
-        verify(characterPrototypeRepository).findByUsername(eq(principalName));
+        verify(characterPrototypeRepository).findByPlayerUsername(eq(principalName));
     }
 
     @Test
@@ -181,8 +186,9 @@ public class CharacterMenuQuestionTest {
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(mudCharacter.getId()).thenReturn(characterId);
-        when(mudCharacter.getName()).thenReturn(characterName);
-        when(characterPrototypeRepository.findByUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
+        when(characterComponent.getName()).thenReturn(characterName);
+        when(mudCharacter.getCharacter()).thenReturn(characterComponent);
+        when(characterPrototypeRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
         when(applicationContext.getBean(eq("characterViewQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(

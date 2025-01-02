@@ -14,10 +14,8 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.impl.MudProfession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -30,8 +28,6 @@ import java.util.Optional;
 
 @Component
 public class CharacterProfessionQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterProfessionQuestion.class);
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
@@ -66,16 +62,13 @@ public class CharacterProfessionQuestion extends BaseQuestion {
             output.append("[red]Please choose one of the menu options.");
         } else {
             MenuItem item = itemOptional.get();
-            Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(webSocketContext, output);
+            Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(webSocketContext, output);
 
             if (chOptional.isPresent()) {
-                MudCharacterPrototype ch = chOptional.get();
+                MudCharacterTemplate ch = chOptional.get();
                 MudProfession profession = (MudProfession)item.getItem();
 
-                ch.setProfessionId(profession.getId());
-
-                Arrays.stream(Stat.values()).forEach(stat -> ch.setProfessionStat(stat, profession.getStat(stat)));
-                Arrays.stream(Effort.values()).forEach(effort -> ch.setProfessionEffort(effort, profession.getEffort(effort)));
+                ch.getCharacter().setProfession(profession);
 
                 // this is the last question, so the character is complete now
                 ch.setComplete(true);

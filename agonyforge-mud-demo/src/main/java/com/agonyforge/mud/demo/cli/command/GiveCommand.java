@@ -52,20 +52,22 @@ public class GiveCommand extends AbstractCommand {
         MudItem item = itemOptional.get();
         MudCharacter target = targetOptional.get();
 
-        if (item.getWorn() != null) {
-            LOGGER.error("Worn item was found in inventory! id:{} proto:{}", item.getInstanceId(), item.getId());
+        if (item.getLocation().getWorn() != null) {
+            LOGGER.error("Worn item was found in inventory! id:{} proto:{}", item.getTemplate().getId(), item.getId());
             output.append("[default]You need to remove it first.");
             return question;
         }
 
-        item.setCharacterId(target.getId());
+        item.getLocation().setWorn(null);
+        item.getLocation().setHeld(target);
+        item.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(item);
 
-        output.append("[default]You give %s[default] to %s.", item.getShortDescription(), target.getName());
-        getCommService().sendTo(target, new Output("[default]%s gives %s[default] to you.", ch.getName(), item.getShortDescription()));
+        output.append("[default]You give %s[default] to %s.", item.getItem().getShortDescription(), target.getCharacter().getName());
+        getCommService().sendTo(target, new Output("[default]%s gives %s[default] to you.", ch.getCharacter().getName(), item.getItem().getShortDescription()));
         getCommService().sendToRoom(webSocketContext,
-            ch.getRoomId(),
-            new Output("[default]%s gives %s[default] to %s.", ch.getName(), item.getShortDescription(), target.getName()),
+            ch.getLocation().getRoom().getId(),
+            new Output("[default]%s gives %s[default] to %s.", ch.getCharacter().getName(), item.getItem().getShortDescription(), target.getCharacter().getName()),
             target);
 
         return question;

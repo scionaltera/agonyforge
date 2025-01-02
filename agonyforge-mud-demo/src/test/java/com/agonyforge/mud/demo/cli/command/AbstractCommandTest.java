@@ -6,7 +6,10 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -59,6 +62,15 @@ public class AbstractCommandTest {
     private MudCharacter target;
 
     @Mock
+    private CharacterComponent targetCharacterComponent;
+
+    @Mock
+    private LocationComponent chLocationComponent;
+
+    @Mock
+    private MudRoom room;
+
+    @Mock
     private Question question;
 
     private final Random random = new Random();
@@ -100,7 +112,8 @@ public class AbstractCommandTest {
     void testGetCharacterInVoid() {
         Long chId = random.nextLong();
 
-        when(ch.getRoomId()).thenReturn(null);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(null);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -127,7 +140,8 @@ public class AbstractCommandTest {
     void testGetCharacterValid() {
         Long chId = random.nextLong();
 
-        when(ch.getRoomId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -152,12 +166,11 @@ public class AbstractCommandTest {
 
     @Test
     void testFindRoomCharacter() {
-        Long roomId = 100L;
-
-        lenient().when(ch.getName()).thenReturn("Scion");
-        when(ch.getRoomId()).thenReturn(roomId);
-        when(target.getName()).thenReturn("Morgan");
-        when(characterRepository.findByRoomId(eq(roomId))).thenReturn(List.of(ch, target));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(targetCharacterComponent.getName()).thenReturn("Morgan");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
@@ -172,8 +185,9 @@ public class AbstractCommandTest {
 
     @Test
     void testFindWorldCharacter() {
-        lenient().when(ch.getName()).thenReturn("Scion");
-        when(target.getName()).thenReturn("Morgan");
+        when(targetCharacterComponent.getName()).thenReturn("Morgan");
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(target.getCharacter().getName()).thenReturn("Morgan");
         when(characterRepository.findAll()).thenReturn(List.of(ch, target));
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {

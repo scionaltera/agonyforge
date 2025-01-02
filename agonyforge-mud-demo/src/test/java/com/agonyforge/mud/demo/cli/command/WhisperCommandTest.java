@@ -5,7 +5,10 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -56,6 +59,9 @@ public class WhisperCommandTest {
     private CommService commService;
 
     @Mock
+    private MudRoom room;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -63,6 +69,12 @@ public class WhisperCommandTest {
 
     @Mock
     private MudCharacter other;
+
+    @Mock
+    private CharacterComponent characterComponent, targetCharacterComponent;
+
+    @Mock
+    private LocationComponent chLocationComponent, targetLocationComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -100,12 +112,16 @@ public class WhisperCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByRoomId(eq(100L))).thenReturn(List.of(ch, target, other));
+        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target, other));
 
-        when(ch.getName()).thenReturn("Scion");
-        when(ch.getRoomId()).thenReturn(100L);
-        when(target.getName()).thenReturn("Target");
+        when(characterComponent.getName()).thenReturn("Scion");
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(targetCharacterComponent.getName()).thenReturn("Target");
 
         Input input = new Input(val);
         Output output = new Output();
@@ -183,6 +199,8 @@ public class WhisperCommandTest {
         Output output = new Output();
         Long chId = random.nextLong();
 
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));

@@ -4,7 +4,9 @@ import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,12 @@ public class CharacterJanitorTest {
     private SimpMessageHeaderAccessor simpMessageHeaderAccessor;
 
     @Mock
+    private PlayerComponent chPlayer, otherPlayer;
+
+    @Mock
+    private CharacterComponent chChComponent, otherChComponent;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -71,6 +79,7 @@ public class CharacterJanitorTest {
 
             when(event.getMessage()).thenReturn(message);
             when(simpMessageHeaderAccessor.getSessionAttributes()).thenReturn(attributes);
+            when(ch.getCharacter()).thenReturn(chChComponent);
             when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
             CharacterJanitor uut = new CharacterJanitor(sessionAttributeService, characterRepository, commService);
@@ -87,8 +96,12 @@ public class CharacterJanitorTest {
         CharacterJanitor uut = new CharacterJanitor(sessionAttributeService, characterRepository, commService);
 
         when(timerEvent.getFrequency()).thenReturn(TimeUnit.MINUTES);
-        when(ch.getWebSocketSession()).thenReturn("abc");
-        when(other.getWebSocketSession()).thenReturn("def");
+        when(ch.getPlayer()).thenReturn(chPlayer);
+        when(ch.getCharacter()).thenReturn(chChComponent);
+        when(chPlayer.getWebSocketSession()).thenReturn("abc");
+        when(other.getPlayer()).thenReturn(otherPlayer);
+        when(other.getCharacter()).thenReturn(otherChComponent);
+        when(otherPlayer.getWebSocketSession()).thenReturn("def");
         when(characterRepository.findAll()).thenReturn(List.of(ch, other));
 
         uut.onTimerEvent(timerEvent);

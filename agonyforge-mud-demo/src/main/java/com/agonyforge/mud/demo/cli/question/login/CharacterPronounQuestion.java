@@ -13,20 +13,16 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 @Component
 public class CharacterPronounQuestion extends BaseQuestion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterPronounQuestion.class);
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
@@ -62,11 +58,11 @@ public class CharacterPronounQuestion extends BaseQuestion {
             output.append("[red]Please choose one of the menu options.");
         } else {
             MenuItem item = itemOptional.get();
-            Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(webSocketContext, output);
+            Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(webSocketContext, output);
 
             if (chOptional.isPresent()) {
-                MudCharacterPrototype ch = chOptional.get();
-                ch.setPronoun((Pronoun)item.getItem());
+                MudCharacterTemplate ch = chOptional.get();
+                ch.getCharacter().setPronoun((Pronoun)item.getItem());
                 getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
             }
 

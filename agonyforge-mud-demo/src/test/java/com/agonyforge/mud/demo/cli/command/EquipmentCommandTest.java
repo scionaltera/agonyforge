@@ -6,8 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -46,6 +45,9 @@ public class EquipmentCommandTest {
     private MudRoomRepository roomRepository;
 
     @Mock
+    private MudRoom room;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -63,6 +65,12 @@ public class EquipmentCommandTest {
     @Mock
     private MudItem junk;
 
+    @Mock
+    private ItemComponent itemComponent;
+
+    @Mock
+    private LocationComponent itemLocationComponent, chLocationComponent;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -76,6 +84,8 @@ public class EquipmentCommandTest {
     void testEquipmentNone() {
         Long chId = random.nextLong();
 
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -99,13 +109,17 @@ public class EquipmentCommandTest {
     void testEquipment() {
         Long chId = random.nextLong();
 
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.getByChId(eq(ch.getId()))).thenReturn(List.of(junk, item));
-        when(item.getWorn()).thenReturn(WearSlot.HEAD);
-        when(item.getShortDescription()).thenReturn("a rubber chicken");
+        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(junk, item));
+        when(item.getLocation()).thenReturn(itemLocationComponent);
+        when(item.getLocation().getWorn()).thenReturn(WearSlot.HEAD);
+        when(item.getItem()).thenReturn(itemComponent);
+        when(item.getItem().getShortDescription()).thenReturn("a rubber chicken");
 
         Output output = new Output();
         EquipmentCommand uut = new EquipmentCommand(repositoryBundle, commService, applicationContext);

@@ -7,7 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
+import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -71,10 +72,13 @@ public class CharacterNameQuestionTest {
     private WebSocketContext webSocketContext;
 
     @Mock
-    private MudCharacterPrototype chProto;
+    private PlayerComponent playerComponent;
+
+    @Mock
+    private MudCharacterTemplate chProto;
 
     @Captor
-    private ArgumentCaptor<MudCharacterPrototype> characterPrototypeCaptor;
+    private ArgumentCaptor<MudCharacterTemplate> characterPrototypeCaptor;
 
     @BeforeEach
     void setUp() {
@@ -106,8 +110,8 @@ public class CharacterNameQuestionTest {
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(roleRepository.findByName(eq("Player"))).thenReturn(Optional.of(role));
-        when(characterPrototypeRepository.save(any(MudCharacterPrototype.class))).thenAnswer(i -> {
-            MudCharacterPrototype prototype = i.getArgument(0);
+        when(characterPrototypeRepository.save(any(MudCharacterTemplate.class))).thenAnswer(i -> {
+            MudCharacterTemplate prototype = i.getArgument(0);
             prototype.setId(1L);
             return prototype;
         });
@@ -124,12 +128,12 @@ public class CharacterNameQuestionTest {
 
         verify(characterPrototypeRepository).save(characterPrototypeCaptor.capture());
 
-        MudCharacterPrototype ch = characterPrototypeCaptor.getValue();
+        MudCharacterTemplate ch = characterPrototypeCaptor.getValue();
 
         assertEquals(1L, ch.getId());
-        assertEquals(principal.getName(), ch.getUsername());
-        assertEquals(userInput, ch.getName());
-        assertTrue(ch.getWearSlots().contains(WearSlot.HEAD));
+        assertEquals(principal.getName(), ch.getPlayer().getUsername());
+        assertEquals(userInput, ch.getCharacter().getName());
+        assertTrue(ch.getCharacter().getWearSlots().contains(WearSlot.HEAD));
     }
 
     @ParameterizedTest
@@ -204,7 +208,7 @@ public class CharacterNameQuestionTest {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Input input = new Input("Scion");
 
-        when(characterPrototypeRepository.findByName(eq("Scion"))).thenReturn(List.of(chProto));
+        when(characterPrototypeRepository.findByCharacterName(eq("Scion"))).thenReturn(List.of(chProto));
 
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();

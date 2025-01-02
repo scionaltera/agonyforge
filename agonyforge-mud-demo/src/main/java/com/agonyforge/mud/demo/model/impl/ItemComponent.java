@@ -3,40 +3,41 @@ package com.agonyforge.mud.demo.model.impl;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-@MappedSuperclass
-public abstract class AbstractMudItem extends Persistent {
-    @Transient
-    private List<String> transientNameList = new ArrayList<>();
+@Entity
+public class ItemComponent extends Persistent {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @Column(name = "namelist")
-    private String nameList;
+    @ElementCollection
+    @CollectionTable(joinColumns = {@JoinColumn(name = "item_id", referencedColumnName = "id")})
+    private Set<String> nameList = new HashSet<>();
+
     private String shortDescription;
     private String longDescription;
 
     @Convert(converter = WearSlot.Converter.class)
     private EnumSet<WearSlot> wearSlots = EnumSet.noneOf(WearSlot.class);
 
-    public List<String> getNameList() {
-        if (!transientNameList.isEmpty()) {
-            return new ArrayList<>(transientNameList);
-        }
-
-        return nameList == null ? List.of() : Arrays.stream(nameList.split(",")).toList();
+    public Long getId() {
+        return id;
     }
 
-    public void setNameList(List<String> names) {
-        transientNameList = new ArrayList<>(names);
-        nameList = String.join(",", transientNameList);
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    @PostLoad
-    private void loadNameList() {
-        transientNameList = nameList == null ? List.of() : Arrays.stream(nameList.split(",")).toList();
+    public Set<String> getNameList() {
+        return nameList;
+    }
+
+    public void setNameList(Set<String> nameList) {
+        this.nameList = new HashSet<>(nameList);
     }
 
     public String getShortDescription() {
@@ -61,5 +62,17 @@ public abstract class AbstractMudItem extends Persistent {
 
     public void setWearSlots(EnumSet<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemComponent that = (ItemComponent) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

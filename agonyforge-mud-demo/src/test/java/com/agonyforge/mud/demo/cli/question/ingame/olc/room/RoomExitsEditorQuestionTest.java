@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Direction;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -55,6 +56,9 @@ public class RoomExitsEditorQuestionTest {
     private MudCharacter ch;
 
     @Mock
+    private LocationComponent locationComponent;
+
+    @Mock
     private MudRoom room;
 
     @Mock
@@ -77,11 +81,11 @@ public class RoomExitsEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Output output = uut.prompt(wsContext);
@@ -98,11 +102,11 @@ public class RoomExitsEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_STATE, "ROOM.EXITS");
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
         Output output = uut.prompt(wsContext);
@@ -120,11 +124,11 @@ public class RoomExitsEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_EXIT, Direction.NORTH);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(roomRepository.findById(eq(destId))).thenReturn(Optional.of(destRoom));
         when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
@@ -150,11 +154,11 @@ public class RoomExitsEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
         attributes.put(REDIT_EXIT, Direction.NORTH);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
@@ -174,11 +178,11 @@ public class RoomExitsEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomExitsEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);
@@ -199,11 +203,11 @@ public class RoomExitsEditorQuestionTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
-        when(ch.getRoomId()).thenReturn(roomId);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(question);
 
         RoomExitsEditorQuestion uut = new RoomExitsEditorQuestion(applicationContext, repositoryBundle);

@@ -7,7 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +32,7 @@ public class CreateCommand extends AbstractCommand {
             return question;
         }
 
-        Optional<MudItemPrototype> itemProto = Optional.empty();
+        Optional<MudItemTemplate> itemProto = Optional.empty();
 
         try {
             Long id = Long.parseLong(tokens.get(1));
@@ -47,12 +47,14 @@ public class CreateCommand extends AbstractCommand {
         }
 
         MudItem item = itemProto.get().buildInstance();
-        item.setCharacterId(ch.getId());
+        item.getLocation().setWorn(null);
+        item.getLocation().setHeld(ch);
+        item.getLocation().setRoom(null);
         item = getRepositoryBundle().getItemRepository().save(item);
 
-        output.append("[yellow]You wave your hand, and %s appears!", item.getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getName(), ch.getPronoun().getPossessive(), item.getShortDescription()));
+        output.append("[yellow]You wave your hand, and %s appears!", item.getItem().getShortDescription());
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), item.getItem().getShortDescription()));
 
         return question;
     }

@@ -33,10 +33,10 @@ public class HelpCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Set<CommandReference> commands;
 
-        if (ch.getPrototypeId() == 1L) {
+        if (ch.getTemplate().getId() == 1L) {
             commands = new HashSet<>(commandRepository.findAll());
         } else {
-            commands = ch.getRoles()
+            commands = ch.getPlayer().getRoles()
                 .stream()
                 .flatMap(role -> role.getCommands().stream())
                 .collect(Collectors.toSet());

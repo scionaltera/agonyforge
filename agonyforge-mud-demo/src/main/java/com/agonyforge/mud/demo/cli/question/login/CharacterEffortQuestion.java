@@ -13,9 +13,7 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +23,6 @@ import java.util.Locale;
 @Component
 public class CharacterEffortQuestion extends BaseQuestion {
     public static final int STARTING_EFFORTS = 4;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterEffortQuestion.class);
 
     private final MenuPane menuPane = new MenuPane();
 
@@ -41,7 +37,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacterPrototype ch = getCharacterPrototype(wsContext, output).orElseThrow();
+        MudCharacterTemplate ch = getCharacterPrototype(wsContext, output).orElseThrow();
 
         populateMenuItems(ch);
 
@@ -52,7 +48,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
     public Response answer(WebSocketContext webSocketContext, Input input) {
         String nextQuestion = "characterEffortQuestion";
         Output output = new Output();
-        MudCharacterPrototype ch = getCharacterPrototype(webSocketContext, output).orElseThrow();
+        MudCharacterTemplate ch = getCharacterPrototype(webSocketContext, output).orElseThrow();
         String choice = input.getInput().toUpperCase(Locale.ROOT);
         int totalPoints = computeEffortPoints(ch);
 
@@ -62,7 +58,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addBaseEffort(Effort.values()[i], 1);
+                    ch.getCharacter().addBaseEffort(Effort.values()[i], 1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red]Oops! Try a number with a plus or minus!");
                 }
@@ -73,7 +69,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
             } else {
                 try {
                     int i = Integer.parseInt(choice.substring(0, choice.length() - 1)) - 1;
-                    ch.addBaseEffort(Effort.values()[i], -1);
+                    ch.getCharacter().addBaseEffort(Effort.values()[i], -1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     output.append("[red]Oops! Try a number with a plus or minus!");
                 }
@@ -98,13 +94,13 @@ public class CharacterEffortQuestion extends BaseQuestion {
         return new Response(next, output);
     }
 
-    private int computeEffortPoints(MudCharacterPrototype ch) {
+    private int computeEffortPoints(MudCharacterTemplate ch) {
         return Arrays.stream(Effort.values())
-            .map(ch::getBaseEffort)
+            .map(ch.getCharacter()::getBaseEffort)
             .reduce(0, Integer::sum);
     }
 
-    private void populateMenuItems(MudCharacterPrototype ch) {
+    private void populateMenuItems(MudCharacterTemplate ch) {
         menuPane.getItems().clear();
 
         int points = STARTING_EFFORTS - computeEffortPoints(ch);
@@ -113,7 +109,7 @@ public class CharacterEffortQuestion extends BaseQuestion {
         menuPane.getItems().add(new MenuItem(" ", String.format("[default]Please allocate [white]%d more points [default]for your stats.", points)));
 
         Arrays.stream(Effort.values())
-            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%16s (%d)", effort.getName(), ch.getBaseEffort(effort)))));
+            .forEachOrdered(effort -> menuPane.getItems().add(new MenuItem((effort.ordinal() + 1) + "[+/-]", String.format("%16s (%d)", effort.getName(), ch.getCharacter().getBaseEffort(effort)))));
 
         menuPane.getItems().add(new MenuItem("S", "Save"));
     }

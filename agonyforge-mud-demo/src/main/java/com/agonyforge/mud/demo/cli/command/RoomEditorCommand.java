@@ -71,12 +71,12 @@ public class RoomEditorCommand extends AbstractCommand {
                 return question;
             }
         } else {
-            room = getRepositoryBundle().getRoomRepository().findById(ch.getRoomId()).orElseThrow();
+            room = ch.getLocation().getRoom();
             webSocketContext.getAttributes().put(REDIT_MODEL, room);
         }
 
-        getCommService().sendToRoom(webSocketContext, ch.getRoomId(),
-            new Output("[yellow]%s begins editing.", ch.getName()), ch);
+        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
 
         return applicationContext.getBean("roomEditorQuestion", Question.class);
     }

@@ -29,10 +29,10 @@ public class EquipmentCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().getByChId(ch.getId())
+        Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)
                 .stream()
-                .filter(item -> item.getWorn() != null)
-                .collect(Collectors.toMap(MudItem::getWorn, Function.identity()));
+                .filter(item -> item.getLocation() != null && item.getLocation().getWorn() != null)
+                .collect(Collectors.toMap((item) -> item.getLocation().getWorn(), Function.identity()));
 
         output.append("[default]You are using:");
 
@@ -43,7 +43,7 @@ public class EquipmentCommand extends AbstractCommand {
                 .stream()
                 .sorted(Comparator.comparingInt(entry -> entry.getKey().ordinal()))
                 .forEach(entry -> output.append("[default]&lt;%s&gt;\t%s",
-                    entry.getKey().getPhrase(), entry.getValue().getShortDescription()));
+                    entry.getKey().getPhrase(), entry.getValue().getItem().getShortDescription()));
         }
 
         return question;

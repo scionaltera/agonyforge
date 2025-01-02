@@ -6,8 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItemPrototype;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemPrototypeRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -47,13 +46,25 @@ public class ItemEditorQuestionTest {
     private MudItemPrototypeRepository itemPrototypeRepository;
 
     @Mock
-    private MudItemPrototype itemProto;
+    private MudItemTemplate itemProto;
+
+    @Mock
+    private ItemComponent itemComponent;
+
+    @Mock
+    private MudRoom room;
 
     @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
     private MudCharacter ch;
+
+    @Mock
+    private CharacterComponent characterComponent;
+
+    @Mock
+    private LocationComponent locationComponent;
 
     @Mock
     private Question question;
@@ -72,6 +83,7 @@ public class ItemEditorQuestionTest {
     @Test
     void testPrompt() {
         when(wsContext.getAttributes()).thenReturn(Map.of(IEDIT_MODEL, 42L));
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(itemProto.getId()).thenReturn(42L);
 
@@ -135,15 +147,16 @@ public class ItemEditorQuestionTest {
         attributes.put(IEDIT_MODEL, 42L);
         attributes.put(IEDIT_STATE, "IEDIT.NAMES");
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(characterRepository.findById(12L)).thenReturn(Optional.of(ch));
 
         ItemEditorQuestion uut = new ItemEditorQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("really big sword"));
 
-        verify(itemProto).setNameList(anyList());
-        verify(itemProto, never()).setLongDescription(anyString());
-        verify(itemProto, never()).setLongDescription(anyString());
+        verify(itemComponent).setNameList(anySet());
+        verify(itemComponent, never()).setLongDescription(anyString());
+        verify(itemComponent, never()).setLongDescription(anyString());
         assertNull(attributes.get(IEDIT_STATE));
         assertEquals(question, result.getNext());
     }
@@ -156,15 +169,16 @@ public class ItemEditorQuestionTest {
         attributes.put(IEDIT_MODEL, 42L);
         attributes.put(IEDIT_STATE, "IEDIT.SHORT_DESC");
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(characterRepository.findById(12L)).thenReturn(Optional.of(ch));
 
         ItemEditorQuestion uut = new ItemEditorQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("a really big sword"));
 
-        verify(itemProto, never()).setNameList(anyList());
-        verify(itemProto).setShortDescription(anyString());
-        verify(itemProto, never()).setLongDescription(anyString());
+        verify(itemComponent, never()).setNameList(anySet());
+        verify(itemComponent).setShortDescription(anyString());
+        verify(itemComponent, never()).setLongDescription(anyString());
         assertNull(attributes.get(IEDIT_STATE));
         assertEquals(question, result.getNext());
     }
@@ -177,15 +191,16 @@ public class ItemEditorQuestionTest {
         attributes.put(IEDIT_MODEL, 42L);
         attributes.put(IEDIT_STATE, "IEDIT.LONG_DESC");
         when(wsContext.getAttributes()).thenReturn(attributes);
+        when(itemProto.getItem()).thenReturn(itemComponent);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
         when(characterRepository.findById(12L)).thenReturn(Optional.of(ch));
 
         ItemEditorQuestion uut = new ItemEditorQuestion(applicationContext, repositoryBundle, commService);
         Response result = uut.answer(wsContext, new Input("A really big sword has been dropped here."));
 
-        verify(itemProto, never()).setNameList(anyList());
-        verify(itemProto, never()).setShortDescription(anyString());
-        verify(itemProto).setLongDescription(anyString());
+        verify(itemComponent, never()).setNameList(anySet());
+        verify(itemComponent, never()).setShortDescription(anyString());
+        verify(itemComponent).setLongDescription(anyString());
         assertNull(attributes.get(IEDIT_STATE));
         assertEquals(question, result.getNext());
     }
@@ -266,6 +281,11 @@ public class ItemEditorQuestionTest {
         attributes.put(IEDIT_MODEL, 42L);
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(itemPrototypeRepository.findById(eq(42L))).thenReturn(Optional.of(itemProto));
+        when(characterComponent.getName()).thenReturn("Name");
+        when(room.getId()).thenReturn(100L);
+        when(ch.getLocation()).thenReturn(locationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(12L)).thenReturn(Optional.of(ch));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(nextQuestion);
 
@@ -273,7 +293,7 @@ public class ItemEditorQuestionTest {
         Response response = uut.answer(wsContext, new Input("x"));
 
         verify(itemPrototypeRepository).save(eq(itemProto));
-        verify(commService).sendToRoom(eq(wsContext), eq(0L), any(Output.class), eq(ch));
+        verify(commService).sendToRoom(eq(wsContext), eq(100L), any(Output.class), eq(ch));
 
         assertNull(attributes.get(IEDIT_MODEL));
         assertNull(attributes.get(IEDIT_STATE));

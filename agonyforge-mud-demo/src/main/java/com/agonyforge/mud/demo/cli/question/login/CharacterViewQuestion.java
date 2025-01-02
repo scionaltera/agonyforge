@@ -10,7 +10,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterPrototype;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
@@ -48,10 +48,10 @@ public class CharacterViewQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
+        Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(wsContext, output);
 
         if (chOptional.isPresent()) {
-            MudCharacterPrototype ch = chOptional.get();
+            MudCharacterTemplate ch = chOptional.get();
 
             characterSheetFormatter.format(ch, output);
 
@@ -75,32 +75,32 @@ public class CharacterViewQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         Output output = new Output();
         Question next = this;
-        Optional<MudCharacterPrototype> chOptional = getCharacterPrototype(wsContext, output);
+        Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(wsContext, output);
 
         if ("P".equalsIgnoreCase(input.getInput())) {
             Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(START_ROOM);
 
             if (chOptional.isPresent() && roomOptional.isPresent()) {
-                MudCharacterPrototype chPrototype = chOptional.get();
+                MudCharacterTemplate chPrototype = chOptional.get();
 
                 if (!chPrototype.getComplete()) {
                     output.append("[red]This character is not finished yet. You must go through character creation first.");
-                } else if (getRepositoryBundle().getCharacterRepository().findByName(chPrototype.getName()).isPresent()) {
+                } else if (getRepositoryBundle().getCharacterRepository().findByCharacterName(chPrototype.getCharacter().getName()).isPresent()) {
                     output.append("[red]This character is already playing. Try a different one, or create a new one.");
                 } else {
                     MudCharacter ch = chPrototype.buildInstance();
-                    MudRoom room = roomOptional.get();
+                    MudRoom startRoom = roomOptional.get();
 
-                    ch.setRoomId(START_ROOM); // TODO configurable start room
-                    ch.setWebSocketSession(wsContext.getSessionId());
+                    ch.getLocation().setRoom(startRoom); // TODO configurable start room
+                    ch.getPlayer().setWebSocketSession(wsContext.getSessionId());
 
                     ch = getRepositoryBundle().getCharacterRepository().save(ch);
                     wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
-                    LOGGER.info("{} has entered the game", ch.getName());
-                    commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getName()), ch);
+                    LOGGER.info("{} has entered the game", ch.getCharacter().getName());
+                    commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getCharacter().getName()), ch);
 
-                    output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
+                    output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, startRoom));
 
                     next = getQuestion("commandQuestion");
                 }

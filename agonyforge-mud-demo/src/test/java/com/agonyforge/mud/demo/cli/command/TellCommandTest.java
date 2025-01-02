@@ -5,7 +5,10 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -65,7 +68,16 @@ public class TellCommandTest {
     private MudCharacter other;
 
     @Mock
+    private CharacterComponent chCharacterComponent, targetCharacterComponent;
+
+    @Mock
+    private LocationComponent chLocationComponent;
+
+    @Mock
     private WebSocketContext webSocketContext;
+
+    @Mock
+    private MudRoom room;
 
     @Mock
     private Question question;
@@ -102,8 +114,12 @@ public class TellCommandTest {
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
-        when(ch.getName()).thenReturn("Scion");
-        when(target.getName()).thenReturn("Target");
+        when(ch.getCharacter()).thenReturn(chCharacterComponent);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(chCharacterComponent.getName()).thenReturn("Scion");
+        when(targetCharacterComponent.getName()).thenReturn("Target");
 
         Input input = new Input(val);
         Output output = new Output();
@@ -176,6 +192,8 @@ public class TellCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
