@@ -69,11 +69,12 @@ public class ItemWearSlotsEditorQuestionTest {
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
 
-        assertEquals(26, result.getOutput().size());
         assertTrue(result.getOutput().stream().anyMatch(line -> line.contains("Item Wear Slots")));
         assertTrue(result.getOutput().stream().anyMatch(line -> line.contains("make your selection")));
         assertTrue(result.getOutput().stream().anyMatch(line -> line.contains("false")));
         assertTrue(result.getOutput().stream().noneMatch(line -> line.contains("true")));
+        assertTrue(result.getOutput().stream().anyMatch(line -> line.contains("Wear Slot Mode")));
+        assertTrue(result.getOutput().stream().anyMatch(line -> line.contains("Exit")));
     }
 
     @Test
@@ -96,7 +97,6 @@ public class ItemWearSlotsEditorQuestionTest {
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
 
-        assertEquals(26, result.getOutput().size());
         assertTrue(slots.contains(eyes));
         assertTrue(result.getOutput().stream().anyMatch(line -> line.contains("true")));
     }
@@ -121,7 +121,6 @@ public class ItemWearSlotsEditorQuestionTest {
         ItemWearSlotsEditorQuestion uut = new ItemWearSlotsEditorQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
 
-        assertEquals(26, result.getOutput().size());
         assertFalse(slots.contains(eyes));
         assertTrue(result.getOutput().stream().noneMatch(line -> line.contains("true")));
     }

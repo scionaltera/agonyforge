@@ -1,5 +1,6 @@
 package com.agonyforge.mud.demo.model.impl;
 
+import com.agonyforge.mud.demo.model.constant.WearMode;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
@@ -23,6 +24,7 @@ public class ItemComponent extends Persistent {
 
     @Convert(converter = WearSlot.Converter.class)
     private EnumSet<WearSlot> wearSlots = EnumSet.noneOf(WearSlot.class);
+    private WearMode wearMode = WearMode.ALL;
 
     public Long getId() {
         return id;
@@ -62,6 +64,14 @@ public class ItemComponent extends Persistent {
 
     public void setWearSlots(EnumSet<WearSlot> wearSlots) {
         this.wearSlots = wearSlots;
+    }
+
+    public WearMode getWearMode() {
+        return wearMode;
+    }
+
+    public void setWearMode(WearMode wearMode) {
+        this.wearMode = wearMode;
     }
 
     @Override

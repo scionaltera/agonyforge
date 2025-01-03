@@ -12,6 +12,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
+import com.agonyforge.mud.demo.model.constant.WearMode;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +28,7 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQue
 @Component
 public class ItemWearSlotsEditorQuestion extends BaseQuestion {
     static final String IEDIT_SLOT = "IEDIT.WEAR_SLOT";
+    static final String IEDIT_MODE = "IEDIT.WEAR_MODE";
 
     private final MenuPane menuPane = new MenuPane();
 
@@ -41,13 +43,22 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
     public Output prompt(WebSocketContext wsContext) {
         MudItemTemplate itemProto = getRepositoryBundle().getItemPrototypeRepository().findById((Long)wsContext.getAttributes().get("IEDIT.MODEL")).orElseThrow();
 
-        if (wsContext.getAttributes().containsKey(IEDIT_STATE) && wsContext.getAttributes().get(IEDIT_STATE).toString().equals(IEDIT_SLOT)) {
-            WearSlot slot = (WearSlot)wsContext.getAttributes().get(IEDIT_SLOT);
+        if (wsContext.getAttributes().containsKey(IEDIT_STATE)) {
+            if (wsContext.getAttributes().get(IEDIT_STATE).toString().equals(IEDIT_SLOT)) {
+                WearSlot slot = (WearSlot) wsContext.getAttributes().get(IEDIT_SLOT);
 
-            if (itemProto.getItem().getWearSlots().contains(slot)) {
-                itemProto.getItem().getWearSlots().remove(slot);
-            } else {
-                itemProto.getItem().getWearSlots().add(slot);
+                if (itemProto.getItem().getWearSlots().contains(slot)) {
+                    itemProto.getItem().getWearSlots().remove(slot);
+                } else {
+                    itemProto.getItem().getWearSlots().add(slot);
+                }
+
+                wsContext.getAttributes().remove(IEDIT_STATE, IEDIT_SLOT);
+            } else if (wsContext.getAttributes().get(IEDIT_STATE).toString().equals(IEDIT_MODE)) {
+                WearMode mode = (WearMode) wsContext.getAttributes().get(IEDIT_MODE);
+
+                itemProto.getItem().setWearMode(mode);
+                wsContext.getAttributes().remove(IEDIT_STATE, IEDIT_MODE);
             }
 
             itemProto = getRepositoryBundle().getItemPrototypeRepository().save(itemProto);
@@ -67,8 +78,18 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
             nextQuestion = "itemEditorQuestion";
             wsContext.getAttributes().remove(IEDIT_STATE);
             wsContext.getAttributes().remove(IEDIT_SLOT);
+        } else if ("M".equals(choice)) {
+            MenuItem menuItem = menuPane.getItems()
+                .stream()
+                .filter(item -> choice.equals(item.getKey().trim()))
+                .map(item -> (MenuItem)item)
+                .findFirst().orElseThrow();
+
+            wsContext.getAttributes().put(IEDIT_STATE, IEDIT_MODE);
+            wsContext.getAttributes().put(IEDIT_MODE, menuItem.getItem());
         } else {
-            Optional<MenuItem> itemOptional = menuPane.getItems().stream()
+            Optional<MenuItem> itemOptional = menuPane.getItems()
+                .stream()
                 .filter(item -> choice.equals(item.getKey().trim()))
                 .map(item -> (MenuItem)item)
                 .findFirst();
@@ -102,6 +123,7 @@ public class ItemWearSlotsEditorQuestion extends BaseQuestion {
 
         menuPane.getItems().addAll(menuItems);
 
+        menuPane.getItems().add(new MenuItem("M ", String.format("Wear Slot Mode: [green]%s", item.getItem().getWearMode()), item.getItem().getWearMode() == WearMode.ALL ? WearMode.SINGLE : WearMode.ALL));
         menuPane.getItems().add(new MenuItem("X ", "Exit"));
     }
 }

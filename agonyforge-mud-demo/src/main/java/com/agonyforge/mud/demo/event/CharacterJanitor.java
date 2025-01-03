@@ -57,7 +57,7 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
                 // TODO copy relevant differences in instance back to prototype
                 characterRepository.delete(instance);
 
-                LOGGER.info("{} has left the game.", instance.getCharacter().getName());
+                LOGGER.info("{} has left the game", instance.getCharacter().getName());
 
                 WebSocketContext webSocketContext = WebSocketContext.build(event.getMessage().getHeaders());
                 commService.sendToAll(webSocketContext,
@@ -87,7 +87,7 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
             // TODO copy relevant differences in instance back to prototype
             characterRepository.delete(ch);
 
-            LOGGER.info("{} has left the game.", ch.getCharacter().getName());
+            LOGGER.info("{} has left the game", ch.getCharacter().getName());
             commService.sendToAll(new Output("[yellow]%s has left the game!", ch.getCharacter().getName()), ch);
         });
     }

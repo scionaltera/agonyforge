@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearMode;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
@@ -62,22 +63,45 @@ public class WearCommand extends AbstractCommand {
 
         // figure out which slots are still available based on what the character is already wearing
         EnumSet<WearSlot> availableSlots = EnumSet.copyOf(ch.getCharacter().getWearSlots());
-        wornItems.forEach(item -> availableSlots.removeAll(item.getItem().getWearSlots()));
+        wornItems.forEach(item -> availableSlots.removeAll(item.getLocation().getWorn()));
 
-        // if the character doesn't have ALL the slots on the item, she can't wear it
-        if (!availableSlots.containsAll(target.getItem().getWearSlots())) {
-            output.append("[default]You need to take something else off before you can wear that.");
+        EnumSet<WearSlot> occupiedSlots;
+
+        if (WearMode.ALL.equals(target.getItem().getWearMode())) {
+            // if the character doesn't have ALL the slots on the item, she can't wear it
+            if (!availableSlots.containsAll(target.getItem().getWearSlots())) {
+                output.append("[default]You need to take something else off before you can wear that.");
+                return question;
+            }
+
+            occupiedSlots = EnumSet.copyOf(target.getItem().getWearSlots());
+        } else if (WearMode.SINGLE.equals(target.getItem().getWearMode())) {
+            // if the character doesn't have ANY ONE OF the slots on the item, she can't wear it
+            Optional<WearSlot> shared = target.getItem().getWearSlots()
+                .stream()
+                .filter(availableSlots::contains)
+                .findAny();
+
+            if (shared.isEmpty()) {
+                output.append("[default]You need to take something else off before you can wear that.");
+                return question;
+            }
+
+            occupiedSlots = EnumSet.of(shared.get());
+        } else {
+            LOGGER.error("Unknown wear mode: {}", target.getItem().getWearMode());
+            output.append("[red]An error has occurred. It has been reported as a bug.");
             return question;
         }
 
         // wear the item
-        target.getLocation().setWorn(target.getItem().getWearSlots());
+        target.getLocation().setWorn(occupiedSlots);
         target.getLocation().setHeld(ch);
         target.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(target);
 
         // make a fancy list of wear locations where the item was worn
-        List<String> slotNames = target.getItem().getWearSlots().stream().map(WearSlot::getName).collect(Collectors.toList());
+        List<String> slotNames = occupiedSlots.stream().map(WearSlot::getName).collect(Collectors.toList());
         String slotNamesString;
 
         if (slotNames.size() == 1) {
@@ -96,7 +120,7 @@ public class WearCommand extends AbstractCommand {
                 ch.getCharacter().getName(),
                 target.getItem().getShortDescription(),
                 ch.getCharacter().getPronoun().getPossessive(),
-                slotNames
+                slotNamesString
             ));
 
         return question;
