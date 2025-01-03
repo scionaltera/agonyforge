@@ -210,8 +210,6 @@ public class WearCommandTest {
         ));
         when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
 
-//        when(item.getItem()).thenReturn(itemItemComponent);
-//        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
@@ -296,8 +294,6 @@ public class WearCommandTest {
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_MAIN, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
 
-//        when(item.getItem()).thenReturn(itemItemComponent);
-//        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
 
@@ -345,8 +341,6 @@ public class WearCommandTest {
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_MAIN, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
 
-//        when(item.getItem()).thenReturn(itemItemComponent);
-//        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
 
