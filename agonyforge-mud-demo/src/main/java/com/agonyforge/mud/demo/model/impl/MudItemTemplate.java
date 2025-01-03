@@ -19,6 +19,7 @@ public class MudItemTemplate extends AbstractMudObject {
         instance.getItem().setShortDescription(getItem().getShortDescription());
         instance.getItem().setLongDescription(getItem().getLongDescription());
         instance.getItem().setWearSlots(getItem().getWearSlots());
+        instance.getItem().setWearMode(getItem().getWearMode());
 
         return instance;
     }

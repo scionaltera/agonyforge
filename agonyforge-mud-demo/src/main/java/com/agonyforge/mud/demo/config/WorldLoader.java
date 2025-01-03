@@ -94,7 +94,7 @@ public class WorldLoader {
     }
 
     private void loadItems() {
-        if (itemRepository.findById(100L).isEmpty()) {
+        if (itemPrototypeRepository.findById(100L).isEmpty()) {
             MudRoom room100 = roomRepository.findById(100L).orElseThrow();
             MudRoom room101 = roomRepository.findById(101L).orElseThrow();
 

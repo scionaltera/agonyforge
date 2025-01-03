@@ -22,7 +22,7 @@ public enum WearSlot implements PersistentEnum {
     ANKLE_LEFT("left ankle", "worn on left ankle"),
     ANKLE_RIGHT("right ankle", "worn on right ankle"),
     HELD_OFF("off hand", "held in off hand"),
-    HELD_WEAPON("weapon hand", "held in weapon hand");
+    HELD_MAIN("main hand", "held in main hand");
 
     private final String name;
     private final String phrase;

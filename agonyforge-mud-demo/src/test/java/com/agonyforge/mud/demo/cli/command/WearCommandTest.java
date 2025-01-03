@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearMode;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -86,6 +87,8 @@ public class WearCommandTest {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+        lenient().when(itemItemComponent.getWearMode()).thenReturn(WearMode.ALL);
+        lenient().when(targetItemComponent.getWearMode()).thenReturn(WearMode.ALL);
     }
 
     @Test
@@ -207,8 +210,8 @@ public class WearCommandTest {
         ));
         when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
 
-        when(item.getItem()).thenReturn(itemItemComponent);
-        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+//        when(item.getItem()).thenReturn(itemItemComponent);
+//        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
@@ -290,11 +293,11 @@ public class WearCommandTest {
 
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_WEAPON, WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_MAIN, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
 
-        when(item.getItem()).thenReturn(itemItemComponent);
-        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
+//        when(item.getItem()).thenReturn(itemItemComponent);
+//        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
 
@@ -339,11 +342,11 @@ public class WearCommandTest {
 
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_WEAPON, WearSlot.HEAD));
+        when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF, WearSlot.HELD_MAIN, WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
 
-        when(item.getItem()).thenReturn(itemItemComponent);
-        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
+//        when(item.getItem()).thenReturn(itemItemComponent);
+//        when(item.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
 
