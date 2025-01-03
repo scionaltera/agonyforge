@@ -150,7 +150,7 @@ public class RemoveCommandTest {
         when(target.getItem().getNameList()).thenReturn(Set.of("test", "hat"));
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getLocation()).thenReturn(targetLocationComponent);
-        when(target.getLocation().getWorn()).thenReturn(WearSlot.HEAD);
+        when(target.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         Output output = new Output();
         RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
@@ -163,7 +163,7 @@ public class RemoveCommandTest {
 
         verify(targetLocationComponent).setHeld(eq(ch));
         verify(targetLocationComponent).setRoom(eq(null));
-        verify(targetLocationComponent).setWorn(eq(null));
+        verify(targetLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             eq(webSocketContext),

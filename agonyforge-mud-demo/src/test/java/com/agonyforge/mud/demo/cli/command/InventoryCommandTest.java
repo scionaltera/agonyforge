@@ -98,10 +98,11 @@ public class InventoryCommandTest {
         when(itemProto.getId()).thenReturn(102L);
         when(item.getTemplate()).thenReturn(itemProto);
         when(item.getLocation()).thenReturn(itemLocationComponent);
+        when(item.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(item.getItem()).thenReturn(itemComponent);
         when(item.getItem().getShortDescription()).thenReturn(itemName);
         when(armor.getLocation()).thenReturn(armorLocationComponent);
-        when(armor.getLocation().getWorn()).thenReturn(WearSlot.BODY);
+        when(armor.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.BODY));
         when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(armor, item));
 
         Output output = new Output();

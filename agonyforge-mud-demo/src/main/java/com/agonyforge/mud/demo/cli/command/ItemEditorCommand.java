@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.impl.MudItemTemplate;
@@ -55,6 +56,7 @@ public class ItemEditorCommand extends AbstractCommand {
                 MudItemTemplate itemPrototype = new MudItemTemplate();
 
                 itemPrototype.setId(id);
+                itemPrototype.setItem(new ItemComponent());
 
                 itemProto = Optional.of(getRepositoryBundle().getItemPrototypeRepository().save(itemPrototype));
             } catch (NumberFormatException e) {

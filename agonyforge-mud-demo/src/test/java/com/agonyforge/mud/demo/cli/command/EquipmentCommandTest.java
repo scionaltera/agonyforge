@@ -117,7 +117,7 @@ public class EquipmentCommandTest {
         ));
         when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(junk, item));
         when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getLocation().getWorn()).thenReturn(WearSlot.HEAD);
+        when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(item.getItem()).thenReturn(itemComponent);
         when(item.getItem().getShortDescription()).thenReturn("a rubber chicken");
 

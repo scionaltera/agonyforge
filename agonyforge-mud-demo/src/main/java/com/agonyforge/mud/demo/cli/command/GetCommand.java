@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +41,7 @@ public class GetCommand extends AbstractCommand {
         }
 
         MudItem target = targetOptional.get();
-        target.getLocation().setWorn(null);
+        target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         target.getLocation().setHeld(ch);
         target.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(target);

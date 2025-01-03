@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.model.impl;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import jakarta.persistence.*;
 
+import java.util.EnumSet;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +15,8 @@ public class LocationComponent extends Persistent {
     @ManyToOne
     private MudCharacter held = null;
 
-    private WearSlot worn = null;
+    @Convert(converter = WearSlot.Converter.class)
+    private EnumSet<WearSlot> worn = null;
 
     @ManyToOne
     private MudRoom room = null;
@@ -35,11 +37,11 @@ public class LocationComponent extends Persistent {
         this.held = heldBy;
     }
 
-    public WearSlot getWorn() {
+    public EnumSet<WearSlot> getWorn() {
         return worn;
     }
 
-    public void setWorn(WearSlot wornOn) {
+    public void setWorn(EnumSet<WearSlot> wornOn) {
         this.worn = wornOn;
     }
 

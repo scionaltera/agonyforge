@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,13 +42,14 @@ public class RemoveCommand extends AbstractCommand {
 
         MudItem target = targetOptional.get();
 
-        if (target.getLocation().getWorn() == null) {
+        if (target.getLocation().getWorn().isEmpty()) {
             output.append("[default]You aren't wearing %s[default].", target.getItem().getShortDescription());
             return question;
         }
 
-        WearSlot targetSlot = target.getLocation().getWorn();
-        target.getLocation().setWorn(null);
+        String slotNames = String.join(", ", target.getLocation().getWorn().stream().map(WearSlot::getName).toList());
+
+        target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         target.getLocation().setHeld(ch);
         target.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(target);
@@ -58,7 +60,7 @@ public class RemoveCommand extends AbstractCommand {
                 ch.getCharacter().getName(),
                 target.getItem().getShortDescription(),
                 ch.getCharacter().getPronoun().getPossessive(),
-                targetSlot.getName()
+                slotNames
             ));
 
         return question;
