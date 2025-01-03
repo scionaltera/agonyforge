@@ -32,7 +32,7 @@ public class InventoryCommand extends AbstractCommand {
 
         List<MudItem> held = items
             .stream()
-            .filter(item -> item.getLocation().getWorn() == null).toList();
+            .filter(item -> item.getLocation().getWorn().isEmpty()).toList();
 
         if (held.isEmpty()) {
             output.append("[default]Nothing.");

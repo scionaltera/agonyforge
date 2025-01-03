@@ -66,7 +66,7 @@ public abstract class AbstractCommand implements Command {
 
         return items
             .stream()
-            .filter(item -> item.getLocation().getWorn() == null)
+            .filter(item -> item.getLocation().getWorn() == null || item.getLocation().getWorn().isEmpty())
             .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
@@ -78,7 +78,7 @@ public abstract class AbstractCommand implements Command {
 
         return items
             .stream()
-            .filter(item -> item.getLocation().getWorn() != null)
+            .filter(item -> item.getLocation().getWorn() != null && !item.getLocation().getWorn().isEmpty())
             .filter(item -> item.getItem().getNameList()
                 .stream()
                 .anyMatch(name -> name.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))

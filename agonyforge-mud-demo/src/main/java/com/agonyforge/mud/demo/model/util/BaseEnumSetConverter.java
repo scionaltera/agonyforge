@@ -17,6 +17,10 @@ public abstract class BaseEnumSetConverter <E extends Enum<E> & PersistentEnum> 
     public Long convertToDatabaseColumn(EnumSet<E> attribute) {
         long total = 0;
 
+        if (attribute == null) {
+            return total;
+        }
+
         for (E constant : attribute) {
             total |= 1L << constant.ordinal();
         }

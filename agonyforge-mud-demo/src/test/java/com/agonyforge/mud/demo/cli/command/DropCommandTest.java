@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -157,6 +158,7 @@ public class DropCommandTest {
         ));
         when(room.getId()).thenReturn(100L);
         when(item.getLocation()).thenReturn(locationComponent);
+        when(item.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(item.getItem()).thenReturn(itemComponent);
         when(item.getItem().getNameList()).thenReturn(Set.of("test"));
         when(item.getItem().getShortDescription()).thenReturn(itemName);
@@ -177,7 +179,7 @@ public class DropCommandTest {
         verify(itemRepository).findByLocationHeld(eq(ch));
         verify(locationComponent).setHeld(eq(null));
         verify(locationComponent).setRoom(eq(room));
-        verify(locationComponent).setWorn(eq(null));
+        verify(locationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));
         verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));

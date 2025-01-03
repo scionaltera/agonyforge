@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -226,6 +227,7 @@ public class GiveCommandTest {
             MUD_CHARACTER, chId
         ));
         when(item.getLocation()).thenReturn(itemLocationComponent);
+        when(item.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(item.getItem()).thenReturn(itemComponent);
         when(item.getItem().getNameList()).thenReturn(Set.of("spoon"));
         when(item.getItem().getShortDescription()).thenReturn("a spoon");
@@ -246,7 +248,7 @@ public class GiveCommandTest {
         verify(itemRepository).findByLocationHeld(eq(ch));
         verify(characterRepository).findByLocationRoom(eq(room));
         verify(itemLocationComponent).setHeld(eq(target));
-        verify(itemLocationComponent).setWorn(eq(null));
+        verify(itemLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemLocationComponent).setRoom(eq(null));
         verify(itemRepository).save(eq(item));
         verify(commService).sendTo(eq(target), any(Output.class));

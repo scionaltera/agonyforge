@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
@@ -176,7 +177,7 @@ public class GetCommandTest {
         verify(itemRepository).findByLocationRoom(eq(room));
         verify(itemLocationComponent).setHeld(eq(ch));
         verify(itemLocationComponent).setRoom(eq(null));
-        verify(itemLocationComponent).setWorn(eq(null));
+        verify(itemLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));
         verify(commService).sendToRoom(eq(webSocketContext), eq(roomId), any(Output.class));

@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,13 +54,13 @@ public class GiveCommand extends AbstractCommand {
         MudItem item = itemOptional.get();
         MudCharacter target = targetOptional.get();
 
-        if (item.getLocation().getWorn() != null) {
+        if (!item.getLocation().getWorn().isEmpty()) {
             LOGGER.error("Worn item was found in inventory! id:{} proto:{}", item.getTemplate().getId(), item.getId());
             output.append("[default]You need to remove it first.");
             return question;
         }
 
-        item.getLocation().setWorn(null);
+        item.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         item.getLocation().setHeld(target);
         item.getLocation().setRoom(null);
         getRepositoryBundle().getItemRepository().save(item);

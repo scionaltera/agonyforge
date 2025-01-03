@@ -9,6 +9,7 @@ import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,9 @@ public class EquipmentCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)
                 .stream()
-                .filter(item -> item.getLocation() != null && item.getLocation().getWorn() != null)
-                .collect(Collectors.toMap((item) -> item.getLocation().getWorn(), Function.identity()));
+                .filter(item -> item.getLocation() != null && !item.getLocation().getWorn().isEmpty())
+                .flatMap(item -> item.getLocation().getWorn().stream().map(slot -> new ImmutablePair<>(slot, item)))
+                .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight));
 
         output.append("[default]You are using:");
 
