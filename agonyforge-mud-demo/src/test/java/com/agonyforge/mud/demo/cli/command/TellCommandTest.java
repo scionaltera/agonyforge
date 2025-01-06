@@ -71,7 +71,7 @@ public class TellCommandTest {
     private CharacterComponent chCharacterComponent, targetCharacterComponent;
 
     @Mock
-    private LocationComponent chLocationComponent;
+    private LocationComponent chLocationComponent, targetLocationComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -117,6 +117,7 @@ public class TellCommandTest {
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(chCharacterComponent.getName()).thenReturn("Scion");
         when(targetCharacterComponent.getName()).thenReturn("Target");

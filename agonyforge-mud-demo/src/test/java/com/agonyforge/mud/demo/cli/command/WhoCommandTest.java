@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -59,6 +60,9 @@ public class WhoCommandTest {
     private CharacterComponent chCharacterComponent, otherCharacterComponent;
 
     @Mock
+    private LocationComponent chLocationComponent, otherLocationComponent;
+
+    @Mock
     private Question question;
 
     @Mock
@@ -79,6 +83,7 @@ public class WhoCommandTest {
         when(chCharacterComponent.getName()).thenReturn("Scion");
         when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
         when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
@@ -100,8 +105,10 @@ public class WhoCommandTest {
         when(otherCharacterComponent.getName()).thenReturn("Spook");
         when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
         when(other.getTemplate()).thenReturn(oProto);
         when(other.getCharacter()).thenReturn(otherCharacterComponent);
+        when(other.getLocation()).thenReturn(otherLocationComponent);
         when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);

@@ -54,8 +54,8 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
             if (instanceOptional.isPresent()) {
                 MudCharacter instance = instanceOptional.get();
 
-                // TODO copy relevant differences in instance back to prototype
-                characterRepository.delete(instance);
+                instance.setLocation(null);
+                characterRepository.save(instance);
 
                 LOGGER.info("{} has left the game", instance.getCharacter().getName());
 
@@ -72,20 +72,15 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
             return;
         }
 
-        List<MudCharacter> allCharacters = characterRepository.findAll();
-        List<MudCharacter> disconnected = new ArrayList<>();
-
-        allCharacters.forEach(ch -> {
-            Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getPlayer().getWebSocketSession());
-
-            if (attributes.isEmpty()) {
-                disconnected.add(ch);
-            }
-        });
+        List<MudCharacter> disconnected = characterRepository.findAll()
+            .stream()
+            .filter(ch -> ch.getLocation() != null)
+            .filter(ch -> sessionAttributeService.getSessionAttributes(ch.getPlayer().getWebSocketSession()).isEmpty())
+            .toList();
 
         disconnected.forEach(ch -> {
-            // TODO copy relevant differences in instance back to prototype
-            characterRepository.delete(ch);
+            ch.setLocation(null);
+            characterRepository.save(ch);
 
             LOGGER.info("{} has left the game", ch.getCharacter().getName());
             commService.sendToAll(new Output("[yellow]%s has left the game!", ch.getCharacter().getName()), ch);

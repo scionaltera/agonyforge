@@ -27,8 +27,7 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER
 import static com.agonyforge.mud.demo.cli.question.login.CharacterViewQuestion.START_ROOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -179,7 +178,51 @@ public class CharacterViewQuestionTest {
     }
 
     @Test
-    void testAnswerPlay() {
+    void testAnswerPlayExisting() {
+        Long chId = random.nextLong();
+        String wsSessionId = UUID.randomUUID().toString();
+        Map<String, Object> attributes = new HashMap<>();
+
+        attributes.put(MUD_PCHARACTER, chId);
+
+        when(wsContext.getAttributes()).thenReturn(attributes);
+        when(wsContext.getSessionId()).thenReturn(wsSessionId);
+
+        when(chInstance.getPlayer()).thenReturn(playerComponent);
+        when(chInstance.getCharacter()).thenReturn(characterComponent);
+        when(chInstance.getLocation())
+            .thenReturn(null)
+            .thenReturn(locationComponent);
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(ch.getCharacter().getName()).thenReturn("Scion");
+        when(ch.getComplete()).thenReturn(true);
+        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findByCharacterName(anyString())).thenReturn(Optional.of(chInstance));
+        when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(roomRepository.findById(eq(START_ROOM))).thenReturn(Optional.of(room));
+        when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
+
+        CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
+        Response result = uut.answer(wsContext, new Input("p"));
+
+        verify(characterRepository).save(characterCaptor.capture());
+        verify(commService).sendToAll(any(WebSocketContext.class), outputCaptor.capture(), eq(chInstance));
+
+        MudCharacter instance = characterCaptor.getValue();
+
+        verify(chInstance).setLocation(any(LocationComponent.class));
+        verify(instance.getLocation()).setRoom(eq(room));
+        verify(playerComponent).setWebSocketSession(eq(wsSessionId));
+
+        Output announcement = outputCaptor.getValue();
+
+        assertTrue(announcement.getOutput().get(0).contains("has entered the game"));
+
+        assertEquals(question, result.getNext());
+    }
+
+    @Test
+    void testAnswerPlayNew() {
         Long chId = random.nextLong();
         String wsSessionId = UUID.randomUUID().toString();
         Map<String, Object> attributes = new HashMap<>();

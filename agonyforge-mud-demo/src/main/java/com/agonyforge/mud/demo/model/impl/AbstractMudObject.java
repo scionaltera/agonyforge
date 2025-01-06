@@ -15,7 +15,7 @@ public abstract class AbstractMudObject extends Persistent {
     @OneToOne(cascade = CascadeType.ALL)
     private ItemComponent item = null;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private LocationComponent location = null;
 
     public PlayerComponent getPlayer() {
