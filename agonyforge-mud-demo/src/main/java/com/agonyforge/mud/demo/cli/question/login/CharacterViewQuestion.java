@@ -9,6 +9,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
@@ -85,24 +86,35 @@ public class CharacterViewQuestion extends BaseQuestion {
 
                 if (!chPrototype.getComplete()) {
                     output.append("[red]This character is not finished yet. You must go through character creation first.");
-                } else if (getRepositoryBundle().getCharacterRepository().findByCharacterName(chPrototype.getCharacter().getName()).isPresent()) {
+                    return new Response(next, output);
+                }
+
+                Optional<MudCharacter> chOp = getRepositoryBundle().getCharacterRepository().findByCharacterName(chPrototype.getCharacter().getName());
+                MudCharacter ch = chOp.orElseGet(chPrototype::buildInstance);
+                MudRoom startRoom = roomOptional.get();
+
+                if (ch.getLocation() == null) {
+                    ch.setLocation(new LocationComponent());
+                } else if (ch.getLocation().getRoom() != null) {
                     output.append("[red]This character is already playing. Try a different one, or create a new one.");
-                } else {
-                    MudCharacter ch = chPrototype.buildInstance();
-                    MudRoom startRoom = roomOptional.get();
+                    return new Response(next, output);
+                }
 
-                    ch.getLocation().setRoom(startRoom); // TODO configurable start room
-                    ch.getPlayer().setWebSocketSession(wsContext.getSessionId());
+                ch.getPlayer().setWebSocketSession(wsContext.getSessionId());
+                ch.getLocation().setRoom(startRoom);
 
-                    ch = getRepositoryBundle().getCharacterRepository().save(ch);
-                    wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
+                ch = getRepositoryBundle().getCharacterRepository().save(ch);
+                wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
-                    LOGGER.info("{} has entered the game", ch.getCharacter().getName());
-                    commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getCharacter().getName()), ch);
+                output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, startRoom));
 
-                    output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, startRoom));
+                LOGGER.info("{} has entered the game", ch.getCharacter().getName());
+                commService.sendToAll(wsContext, new Output("[yellow]%s has entered the game!", ch.getCharacter().getName()), ch);
 
-                    next = getQuestion("commandQuestion");
+                next = getQuestion("commandQuestion");
+            } else {
+                if (roomOptional.isEmpty()) {
+                    LOGGER.error("Start room with ID {} was empty!", START_ROOM);
                 }
             }
         } else if ("E".equalsIgnoreCase(input.getInput())) {

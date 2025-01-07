@@ -62,10 +62,10 @@ public class AbstractCommandTest {
     private MudCharacter target;
 
     @Mock
-    private CharacterComponent targetCharacterComponent;
+    private CharacterComponent chCharacterComponent, targetCharacterComponent;
 
     @Mock
-    private LocationComponent chLocationComponent;
+    private LocationComponent chLocationComponent, targetLocationComponent;
 
     @Mock
     private MudRoom room;
@@ -185,8 +185,8 @@ public class AbstractCommandTest {
 
     @Test
     void testFindWorldCharacter() {
-        when(targetCharacterComponent.getName()).thenReturn("Morgan");
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getCharacter().getName()).thenReturn("Morgan");
         when(characterRepository.findAll()).thenReturn(List.of(ch, target));
 

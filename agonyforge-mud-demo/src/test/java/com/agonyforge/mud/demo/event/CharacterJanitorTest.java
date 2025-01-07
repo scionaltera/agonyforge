@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
+import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.PlayerComponent;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -54,6 +55,9 @@ public class CharacterJanitorTest {
     private CharacterComponent chChComponent, otherChComponent;
 
     @Mock
+    private LocationComponent chLocationComponent, otherLocationComponent;
+
+    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -86,7 +90,7 @@ public class CharacterJanitorTest {
 
             uut.onApplicationEvent(event);
 
-            verify(characterRepository).delete(ch);
+            verify(characterRepository).save(ch);
             verify(commService).sendToAll(any(WebSocketContext.class), any(Output.class), eq(ch));
         }
     }
@@ -98,16 +102,18 @@ public class CharacterJanitorTest {
         when(timerEvent.getFrequency()).thenReturn(TimeUnit.MINUTES);
         when(ch.getPlayer()).thenReturn(chPlayer);
         when(ch.getCharacter()).thenReturn(chChComponent);
+        when(ch.getLocation()).thenReturn(chLocationComponent);
         when(chPlayer.getWebSocketSession()).thenReturn("abc");
         when(other.getPlayer()).thenReturn(otherPlayer);
         when(other.getCharacter()).thenReturn(otherChComponent);
+        when(other.getLocation()).thenReturn(otherLocationComponent);
         when(otherPlayer.getWebSocketSession()).thenReturn("def");
         when(characterRepository.findAll()).thenReturn(List.of(ch, other));
 
         uut.onTimerEvent(timerEvent);
 
         verify(sessionAttributeService, times(2)).getSessionAttributes(anyString());
-        verify(characterRepository, times(2)).delete(any(MudCharacter.class));
+        verify(characterRepository, times(2)).save(any(MudCharacter.class));
         verify(commService, times(2)).sendToAll(any(Output.class), any(MudCharacter.class));
     }
 }
