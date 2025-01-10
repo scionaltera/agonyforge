@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.RoomFlag;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -81,6 +82,7 @@ public class RoomEditorQuestionTest {
         attributes.put(MUD_CHARACTER, chId);
 
         when(room.getId()).thenReturn(roomId);
+        when(room.getFlags()).thenReturn(EnumSet.noneOf(RoomFlag.class));
         when(ch.getLocation()).thenReturn(locationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);

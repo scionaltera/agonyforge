@@ -2,6 +2,7 @@ package com.agonyforge.mud.demo.event;
 
 import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
+import com.agonyforge.mud.demo.model.constant.RoomFlag;
 import com.agonyforge.mud.demo.model.impl.MudProperty;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +21,7 @@ public class WeatherListener {
     public static final String PROPERTY_HOUR = "mud.hour";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WeatherListener.class);
+    private static final EnumSet<RoomFlag> ROOM_INDOORS = EnumSet.of(RoomFlag.INDOORS);
 
     private final MudPropertyRepository mudPropertyRepository;
     private final CommService commService;
@@ -38,10 +41,10 @@ public class WeatherListener {
         final int newHour = advanceTime();
 
         switch (newHour) {
-            case 0 -> commService.sendToAll(new Output("[dblue]It is midnight."));
-            case 6 -> commService.sendToAll(new Output("[dyellow]The sun is rising."));
-            case 12 -> commService.sendToAll(new Output("[yellow]It is noon."));
-            case 18 -> commService.sendToAll(new Output("[magenta]The sun is setting."));
+            case 0 -> commService.sendToAllWithoutFlags(new Output("[dblue]It is midnight."), ROOM_INDOORS);
+            case 6 -> commService.sendToAllWithoutFlags(new Output("[dyellow]The sun is rising."), ROOM_INDOORS);
+            case 12 -> commService.sendToAllWithoutFlags(new Output("[yellow]It is noon."), ROOM_INDOORS);
+            case 18 -> commService.sendToAllWithoutFlags(new Output("[magenta]The sun is setting."), ROOM_INDOORS);
             default -> LOGGER.trace("Advanced MUD hour to {}", newHour);
         }
     }

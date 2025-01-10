@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.model.constant.RoomFlag;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,20 +19,13 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CommServiceTest {
@@ -133,7 +127,9 @@ public class CommServiceTest {
         lenient().when(protoPlayer.getUsername()).thenReturn(otherPrincipal);
 
         lenient().when(room.getId()).thenReturn(100L);
+        lenient().when(room.getFlags()).thenReturn(EnumSet.of(RoomFlag.INDOORS));
         lenient().when(otherRoom.getId()).thenReturn(200L);
+        lenient().when(otherRoom.getFlags()).thenReturn(EnumSet.noneOf(RoomFlag.class));
     }
 
     @Test
@@ -187,6 +183,43 @@ public class CommServiceTest {
         );
 
         verify(simpMessagingTemplate).convertAndSendToUser(
+            eq(targetPrincipal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
+
+        verify(simpMessagingTemplate).convertAndSendToUser(
+            eq(otherPrincipal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
+
+        verifyNoMoreInteractions(simpMessagingTemplate);
+    }
+
+    @Test
+    void testSendToAllWithoutFlags() {
+        CommService uut = new CommService(
+            applicationContext,
+            simpMessagingTemplate,
+            simpUserRegistry,
+            sessionAttributeService,
+            characterRepository);
+
+        Output message = new Output("message");
+
+        uut.sendToAllWithoutFlags(message, EnumSet.of(RoomFlag.INDOORS));
+
+        verify(simpMessagingTemplate, never()).convertAndSendToUser(
+            eq(principal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
+
+        verify(simpMessagingTemplate, never()).convertAndSendToUser(
             eq(targetPrincipal),
             eq("/queue/output"),
             any(Output.class),
