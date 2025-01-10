@@ -32,6 +32,10 @@ public abstract class BaseEnumSetConverter <E extends Enum<E> & PersistentEnum> 
     public EnumSet<E> convertToEntityAttribute(Long dbData) {
         EnumSet<E> results = EnumSet.noneOf(klass);
 
+        if (dbData == null) {
+            return results;
+        }
+
         for (E constant : klass.getEnumConstants()) {
             if ((dbData & (1L << constant.ordinal())) != 0) {
                 results.add(constant);
