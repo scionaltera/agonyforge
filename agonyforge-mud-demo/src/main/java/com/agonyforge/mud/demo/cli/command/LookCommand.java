@@ -32,7 +32,7 @@ public class LookCommand extends AbstractCommand {
         Output output = new Output();
 
         output
-            .append("[yellow](%d) %s", room.getId(), room.getName())
+            .append("[yellow](%d) %s %s", room.getId(), room.getName(), room.getFlags())
             .append("[default]%s", room.getDescription())
             .append("[dcyan]Exits: %s", String.join(" ", room.getExits()));
 

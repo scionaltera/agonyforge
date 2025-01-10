@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.service.StompPrincipal;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.model.constant.RoomFlag;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +64,22 @@ public class CommService extends EchoService {
         characterRepository.findAll()
             .stream()
             .filter(ch -> !skip.contains(ch))
+            .forEach(ch -> sendTo(ch, message));
+    }
+
+    /**
+     * Send a message to all characters in rooms without the specified flags.
+     * @param message The message to send.
+     * @param roomFlags Don't send if the character's room has all of these flags.
+     * @param except Don't send to these characters.
+     */
+    public void sendToAllWithoutFlags(Output message, EnumSet<RoomFlag> roomFlags, MudCharacter ... except) {
+        List<MudCharacter> skip = List.of(except);
+
+        characterRepository.findAll()
+            .stream()
+            .filter(ch -> !skip.contains(ch))
+            .filter(ch -> ch.getLocation() != null && ch.getLocation().getRoom() != null && !ch.getLocation().getRoom().getFlags().containsAll(roomFlags))
             .forEach(ch -> sendTo(ch, message));
     }
 

@@ -1,11 +1,9 @@
 package com.agonyforge.mud.demo.model.impl;
 
+import com.agonyforge.mud.demo.model.constant.RoomFlag;
 import jakarta.persistence.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -18,6 +16,9 @@ public class MudRoom extends Persistent {
 
     @Lob
     private String description;
+
+    @Convert(converter = RoomFlag.Converter.class)
+    private EnumSet<RoomFlag> flags = EnumSet.noneOf(RoomFlag.class);
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "mud_room_exit_mapping",
@@ -79,6 +80,14 @@ public class MudRoom extends Persistent {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public EnumSet<RoomFlag> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(EnumSet<RoomFlag> flags) {
+        this.flags = flags;
     }
 
     public List<String> getExits() {

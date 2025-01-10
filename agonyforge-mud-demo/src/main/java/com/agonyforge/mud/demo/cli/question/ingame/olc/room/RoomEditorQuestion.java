@@ -84,6 +84,7 @@ public class RoomEditorQuestion extends BaseQuestion {
             switch (choice) {
                 case "T" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.TITLE");
                 case "D" -> wsContext.getAttributes().put(REDIT_STATE, "ROOM.DESCRIPTION");
+                case "F" -> nextQuestion = "roomFlagsEditorQuestion";
                 case "E" -> nextQuestion = "roomExitsEditorQuestion";
                 case "X" -> {
                     getRepositoryBundle().getRoomRepository().save(room);
@@ -125,6 +126,7 @@ public class RoomEditorQuestion extends BaseQuestion {
         menuPane.getTitle().setTitle(String.format("Room Editor - %s", room.getId()));
         menuPane.getItems().add(new MenuItem("T", "Title: " + room.getName()));
         menuPane.getItems().add(new MenuItem("D", "Description: " + room.getDescription()));
+        menuPane.getItems().add(new MenuItem("F", "Flags: " + room.getFlags().toString()));
         menuPane.getItems().add(new MenuItem("E", "Exits"));
 
         menuPane.getItems().add(new MenuItem("X", "Save"));
