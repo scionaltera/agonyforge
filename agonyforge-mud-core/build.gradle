@@ -22,7 +22,7 @@ dependencies {
 
     implementation 'com.hazelcast:hazelcast:5.5.0'
     implementation 'io.projectreactor.netty:reactor-netty:1.2.1'
-    implementation 'ch.qos.logback.access:logback-access-tomcat:2.0.5'
+    implementation 'ch.qos.logback.access:logback-access-tomcat:2.0.6'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'
