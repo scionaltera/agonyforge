@@ -61,6 +61,7 @@ public class CommandLoader {
             refs.put("GIVE", new CommandReference(10, "GIVE", "giveCommand", "Give an item to someone."));
             refs.put("REMOVE", new CommandReference(10, "REMOVE", "removeCommand", "Stop wearing an item."));
             refs.put("WEAR", new CommandReference(10, "WEAR", "wearCommand", "Wear an item that you're carrying."));
+            refs.put("EMOTE", new CommandReference(10, "EMOTE", "emoteCommand", "Perform a social action."));
             refs.put("GOSSIP", new CommandReference(10, "GOSSIP", "gossipCommand", "Talk on the worldwide channel."));
             refs.put("SAY", new CommandReference(10, "SAY", "sayCommand", "Talk in the room you're in."));
             refs.put("SHOUT", new CommandReference(10, "SHOUT", "shoutCommand", "Talk in the area you're in."));
@@ -111,6 +112,7 @@ public class CommandLoader {
             player.getCommands().add(refs.get("REMOVE"));
             player.getCommands().add(refs.get("WEAR"));
 
+            player.getCommands().add(refs.get("EMOTE"));
             player.getCommands().add(refs.get("GOSSIP"));
             player.getCommands().add(refs.get("SAY"));
             player.getCommands().add(refs.get("SHOUT"));
