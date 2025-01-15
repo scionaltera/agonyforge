@@ -5,10 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.LocationComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -57,6 +54,9 @@ public class WhoCommandTest {
     private MudCharacter other;
 
     @Mock
+    private PlayerComponent chPlayerComponent, otherPlayerComponent;
+
+    @Mock
     private CharacterComponent chCharacterComponent, otherCharacterComponent;
 
     @Mock
@@ -81,9 +81,11 @@ public class WhoCommandTest {
         Output output = new Output();
 
         when(chCharacterComponent.getName()).thenReturn("Scion");
+        when(chPlayerComponent.getTitle()).thenReturn("the Man With the Plan");
         when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getPlayer()).thenReturn(chPlayerComponent);
         when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
@@ -92,7 +94,7 @@ public class WhoCommandTest {
         assertEquals(question, result);
 
         assertTrue(output.getOutput().get(0).contains("Who is Playing"));
-        assertTrue(output.getOutput().get(2).contains("Scion"));
+        assertTrue(output.getOutput().get(2).contains("Scion the Man With the Plan"));
         assertTrue(output.getOutput().get(4).contains("1 player online"));
     }
 
@@ -102,13 +104,17 @@ public class WhoCommandTest {
         Output output = new Output();
 
         when(chCharacterComponent.getName()).thenReturn("Scion");
+        when(chPlayerComponent.getTitle()).thenReturn("the Man With the Plan");
         when(otherCharacterComponent.getName()).thenReturn("Spook");
+        when(otherPlayerComponent.getTitle()).thenReturn("the Other Man With the Other Plan");
         when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getPlayer()).thenReturn(chPlayerComponent);
         when(other.getTemplate()).thenReturn(oProto);
         when(other.getCharacter()).thenReturn(otherCharacterComponent);
         when(other.getLocation()).thenReturn(otherLocationComponent);
+        when(other.getPlayer()).thenReturn(otherPlayerComponent);
         when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
@@ -117,8 +123,8 @@ public class WhoCommandTest {
         assertEquals(question, result);
 
         assertTrue(output.getOutput().get(0).contains("Who is Playing"));
-        assertTrue(output.getOutput().get(2).contains("Scion"));
-        assertTrue(output.getOutput().get(3).contains("Spook"));
+        assertTrue(output.getOutput().get(2).contains("Scion the Man With the Plan"));
+        assertTrue(output.getOutput().get(3).contains("Spook the Other Man With the Other Plan"));
         assertTrue(output.getOutput().get(5).contains("2 players online"));
     }
 }

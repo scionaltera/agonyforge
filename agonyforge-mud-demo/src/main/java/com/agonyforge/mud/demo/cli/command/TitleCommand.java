@@ -14,33 +14,28 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class WhoCommand extends AbstractCommand {
+public class TitleCommand extends AbstractCommand {
     @Autowired
-    public WhoCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+    public TitleCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
     }
 
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().findAll()
-            .stream()
-            .filter(ch -> ch.getLocation() != null)
-            .toList();
+        String title = Command.stripFirstWord(input.getInput());
+        String titleColorless = Command.stripColors(title);
 
-        output
-            .append("[black]=== [white]Who is Playing [black]===")
-            .append("");
+        if (titleColorless.length() > 60) {
+            output.append("[default]That title is too long, please try something shorter.");
+            return question;
+        }
 
-        characters.forEach(ch -> output.append("[%s]%s %s",
-            ch.getTemplate().getId() == 1L ? "yellow" : "white",
-            ch.getCharacter().getName(),
-            ch.getPlayer().getTitle()));
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
-        output
-            .append("")
-            .append("[white]%d player%s online.",
-                characters.size(),
-                characters.size() == 1 ? "" : "s");
+        ch.getPlayer().setTitle(title);
+        getRepositoryBundle().getCharacterRepository().save(ch);
+
+        output.append("[default]Changed title to: [white]%s %s", ch.getCharacter().getName(), title);
 
         return question;
     }
