@@ -13,6 +13,7 @@ public class PlayerComponent extends Persistent {
     private Long id;
     private String username;
     private String webSocketSession;
+    private String title;
 
     @ManyToMany()
     private Set<Role> roles = new HashSet<>();
@@ -39,6 +40,14 @@ public class PlayerComponent extends Persistent {
 
     public void setWebSocketSession(String webSocketSession) {
         this.webSocketSession = webSocketSession;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Set<Role> getRoles() {

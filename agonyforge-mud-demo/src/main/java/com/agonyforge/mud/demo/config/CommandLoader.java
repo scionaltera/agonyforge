@@ -55,6 +55,7 @@ public class CommandLoader {
             refs.put("SCORE", new CommandReference(5, "SCORE", "scoreCommand", "See your character sheet."));
             refs.put("EQUIPMENT", new CommandReference(5, "EQUIPMENT", "equipmentCommand", "See what you're wearing."));
             refs.put("INVENTORY", new CommandReference(5, "INVENTORY", "inventoryCommand", "See what you're carrying."));
+            refs.put("TITLE", new CommandReference(5, "TITLE", "titleCommand", "Change your title message on the who list."));
 
             refs.put("DROP", new CommandReference(10, "DROP", "dropCommand", "Drop an item."));
             refs.put("GET", new CommandReference(10, "GET", "getCommand", "Pick up an item."));
@@ -103,6 +104,7 @@ public class CommandLoader {
             player.getCommands().add(refs.get("LOOK"));
             player.getCommands().add(refs.get("WHO"));
             player.getCommands().add(refs.get("SCORE"));
+            player.getCommands().add(refs.get("TITLE"));
 
             player.getCommands().add(refs.get("EQUIPMENT"));
             player.getCommands().add(refs.get("INVENTORY"));

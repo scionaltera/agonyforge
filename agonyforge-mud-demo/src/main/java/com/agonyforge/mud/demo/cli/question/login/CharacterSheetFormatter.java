@@ -10,12 +10,19 @@ import org.springframework.stereotype.Component;
 public final class CharacterSheetFormatter {
     public void format(AbstractMudObject ch, Output output) {
         output.append("[dcyan]CHARACTER SHEET");
-        output.append("[default]Name: [cyan]%s", ch.getCharacter().getName());
+
+        if (ch.getPlayer() != null) {
+            output.append("[default]Name: [cyan]%s %s", ch.getCharacter().getName(), ch.getPlayer().getTitle());
+        } else {
+            output.append("[default]Name: [cyan]%s", ch.getCharacter().getName());
+        }
+
         output.append("[default]Pronouns: [cyan]%s/%s", ch.getCharacter().getPronoun().getSubject(), ch.getCharacter().getPronoun().getObject());
         output.append("[default]Species: [cyan]%s", ch.getCharacter().getSpecies().getName());
         output.append("[default]Profession: [cyan]%s", ch.getCharacter().getProfession().getName());
         output.append("");
         output.append("[cyan]Stats  [magenta]Efforts");
+
         for (int i = 0; i < Math.max(Stat.values().length, Effort.values().length); i++) {
             Stat stat = Stat.values().length > i ? Stat.values()[i] : null;
             Effort effort = Effort.values().length > i ? Effort.values()[i] : null;

@@ -66,6 +66,7 @@ public class CharacterNameQuestion extends BaseQuestion {
         Role playerRole = roleRepository.findByName("Player").orElseThrow();
 
         ch.setPlayer(new PlayerComponent());
+        ch.getPlayer().setTitle("the Neophyte");
         ch.getPlayer().setUsername(wsContext.getPrincipal().getName());
         ch.getPlayer().setRoles(Set.of(playerRole));
 
