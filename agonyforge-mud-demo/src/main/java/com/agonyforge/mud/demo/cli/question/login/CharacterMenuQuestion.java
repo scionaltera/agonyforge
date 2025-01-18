@@ -12,7 +12,6 @@ import com.agonyforge.mud.core.cli.menu.impl.MenuPane;
 import com.agonyforge.mud.core.cli.menu.impl.MenuPrompt;
 import com.agonyforge.mud.core.cli.menu.impl.MenuTitle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.security.Principal;
 import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
 public class CharacterMenuQuestion extends BaseQuestion {
@@ -61,7 +60,7 @@ public class CharacterMenuQuestion extends BaseQuestion {
             nextQuestion = "characterNameQuestion";
         } else {
             MenuItem item = itemOptional.get();
-            wsContext.getAttributes().put(MUD_PCHARACTER, item.getItem());
+            wsContext.getAttributes().put(MUD_CHARACTER, item.getItem());
             nextQuestion = "characterViewQuestion";
         }
 
@@ -74,23 +73,16 @@ public class CharacterMenuQuestion extends BaseQuestion {
         menuPane.getItems().clear();
         menuPane.getItems().add(new MenuItem("N", "New Character"));
 
-        getRepositoryBundle().getCharacterPrototypeRepository().findByPlayerUsername(principal.getName())
+        getRepositoryBundle().getCharacterRepository().findByPlayerUsername(principal.getName())
             .forEach(ch -> {
-                Optional<MudCharacter> instanceOpt = getRepositoryBundle().getCharacterRepository().findByCharacterName(ch.getCharacter().getName());
-                boolean playing = false;
-
-                if (instanceOpt.isPresent()) {
-                    MudCharacter instance = instanceOpt.get();
-                    playing = instance.getLocation() != null;
-                }
+                boolean playing = ch.getLocation() != null;
 
                 menuPane.getItems().add(new MenuItem(
                     Integer.toString(menuPane.getItems().size()),
-                    String.format("%s%s%s%s",
+                    String.format("%s%s%s",
                         ch.getId() == 1L ? "[yellow]" : "[white]",
                         ch.getCharacter().getName(),
-                        playing ? " [dgreen]*[green]PLAYING[dgreen]*" : "",
-                        ch.getComplete() ? "" : " [dred]*[red]INCOMPLETE[dred]*"),
+                        playing ? " [dgreen]*[green]PLAYING[dgreen]*" : ""),
                     ch.getId()));
             });
     }

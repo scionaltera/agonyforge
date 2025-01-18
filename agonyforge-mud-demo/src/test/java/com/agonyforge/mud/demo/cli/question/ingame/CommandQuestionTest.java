@@ -59,7 +59,7 @@ public class CommandQuestionTest {
     private CharacterComponent characterComponent;
 
     @Mock
-    private MudCharacterTemplate chProto;
+    private Role role;
 
     @Mock
     private MudCharacter ch;
@@ -122,8 +122,9 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getTemplate()).thenReturn(chProto);
-        when(ch.getTemplate().getId()).thenReturn(1L);
+        when(role.getCommands()).thenReturn(Set.of(commandReference));
+        when(ch.getPlayer()).thenReturn(playerComponent);
+        when(ch.getPlayer().getRoles()).thenReturn(Set.of(role));
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
@@ -146,8 +147,6 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getTemplate()).thenReturn(chProto);
-        when(ch.getTemplate().getId()).thenReturn(2L);
         when(ch.getPlayer()).thenReturn(playerComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
@@ -242,8 +241,9 @@ public class CommandQuestionTest {
 
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
-        when(ch.getTemplate()).thenReturn(chProto);
-        when(ch.getTemplate().getId()).thenReturn(1L);
+        when(role.getCommands()).thenReturn(Set.of(commandReference));
+        when(ch.getPlayer()).thenReturn(playerComponent);
+        when(ch.getPlayer().getRoles()).thenReturn(Set.of(role));
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);

@@ -45,9 +45,6 @@ public class WhoCommandTest {
     private CommService commService;
 
     @Mock
-    private MudCharacterTemplate chProto, oProto;
-
-    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -82,7 +79,6 @@ public class WhoCommandTest {
 
         when(chCharacterComponent.getName()).thenReturn("Scion");
         when(chPlayerComponent.getTitle()).thenReturn("the Man With the Plan");
-        when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getPlayer()).thenReturn(chPlayerComponent);
@@ -107,11 +103,9 @@ public class WhoCommandTest {
         when(chPlayerComponent.getTitle()).thenReturn("the Man With the Plan");
         when(otherCharacterComponent.getName()).thenReturn("Spook");
         when(otherPlayerComponent.getTitle()).thenReturn("the Other Man With the Other Plan");
-        when(ch.getTemplate()).thenReturn(chProto);
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getPlayer()).thenReturn(chPlayerComponent);
-        when(other.getTemplate()).thenReturn(oProto);
         when(other.getCharacter()).thenReturn(otherCharacterComponent);
         when(other.getLocation()).thenReturn(otherLocationComponent);
         when(other.getPlayer()).thenReturn(otherPlayerComponent);

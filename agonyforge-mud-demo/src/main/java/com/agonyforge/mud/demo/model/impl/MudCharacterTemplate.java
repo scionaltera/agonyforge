@@ -19,27 +19,29 @@ public class MudCharacterTemplate extends AbstractMudObject {
         }
 
         MudCharacter instance = new MudCharacter();
-        instance.setPlayer(new PlayerComponent());
+
+        if (getPlayer() != null) {
+            instance.setPlayer(new PlayerComponent());
+            instance.getPlayer().setUsername(getPlayer().getUsername());
+            instance.getPlayer().setRoles(getPlayer().getRoles());
+        } else if (getNonPlayer() != null) {
+            instance.setNonPlayer(new NonPlayerComponent());
+        }
+
         instance.setCharacter(new CharacterComponent());
         instance.setLocation(new LocationComponent());
 
         instance.setTemplate(this);
         instance.getCharacter().setName(getCharacter().getName());
         instance.getCharacter().setPronoun(getCharacter().getPronoun());
-        instance.getPlayer().setUsername(getPlayer().getUsername());
-        instance.getPlayer().setRoles(getPlayer().getRoles());
         instance.getCharacter().setWearSlots(getCharacter().getWearSlots());
         instance.getCharacter().setSpecies(getCharacter().getSpecies());
         instance.getCharacter().setProfession(getCharacter().getProfession());
 
         Arrays.stream(Stat.values())
-            .forEach(stat -> {
-                instance.getCharacter().setBaseStat(stat, getCharacter().getBaseStat(stat));
-            });
+            .forEach(stat -> instance.getCharacter().setBaseStat(stat, getCharacter().getBaseStat(stat)));
         Arrays.stream(Effort.values())
-            .forEach(effort -> {
-                instance.getCharacter().setBaseEffort(effort, getCharacter().getBaseEffort(effort));
-            });
+            .forEach(effort -> instance.getCharacter().setBaseEffort(effort, getCharacter().getBaseEffort(effort)));
 
         return instance;
     }
@@ -63,8 +65,7 @@ public class MudCharacterTemplate extends AbstractMudObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MudCharacterTemplate)) return false;
-        MudCharacterTemplate that = (MudCharacterTemplate) o;
+        if (!(o instanceof MudCharacterTemplate that)) return false;
         return Objects.equals(getId(), that.getId());
     }
 

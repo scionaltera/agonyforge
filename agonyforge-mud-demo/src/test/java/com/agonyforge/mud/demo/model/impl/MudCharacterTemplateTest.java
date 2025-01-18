@@ -298,4 +298,14 @@ public class MudCharacterTemplateTest {
 
         assertEquals(component, uut.getCharacter());
     }
+
+    @Test
+    void testNonPlayerComponent() {
+        NonPlayerComponent component = new NonPlayerComponent();
+        MudCharacterTemplate uut = new MudCharacterTemplate();
+
+        uut.setNonPlayer(component);
+
+        assertEquals(component, uut.getNonPlayer());
+    }
 }

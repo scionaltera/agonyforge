@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +33,7 @@ public class WhoCommand extends AbstractCommand {
             .append("");
 
         characters.forEach(ch -> output.append("[%s]%s %s",
-            ch.getTemplate().getId() == 1L ? "yellow" : "white",
+            ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor) ? "yellow" : "white",
             ch.getCharacter().getName(),
             ch.getPlayer().getTitle()));
 

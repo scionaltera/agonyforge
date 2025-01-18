@@ -7,10 +7,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
-import com.agonyforge.mud.demo.model.impl.PlayerComponent;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.Role;
-import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.RoleRepository;
@@ -26,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,13 +54,13 @@ public class CharacterNameQuestionTest {
     private Role role;
 
     @Mock
+    private Role supah;
+
+    @Mock
     private ApplicationContext applicationContext;
 
     @Mock
     private MudCharacterRepository characterRepository;
-
-    @Mock
-    private MudCharacterPrototypeRepository characterPrototypeRepository;
 
     @Mock
     private MudItemRepository itemRepository;
@@ -72,18 +69,14 @@ public class CharacterNameQuestionTest {
     private WebSocketContext webSocketContext;
 
     @Mock
-    private PlayerComponent playerComponent;
-
-    @Mock
-    private MudCharacterTemplate chProto;
+    private MudCharacter ch;
 
     @Captor
-    private ArgumentCaptor<MudCharacterTemplate> characterPrototypeCaptor;
+    private ArgumentCaptor<MudCharacter> characterCaptor;
 
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(characterPrototypeRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
     }
 
@@ -110,10 +103,11 @@ public class CharacterNameQuestionTest {
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(roleRepository.findByName(eq("Player"))).thenReturn(Optional.of(role));
-        when(characterPrototypeRepository.save(any(MudCharacterTemplate.class))).thenAnswer(i -> {
-            MudCharacterTemplate prototype = i.getArgument(0);
-            prototype.setId(1L);
-            return prototype;
+        when(roleRepository.findByName(eq("Implementor"))).thenReturn(Optional.of(supah));
+        when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> {
+            MudCharacter saved = i.getArgument(0);
+            saved.setId(1L);
+            return saved;
         });
 
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
@@ -126,9 +120,9 @@ public class CharacterNameQuestionTest {
         assertEquals(1, output.getOutput().size());
         assertEquals(String.format("[default]Hello, [white]%s[default]!", userInput), output.getOutput().get(0));
 
-        verify(characterPrototypeRepository).save(characterPrototypeCaptor.capture());
+        verify(characterRepository).save(characterCaptor.capture());
 
-        MudCharacterTemplate ch = characterPrototypeCaptor.getValue();
+        MudCharacter ch = characterCaptor.getValue();
 
         assertEquals(1L, ch.getId());
         assertEquals(principal.getName(), ch.getPlayer().getUsername());
@@ -208,7 +202,7 @@ public class CharacterNameQuestionTest {
         CharacterNameQuestion uut = new CharacterNameQuestion(applicationContext, repositoryBundle, roleRepository);
         Input input = new Input("Scion");
 
-        when(characterPrototypeRepository.findByCharacterName(eq("Scion"))).thenReturn(List.of(chProto));
+        when(characterRepository.findByCharacterName(eq("Scion"))).thenReturn(Optional.of(ch));
 
         Response result = uut.answer(webSocketContext, input);
         Output output = result.getFeedback().orElseThrow();

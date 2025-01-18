@@ -12,6 +12,7 @@ import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,7 @@ public class CommandQuestion extends BaseQuestion {
             Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
             MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
 
-            if (1L == ch.getTemplate().getId() || (ch.getPlayer() != null && ch.getPlayer().getRoles().stream().anyMatch(role -> role.getCommands().contains(ref)))) {
+            if (ch.getPlayer() != null && (ch.getPlayer().getRoles().stream().anyMatch(role -> role.getCommands().contains(ref)) || ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor))) {
                 Question next = command.execute(this, webSocketContext, tokens, input, output);
                 return new Response(next, output);
             }

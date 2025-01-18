@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.Role;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.context.ApplicationContext;
@@ -33,7 +34,7 @@ public class HelpCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Set<CommandReference> commands;
 
-        if (ch.getTemplate().getId() == 1L) {
+        if (ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor)) {
             commands = new HashSet<>(commandRepository.findAll());
         } else {
             commands = ch.getPlayer().getRoles()

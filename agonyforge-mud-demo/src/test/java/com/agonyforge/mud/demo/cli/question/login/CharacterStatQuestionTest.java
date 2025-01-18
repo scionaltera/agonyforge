@@ -8,8 +8,8 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
-import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.login.CharacterStatQuestion.STARTING_STATS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -38,13 +38,13 @@ public class CharacterStatQuestionTest {
     private RepositoryBundle repositoryBundle;
 
     @Mock
-    private MudCharacterPrototypeRepository mudCharacterPrototypeRepository;
+    private MudCharacterRepository mudCharacterRepository;
 
     @Mock
     private WebSocketContext wsContext;
 
     @Mock
-    private MudCharacterTemplate chProto;
+    private MudCharacter ch;
 
     @Mock
     private CharacterComponent characterComponent;
@@ -60,16 +60,16 @@ public class CharacterStatQuestionTest {
         lenient().when(applicationContext.getBean(eq("characterStatQuestion"), eq(Question.class))).thenReturn(question);
         lenient().when(applicationContext.getBean(eq("characterEffortQuestion"), eq(Question.class))).thenReturn(nextQuestion);
 
-        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(mudCharacterPrototypeRepository);
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(mudCharacterRepository);
     }
 
     @Test
     void testPrompt() {
         Long chId = random.nextLong();
 
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Output result = uut.prompt(wsContext);
@@ -81,15 +81,15 @@ public class CharacterStatQuestionTest {
     void testAdd() {
         Long chId = random.nextLong();
 
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("1+"));
 
         verify(characterComponent).addBaseStat(eq(Stat.values()[0]), eq(1));
-        verify(mudCharacterPrototypeRepository).save(eq(chProto));
+        verify(mudCharacterRepository).save(eq(ch));
 
         assertTrue(response.getFeedback().isPresent());
         assertEquals(question, response.getNext());
@@ -100,9 +100,9 @@ public class CharacterStatQuestionTest {
         Long chId = random.nextLong();
 
         lenient().when(characterComponent.getBaseStat(Stat.DEX)).thenReturn(STARTING_STATS);
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("1+"));
@@ -118,9 +118,9 @@ public class CharacterStatQuestionTest {
     void testInvalidAddition() {
         Long chId = random.nextLong();
 
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("+"));
@@ -137,15 +137,15 @@ public class CharacterStatQuestionTest {
         Long chId = random.nextLong();
 
         lenient().when(characterComponent.getBaseStat(Stat.DEX)).thenReturn(3);
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("2-"));
 
         verify(characterComponent).addBaseStat(eq(Stat.DEX), eq(-1));
-        verify(mudCharacterPrototypeRepository).save(eq(chProto));
+        verify(mudCharacterRepository).save(eq(ch));
 
         assertTrue(response.getFeedback().isPresent());
         assertEquals(question, response.getNext());
@@ -155,9 +155,9 @@ public class CharacterStatQuestionTest {
     void testSubtractTooMany() {
         Long chId = random.nextLong();
 
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("1-"));
@@ -173,9 +173,9 @@ public class CharacterStatQuestionTest {
     void testInvalidSubtraction() {
         Long chId = random.nextLong();
 
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("-"));
@@ -191,9 +191,9 @@ public class CharacterStatQuestionTest {
     void testGarbageInput() {
         Long chId = random.nextLong();
 
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("F"));
@@ -210,14 +210,14 @@ public class CharacterStatQuestionTest {
         Long chId = random.nextLong();
 
         lenient().when(characterComponent.getBaseStat(Stat.DEX)).thenReturn(STARTING_STATS);
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("s"));
 
-        verify(mudCharacterPrototypeRepository).save(eq(chProto));
+        verify(mudCharacterRepository).save(eq(ch));
 
         assertTrue(response.getFeedback().isPresent());
         assertEquals(nextQuestion, response.getNext());
@@ -228,14 +228,14 @@ public class CharacterStatQuestionTest {
         Long chId = random.nextLong();
 
         lenient().when(characterComponent.getBaseStat(Stat.DEX)).thenReturn(STARTING_STATS - 1);
-        when(chProto.getCharacter()).thenReturn(characterComponent);
-        when(mudCharacterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(chProto));
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_PCHARACTER, chId));
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         CharacterStatQuestion uut = new CharacterStatQuestion(applicationContext, repositoryBundle);
         Response response = uut.answer(wsContext, new Input("s"));
 
-        verify(mudCharacterPrototypeRepository).save(eq(chProto));
+        verify(mudCharacterRepository).save(eq(ch));
 
         Output answer = response.getFeedback().orElseThrow();
         assertTrue(answer.getOutput().stream().anyMatch(line -> line.contains("allocate exactly")));
