@@ -9,7 +9,6 @@ import java.util.*;
 @Entity
 public class MudCharacterTemplate extends AbstractMudObject {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Boolean isComplete = false;
 

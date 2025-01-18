@@ -75,6 +75,7 @@ public class CommandLoader {
 
             refs.put("REDIT", new CommandReference(20, "REDIT", "roomEditorCommand", "Edit a room."));
             refs.put("IEDIT", new CommandReference(20, "IEDIT", "itemEditorCommand", "Edit an item."));
+            refs.put("MEDIT", new CommandReference(20, "MEDIT", "nonPlayerCreatureEditorCommand", "Edit a creature."));
 
             refs.put("CREATE", new CommandReference(30, "CREATE", "createCommand", "Create an item."));
             refs.put("PURGE", new CommandReference(30, "PURGE", "purgeCommand", "Destroy an item."));

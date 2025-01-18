@@ -37,6 +37,10 @@ public abstract class AbstractCommand implements Command {
         return commService;
     }
 
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
     protected Question getQuestion(String name) {
         return applicationContext.getBean(name, Question.class);
     }

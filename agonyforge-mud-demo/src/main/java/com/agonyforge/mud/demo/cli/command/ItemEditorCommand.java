@@ -21,13 +21,9 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQue
 
 @Component
 public class ItemEditorCommand extends AbstractCommand {
-    private final ApplicationContext applicationContext;
-
     @Autowired
     public ItemEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
-
-        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -69,7 +65,7 @@ public class ItemEditorCommand extends AbstractCommand {
         getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(), new Output(
             "[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
 
-        return applicationContext.getBean("itemEditorQuestion", Question.class);
+        return getApplicationContext().getBean("itemEditorQuestion", Question.class);
     }
 
     private Optional<MudItemTemplate> findItemToEdit(MudCharacter ch, String token) {
