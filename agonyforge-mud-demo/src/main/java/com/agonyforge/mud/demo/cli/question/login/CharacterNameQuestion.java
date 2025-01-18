@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -63,12 +64,20 @@ public class CharacterNameQuestion extends BaseQuestion {
         }
 
         MudCharacter ch = new MudCharacter();
+        Set<Role> roles = new HashSet<>();
         Role playerRole = roleRepository.findByName("Player").orElseThrow();
+
+        if (getRepositoryBundle().getCharacterRepository().countMudCharacterByPlayerIsNotNull() == 0) {
+            Role implRole = roleRepository.findByName("Implementor").orElseThrow();
+            roles.add(implRole);
+        }
+
+        roles.add(playerRole);
 
         ch.setPlayer(new PlayerComponent());
         ch.getPlayer().setTitle("the Stranger");
         ch.getPlayer().setUsername(wsContext.getPrincipal().getName());
-        ch.getPlayer().setRoles(Set.of(playerRole));
+        ch.getPlayer().setRoles(roles);
 
         ch.setCharacter(new CharacterComponent());
         ch.getCharacter().setName(input.getInput());

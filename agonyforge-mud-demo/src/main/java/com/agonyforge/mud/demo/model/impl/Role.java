@@ -13,8 +13,9 @@ public class Role extends Persistent {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private boolean implementor = false;
 
-    @OneToMany
+    @ManyToMany
     private Set<CommandReference> commands = new HashSet<>();
 
     public Long getId() {
@@ -31,6 +32,14 @@ public class Role extends Persistent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isImplementor() {
+        return implementor;
+    }
+
+    public void setImplementor(boolean implementor) {
+        this.implementor = implementor;
     }
 
     public Set<CommandReference> getCommands() {

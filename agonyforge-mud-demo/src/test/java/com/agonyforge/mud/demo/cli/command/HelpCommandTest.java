@@ -50,9 +50,6 @@ public class HelpCommandTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterTemplate chProto;
-
-    @Mock
     private MudCharacter ch;
 
     @Mock
@@ -63,6 +60,9 @@ public class HelpCommandTest {
 
     @Mock
     private PlayerComponent playerComponent;
+
+    @Mock
+    private Role implRole;
 
     @Mock
     private Role playerRole;
@@ -89,14 +89,14 @@ public class HelpCommandTest {
 
         lenient().when(commandRepository.findAll()).thenReturn(List.of(testCommandRefA, testCommandRefB));
         lenient().when(playerRole.getCommands()).thenReturn(Set.of(testCommandRefA));
-        lenient().when(playerComponent.getRoles()).thenReturn(Set.of(playerRole));
         lenient().when(ch.getPlayer()).thenReturn(playerComponent);
     }
 
     @Test
     void testHelpSuper() {
-        when(ch.getTemplate()).thenReturn(chProto);
-        when(ch.getTemplate().getId()).thenReturn(1L);
+        when(implRole.isImplementor()).thenReturn(true);
+
+        when(playerComponent.getRoles()).thenReturn(Set.of(implRole, playerRole));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 
@@ -114,8 +114,7 @@ public class HelpCommandTest {
 
     @Test
     void testHelpPlayer() {
-        when(ch.getTemplate()).thenReturn(chProto);
-        when(ch.getTemplate().getId()).thenReturn(2L);
+        when(playerComponent.getRoles()).thenReturn(Set.of(playerRole));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 

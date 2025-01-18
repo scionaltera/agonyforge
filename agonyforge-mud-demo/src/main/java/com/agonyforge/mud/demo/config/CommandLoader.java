@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -81,6 +82,11 @@ public class CommandLoader {
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs.values());
 
+            Role implementor = new Role();
+
+            implementor.setName("Implementor");
+            implementor.setImplementor(true);
+
             Role player = new Role();
 
             player.setName("Player");
@@ -123,7 +129,7 @@ public class CommandLoader {
 
             player.getCommands().add(refs.get("TIME"));
 
-            roleRepository.save(player);
+            roleRepository.saveAll(List.of(implementor, player));
         }
     }
 }

@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface MudCharacterRepository extends JpaRepository<MudCharacter, Long> {
+    int countMudCharacterByPlayerIsNotNull();
     Optional<MudCharacter> findByCharacterName(String name);
     List<MudCharacter> findByPlayerUsername(String username);
     List<MudCharacter> findByLocationRoom(MudRoom room);

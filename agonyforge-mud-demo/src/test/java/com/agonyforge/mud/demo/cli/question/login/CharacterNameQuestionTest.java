@@ -54,6 +54,9 @@ public class CharacterNameQuestionTest {
     private Role role;
 
     @Mock
+    private Role supah;
+
+    @Mock
     private ApplicationContext applicationContext;
 
     @Mock
@@ -100,6 +103,7 @@ public class CharacterNameQuestionTest {
         when(principal.getName()).thenReturn("principal");
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(roleRepository.findByName(eq("Player"))).thenReturn(Optional.of(role));
+        when(roleRepository.findByName(eq("Implementor"))).thenReturn(Optional.of(supah));
         when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> {
             MudCharacter saved = i.getArgument(0);
             saved.setId(1L);
