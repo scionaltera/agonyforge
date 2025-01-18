@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.login.CharacterViewQuestion.START_ROOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,9 +48,6 @@ public class CharacterViewQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterPrototypeRepository characterPrototypeRepository;
-
-    @Mock
     private MudItemRepository itemRepository;
 
     @Mock
@@ -66,7 +63,7 @@ public class CharacterViewQuestionTest {
     private CommService commService;
 
     @Mock
-    private MudCharacterTemplate ch;
+    private MudCharacter ch;
 
     @Mock
     private PlayerComponent playerComponent;
@@ -76,9 +73,6 @@ public class CharacterViewQuestionTest {
 
     @Mock
     private LocationComponent locationComponent;
-
-    @Mock
-    private MudCharacter chInstance;
 
     @Mock
     private MudSpecies species;
@@ -108,7 +102,6 @@ public class CharacterViewQuestionTest {
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(characterPrototypeRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(repositoryBundle.getSpeciesRepository()).thenReturn(speciesRepository);
@@ -123,11 +116,10 @@ public class CharacterViewQuestionTest {
         String characterName = "Scion";
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_PCHARACTER, chId);
+        attributes.put(MUD_CHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(ch.getComplete()).thenReturn(true);
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterComponent.getName()).thenReturn(characterName);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterComponent.getPronoun()).thenReturn(Pronoun.SHE);
@@ -183,21 +175,18 @@ public class CharacterViewQuestionTest {
         String wsSessionId = UUID.randomUUID().toString();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_PCHARACTER, chId);
+        attributes.put(MUD_CHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
-        when(chInstance.getPlayer()).thenReturn(playerComponent);
-        when(chInstance.getCharacter()).thenReturn(characterComponent);
-        when(chInstance.getLocation())
+        when(ch.getPlayer()).thenReturn(playerComponent);
+        when(ch.getCharacter()).thenReturn(characterComponent);
+        when(ch.getLocation())
             .thenReturn(null)
             .thenReturn(locationComponent);
-        when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getCharacter().getName()).thenReturn("Scion");
-        when(ch.getComplete()).thenReturn(true);
-        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByCharacterName(anyString())).thenReturn(Optional.of(chInstance));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> i.getArguments()[0]);
         when(roomRepository.findById(eq(START_ROOM))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
@@ -206,11 +195,11 @@ public class CharacterViewQuestionTest {
         Response result = uut.answer(wsContext, new Input("p"));
 
         verify(characterRepository).save(characterCaptor.capture());
-        verify(commService).sendToAll(any(WebSocketContext.class), outputCaptor.capture(), eq(chInstance));
+        verify(commService).sendToAll(any(WebSocketContext.class), outputCaptor.capture(), eq(ch));
 
         MudCharacter instance = characterCaptor.getValue();
 
-        verify(chInstance).setLocation(any(LocationComponent.class));
+        verify(ch).setLocation(any(LocationComponent.class));
         verify(instance.getLocation()).setRoom(eq(room));
         verify(playerComponent).setWebSocketSession(eq(wsSessionId));
 
@@ -227,18 +216,15 @@ public class CharacterViewQuestionTest {
         String wsSessionId = UUID.randomUUID().toString();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_PCHARACTER, chId);
+        attributes.put(MUD_CHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
-        when(chInstance.getPlayer()).thenReturn(playerComponent);
-        when(chInstance.getCharacter()).thenReturn(characterComponent);
-        when(chInstance.getLocation()).thenReturn(locationComponent);
+        when(ch.getPlayer()).thenReturn(playerComponent);
+        when(ch.getLocation()).thenReturn(locationComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(ch.getComplete()).thenReturn(true);
-        when(ch.buildInstance()).thenReturn(chInstance);
-        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.save(any(MudCharacter.class))).thenAnswer(i -> i.getArguments()[0]);
         when(roomRepository.findById(eq(START_ROOM))).thenReturn(Optional.of(room));
         when(applicationContext.getBean(eq("commandQuestion"), eq(Question.class))).thenReturn(question);
@@ -247,7 +233,7 @@ public class CharacterViewQuestionTest {
         Response result = uut.answer(wsContext, new Input("p"));
 
         verify(characterRepository).save(characterCaptor.capture());
-        verify(commService).sendToAll(any(WebSocketContext.class), outputCaptor.capture(), eq(chInstance));
+        verify(commService).sendToAll(any(WebSocketContext.class), outputCaptor.capture(), eq(ch));
 
         MudCharacter instance = characterCaptor.getValue();
 
@@ -290,10 +276,10 @@ public class CharacterViewQuestionTest {
         Long chId = random.nextLong();
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(MUD_PCHARACTER, chId);
+        attributes.put(MUD_CHARACTER, chId);
 
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(characterPrototypeRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         CharacterViewQuestion uut = new CharacterViewQuestion(applicationContext, repositoryBundle, commService, sessionAttributeService, characterSheetFormatter);
         Response result = uut.answer(wsContext, new Input("x"));

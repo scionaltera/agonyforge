@@ -19,10 +19,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 @Component
 public class CharacterNameQuestion extends BaseQuestion {
@@ -56,17 +56,17 @@ public class CharacterNameQuestion extends BaseQuestion {
             return new Response(this, new Output("[red]Names must begin with a capital letter."));
         }
 
-        List<MudCharacterTemplate> existing = getRepositoryBundle().getCharacterPrototypeRepository().findByCharacterName(input.getInput());
+        Optional<MudCharacter> existing = getRepositoryBundle().getCharacterRepository().findByCharacterName(input.getInput());
 
-        if (!existing.isEmpty()) {
+        if (existing.isPresent()) {
             return new Response(this, new Output("[red]Somebody else is already using that name. Please try a different one."));
         }
 
-        MudCharacterTemplate ch = new MudCharacterTemplate();
+        MudCharacter ch = new MudCharacter();
         Role playerRole = roleRepository.findByName("Player").orElseThrow();
 
         ch.setPlayer(new PlayerComponent());
-        ch.getPlayer().setTitle("the Neophyte");
+        ch.getPlayer().setTitle("the Stranger");
         ch.getPlayer().setUsername(wsContext.getPrincipal().getName());
         ch.getPlayer().setRoles(Set.of(playerRole));
 
@@ -75,8 +75,8 @@ public class CharacterNameQuestion extends BaseQuestion {
         ch.getCharacter().setPronoun(Pronoun.THEY);
         ch.getCharacter().setWearSlots(EnumSet.allOf(WearSlot.class));
 
-        ch = getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
-        wsContext.getAttributes().put(MUD_PCHARACTER, ch.getId());
+        ch = getRepositoryBundle().getCharacterRepository().save(ch);
+        wsContext.getAttributes().put(MUD_CHARACTER, ch.getId());
 
         LOGGER.info("New character created: {}", ch.getCharacter().getName());
 

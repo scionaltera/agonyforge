@@ -11,7 +11,6 @@ import com.agonyforge.mud.demo.cli.command.LookCommand;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
@@ -49,21 +48,16 @@ public class CharacterViewQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(wsContext, output);
+        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if (chOptional.isPresent()) {
-            MudCharacterTemplate ch = chOptional.get();
+            MudCharacter ch = chOptional.get();
 
             characterSheetFormatter.format(ch, output);
 
             output.append("");
 
-            if (!ch.getComplete()) {
-                output.append("[blue]E[black]) Edit this character");
-            } else {
-                output.append("[green]P[black]) Play as this character");
-            }
-
+            output.append("[green]P[black]) Play as this character");
             output.append("[red]D[black]) Delete this character");
             output.append("[dwhite]B[black]) Go back");
             output.append("[black]Please [white]make your selection[black]: ");
@@ -76,21 +70,13 @@ public class CharacterViewQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         Output output = new Output();
         Question next = this;
-        Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(wsContext, output);
+        Optional<MudCharacter> chOptional = getCharacter(wsContext, output);
 
         if ("P".equalsIgnoreCase(input.getInput())) {
             Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(START_ROOM);
 
             if (chOptional.isPresent() && roomOptional.isPresent()) {
-                MudCharacterTemplate chPrototype = chOptional.get();
-
-                if (!chPrototype.getComplete()) {
-                    output.append("[red]This character is not finished yet. You must go through character creation first.");
-                    return new Response(next, output);
-                }
-
-                Optional<MudCharacter> chOp = getRepositoryBundle().getCharacterRepository().findByCharacterName(chPrototype.getCharacter().getName());
-                MudCharacter ch = chOp.orElseGet(chPrototype::buildInstance);
+                MudCharacter ch = chOptional.get();
                 MudRoom startRoom = roomOptional.get();
 
                 if (ch.getLocation() == null) {
@@ -117,8 +103,6 @@ public class CharacterViewQuestion extends BaseQuestion {
                     LOGGER.error("Start room with ID {} was empty!", START_ROOM);
                 }
             }
-        } else if ("E".equalsIgnoreCase(input.getInput())) {
-            next = getQuestion("characterPronounQuestion");
         } else if ("D".equalsIgnoreCase(input.getInput())) {
             next = getQuestion("characterDeleteQuestion");
         } else if ("B".equalsIgnoreCase(input.getInput())) {

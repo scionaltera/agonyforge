@@ -15,7 +15,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudSpecies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -63,15 +63,15 @@ public class CharacterSpeciesQuestion extends BaseQuestion {
             output.append("[red]Please choose one of the menu options.");
         } else {
             MenuItem item = itemOptional.get();
-            Optional<MudCharacterTemplate> chOptional = getCharacterPrototype(webSocketContext, output);
+            Optional<MudCharacter> chOptional = getCharacter(webSocketContext, output);
 
             if (chOptional.isPresent()) {
-                MudCharacterTemplate ch = chOptional.get();
+                MudCharacter ch = chOptional.get();
                 MudSpecies species = (MudSpecies)item.getItem();
 
                 ch.getCharacter().setSpecies(species);
 
-                getRepositoryBundle().getCharacterPrototypeRepository().save(ch);
+                getRepositoryBundle().getCharacterRepository().save(ch);
             }
 
             nextQuestion = "characterProfessionQuestion";

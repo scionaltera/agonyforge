@@ -7,8 +7,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
-import com.agonyforge.mud.demo.model.repository.MudCharacterPrototypeRepository;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 import java.security.Principal;
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,13 +47,10 @@ public class CharacterMenuQuestionTest {
     private MudCharacterRepository characterRepository;
 
     @Mock
-    private MudCharacterPrototypeRepository characterPrototypeRepository;
-
-    @Mock
     private MudItemRepository itemRepository;
 
     @Mock
-    private MudCharacterTemplate mudCharacter;
+    private MudCharacter mudCharacter;
 
     @Mock
     private CharacterComponent characterComponent;
@@ -67,7 +63,6 @@ public class CharacterMenuQuestionTest {
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getCharacterPrototypeRepository()).thenReturn(characterPrototypeRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
     }
 
@@ -90,7 +85,7 @@ public class CharacterMenuQuestionTest {
         assertEquals(7, result.getOutput().size());
         assertTrue(itemOptional.isPresent());
 
-        verify(characterPrototypeRepository).findByPlayerUsername(eq(principalName));
+        verify(characterRepository).findByPlayerUsername(eq(principalName));
     }
 
     @Test
@@ -102,7 +97,7 @@ public class CharacterMenuQuestionTest {
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(characterComponent.getName()).thenReturn(characterName);
         when(mudCharacter.getCharacter()).thenReturn(characterComponent);
-        when(characterPrototypeRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
+        when(characterRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
             applicationContext,
@@ -121,7 +116,7 @@ public class CharacterMenuQuestionTest {
         assertTrue(newCharacterLineOptional.isPresent());
         assertTrue(characterNameLineOptional.isPresent());
 
-        verify(characterPrototypeRepository).findByPlayerUsername(eq(principalName));
+        verify(characterRepository).findByPlayerUsername(eq(principalName));
     }
 
     @Test
@@ -186,9 +181,9 @@ public class CharacterMenuQuestionTest {
         when(webSocketContext.getPrincipal()).thenReturn(principal);
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(mudCharacter.getId()).thenReturn(characterId);
-        when(characterComponent.getName()).thenReturn(characterName);
         when(mudCharacter.getCharacter()).thenReturn(characterComponent);
-        when(characterPrototypeRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
+        when(characterComponent.getName()).thenReturn(characterName);
+        when(characterRepository.findByPlayerUsername(eq(principalName))).thenReturn(List.of(mudCharacter));
         when(applicationContext.getBean(eq("characterViewQuestion"), eq(Question.class))).thenReturn(question);
 
         CharacterMenuQuestion uut = new CharacterMenuQuestion(
@@ -198,6 +193,6 @@ public class CharacterMenuQuestionTest {
         Response result = uut.answer(webSocketContext, new Input("1"));
 
         assertEquals(question, result.getNext());
-        assertEquals(characterId, attributes.get(MUD_PCHARACTER));
+        assertEquals(characterId, attributes.get(MUD_CHARACTER));
     }
 }
