@@ -63,7 +63,11 @@ public class LookCommand extends AbstractCommand {
                     action = "here";
                 }
 
-                output.append("[green]%s is %s. %s", StringUtils.capitalize(target.getCharacter().getName()), action, flags);
+                if (target.getPlayer() != null) {
+                    output.append("[green]%s is %s. %s", StringUtils.capitalize(target.getCharacter().getName()), action, flags);
+                } else {
+                    output.append("[green](%d) %s is %s.", target.getTemplate().getId(), StringUtils.capitalize(target.getCharacter().getName()), action, flags);
+                }
             });
 
         repositoryBundle.getItemRepository().findByLocationRoom(room)
