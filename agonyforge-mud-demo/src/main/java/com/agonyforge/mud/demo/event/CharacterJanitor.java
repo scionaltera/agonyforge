@@ -74,6 +74,7 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
 
         List<MudCharacter> disconnected = characterRepository.findAll()
             .stream()
+            .filter(ch -> ch.getPlayer() != null)
             .filter(ch -> ch.getLocation() != null)
             .filter(ch -> sessionAttributeService.getSessionAttributes(ch.getPlayer().getWebSocketSession()).isEmpty())
             .toList();

@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,12 +41,19 @@ public class LookCommand extends AbstractCommand {
             .stream()
             .filter(target -> !target.equals(ch))
             .forEach(target -> {
-                Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(target.getPlayer().getWebSocketSession());
+                Map<String, Object> attributes;
+
+                if (target.getPlayer() != null) {
+                    attributes = sessionAttributeService.getSessionAttributes(target.getPlayer().getWebSocketSession());
+                } else {
+                    attributes = new HashMap<>();
+                }
+
                 String question = (String)attributes.get("MUD.QUESTION");
                 String action;
                 String flags = "";
 
-                if (attributes.isEmpty()) {
+                if (target.getPlayer() != null && attributes.isEmpty()) {
                     flags += "[dred]([red]LINKDEAD[dred])";
                 }
 
@@ -55,7 +63,7 @@ public class LookCommand extends AbstractCommand {
                     action = "here";
                 }
 
-                output.append("[green]%s is %s. %s", target.getCharacter().getName(), action, flags);
+                output.append("[green]%s is %s. %s", StringUtils.capitalize(target.getCharacter().getName()), action, flags);
             });
 
         repositoryBundle.getItemRepository().findByLocationRoom(room)

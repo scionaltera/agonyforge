@@ -78,7 +78,9 @@ public class CommandLoader {
             refs.put("MEDIT", new CommandReference(20, "MEDIT", "nonPlayerCreatureEditorCommand", "Edit a creature."));
 
             refs.put("CREATE", new CommandReference(30, "CREATE", "createCommand", "Create an item."));
+            refs.put("SPAWN", new CommandReference(30, "SPAWN", "spawnCommand", "Spawn a character."));
             refs.put("PURGE", new CommandReference(30, "PURGE", "purgeCommand", "Destroy an item."));
+            refs.put("SLAY", new CommandReference(30, "SLAY", "slayCommand", "Slay a character."));
 
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs.values());

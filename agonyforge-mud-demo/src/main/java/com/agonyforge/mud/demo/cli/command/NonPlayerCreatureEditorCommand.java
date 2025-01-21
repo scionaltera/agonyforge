@@ -5,6 +5,9 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.Effort;
+import com.agonyforge.mud.demo.model.constant.Pronoun;
+import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
@@ -12,8 +15,10 @@ import com.agonyforge.mud.demo.model.impl.NonPlayerComponent;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +55,18 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
                 MudCharacterTemplate npcTemplate = new MudCharacterTemplate();
 
                 npcTemplate.setId(id);
+                npcTemplate.setComplete(true);
+
                 npcTemplate.setCharacter(new CharacterComponent());
+                npcTemplate.getCharacter().setName("an unfinished npc");
+                npcTemplate.getCharacter().setPronoun(Pronoun.THEY);
+                npcTemplate.getCharacter().setSpecies(getRepositoryBundle().getSpeciesRepository().findById(1L).orElseThrow());
+                npcTemplate.getCharacter().setProfession(getRepositoryBundle().getProfessionRepository().findById(1L).orElseThrow());
+
+                MudCharacterTemplate finalNpcTemplate = npcTemplate;
+                Arrays.stream(Stat.values()).forEach(stat -> finalNpcTemplate.getCharacter().setBaseStat(stat, 0));
+                Arrays.stream(Effort.values()).forEach(effort -> finalNpcTemplate.getCharacter().setBaseEffort(effort, 0));
+
                 npcTemplate.setNonPlayer(new NonPlayerComponent());
 
                 npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().save(npcTemplate);
