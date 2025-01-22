@@ -76,6 +76,9 @@ public class CommandLoader {
             refs.put("REDIT", new CommandReference(20, "REDIT", "roomEditorCommand", "Edit a room."));
             refs.put("IEDIT", new CommandReference(20, "IEDIT", "itemEditorCommand", "Edit an item."));
 
+            refs.put("GOTO", new CommandReference(30, "GOTO", "gotoCommand", "Go to a room or player."));
+            refs.put("TRANSFER", new CommandReference(30, "TRANSFER", "transferCommand", "Bring a player to you."));
+            refs.put("TELEPORT", new CommandReference(30, "TELEPORT", "teleportCommand", "Send a player to a room."));
             refs.put("CREATE", new CommandReference(30, "CREATE", "createCommand", "Create an item."));
             refs.put("PURGE", new CommandReference(30, "PURGE", "purgeCommand", "Destroy an item."));
 
