@@ -180,7 +180,7 @@ public class GetCommandTest {
         verify(itemLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));
-        verify(commService).sendToRoom(eq(webSocketContext), eq(roomId), any(Output.class));
+        verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You get " + itemName));

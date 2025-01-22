@@ -62,7 +62,7 @@ public class ItemEditorCommand extends AbstractCommand {
         }
 
         webSocketContext.getAttributes().put(IEDIT_MODEL, itemProto.get().getId());
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(), new Output(
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), new Output(
             "[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
 
         return getApplicationContext().getBean("itemEditorQuestion", Question.class);

@@ -270,10 +270,17 @@ public class CommServiceTest {
 
         Output message = new Output("message");
 
-        uut.sendToRoom(webSocketContext,100L, message);
+        uut.sendToRoom(100L, message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
             eq(targetPrincipal),
+            eq("/queue/output"),
+            any(Output.class),
+            any(MessageHeaders.class)
+        );
+
+        verify(simpMessagingTemplate).convertAndSendToUser(
+            eq(principal),
             eq("/queue/output"),
             any(Output.class),
             any(MessageHeaders.class)

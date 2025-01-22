@@ -107,17 +107,15 @@ public class CommService extends EchoService {
     /**
      * Send a message to all characters in a Room.
      *
-     * @param wsContext The WebSocketContext of the sender.
      * @param roomId The ID of the room to send to.
      * @param message The message to send.
      * @param except Don't send to these characters.
      */
-    public void sendToRoom(WebSocketContext wsContext, Long roomId, Output message, MudCharacter ... except) {
+    public void sendToRoom(Long roomId, Output message, MudCharacter ... except) {
         List<MudCharacter> skip = List.of(except);
         characterRepository.findByLocationRoomId(roomId)
             .stream()
             .filter(ch -> ch.getPlayer() != null)
-            .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }

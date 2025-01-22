@@ -55,13 +55,13 @@ public class RemoveCommand extends AbstractCommand {
         getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You remove %s[default].", target.getItem().getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
             new Output("[default]%s removes %s[default] from %s %s.",
                 ch.getCharacter().getName(),
                 target.getItem().getShortDescription(),
                 ch.getCharacter().getPronoun().getPossessive(),
                 slotNames
-            ));
+            ), ch);
 
         return question;
     }

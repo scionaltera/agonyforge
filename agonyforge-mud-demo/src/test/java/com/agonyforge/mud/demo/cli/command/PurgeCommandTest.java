@@ -142,7 +142,7 @@ public class PurgeCommandTest {
         assertEquals(question, result);
 
         verify(itemRepository).delete(eq(item));
-        verify(commService).sendToRoom(eq(wsContext), anyLong(), any(Output.class));
+        verify(commService).sendToRoom(anyLong(), any(Output.class), eq(ch));
     }
 
     @Test
@@ -159,6 +159,6 @@ public class PurgeCommandTest {
         assertEquals(question, result);
 
         verify(itemRepository).delete(eq(item));
-        verify(commService).sendToRoom(eq(wsContext), anyLong(), any(Output.class));
+        verify(commService).sendToRoom(anyLong(), any(Output.class), eq(ch));
     }
 }

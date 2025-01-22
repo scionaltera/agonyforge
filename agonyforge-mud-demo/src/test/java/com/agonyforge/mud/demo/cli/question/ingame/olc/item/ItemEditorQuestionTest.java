@@ -293,7 +293,7 @@ public class ItemEditorQuestionTest {
         Response response = uut.answer(wsContext, new Input("x"));
 
         verify(itemPrototypeRepository).save(eq(itemProto));
-        verify(commService).sendToRoom(eq(wsContext), eq(100L), any(Output.class), eq(ch));
+        verify(commService).sendToRoom(eq(100L), any(Output.class), eq(ch));
 
         assertNull(attributes.get(IEDIT_MODEL));
         assertNull(attributes.get(IEDIT_STATE));

@@ -182,7 +182,7 @@ public class DropCommandTest {
         verify(locationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemRepository).save(eq(item));
         verify(itemRepository, never()).save(eq(other));
-        verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));
+        verify(commService).sendToRoom(eq(100L), any(Output.class));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You drop " + itemName));

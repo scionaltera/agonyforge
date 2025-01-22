@@ -252,7 +252,7 @@ public class GiveCommandTest {
         verify(itemLocationComponent).setRoom(eq(null));
         verify(itemRepository).save(eq(item));
         verify(commService).sendTo(eq(target), any(Output.class));
-        verify(commService).sendToRoom(eq(webSocketContext), eq(roomId), any(Output.class), eq(target));
+        verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You give a spoon[default] to Spook."));

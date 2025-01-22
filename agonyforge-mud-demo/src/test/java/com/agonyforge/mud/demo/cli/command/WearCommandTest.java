@@ -268,9 +268,9 @@ public class WearCommandTest {
         verify(targetLocationComponent).setWorn(ArgumentMatchers.any());
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
-            eq(webSocketContext),
             anyLong(),
-            any(Output.class));
+            any(Output.class),
+            eq(ch));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You wear a test hat[default] on your head"));
@@ -316,9 +316,9 @@ public class WearCommandTest {
         verify(targetLocationComponent).setWorn(eq(EnumSet.of(WearSlot.HEAD)));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
-            eq(webSocketContext),
             anyLong(),
-            any(Output.class));
+            any(Output.class),
+            eq(ch));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You wear a test hat[default] on your head"));
@@ -363,9 +363,9 @@ public class WearCommandTest {
         verify(targetLocationComponent).setWorn(ArgumentMatchers.<EnumSet<WearSlot>>any());
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
-            eq(webSocketContext),
             anyLong(),
-            any(Output.class));
+            any(Output.class),
+            eq(ch));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You wear a test hat[default] on your head"));

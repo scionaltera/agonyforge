@@ -94,7 +94,7 @@ public class ItemEditorQuestion extends BaseQuestion {
                     wsContext.getAttributes().remove(IEDIT_MODEL);
                     nextQuestion = "commandQuestion";
 
-                    commService.sendToRoom(wsContext, ch.getLocation().getRoom().getId(),
+                    commService.sendToRoom(ch.getLocation().getRoom().getId(),
                         new Output("[yellow]%s stops editing.", ch.getCharacter().getName()), ch);
                 }
             }
