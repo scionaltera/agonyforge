@@ -111,7 +111,7 @@ public class EmoteCommandTest {
         assertEquals("[dcyan]" + ch.getCharacter().getName() + " " + match, output.getOutput().get(0));
 
         verify(characterRepository).findById(eq(chId));
-        verify(commService).sendToRoom(eq(webSocketContext), eq(100L), any(Output.class));
+        verify(commService).sendToRoom(eq(100L), any(Output.class), eq(ch));
     }
 
     @ParameterizedTest
@@ -133,7 +133,7 @@ public class EmoteCommandTest {
         assertEquals("[default]What would you like to emote?", output.getOutput().get(0));
 
         verify(characterRepository, never()).findById(any(Long.class));
-        verify(commService, never()).sendToRoom(any(WebSocketContext.class), anyLong(), any(Output.class));
+        verify(commService, never()).sendToRoom(anyLong(), any(Output.class));
     }
 
     private List<String> tokenize(String val) {

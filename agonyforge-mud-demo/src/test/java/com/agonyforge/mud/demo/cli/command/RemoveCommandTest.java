@@ -166,9 +166,9 @@ public class RemoveCommandTest {
         verify(targetLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
-            eq(webSocketContext),
             anyLong(),
-            any(Output.class));
+            any(Output.class),
+            eq(ch));
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You remove a test hat"));

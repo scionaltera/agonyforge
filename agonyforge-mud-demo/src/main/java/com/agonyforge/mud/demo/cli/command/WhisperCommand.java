@@ -53,10 +53,9 @@ public class WhisperCommand extends AbstractCommand {
         output.append("[red]You whisper to %s, '%s[red]'", target.getCharacter().getName(), message);
         getCommService().sendTo(target, new Output("[red]%s whispers to you, '%s[red]'", ch.getCharacter().getName(), message));
         getCommService().sendToRoom(
-            webSocketContext,
             ch.getLocation().getRoom().getId(),
             new Output("[red]%s whispers something to %s.", ch.getCharacter().getName(), target.getCharacter().getName()),
-            target);
+            ch, target);
 
         return question;
     }

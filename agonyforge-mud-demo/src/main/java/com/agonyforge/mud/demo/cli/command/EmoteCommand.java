@@ -33,7 +33,7 @@ public class EmoteCommand extends AbstractCommand {
         Output formatted = new Output("[dcyan]%s %s", ch.getCharacter().getName(), message);
 
         output.append(formatted);
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(), formatted);
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), formatted, ch);
 
         return question;
     }

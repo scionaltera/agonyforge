@@ -148,6 +148,6 @@ public class CreateCommandTest {
         verify(itemLocationComponent).setHeld(eq(ch));
         verify(itemLocationComponent).setRoom(eq(null));
         verify(itemRepository).save(eq(item));
-        verify(commService).sendToRoom(eq(wsContext), anyLong(), any(Output.class));
+        verify(commService).sendToRoom(anyLong(), any(Output.class), eq(ch));
     }
 }

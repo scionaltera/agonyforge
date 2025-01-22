@@ -134,7 +134,7 @@ public class WhisperCommandTest {
 
         verify(characterRepository).findById(eq(chId));
         verify(commService).sendTo(eq(target), outputCaptor.capture());
-        verify(commService).sendToRoom(eq(webSocketContext), eq(100L), outputCaptor.capture(), eq(target));
+        verify(commService).sendToRoom(eq(100L), outputCaptor.capture(), eq(ch), eq(target));
         verifyNoMoreInteractions(commService);
 
         List<Output> captured = outputCaptor.getAllValues();
