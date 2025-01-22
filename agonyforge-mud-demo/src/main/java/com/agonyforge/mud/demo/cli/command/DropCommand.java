@@ -53,7 +53,7 @@ public class DropCommand extends AbstractCommand {
         getRepositoryBundle().getItemRepository().save(target);
 
         output.append("[default]You drop %s[default].", target.getItem().getShortDescription());
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
             new Output("[default]%s drops %s[default].", ch.getCharacter().getName(), target.getItem().getShortDescription()));
 
         return question;

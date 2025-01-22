@@ -108,7 +108,7 @@ public class MoveCommandTest {
         assertEquals(question, response);
 
         verify(chLocationComponent, atLeastOnce()).getRoom();
-        verify(commService, times(2)).sendToRoom(eq(webSocketContext), anyLong(), any(Output.class));
+        verify(commService, times(2)).sendToRoom(anyLong(), any(Output.class), eq(ch));
         verify(ch.getLocation()).setRoom(eq(destination));
         verify(characterRepository).save(any(MudCharacter.class));
     }

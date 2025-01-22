@@ -67,14 +67,14 @@ public class TeleportCommand extends AbstractCommand {
         Output targetOutput = new Output();
 
         output.append("[yellow]You TELEPORT %s!", target.getCharacter().getName());
-        getCommService().sendToRoom(webSocketContext, target.getLocation().getRoom().getId(),
-            new Output("[yellow]%s disappears in a puff of smoke!", target.getCharacter().getName()), target);
+        getCommService().sendToRoom(target.getLocation().getRoom().getId(),
+            new Output("[yellow]%s disappears in a puff of smoke!", target.getCharacter().getName()), ch, target);
 
         target.getLocation().setRoom(destination);
         getRepositoryBundle().getCharacterRepository().save(target);
 
-        getCommService().sendToRoom(webSocketContext, target.getLocation().getRoom().getId(),
-            new Output("[yellow]%s appears in a puff of smoke!", target.getCharacter().getName()), target);
+        getCommService().sendToRoom(target.getLocation().getRoom().getId(),
+            new Output("[yellow]%s appears in a puff of smoke!", target.getCharacter().getName()), ch, target);
 
         targetOutput.append(new Output("[yellow]%s TELEPORTS you!", ch.getCharacter().getName()));
         targetOutput.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, target, target.getLocation().getRoom()));

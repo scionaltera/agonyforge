@@ -58,14 +58,14 @@ public class GotoCommand extends AbstractCommand {
             return question;
         }
 
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s disappears in a puff of smoke!", ch.getCharacter().getName()));
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s disappears in a puff of smoke!", ch.getCharacter().getName()), ch);
 
         ch.getLocation().setRoom(destination);
         getRepositoryBundle().getCharacterRepository().save(ch);
 
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s appears in a puff of smoke!", ch.getCharacter().getName()));
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s appears in a puff of smoke!", ch.getCharacter().getName()), ch);
 
         output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destination));
 
