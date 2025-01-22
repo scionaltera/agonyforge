@@ -80,7 +80,6 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
 
         webSocketContext.getAttributes().put(MEDIT_MODEL, npcTemplateOptional.get().getId());
         getCommService().sendToRoom(
-            webSocketContext,
             ch.getLocation().getRoom().getId(),
             new Output("[yellow]%s begins editing.", ch.getCharacter().getName()),
             ch);

@@ -50,8 +50,11 @@ public class SpawnCommand extends AbstractCommand {
         npc = getRepositoryBundle().getCharacterRepository().save(npc);
 
         output.append("[yellow]You wave your hand, and %s appears!", npc.getCharacter().getName());
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), npc.getCharacter().getName()));
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s waves %s hand, and %s appears!",
+                ch.getCharacter().getName(),
+                ch.getCharacter().getPronoun().getPossessive(),
+                npc.getCharacter().getName()), ch);
 
         return question;
     }

@@ -41,11 +41,11 @@ public class SlayCommand extends AbstractCommand {
         getRepositoryBundle().getCharacterRepository().delete(target);
 
         output.append("[yellow]You snap your fingers, and %s disappears!", target.getCharacter().getName());
-        getCommService().sendToRoom(webSocketContext, ch.getLocation().getRoom().getId(),
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
             new Output("[yellow]%s snaps %s fingers, and %s disappears!",
                 ch.getCharacter().getName(),
                 ch.getCharacter().getPronoun().getPossessive(),
-                target.getCharacter().getName()));
+                target.getCharacter().getName()), ch);
 
         return question;
     }
