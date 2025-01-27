@@ -12,38 +12,29 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
-import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 @Component
-public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
+public class NonPlayerCreaturePronounEditorQuestion extends BaseQuestion {
     public static final String MEDIT_MODEL = "MEDIT.MODEL";
 
     static final String MEDIT_STATE = "MEDIT.STATE";
 
-    private enum MeditState {
-        NAME,
-        PRONOUN
-    }
-
-    private final CommService commService;
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
-    public NonPlayerCreatureEditorQuestion(ApplicationContext applicationContext,
-                                           RepositoryBundle repositoryBundle,
-                                           CommService commService) {
+    public NonPlayerCreaturePronounEditorQuestion(ApplicationContext applicationContext,
+                                                  RepositoryBundle repositoryBundle) {
         super(applicationContext, repositoryBundle);
 
-        this.commService = commService;
-
-        menuPane.setTitle(new MenuTitle("Non-Player Character Editor"));
+        menuPane.setTitle(new MenuTitle("Non-Player Character Pronouns"));
         menuPane.setPrompt(new MenuPrompt());
     }
 
@@ -57,47 +48,35 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
             return menuPane.render(Color.DYELLOW, Color.DWHITE);
         }
 
-        MeditState meditState = (MeditState)wsContext.getAttributes().get(MEDIT_STATE);
-
-        switch (meditState) {
-            case NAME -> output.append("[green]New name: ");
-        }
-
         return output;
     }
 
     @Override
     public Response answer(WebSocketContext webSocketContext, Input input) {
-        String nextQuestion = "nonPlayerCreatureEditorQuestion";
+        String nextQuestion = "nonPlayerCreaturePronounEditorQuestion";
         Output output = new Output();
-        MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
         MudCharacterTemplate npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById((Long)webSocketContext.getAttributes().get(MEDIT_MODEL)).orElseThrow();
 
         if (!webSocketContext.getAttributes().containsKey(MEDIT_STATE)) {
             String choice = input.getInput().toUpperCase(Locale.ROOT);
 
-            switch (choice) {
-                case "N" -> webSocketContext.getAttributes().put(MEDIT_STATE, MeditState.NAME);
-                case "P" -> nextQuestion = "nonPlayerCreaturePronounEditorQuestion";
-                case "X" -> {
+            try {
+                int ordinal = Integer.parseInt(choice);
+
+                if (ordinal < 1 || ordinal > Pronoun.values().length) {
+                    output.append("[red]Please choose one of the menu items.");
+                } else {
+                    Pronoun pronoun = Pronoun.values()[ordinal - 1];
+                    npcTemplate.getCharacter().setPronoun(pronoun);
                     getRepositoryBundle().getCharacterPrototypeRepository().save(npcTemplate);
-                    output.append("[green]Saved changes.");
-
-                    webSocketContext.getAttributes().remove(MEDIT_STATE);
-                    webSocketContext.getAttributes().remove(MEDIT_MODEL);
-                    nextQuestion = "commandQuestion";
-
-                    commService.sendToRoom(ch.getLocation().getRoom().getId(),
-                        new Output("[yellow]%s stops editing.", ch.getCharacter().getName()), ch);
+                    nextQuestion = "nonPlayerCreatureEditorQuestion";
                 }
-            }
-        } else {
-            MeditState meditState = (MeditState)webSocketContext.getAttributes().get(MEDIT_STATE);
-
-            switch (meditState) {
-                case NAME -> {
-                    npcTemplate.getCharacter().setName(input.getInput());
+            } catch (NumberFormatException e) {
+                if ("X".equals(choice)) {
                     webSocketContext.getAttributes().remove(MEDIT_STATE);
+                    nextQuestion = "nonPlayerCreatureEditorQuestion";
+                } else {
+                    output.append("[red]Please choose one of the menu items.");
                 }
             }
         }
@@ -110,10 +89,14 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
     private void populateMenuItems(MudCharacterTemplate npcTemplate) {
         menuPane.getItems().clear();
 
-        menuPane.getTitle().setTitle(String.format("Non-Player Character Editor - %d", npcTemplate.getId()));
-        menuPane.getItems().add(new MenuItem("N", "Name: " + npcTemplate.getCharacter().getName()));
-        menuPane.getItems().add(new MenuItem("P", "Pronoun: " + npcTemplate.getCharacter().getPronoun()));
+        menuPane.getTitle().setTitle(String.format("Non-Player Character Pronouns - %d", npcTemplate.getId()));
 
-        menuPane.getItems().add(new MenuItem("X", "Save"));
+        Arrays.stream(Pronoun.values())
+            .forEach(pronoun -> menuPane.getItems().add(new MenuItem(
+                Integer.toString(pronoun.ordinal() + 1),
+                pronoun.toString(),
+                pronoun)));
+
+        menuPane.getItems().add(new MenuItem("X", "Back"));
     }
 }
