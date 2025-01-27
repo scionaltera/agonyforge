@@ -29,7 +29,8 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
 
     private enum MeditState {
         NAME,
-        PRONOUN
+        PRONOUN,
+        HEARTS
     }
 
     private final CommService commService;
@@ -61,6 +62,7 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
 
         switch (meditState) {
             case NAME -> output.append("[green]New name: ");
+            case HEARTS -> output.append("[green]How many hearts: ");
         }
 
         return output;
@@ -79,6 +81,7 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
             switch (choice) {
                 case "N" -> webSocketContext.getAttributes().put(MEDIT_STATE, MeditState.NAME);
                 case "P" -> nextQuestion = "nonPlayerCreaturePronounEditorQuestion";
+                case "H" -> webSocketContext.getAttributes().put(MEDIT_STATE, MeditState.HEARTS);
                 case "X" -> {
                     getRepositoryBundle().getCharacterPrototypeRepository().save(npcTemplate);
                     output.append("[green]Saved changes.");
@@ -99,6 +102,20 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
                     npcTemplate.getCharacter().setName(input.getInput());
                     webSocketContext.getAttributes().remove(MEDIT_STATE);
                 }
+                case HEARTS -> {
+                    try {
+                        int count = Integer.parseInt(input.getInput());
+
+                        if (count < 1 || count > 4) {
+                            output.append("[red]Choose a number of hearts from 1 to 4.");
+                        } else {
+                            //npcTemplate.getCharacter().setHearts(count);
+                            webSocketContext.getAttributes().remove(MEDIT_STATE);
+                        }
+                    } catch (NumberFormatException e) {
+                        output.append("[red]Choose a number of hearts from 1 to 4.");
+                    }
+                }
             }
         }
 
@@ -113,6 +130,7 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
         menuPane.getTitle().setTitle(String.format("Non-Player Character Editor - %d", npcTemplate.getId()));
         menuPane.getItems().add(new MenuItem("N", "Name: " + npcTemplate.getCharacter().getName()));
         menuPane.getItems().add(new MenuItem("P", "Pronoun: " + npcTemplate.getCharacter().getPronoun()));
+        menuPane.getItems().add(new MenuItem("H", "Hearts: [red]❤")); // TODO
 
         menuPane.getItems().add(new MenuItem("X", "Save"));
     }
