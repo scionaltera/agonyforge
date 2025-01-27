@@ -12,6 +12,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
+import com.agonyforge.mud.demo.cli.question.login.CharacterSheetFormatter;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.service.CommService;
@@ -109,7 +110,8 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
                         if (count < 1 || count > 4) {
                             output.append("[red]Choose a number of hearts from 1 to 4.");
                         } else {
-                            //npcTemplate.getCharacter().setHearts(count);
+                            npcTemplate.getCharacter().setHitPoints(count * 10);
+                            npcTemplate.getCharacter().setMaxHitPoints(count * 10);
                             webSocketContext.getAttributes().remove(MEDIT_STATE);
                         }
                     } catch (NumberFormatException e) {
@@ -130,7 +132,7 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
         menuPane.getTitle().setTitle(String.format("Non-Player Character Editor - %d", npcTemplate.getId()));
         menuPane.getItems().add(new MenuItem("N", "Name: " + npcTemplate.getCharacter().getName()));
         menuPane.getItems().add(new MenuItem("P", "Pronoun: " + npcTemplate.getCharacter().getPronoun()));
-        menuPane.getItems().add(new MenuItem("H", "Hearts: [red]❤")); // TODO
+        menuPane.getItems().add(new MenuItem("H", "Hearts: [red]" + CharacterSheetFormatter.hearts(npcTemplate)));
 
         menuPane.getItems().add(new MenuItem("X", "Save"));
     }
