@@ -28,7 +28,7 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
 
     static final String MEDIT_STATE = "MEDIT.STATE";
 
-    private enum MeditState {
+    enum MeditState {
         NAME,
         PRONOUN,
         HEARTS
@@ -52,14 +52,14 @@ public class NonPlayerCreatureEditorQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacterTemplate npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById((Long)wsContext.getAttributes().get(MEDIT_MODEL)).orElseThrow();
+        MeditState meditState = (MeditState)wsContext.getAttributes().get(MEDIT_STATE);
+        Long npcId = (Long)wsContext.getAttributes().get(MEDIT_MODEL);
+        MudCharacterTemplate npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById(npcId).orElseThrow();
 
-        if (!wsContext.getAttributes().containsKey(MEDIT_STATE)) {
+        if (meditState == null) {
             populateMenuItems(npcTemplate);
             return menuPane.render(Color.DYELLOW, Color.DWHITE);
         }
-
-        MeditState meditState = (MeditState)wsContext.getAttributes().get(MEDIT_STATE);
 
         switch (meditState) {
             case NAME -> output.append("[green]New name: ");

@@ -25,8 +25,6 @@ import java.util.Locale;
 public class NonPlayerCreaturePronounEditorQuestion extends BaseQuestion {
     public static final String MEDIT_MODEL = "MEDIT.MODEL";
 
-    static final String MEDIT_STATE = "MEDIT.STATE";
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
@@ -40,15 +38,10 @@ public class NonPlayerCreaturePronounEditorQuestion extends BaseQuestion {
 
     @Override
     public Output prompt(WebSocketContext wsContext) {
-        Output output = new Output();
         MudCharacterTemplate npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById((Long)wsContext.getAttributes().get(MEDIT_MODEL)).orElseThrow();
 
-        if (!wsContext.getAttributes().containsKey(MEDIT_STATE)) {
-            populateMenuItems(npcTemplate);
-            return menuPane.render(Color.DYELLOW, Color.DWHITE);
-        }
-
-        return output;
+        populateMenuItems(npcTemplate);
+        return menuPane.render(Color.DYELLOW, Color.DWHITE);
     }
 
     @Override
@@ -57,27 +50,24 @@ public class NonPlayerCreaturePronounEditorQuestion extends BaseQuestion {
         Output output = new Output();
         MudCharacterTemplate npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById((Long)webSocketContext.getAttributes().get(MEDIT_MODEL)).orElseThrow();
 
-        if (!webSocketContext.getAttributes().containsKey(MEDIT_STATE)) {
-            String choice = input.getInput().toUpperCase(Locale.ROOT);
+        String choice = input.getInput().toUpperCase(Locale.ROOT);
 
-            try {
-                int ordinal = Integer.parseInt(choice);
+        try {
+            int ordinal = Integer.parseInt(choice);
 
-                if (ordinal < 1 || ordinal > Pronoun.values().length) {
-                    output.append("[red]Please choose one of the menu items.");
-                } else {
-                    Pronoun pronoun = Pronoun.values()[ordinal - 1];
-                    npcTemplate.getCharacter().setPronoun(pronoun);
-                    getRepositoryBundle().getCharacterPrototypeRepository().save(npcTemplate);
-                    nextQuestion = "nonPlayerCreatureEditorQuestion";
-                }
-            } catch (NumberFormatException e) {
-                if ("X".equals(choice)) {
-                    webSocketContext.getAttributes().remove(MEDIT_STATE);
-                    nextQuestion = "nonPlayerCreatureEditorQuestion";
-                } else {
-                    output.append("[red]Please choose one of the menu items.");
-                }
+            if (ordinal < 1 || ordinal > Pronoun.values().length) {
+                output.append("[red]Please choose one of the menu items.");
+            } else {
+                Pronoun pronoun = Pronoun.values()[ordinal - 1];
+                npcTemplate.getCharacter().setPronoun(pronoun);
+                getRepositoryBundle().getCharacterPrototypeRepository().save(npcTemplate);
+                nextQuestion = "nonPlayerCreatureEditorQuestion";
+            }
+        } catch (NumberFormatException e) {
+            if ("X".equals(choice)) {
+                nextQuestion = "nonPlayerCreatureEditorQuestion";
+            } else {
+                output.append("[red]Please choose one of the menu items.");
             }
         }
 
