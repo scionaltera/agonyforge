@@ -34,7 +34,18 @@ public final class CharacterSheetFormatter {
         }
 
         output.append("");
-        output.append("[default]Health: [red]❤");
+        output.append("[default]Health: [red]" + hearts(ch));
         output.append("[default]DEF: [green]%d", ch.getCharacter().getDefense());
+    }
+
+    public static String hearts(AbstractMudObject ch) {
+        if (ch == null || ch.getCharacter() == null) {
+            return "";
+        }
+
+        String filled = "♥".repeat(Math.max(0, (int)Math.ceil(ch.getCharacter().getHitPoints() / 10.0)));
+        String empty  = "♡".repeat(Math.max(0, (int)Math.floor((ch.getCharacter().getMaxHitPoints() - ch.getCharacter().getHitPoints()) / 10.0)));
+
+        return filled + empty;
     }
 }

@@ -26,7 +26,7 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQue
 
 @Component
 public class RoomFlagsEditorQuestion extends BaseQuestion {
-    private static final String REDIT_FLAG = "REDIT.FLAG";
+    static final String REDIT_FLAG = "REDIT.FLAG";
 
     private final MenuPane menuPane = new MenuPane();
 
@@ -100,7 +100,7 @@ public class RoomFlagsEditorQuestion extends BaseQuestion {
         List<MenuItem> menuItems = Arrays.stream(RoomFlag.values())
             .sequential()
             .map(flag -> new MenuItem(
-                String.format("%-2d", flag.ordinal()),
+                String.format("%-2d", flag.ordinal() + 1),
                 String.format("%-10s: ([%s]%-5s[dyellow]) %s",
                     flag.name(),
                     room.getFlags().contains(flag) ? "green" : "red",

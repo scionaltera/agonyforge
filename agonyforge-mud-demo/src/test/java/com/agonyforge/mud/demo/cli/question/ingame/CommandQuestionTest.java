@@ -110,13 +110,7 @@ public class CommandQuestionTest {
         assertEquals("[default]> ", output.getOutput().get(2));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "t",
-        "te",
-        "tes",
-        "test"
-    })
+    @Test
     void testAnswer() {
         CommandReference commandReference = mock(CommandReference.class);
 

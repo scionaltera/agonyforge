@@ -47,6 +47,7 @@ public class CommService extends EchoService {
 
         characterRepository.findAll()
             .stream()
+            .filter(ch -> ch.getPlayer() != null)
             .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
@@ -96,6 +97,7 @@ public class CommService extends EchoService {
 
         characterRepository.findByLocationRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
             .stream()
+            .filter(ch -> ch.getPlayer() != null)
             .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
             .filter(ch -> !skip.contains(ch))
             .filter(ch -> zoneIdString.equals(ch.getLocation().getRoom().getId().toString().substring(0, zoneIdString.length())))
@@ -113,6 +115,7 @@ public class CommService extends EchoService {
         List<MudCharacter> skip = List.of(except);
         characterRepository.findByLocationRoomId(roomId)
             .stream()
+            .filter(ch -> ch.getPlayer() != null)
             .filter(ch -> !skip.contains(ch))
             .forEach(ch -> sendTo(ch, message));
     }
@@ -135,6 +138,10 @@ public class CommService extends EchoService {
      * @param message The message to send.
      */
     public void sendTo(MudCharacter ch, Output message) {
+        if (ch.getPlayer() == null) {
+            return;
+        }
+
         Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getPlayer().getWebSocketSession());
 
         if (!"commandQuestion".equals(attributes.get("MUD.QUESTION"))) {

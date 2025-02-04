@@ -6,7 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class PurgeCommand extends AbstractCommand {
+public class SpawnCommand extends AbstractCommand {
     @Autowired
-    public PurgeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+    public SpawnCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
     }
 
@@ -27,30 +27,34 @@ public class PurgeCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         if (tokens.size() != 2) {
-            output.append("[default]What would you like to purge?");
+            output.append("[default]What is the ID of the creature you'd like to create?");
             return question;
         }
 
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
+        Optional<MudCharacterTemplate> npcTemplate = Optional.empty();
 
-        if (targetOptional.isEmpty()) {
-            targetOptional = findRoomItem(ch, tokens.get(1));
+        try {
+            Long id = Long.parseLong(tokens.get(1));
+            npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById(id);
+        } catch (NumberFormatException e) {
+            // TODO search for template by name
         }
 
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't see anything like that.");
+        if (npcTemplate.isEmpty()) {
+            output.append("[red]There is no creature with that ID.");
             return question;
         }
 
-        MudItem target = targetOptional.get();
-        getRepositoryBundle().getItemRepository().delete(target);
+        MudCharacter npc = npcTemplate.get().buildInstance();
+        npc.getLocation().setRoom(ch.getLocation().getRoom());
+        npc = getRepositoryBundle().getCharacterRepository().save(npc);
 
-        output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
+        output.append("[yellow]You wave your hand, and %s appears!", npc.getCharacter().getName());
         getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s snaps %s fingers, and %s disappears!",
+            new Output("[yellow]%s waves %s hand, and %s appears!",
                 ch.getCharacter().getName(),
                 ch.getCharacter().getPronoun().getPossessive(),
-                target.getItem().getShortDescription()), ch);
+                npc.getCharacter().getName()), ch);
 
         return question;
     }

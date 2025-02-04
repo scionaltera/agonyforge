@@ -6,7 +6,6 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,9 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class PurgeCommand extends AbstractCommand {
+public class SlayCommand extends AbstractCommand {
     @Autowired
-    public PurgeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
+    public SlayCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
     }
 
@@ -27,30 +26,26 @@ public class PurgeCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         if (tokens.size() != 2) {
-            output.append("[default]What would you like to purge?");
+            output.append("[default]Whom do you wish to slay?");
             return question;
         }
 
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
+        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, tokens.get(1));
 
         if (targetOptional.isEmpty()) {
-            targetOptional = findRoomItem(ch, tokens.get(1));
-        }
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't see anything like that.");
+            output.append("[default]You don't see anyone like that.");
             return question;
         }
 
-        MudItem target = targetOptional.get();
-        getRepositoryBundle().getItemRepository().delete(target);
+        MudCharacter target = targetOptional.get();
+        getRepositoryBundle().getCharacterRepository().delete(target);
 
-        output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
+        output.append("[yellow]You snap your fingers, and %s disappears!", target.getCharacter().getName());
         getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
             new Output("[yellow]%s snaps %s fingers, and %s disappears!",
                 ch.getCharacter().getName(),
                 ch.getCharacter().getPronoun().getPossessive(),
-                target.getItem().getShortDescription()), ch);
+                target.getCharacter().getName()), ch);
 
         return question;
     }

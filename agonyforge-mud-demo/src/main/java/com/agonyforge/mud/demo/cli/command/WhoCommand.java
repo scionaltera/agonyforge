@@ -25,6 +25,7 @@ public class WhoCommand extends AbstractCommand {
     public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
         List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().findAll()
             .stream()
+            .filter(ch -> ch.getPlayer() != null)
             .filter(ch -> ch.getLocation() != null)
             .toList();
 

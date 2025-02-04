@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.question.CommandException;
@@ -35,6 +36,10 @@ public abstract class AbstractCommand implements Command {
 
     protected CommService getCommService() {
         return commService;
+    }
+
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
     protected Question getQuestion(String name) {
@@ -102,7 +107,9 @@ public abstract class AbstractCommand implements Command {
         return targets
             .stream()
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> tch.getCharacter().getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .filter(tch -> Tokenizer.tokenize(tch.getCharacter().getName()).stream()
+                .filter(nameToken -> !nameToken.equals("A") && !nameToken.equals("AN") && !nameToken.equals("THE"))
+                .anyMatch(nameToken -> nameToken.startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 
@@ -111,9 +118,11 @@ public abstract class AbstractCommand implements Command {
 
         return targets
             .stream()
-            .filter(tch -> tch.getLocation() != null)
             .filter(tch -> !tch.equals(ch))
-            .filter(tch -> tch.getCharacter().getName().toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT)))
+            .filter(tch -> tch.getLocation() != null)
+            .filter(tch -> Tokenizer.tokenize(tch.getCharacter().getName()).stream()
+                .filter(nameToken -> !nameToken.equals("A") && !nameToken.equals("AN") && !nameToken.equals("THE"))
+                .anyMatch(nameToken -> nameToken.startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 }

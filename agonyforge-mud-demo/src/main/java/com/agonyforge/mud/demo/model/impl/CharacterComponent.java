@@ -18,6 +18,8 @@ public class CharacterComponent extends Persistent {
     private Long id;
     private String name;
     private Pronoun pronoun;
+    private Integer maxHitPoints = 10;
+    private Integer hitPoints = 10;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private MudSpecies species;
@@ -56,6 +58,22 @@ public class CharacterComponent extends Persistent {
 
     public void setPronoun(Pronoun pronoun) {
         this.pronoun = pronoun;
+    }
+
+    public Integer getMaxHitPoints() {
+        return maxHitPoints;
+    }
+
+    public void setMaxHitPoints(Integer maxHitPoints) {
+        this.maxHitPoints = maxHitPoints;
+    }
+
+    public Integer getHitPoints() {
+        return hitPoints;
+    }
+
+    public void setHitPoints(Integer hitPoints) {
+        this.hitPoints = hitPoints;
     }
 
     public MudSpecies getSpecies() {
