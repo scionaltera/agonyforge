@@ -22,10 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
@@ -37,6 +34,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RoomFlagsEditorQuestionTest {
+    private static final Random RAND = new Random();
+
     @Mock
     private RepositoryBundle repositoryBundle;
 
@@ -85,10 +84,13 @@ public class RoomFlagsEditorQuestionTest {
 
     @Test
     void testPrompt() {
+        Long roomId = RAND.nextLong(100, 1000);
+
+        when(mudRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(room.getFlags()).thenReturn(EnumSet.noneOf(RoomFlag.class));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, 65L,
-            REDIT_MODEL, room
+            REDIT_MODEL, roomId
         ));
 
         RoomFlagsEditorQuestion uut = new RoomFlagsEditorQuestion(applicationContext, repositoryBundle);
@@ -99,13 +101,15 @@ public class RoomFlagsEditorQuestionTest {
 
     @Test
     void testPromptToggleOn() {
+        Long roomId = RAND.nextLong(100, 1000);
         Map<String, Object> attributes = new HashMap<>();
         EnumSet<RoomFlag> flags = EnumSet.noneOf(RoomFlag.class);
 
-        attributes.put(REDIT_MODEL, room);
+        attributes.put(REDIT_MODEL, roomId);
         attributes.put(REDIT_STATE, REDIT_FLAG);
         attributes.put(REDIT_FLAG, RoomFlag.INDOORS);
 
+        when(mudRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(room.getFlags()).thenReturn(flags);
 
@@ -120,13 +124,15 @@ public class RoomFlagsEditorQuestionTest {
 
     @Test
     void testPromptToggleOff() {
+        Long roomId = RAND.nextLong(100, 1000);
         Map<String, Object> attributes = new HashMap<>();
         EnumSet<RoomFlag> flags = EnumSet.of(RoomFlag.INDOORS);
 
-        attributes.put(REDIT_MODEL, room);
+        attributes.put(REDIT_MODEL, roomId);
         attributes.put(REDIT_STATE, REDIT_FLAG);
         attributes.put(REDIT_FLAG, RoomFlag.INDOORS);
 
+        when(mudRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(room.getFlags()).thenReturn(flags);
 
@@ -142,10 +148,12 @@ public class RoomFlagsEditorQuestionTest {
     @ParameterizedTest
     @ValueSource(strings = { "1" })
     void testAnswer(String input) {
+        Long roomId = RAND.nextLong(100, 1000);
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(REDIT_MODEL, room);
+        attributes.put(REDIT_MODEL, roomId);
 
+        when(mudRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(room.getFlags()).thenReturn(EnumSet.noneOf(RoomFlag.class));
 
@@ -162,10 +170,12 @@ public class RoomFlagsEditorQuestionTest {
     @ParameterizedTest
     @ValueSource(strings = { "0", "T", "💀" })
     void testAnswerInvalid(String input) {
+        Long roomId = RAND.nextLong(100, 1000);
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(REDIT_MODEL, room);
+        attributes.put(REDIT_MODEL, roomId);
 
+        when(mudRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(room.getFlags()).thenReturn(EnumSet.noneOf(RoomFlag.class));
 
@@ -182,9 +192,10 @@ public class RoomFlagsEditorQuestionTest {
 
     @Test
     void testAnswerExit() {
+        Long roomId = RAND.nextLong(100, 1000);
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(REDIT_MODEL, room);
+        attributes.put(REDIT_MODEL, roomId);
         attributes.put(REDIT_FLAG, RoomFlag.INDOORS);
 
         when(webSocketContext.getAttributes()).thenReturn(attributes);

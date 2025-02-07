@@ -38,7 +38,6 @@ public class RoomEditorQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomEditorQuestion.class);
 
     private final CommService commService;
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
@@ -113,11 +112,11 @@ public class RoomEditorQuestion extends BaseQuestion {
 
     private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
         if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getLocation().getRoom().getId()).orElseThrow();
-            wsContext.getAttributes().put(REDIT_MODEL, room);
+            wsContext.getAttributes().put(REDIT_MODEL, ch.getLocation().getRoom().getId());
         }
 
-        return (MudRoom)wsContext.getAttributes().get(REDIT_MODEL);
+        Long roomId = (Long)wsContext.getAttributes().get(REDIT_MODEL);
+        return getRepositoryBundle().getRoomRepository().findById(roomId).orElseThrow();
     }
 
     private void populateMenuItems(MudRoom room) {
