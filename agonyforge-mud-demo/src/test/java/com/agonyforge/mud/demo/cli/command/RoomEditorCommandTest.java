@@ -95,7 +95,7 @@ public class RoomEditorCommandTest {
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
-        when(room.getId()).thenReturn(100L);
+        when(room.getId()).thenReturn(roomId);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -105,7 +105,7 @@ public class RoomEditorCommandTest {
 
         Question result = uut.execute(originalQuestion, wsContext, List.of("REDIT"), new Input("redit"), output);
 
-        assertEquals(room, attributes.get(REDIT_MODEL));
+        assertEquals(roomId, attributes.get(REDIT_MODEL));
         assertEquals(reditQuestion, result);
     }
 
@@ -124,13 +124,14 @@ public class RoomEditorCommandTest {
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
+        when(room.getId()).thenReturn(roomId);
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
         Question result = uut.execute(originalQuestion, wsContext, List.of("REDIT", Long.toString(roomId)), new Input("redit " + roomId), output);
 
-        assertEquals(room, attributes.get(REDIT_MODEL));
+        assertEquals(roomId, attributes.get(REDIT_MODEL));
         assertEquals(reditQuestion, result);
     }
 

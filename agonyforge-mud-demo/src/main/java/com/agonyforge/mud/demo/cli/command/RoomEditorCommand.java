@@ -60,7 +60,7 @@ public class RoomEditorCommand extends AbstractCommand {
                     room = roomOptional.get();
                 }
 
-                webSocketContext.getAttributes().put(REDIT_MODEL, room);
+                webSocketContext.getAttributes().put(REDIT_MODEL, room.getId());
             } catch (NumberFormatException e) {
                 LOGGER.error(e.getMessage());
                 output
@@ -72,7 +72,7 @@ public class RoomEditorCommand extends AbstractCommand {
             }
         } else {
             room = ch.getLocation().getRoom();
-            webSocketContext.getAttributes().put(REDIT_MODEL, room);
+            webSocketContext.getAttributes().put(REDIT_MODEL, room.getId());
         }
 
         getCommService().sendToRoom(ch.getLocation().getRoom().getId(),

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_STATE;
 
 @Component
@@ -39,7 +40,7 @@ public class RoomFlagsEditorQuestion extends BaseQuestion {
 
     @Override
     public Output prompt(WebSocketContext wsContext) {
-        MudRoom room = (MudRoom)wsContext.getAttributes().get("REDIT.MODEL");
+        MudRoom room = getRepositoryBundle().getRoomRepository().findById((Long)wsContext.getAttributes().get(REDIT_MODEL)).orElseThrow();
 
         if (wsContext.getAttributes().containsKey(REDIT_STATE)) {
             if (wsContext.getAttributes().get(REDIT_STATE).toString().equals(REDIT_FLAG)) {

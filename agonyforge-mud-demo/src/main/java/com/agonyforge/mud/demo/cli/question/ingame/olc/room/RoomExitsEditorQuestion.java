@@ -13,7 +13,6 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.model.constant.Direction;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +48,7 @@ public class RoomExitsEditorQuestion extends BaseQuestion {
     @Override
     public Output prompt(WebSocketContext wsContext) {
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
-        MudRoom room = getRoomModel(wsContext, ch);
+        MudRoom room = getRepositoryBundle().getRoomRepository().findById((Long)wsContext.getAttributes().get(REDIT_MODEL)).orElseThrow();
 
         if (wsContext.getAttributes().containsKey(REDIT_STATE) && wsContext.getAttributes().get(REDIT_STATE).toString().startsWith("ROOM.EXITS")) {
             output.append("Destination room ID for exit %s, or 0 to delete: ", wsContext.getAttributes().get(REDIT_EXIT));
@@ -65,8 +63,7 @@ public class RoomExitsEditorQuestion extends BaseQuestion {
     public Response answer(WebSocketContext wsContext, Input input) {
         String nextQuestion = "roomExitsEditorQuestion";
         Output output = new Output();
-        MudCharacter ch = getCharacter(wsContext, output).orElseThrow();
-        MudRoom room = getRoomModel(wsContext, ch);
+        MudRoom room = getRepositoryBundle().getRoomRepository().findById((Long)wsContext.getAttributes().get(REDIT_MODEL)).orElseThrow();
 
         if (wsContext.getAttributes().containsKey(REDIT_EXIT)) {
             try {
@@ -120,17 +117,6 @@ public class RoomExitsEditorQuestion extends BaseQuestion {
         Question next = getQuestion(nextQuestion);
 
         return new Response(next, output);
-    }
-
-    private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
-        if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            LOGGER.error("{} doesn't have a room model.", this.getClass().getSimpleName());
-
-            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getLocation().getRoom().getId()).orElseThrow();
-            wsContext.getAttributes().put(REDIT_MODEL, room);
-        }
-
-        return (MudRoom)wsContext.getAttributes().get(REDIT_MODEL);
     }
 
     void populateMenuItems(MudRoom room) {
