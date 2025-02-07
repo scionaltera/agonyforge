@@ -124,10 +124,13 @@ public class RoomExitsEditorQuestion extends BaseQuestion {
 
     private MudRoom getRoomModel(WebSocketContext wsContext, MudCharacter ch) {
         if (!wsContext.getAttributes().containsKey(REDIT_MODEL)) {
-            wsContext.getAttributes().put(REDIT_MODEL, ch.getLocation().getRoom().getId());
+            LOGGER.error("{} doesn't have a room model.", this.getClass().getSimpleName());
+
+            MudRoom room = getRepositoryBundle().getRoomRepository().findById(ch.getLocation().getRoom().getId()).orElseThrow();
+            wsContext.getAttributes().put(REDIT_MODEL, room);
         }
 
-        return ch.getLocation().getRoom();
+        return (MudRoom)wsContext.getAttributes().get(REDIT_MODEL);
     }
 
     void populateMenuItems(MudRoom room) {

@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
+import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_STATE;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomExitsEditorQuestion.REDIT_EXIT;
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,9 +57,6 @@ public class RoomExitsEditorQuestionTest {
     private MudCharacter ch;
 
     @Mock
-    private LocationComponent locationComponent;
-
-    @Mock
     private MudRoom room;
 
     @Mock
@@ -76,13 +74,11 @@ public class RoomExitsEditorQuestionTest {
     @Test
     void testPromptMenu() {
         Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
+        attributes.put(REDIT_MODEL, room);
 
-        when(ch.getLocation()).thenReturn(locationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -96,14 +92,12 @@ public class RoomExitsEditorQuestionTest {
     @Test
     void testPromptExit() {
         Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
+        attributes.put(REDIT_MODEL, room);
         attributes.put(REDIT_STATE, "ROOM.EXITS");
 
-        when(ch.getLocation()).thenReturn(locationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -117,15 +111,13 @@ public class RoomExitsEditorQuestionTest {
     @Test
     void testAnswerExitDirection() {
         Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 150);
         long destId = RAND.nextLong(150, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
+        attributes.put(REDIT_MODEL, room);
         attributes.put(REDIT_EXIT, Direction.NORTH);
 
-        when(ch.getLocation()).thenReturn(locationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -148,14 +140,12 @@ public class RoomExitsEditorQuestionTest {
     @Test
     void testAnswerExitDelete() {
         Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 150);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
+        attributes.put(REDIT_MODEL, room);
         attributes.put(REDIT_EXIT, Direction.NORTH);
 
-        when(ch.getLocation()).thenReturn(locationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -173,13 +163,11 @@ public class RoomExitsEditorQuestionTest {
     @Test
     void testAnswerChooseExit() {
         Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 150);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
+        attributes.put(REDIT_MODEL, room);
 
-        when(ch.getLocation()).thenReturn(locationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -198,13 +186,11 @@ public class RoomExitsEditorQuestionTest {
     @Test
     void testAnswerQuit() {
         Long chId = RAND.nextLong();
-        long roomId = RAND.nextLong(100, 150);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
+        attributes.put(REDIT_MODEL, room);
 
-        when(ch.getLocation()).thenReturn(locationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
         when(wsContext.getAttributes()).thenReturn(attributes);
 
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));

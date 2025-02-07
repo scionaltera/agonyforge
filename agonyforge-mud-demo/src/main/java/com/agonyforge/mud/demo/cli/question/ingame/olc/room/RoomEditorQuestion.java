@@ -38,7 +38,6 @@ public class RoomEditorQuestion extends BaseQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomEditorQuestion.class);
 
     private final CommService commService;
-
     private final MenuPane menuPane = new MenuPane();
 
     @Autowired
