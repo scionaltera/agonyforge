@@ -46,4 +46,12 @@ public class TokenizerTest {
 
         assertEquals(expected, Tokenizer.tokenize(input));
     }
+
+    @Test
+    void testTokenizeColorCodes() {
+        String input = "[red]able baker [blue]charlie";
+        List<String> expected = List.of("ABLE", "BAKER", "CHARLIE");
+
+        assertEquals(expected, Tokenizer.tokenize(input));
+    }
 }

@@ -11,12 +11,19 @@ public class Tokenizer {
         List<String> tokens = new ArrayList<>();
         StringBuilder buf = new StringBuilder();
         boolean isQuoting = false;
+        boolean isColor = false;
 
         String input = HtmlUtils.htmlUnescape(escaped).trim();
 
         for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) == '"') {
                 isQuoting = !isQuoting;
+            } else if (input.charAt(i) == '[') {
+                isColor = true;
+            } else if (input.charAt(i) == ']') {
+                isColor = false;
+            } else if (isColor) {
+                // do nothing
             } else if (!isQuoting && input.charAt(i) == ' ') {
                 addTokenIfNotBlank(tokens, buf);
                 buf.setLength(0);
