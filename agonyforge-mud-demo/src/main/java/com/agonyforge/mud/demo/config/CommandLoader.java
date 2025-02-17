@@ -72,6 +72,7 @@ public class CommandLoader {
 
             refs.put("ROLL", new CommandReference(15, "ROLL", "rollCommand", "Roll some dice."));
             refs.put("TIME", new CommandReference(15, "TIME", "timeCommand", "See what time it is."));
+            refs.put("QUIT", new CommandReference(15, "QUIT", "quitCommand", "Return to the character menu."));
 
             refs.put("REDIT", new CommandReference(20, "REDIT", "roomEditorCommand", "Edit a room."));
             refs.put("IEDIT", new CommandReference(20, "IEDIT", "itemEditorCommand", "Edit an item."));
