@@ -24,6 +24,14 @@ public interface Command {
         return input.substring(space + 1).stripLeading();
     }
 
+    static String stripFirstWords(String input, int words) {
+        for (int i = 0; i < words; i++) {
+            input = stripFirstWord(input);
+        }
+
+        return input;
+    }
+
     static String stripColors(String input) {
         boolean inColor = false;
         StringBuilder out = new StringBuilder();
