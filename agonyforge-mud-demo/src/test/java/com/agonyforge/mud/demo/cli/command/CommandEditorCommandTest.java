@@ -55,6 +55,9 @@ public class CommandEditorCommandTest {
     @Mock
     private CommandReference commandRef;
 
+    @Mock
+    private Command command;
+
     @Captor
     private ArgumentCaptor<CommandReference> commandRefCaptor;
 
@@ -69,8 +72,8 @@ public class CommandEditorCommandTest {
         lenient().when(commandRepository.findAll()).thenReturn(List.of(commandRef));
         lenient().when(commandRepository.save(any(CommandReference.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        lenient().when(applicationContext.getBean(eq("testCommand"), eq(CommandReference.class))).thenReturn(commandRef);
-        lenient().when(applicationContext.getBean(eq("missingCommand"), eq(CommandReference.class))).thenThrow(new NoSuchBeanDefinitionException("Aw nuts!"));
+        lenient().when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
+        lenient().when(applicationContext.getBean(eq("missingCommand"), eq(Command.class))).thenThrow(new NoSuchBeanDefinitionException("Aw nuts!"));
     }
 
     @Test

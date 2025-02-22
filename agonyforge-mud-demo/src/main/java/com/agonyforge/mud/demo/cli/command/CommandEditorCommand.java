@@ -68,7 +68,7 @@ public class CommandEditorCommand extends AbstractCommand {
                     CommandReference command = new CommandReference();
 
                     // throws exception if bean cannot be found
-                    getApplicationContext().getBean(beanName, CommandReference.class);
+                    getApplicationContext().getBean(beanName, Command.class);
 
                     command.setName(name);
                     command.setPriority(priority);
