@@ -64,11 +64,11 @@ public class CommandEditorCommandTest {
     @BeforeEach
     void setUp() {
         lenient().when(commandRef.getPriority()).thenReturn(1);
-        lenient().when(commandRef.getName()).thenReturn("test");
+        lenient().when(commandRef.getName()).thenReturn("TEST");
         lenient().when(commandRef.getBeanName()).thenReturn("testCommand");
         lenient().when(commandRef.getDescription()).thenReturn("Tests things.");
 
-        lenient().when(commandRepository.findByName(eq("test"))).thenReturn(Optional.of(commandRef));
+        lenient().when(commandRepository.findByNameIgnoreCase(eq("test"))).thenReturn(Optional.of(commandRef));
         lenient().when(commandRepository.findAll()).thenReturn(List.of(commandRef));
         lenient().when(commandRepository.save(any(CommandReference.class))).thenAnswer(i -> i.getArguments()[0]);
 
