@@ -47,6 +47,9 @@ public class WebSocketControllerTest {
     @Mock
     private Principal principal;
 
+    @Mock
+    private WebSocketContextAware webSocketContextAware;
+
     @Captor
     private ArgumentCaptor<WebSocketContext> contextCaptor;
 
@@ -72,7 +75,7 @@ public class WebSocketControllerTest {
         when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("").append("[default]> "));
         when(question.getBeanName()).thenReturn("testQuestion");
 
-        WebSocketController uut = new WebSocketController(applicationContext, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
         Output result = uut.onSubscribe(headers);
 
         assertEquals(3, result.getOutput().size());
@@ -91,7 +94,7 @@ public class WebSocketControllerTest {
     void testSubscribeMissingAttributes() {
         headers.remove(SESSION_ATTRIBUTES);
 
-        WebSocketController uut = new WebSocketController(applicationContext, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
         Output result = uut.onSubscribe(headers);
 
         assertEquals(1, result.getOutput().size());
@@ -111,7 +114,7 @@ public class WebSocketControllerTest {
         when(question.getBeanName()).thenReturn("nextQuestion");
 
         Input input = new Input("Hello!");
-        WebSocketController uut = new WebSocketController(applicationContext, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
         Output result = uut.onInput(headers, input);
 
         assertEquals("[cyan]You say, 'Hello![cyan]'", result.getOutput().get(0));
@@ -131,7 +134,7 @@ public class WebSocketControllerTest {
         headers.remove(SESSION_ATTRIBUTES);
 
         Input input = new Input("Hello!");
-        WebSocketController uut = new WebSocketController(applicationContext, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
         Output result = uut.onInput(headers, input);
 
         assertEquals(1, result.getOutput().size());
