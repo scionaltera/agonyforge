@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface CommandRepository extends JpaRepository<CommandReference, String> {
-    Optional<CommandReference> findByName(String name);
+    Optional<CommandReference> findByNameIgnoreCase(String name);
     Optional<CommandReference> findFirstByNameStartingWith(String name, Sort sort);
 }

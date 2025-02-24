@@ -8,8 +8,6 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import com.agonyforge.mud.demo.service.CommService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +21,6 @@ import java.util.Optional;
 
 @Component
 public class CommandEditorCommand extends AbstractCommand {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommandEditorCommand.class);
-
     private final CommandRepository commandRepository;
 
     @Autowired
@@ -68,7 +64,7 @@ public class CommandEditorCommand extends AbstractCommand {
                     CommandReference command = new CommandReference();
 
                     // throws exception if bean cannot be found
-                    getApplicationContext().getBean(beanName, CommandReference.class);
+                    getApplicationContext().getBean(beanName, Command.class);
 
                     command.setName(name);
                     command.setPriority(priority);
@@ -90,7 +86,7 @@ public class CommandEditorCommand extends AbstractCommand {
                 output.append("[yellow]CEDIT DELETE &lt;name&gt;");
             } else {
                 String name = Command.stripFirstWords(input.getInput(), 2);
-                Optional<CommandReference> commandOptional = commandRepository.findByName(name);
+                Optional<CommandReference> commandOptional = commandRepository.findByNameIgnoreCase(name);
 
                 if (commandOptional.isPresent()) {
                     commandRepository.delete(commandOptional.get());
