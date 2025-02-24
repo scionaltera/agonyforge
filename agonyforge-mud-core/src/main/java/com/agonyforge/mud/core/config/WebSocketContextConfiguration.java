@@ -15,7 +15,6 @@ public class WebSocketContextConfiguration {
             @Override
             public void setWebSocketContext(WebSocketContext webSocketContext) {
                 // default implementation does nothing
-                webSocketContext.getPrincipal().getName();
             }
         };
     }
