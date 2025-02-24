@@ -6,7 +6,6 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import java.util.Optional;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_PCHARACTER;
 
 public abstract class BaseQuestion extends AbstractQuestion {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseQuestion.class);
@@ -43,19 +41,6 @@ public abstract class BaseQuestion extends AbstractQuestion {
 
         if (chOptional.isEmpty()) {
             LOGGER.error("Cannot look up character by ID: {}", chId);
-            output.append("[red]Unable to find your character! The error has been reported.");
-            return Optional.empty();
-        }
-
-        return chOptional;
-    }
-
-    protected Optional<MudCharacterTemplate> getCharacterPrototype(WebSocketContext wsContext, Output output) {
-        Long chId = (Long) wsContext.getAttributes().get(MUD_PCHARACTER);
-        Optional<MudCharacterTemplate> chOptional = getRepositoryBundle().getCharacterPrototypeRepository().findById(chId);
-
-        if (chOptional.isEmpty()) {
-            LOGGER.error("Cannot look up character prototype by ID: {}", chId);
             output.append("[red]Unable to find your character! The error has been reported.");
             return Optional.empty();
         }

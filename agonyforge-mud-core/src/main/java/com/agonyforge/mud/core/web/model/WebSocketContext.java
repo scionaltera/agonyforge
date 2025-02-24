@@ -43,7 +43,7 @@ public class WebSocketContext {
             errors.add("no Session Attributes");
         }
 
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             throw new IllegalStateException(String.join(", ", errors));
         }
     }
