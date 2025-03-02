@@ -32,13 +32,16 @@ public class WebSocketController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
     private final ApplicationContext applicationContext;
+    private final WebSocketContextAware webSocketContextAware;
     private final Question initialQuestion;
     private Output greeting;
 
     @Autowired
     public WebSocketController(ApplicationContext applicationContext,
+                               WebSocketContextAware webSocketContextAware,
                                @Qualifier("initialQuestion") Question initialQuestion) {
         this.applicationContext = applicationContext;
+        this.webSocketContextAware = webSocketContextAware;
         this.initialQuestion = initialQuestion;
 
         try {
@@ -55,6 +58,7 @@ public class WebSocketController {
 
         try {
             wsContext = WebSocketContext.build(headers);
+            webSocketContextAware.setWebSocketContext(wsContext);
         } catch (IllegalStateException e) {
             LOGGER.error("Error building WebSocketContext: {}", e.getMessage());
             return new Output("[red]Oops! Something went wrong. The error has been reported. Please try again.");
@@ -84,6 +88,7 @@ public class WebSocketController {
 
         try {
             wsContext = WebSocketContext.build(headers);
+            this.webSocketContextAware.setWebSocketContext(wsContext);
         } catch (IllegalStateException e) {
             LOGGER.error("Error building WebSocketContext: {}", e.getMessage());
             return new Output("[red]Oops! Something went wrong. The error has been reported. Please try again.");
