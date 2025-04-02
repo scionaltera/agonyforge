@@ -3,12 +3,12 @@ package com.agonyforge.mud.demo.model.constant;
 import com.agonyforge.mud.demo.model.util.BaseEnumSetConverter;
 import com.agonyforge.mud.demo.model.util.PersistentEnum;
 
-public enum PlayerFlag implements PersistentEnum {
+public enum AdminFlag implements PersistentEnum {
     HOLYLIGHT("can see everything");
 
     private final String description;
 
-    PlayerFlag(String description) {
+    AdminFlag(String description) {
         this.description = description;
     }
 
@@ -16,9 +16,9 @@ public enum PlayerFlag implements PersistentEnum {
         return description;
     }
 
-    public static class Converter extends BaseEnumSetConverter<PlayerFlag> {
+    public static class Converter extends BaseEnumSetConverter<AdminFlag> {
         public Converter() {
-            super(PlayerFlag.class);
+            super(AdminFlag.class);
         }
     }
 }

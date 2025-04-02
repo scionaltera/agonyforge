@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.repository.*;
@@ -180,6 +181,7 @@ public class CharacterViewQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
+        when(playerComponent.getAdminFlags()).thenReturn(EnumSet.noneOf(AdminFlag.class));
         when(ch.getPlayer()).thenReturn(playerComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation())
@@ -221,6 +223,7 @@ public class CharacterViewQuestionTest {
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(wsContext.getSessionId()).thenReturn(wsSessionId);
 
+        when(playerComponent.getAdminFlags()).thenReturn(EnumSet.noneOf(AdminFlag.class));
         when(ch.getPlayer()).thenReturn(playerComponent);
         when(ch.getLocation()).thenReturn(locationComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);

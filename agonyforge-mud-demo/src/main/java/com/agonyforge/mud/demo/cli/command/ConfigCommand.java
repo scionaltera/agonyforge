@@ -5,7 +5,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.constant.PlayerFlag;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,13 @@ public class ConfigCommand extends AbstractCommand {
 
         if (tokens.size() == 1) {
             output.append("[yellow]Admin Configuration Flags:");
-            Arrays.stream(PlayerFlag.values()).forEachOrdered(flag -> {
+            Arrays.stream(AdminFlag.values()).forEachOrdered(flag -> {
                 boolean isEnabled = ch.getPlayer().getAdminFlags().contains(flag);
 
                 output.append("[yellow]%s: %s", flag.name(), isEnabled);
             });
         } else if (tokens.size() == 2) {
-            PlayerFlag flag = PlayerFlag.valueOf(tokens.get(1));
+            AdminFlag flag = AdminFlag.valueOf(tokens.get(1));
 
             if (ch.getPlayer().getAdminFlags().contains(flag)) {
                 ch.getPlayer().getAdminFlags().remove(flag);
