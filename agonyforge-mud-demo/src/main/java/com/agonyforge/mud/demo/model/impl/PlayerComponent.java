@@ -18,7 +18,7 @@ public class PlayerComponent extends Persistent {
     private String title;
 
     @Convert(converter = PlayerFlag.Converter.class)
-    private EnumSet<PlayerFlag> flags = EnumSet.noneOf(PlayerFlag.class);
+    private EnumSet<PlayerFlag> adminFlags = EnumSet.noneOf(PlayerFlag.class);
 
     @ManyToMany()
     private Set<Role> roles = new HashSet<>();
@@ -55,12 +55,12 @@ public class PlayerComponent extends Persistent {
         this.title = title;
     }
 
-    public EnumSet<PlayerFlag> getFlags() {
-        return flags;
+    public EnumSet<PlayerFlag> getAdminFlags() {
+        return adminFlags;
     }
 
-    public void setFlags(EnumSet<PlayerFlag> flags) {
-        this.flags = flags;
+    public void setAdminFlags(EnumSet<PlayerFlag> flags) {
+        this.adminFlags = flags;
     }
 
     public Set<Role> getRoles() {

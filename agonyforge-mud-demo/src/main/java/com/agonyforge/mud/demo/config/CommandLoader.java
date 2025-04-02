@@ -79,6 +79,7 @@ public class CommandLoader {
             refs.put("MEDIT", new CommandReference(20, "MEDIT", "nonPlayerCreatureEditorCommand", "Edit a creature."));
             refs.put("CEDIT", new CommandReference(20, "CEDIT", "commandEditorCommand", "Edit commands."));
 
+            refs.put("CONFIG", new CommandReference(30, "CONFIG", "configCommand", "Configure admin preferences."));
             refs.put("GOTO", new CommandReference(30, "GOTO", "gotoCommand", "Go to a room or player."));
             refs.put("TRANSFER", new CommandReference(30, "TRANSFER", "transferCommand", "Bring a player to you."));
             refs.put("TELEPORT", new CommandReference(30, "TELEPORT", "teleportCommand", "Send a player to a room."));
