@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -19,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,6 +94,7 @@ public class TeleportCommandTest {
         lenient().when(ch.getCharacter()).thenReturn(chCharacter);
         lenient().when(chCharacter.getName()).thenReturn("Scion");
         lenient().when(ch.getPlayer()).thenReturn(chPlayer);
+        lenient().when(chPlayer.getAdminFlags()).thenReturn(EnumSet.noneOf(AdminFlag.class));
 
         lenient().when(mudCharacterRepository.findById(eq(targetId))).thenReturn(Optional.of(target));
         lenient().when(target.getLocation()).thenReturn(targetLocation);
@@ -103,7 +102,8 @@ public class TeleportCommandTest {
         lenient().when(target.getCharacter()).thenReturn(targetCharacter);
         lenient().when(targetCharacter.getName()).thenReturn("Target");
         lenient().when(targetCharacter.getPronoun()).thenReturn(Pronoun.THEY);
-        lenient().when(target.getPlayer()).thenReturn(chPlayer);
+        lenient().when(target.getPlayer()).thenReturn(targetPlayer);
+        lenient().when(targetPlayer.getAdminFlags()).thenReturn(EnumSet.noneOf(AdminFlag.class));
     }
 
     @Test

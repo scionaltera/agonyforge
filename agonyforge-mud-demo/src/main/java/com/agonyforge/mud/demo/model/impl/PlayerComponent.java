@@ -1,7 +1,9 @@
 package com.agonyforge.mud.demo.model.impl;
 
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import jakarta.persistence.*;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -14,6 +16,9 @@ public class PlayerComponent extends Persistent {
     private String username;
     private String webSocketSession;
     private String title;
+
+    @Convert(converter = AdminFlag.Converter.class)
+    private EnumSet<AdminFlag> adminFlags = EnumSet.noneOf(AdminFlag.class);
 
     @ManyToMany()
     private Set<Role> roles = new HashSet<>();
@@ -48,6 +53,14 @@ public class PlayerComponent extends Persistent {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public EnumSet<AdminFlag> getAdminFlags() {
+        return adminFlags;
+    }
+
+    public void setAdminFlags(EnumSet<AdminFlag> flags) {
+        this.adminFlags = flags;
     }
 
     public Set<Role> getRoles() {

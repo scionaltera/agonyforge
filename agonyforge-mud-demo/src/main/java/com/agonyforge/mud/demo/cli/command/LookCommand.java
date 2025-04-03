@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
@@ -32,8 +33,13 @@ public class LookCommand extends AbstractCommand {
 
         Output output = new Output();
 
+        if (ch.getPlayer() != null && ch.getPlayer().getAdminFlags().contains(AdminFlag.HOLYLIGHT)) {
+            output.append("[yellow](%d) %s %s", room.getId(), room.getName(), room.getFlags());
+        } else {
+            output.append("[yellow]%s", room.getName());
+        }
+
         output
-            .append("[yellow](%d) %s %s", room.getId(), room.getName(), room.getFlags())
             .append("[default]%s", room.getDescription())
             .append("[dcyan]Exits: %s", String.join(" ", room.getExits()));
 
@@ -63,7 +69,7 @@ public class LookCommand extends AbstractCommand {
                     action = "here";
                 }
 
-                if (target.getPlayer() != null) {
+                if (target.getPlayer() != null || (ch.getPlayer() != null && !ch.getPlayer().getAdminFlags().contains(AdminFlag.HOLYLIGHT))) {
                     output.append("[green]%s is %s. %s", StringUtils.capitalize(target.getCharacter().getName()), action, flags);
                 } else {
                     output.append("[green](%d) %s is %s.", target.getTemplate().getId(), StringUtils.capitalize(target.getCharacter().getName()), action, flags);
@@ -71,9 +77,15 @@ public class LookCommand extends AbstractCommand {
             });
 
         repositoryBundle.getItemRepository().findByLocationRoom(room)
-            .forEach(target -> output.append("[green](%d) %s",
-                target.getTemplate().getId(),
-                StringUtils.capitalize(target.getItem().getLongDescription())));
+            .forEach(target -> {
+                if (ch.getPlayer() != null && ch.getPlayer().getAdminFlags().contains(AdminFlag.HOLYLIGHT)) {
+                    output.append("[green](%d) %s",
+                        target.getTemplate().getId(),
+                        StringUtils.capitalize(target.getItem().getLongDescription()));
+                } else {
+                    output.append("[green]%s", StringUtils.capitalize(target.getItem().getLongDescription()));
+                }
+            });
 
         return output;
     }

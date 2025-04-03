@@ -136,10 +136,7 @@ public class LookCommandTest {
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(target.getCharacter().getName()).thenReturn("Target");
         when(item.getItem()).thenReturn(itemComponent);
-        when(item.getTemplate()).thenReturn(itemProto);
-        when(item.getTemplate().getId()).thenReturn(100L);
         when(itemComponent.getLongDescription()).thenReturn("A test is zipping wildly around the room.");
-        when(room.getId()).thenReturn(roomId);
         when(room.getName()).thenReturn("Test Room");
         when(room.getDescription()).thenReturn("This room is a test.");
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -157,7 +154,7 @@ public class LookCommandTest {
             output);
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("(100) Test Room"));
+        assertTrue(output.getOutput().get(0).contains("Test Room"));
         assertTrue(output.getOutput().get(1).contains("This room is a test."));
         assertTrue(output.getOutput().get(2).contains("Exits:"));
         assertTrue(output.getOutput().get(3).contains("Target is here."));
