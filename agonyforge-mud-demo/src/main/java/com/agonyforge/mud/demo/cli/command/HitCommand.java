@@ -56,15 +56,13 @@ public class HitCommand extends AbstractCommand {
 
         if (attempt.getModifiedRoll(0) >= rollTarget) {
             // Damage roll
+            // TODO d4 if unarmed, d6 if holding a weapon
             DiceResult damage = diceService.roll(1, 4);
             LOGGER.info("Damage result: {}", damage);
 
             int targetDefense = target.getCharacter().getDefense();
             int adjustedDamage = damage.getModifiedRoll(0) - targetDefense;
             int resultHitPoints = Math.max(adjustedDamage, 0);
-
-            output.append("[red]You did %d damage!", adjustedDamage);
-            target.getCharacter().setHitPoints(resultHitPoints);
 
             output.append("[default]You hit %s!", target.getCharacter().getName());
             getCommService().sendTo(target, new Output("[default]%s hits you!", ch.getCharacter().getName()));
@@ -74,6 +72,9 @@ public class HitCommand extends AbstractCommand {
                     ch.getCharacter().getName(),
                     target.getCharacter().getName()),
                 ch, target);
+
+            output.append("[red]You did %d damage!", adjustedDamage);
+            target.getCharacter().setHitPoints(resultHitPoints);
         } else {
             output.append("[default]You miss.");
             getCommService().sendTo(target, new Output("[default]%s tries to hit you, but misses.", ch.getCharacter().getName()));

@@ -149,6 +149,7 @@ public class HitCommandTest {
         verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
         verify(diceService).roll(eq(1), eq(20));
         verify(diceService, never()).roll(eq(1), eq(4));
+        verify(targetCharacter, never()).setHitPoints(anyInt());
     }
 
     @Test
@@ -181,5 +182,6 @@ public class HitCommandTest {
         verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
         verify(diceService).roll(eq(1), eq(20));
         verify(diceService).roll(eq(1), eq(4));
+        verify(targetCharacter).setHitPoints(anyInt());
     }
 }
