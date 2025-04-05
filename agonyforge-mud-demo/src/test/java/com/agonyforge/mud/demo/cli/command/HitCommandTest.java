@@ -1,6 +1,8 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.core.service.dice.DiceResult;
+import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -40,6 +42,9 @@ public class HitCommandTest {
     private CommService commService;
 
     @Mock
+    private DiceService diceService;
+
+    @Mock
     private ApplicationContext applicationContext;
 
     @Mock
@@ -77,7 +82,7 @@ public class HitCommandTest {
     @Test
     void testHitNoArg() {
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -101,7 +106,7 @@ public class HitCommandTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -116,7 +121,7 @@ public class HitCommandTest {
     }
 
     @Test
-    void testHitTarget() {
+    void testHitTargetMiss() {
         Long chId = RANDOM.nextLong();
         Long roomId = RANDOM.nextLong();
 
@@ -126,9 +131,10 @@ public class HitCommandTest {
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 11));
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -137,9 +143,43 @@ public class HitCommandTest {
             output);
 
         assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You hit Frodo!"));
+        assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You miss.")));
 
         verify(commService).sendTo(eq(target), any(Output.class));
         verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
+        verify(diceService).roll(eq(1), eq(20));
+        verify(diceService, never()).roll(eq(1), eq(4));
+    }
+
+    @Test
+    void testHitTargetHit() {
+        Long chId = RANDOM.nextLong();
+        Long roomId = RANDOM.nextLong();
+
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(room.getId()).thenReturn(roomId);
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 12));
+        when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
+
+        Output output = new Output();
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("HIT", "FRODO"),
+            new Input("hit frodo"),
+            output);
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You hit Frodo!")));
+
+        verify(commService).sendTo(eq(target), any(Output.class));
+        verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
+        verify(diceService).roll(eq(1), eq(20));
+        verify(diceService).roll(eq(1), eq(4));
     }
 }
