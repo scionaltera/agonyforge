@@ -7,7 +7,9 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
 import org.slf4j.Logger;
@@ -55,14 +57,29 @@ public class HitCommand extends AbstractCommand {
         LOGGER.info("Attempt result: {}", attempt);
 
         if (attempt.getModifiedRoll(0) >= rollTarget) {
+            Optional<MudItem> weaponOptional = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)
+                .stream()
+                .filter(item -> item.getLocation().getWorn().contains(WearSlot.HELD_MAIN))
+                .findFirst();
+
             // Damage roll
-            // TODO d4 if unarmed, d6 if holding a weapon
-            DiceResult damage = diceService.roll(1, 4);
+            // d4 if BASIC effort, d6 if WEAPONS & TOOLS
+            DiceResult damage = diceService.roll(1, weaponOptional.isPresent() ? 6 : 4);
+            int damageAmount = damage.getModifiedRoll(0);
+
             LOGGER.info("Damage result: {}", damage);
 
-            int targetDefense = target.getCharacter().getDefense();
-            int adjustedDamage = damage.getModifiedRoll(0) - targetDefense;
-            int resultHitPoints = Math.max(adjustedDamage, 0);
+            // natural 20 adds ULTIMATE
+            if (attempt.getRoll(0) == 20) {
+                DiceResult ultimate = diceService.roll(1, 12);
+                damageAmount += ultimate.getModifiedRoll(0);
+
+                LOGGER.info("Ultimate result: {}", ultimate);
+            }
+
+            // TODO check if weapon provides any bonuses
+
+            int resultHitPoints = Math.max(damageAmount, 0);
 
             output.append("[default]You hit %s!", target.getCharacter().getName());
             getCommService().sendTo(target, new Output("[default]%s hits you!", ch.getCharacter().getName()));
@@ -73,7 +90,7 @@ public class HitCommand extends AbstractCommand {
                     target.getCharacter().getName()),
                 ch, target);
 
-            output.append("[red]You did %d damage!", adjustedDamage);
+            output.append("[red]You did %d damage!", damageAmount);
             target.getCharacter().setHitPoints(resultHitPoints);
         } else {
             output.append("[default]You miss.");
