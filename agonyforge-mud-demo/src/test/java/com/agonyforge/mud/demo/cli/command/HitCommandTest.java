@@ -80,6 +80,7 @@ public class HitCommandTest {
         lenient().when(chCharacter.getName()).thenReturn("Scion");
         lenient().when(target.getCharacter()).thenReturn(targetCharacter);
         lenient().when(targetCharacter.getName()).thenReturn("Frodo");
+        lenient().when(targetCharacter.getHitPoints()).thenReturn(10);
     }
 
     @Test
@@ -190,7 +191,7 @@ public class HitCommandTest {
         verify(diceService).roll(eq(1), eq(20));
         verify(diceService).roll(eq(1), eq(4));
         verify(diceService, never()).roll(eq(1), eq(12));
-        verify(targetCharacter).setHitPoints(anyInt());
+        verify(targetCharacter).setHitPoints(eq(6));
     }
 
     @Test
@@ -229,7 +230,7 @@ public class HitCommandTest {
         verify(diceService).roll(eq(1), eq(20));
         verify(diceService).roll(eq(1), eq(6));
         verify(diceService, never()).roll(eq(1), eq(12));
-        verify(targetCharacter).setHitPoints(anyInt());
+        verify(targetCharacter).setHitPoints(eq(6));
     }
 
     @Test
@@ -267,6 +268,6 @@ public class HitCommandTest {
         verify(diceService).roll(eq(1), eq(20));
         verify(diceService).roll(eq(1), eq(4));
         verify(diceService).roll(eq(1), eq(12), anyInt());
-        verify(targetCharacter).setHitPoints(anyInt());
+        verify(targetCharacter).setHitPoints(eq(0));
     }
 }
