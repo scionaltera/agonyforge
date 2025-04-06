@@ -13,6 +13,13 @@ public class DiceResult {
         this.modifier = modifier;
     }
 
+    // for unit testing only
+    public DiceResult(int size, int modifier, int result) {
+        this.size = size;
+        this.modifier = modifier;
+        addRoll(result);
+    }
+
     /**
      * Add a roll to the DiceResult.
      *
@@ -79,5 +86,14 @@ public class DiceResult {
      */
     public int getModifier() {
         return modifier;
+    }
+
+    @Override
+    public String toString() {
+        return "DiceResult{" +
+            "size=" + size +
+            ", modifier=" + modifier +
+            ", rolls=" + rolls +
+            '}';
     }
 }

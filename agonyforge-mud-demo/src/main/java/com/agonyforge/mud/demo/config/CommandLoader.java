@@ -69,6 +69,8 @@ public class CommandLoader {
             refs.put("SHOUT", new CommandReference(10, "SHOUT", "shoutCommand", "Talk in the area you're in."));
             refs.put("TELL", new CommandReference(10, "TELL", "tellCommand", "Say something privately to someone anywhere in the world."));
             refs.put("WHISPER", new CommandReference(10, "WHISPER", "whisperCommand", "Say something privately to someone in the same room."));
+            refs.put("HIT", new CommandReference(10, "HIT", "hitCommand", "Try to hit someone."));
+            refs.put("KILL", new CommandReference(10, "KILL", "hitCommand", "Try to kill someone."));
 
             refs.put("ROLL", new CommandReference(15, "ROLL", "rollCommand", "Roll some dice."));
             refs.put("TIME", new CommandReference(15, "TIME", "timeCommand", "See what time it is."));
