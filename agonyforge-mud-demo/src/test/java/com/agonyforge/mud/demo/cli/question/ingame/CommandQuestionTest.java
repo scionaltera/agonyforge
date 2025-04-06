@@ -96,7 +96,7 @@ public class CommandQuestionTest {
 
         assertEquals(2, output.getOutput().size());
         assertEquals("", output.getOutput().get(0));
-        assertEquals("[green]null[default]> ", output.getOutput().get(1));
+        assertEquals("[green]null [red][default]> ", output.getOutput().get(1));
     }
 
     @Test
