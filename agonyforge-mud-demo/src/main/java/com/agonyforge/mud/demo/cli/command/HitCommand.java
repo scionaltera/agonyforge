@@ -82,7 +82,10 @@ public class HitCommand extends AbstractCommand {
 
             // TODO check if weapon provides any bonuses
 
-            int resultHitPoints = Math.max(damageAmount, 0);
+            int targetHitPoints = target.getCharacter().getHitPoints();
+            int resultHitPoints = Math.max(targetHitPoints - damageAmount, 0); // don't go below 0
+
+            // TODO in the future we may go below 0 because of the "blown to bits" at -20 rule
 
             output.append("[default]You hit %s!", target.getCharacter().getName());
             getCommService().sendTo(target, new Output("[default]%s hits you!", ch.getCharacter().getName()));
