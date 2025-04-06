@@ -134,6 +134,7 @@ public class HitCommandTest {
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 11));
 
         Output output = new Output();
@@ -166,6 +167,7 @@ public class HitCommandTest {
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
 
@@ -202,6 +204,7 @@ public class HitCommandTest {
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(6))).thenReturn(new DiceResult(6, 0, 4));
 
@@ -240,9 +243,10 @@ public class HitCommandTest {
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 20));
         when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
-        when(diceService.roll(eq(1), eq(12))).thenReturn(new DiceResult(12, 0, 8));
+        when(diceService.roll(eq(1), eq(12), anyInt())).thenReturn(new DiceResult(12, 0, 8));
 
         when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of());
 
@@ -262,7 +266,7 @@ public class HitCommandTest {
         verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
         verify(diceService).roll(eq(1), eq(20));
         verify(diceService).roll(eq(1), eq(4));
-        verify(diceService).roll(eq(1), eq(12));
+        verify(diceService).roll(eq(1), eq(12), anyInt());
         verify(targetCharacter).setHitPoints(anyInt());
     }
 }

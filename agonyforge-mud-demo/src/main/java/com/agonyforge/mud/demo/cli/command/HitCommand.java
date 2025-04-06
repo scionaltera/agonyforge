@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
@@ -52,11 +53,13 @@ public class HitCommand extends AbstractCommand {
         MudRoom room = ch.getLocation().getRoom();
 
         // Attempt roll
-        final int rollTarget = 12;
-        DiceResult attempt = diceService.roll(1, 20);
-        LOGGER.info("Attempt result: {}", attempt);
+        DiceResult defense = diceService.roll(1, 20, target.getCharacter().getDefense());
+        final int attemptTarget = defense.getModifiedRoll(0);
 
-        if (attempt.getModifiedRoll(0) >= rollTarget) {
+        DiceResult attempt = diceService.roll(1, 20);
+        LOGGER.trace("Attempt result: {}", attempt);
+
+        if (attempt.getModifiedRoll(0) >= attemptTarget) {
             Optional<MudItem> weaponOptional = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)
                 .stream()
                 .filter(item -> item.getLocation().getWorn().contains(WearSlot.HELD_MAIN))
@@ -67,14 +70,14 @@ public class HitCommand extends AbstractCommand {
             DiceResult damage = diceService.roll(1, weaponOptional.isPresent() ? 6 : 4);
             int damageAmount = damage.getModifiedRoll(0);
 
-            LOGGER.info("Damage result: {}", damage);
+            LOGGER.trace("Damage result: {}", damage);
 
             // natural 20 adds ULTIMATE
             if (attempt.getRoll(0) == 20) {
-                DiceResult ultimate = diceService.roll(1, 12);
+                DiceResult ultimate = diceService.roll(1, 12, ch.getCharacter().getEffort(Effort.ULTIMATE));
                 damageAmount += ultimate.getModifiedRoll(0);
 
-                LOGGER.info("Ultimate result: {}", ultimate);
+                LOGGER.trace("Ultimate result: {}", ultimate);
             }
 
             // TODO check if weapon provides any bonuses
