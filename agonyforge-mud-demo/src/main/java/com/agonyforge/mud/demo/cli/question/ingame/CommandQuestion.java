@@ -10,6 +10,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.cli.question.CommandException;
+import com.agonyforge.mud.demo.cli.question.login.CharacterSheetFormatter;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.Role;
@@ -48,7 +49,9 @@ public class CommandQuestion extends BaseQuestion {
         if (chOptional.isPresent()) {
             output
                 .append("")
-                .append("[green]%s[default]> ", chOptional.get().getCharacter().getName());
+                .append("[green]%s [red]%s[default]> ",
+                    chOptional.get().getCharacter().getName(),
+                    CharacterSheetFormatter.hearts(chOptional.get()));
         } else {
             output
                 .append("")
