@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.service;
 import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.service.StompPrincipal;
+import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.model.constant.RoomFlag;
@@ -25,99 +26,103 @@ public class CommService extends EchoService {
 
     @Autowired
     public CommService(ApplicationContext applicationContext,
-                       SimpMessagingTemplate simpMessagingTemplate,
-                       SimpUserRegistry simpUserRegistry,
-                       SessionAttributeService sessionAttributeService,
-                       MudCharacterRepository characterRepository) {
+            SimpMessagingTemplate simpMessagingTemplate,
+            SimpUserRegistry simpUserRegistry,
+            SessionAttributeService sessionAttributeService,
+            MudCharacterRepository characterRepository) {
         super(applicationContext, simpMessagingTemplate, simpUserRegistry, sessionAttributeService);
 
         this.characterRepository = characterRepository;
     }
 
     /**
-     * Send a message to all characters that are playing except the sender and specifically excluded
+     * Send a message to all characters that are playing except the sender and
+     * specifically excluded
      * characters.
      *
      * @param wsContext The WebSocketContext of the sender.
-     * @param message The message to send.
-     * @param except Don't send to these characters.
+     * @param message   The message to send.
+     * @param except    Don't send to these characters.
      */
-    public void sendToAll(WebSocketContext wsContext, Output message, MudCharacter ... except) {
+    public void sendToAll(WebSocketContext wsContext, Output message, MudCharacter... except) {
         List<MudCharacter> skip = List.of(except);
 
         characterRepository.findAll()
-            .stream()
-            .filter(ch -> ch.getPlayer() != null)
-            .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
-            .filter(ch -> !skip.contains(ch))
-            .forEach(ch -> sendTo(ch, message));
+                .stream()
+                .filter(ch -> ch.getPlayer() != null)
+                .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
+                .filter(ch -> !skip.contains(ch))
+                .forEach(ch -> sendTo(ch, message));
     }
 
     /**
      * Send a message to all characters except specifically excluded characters.
      *
      * @param message The message to send.
-     * @param except Don't send to these characters.
+     * @param except  Don't send to these characters.
      */
-    public void sendToAll(Output message, MudCharacter ... except) {
+    public void sendToAll(Output message, MudCharacter... except) {
         List<MudCharacter> skip = List.of(except);
 
         characterRepository.findAll()
-            .stream()
-            .filter(ch -> !skip.contains(ch))
-            .forEach(ch -> sendTo(ch, message));
+                .stream()
+                .filter(ch -> !skip.contains(ch))
+                .forEach(ch -> sendTo(ch, message));
     }
 
     /**
      * Send a message to all characters in rooms without the specified flags.
-     * @param message The message to send.
+     * 
+     * @param message   The message to send.
      * @param roomFlags Don't send if the character's room has all of these flags.
-     * @param except Don't send to these characters.
+     * @param except    Don't send to these characters.
      */
-    public void sendToAllWithoutFlags(Output message, EnumSet<RoomFlag> roomFlags, MudCharacter ... except) {
+    public void sendToAllWithoutFlags(Output message, EnumSet<RoomFlag> roomFlags, MudCharacter... except) {
         List<MudCharacter> skip = List.of(except);
 
         characterRepository.findAll()
-            .stream()
-            .filter(ch -> !skip.contains(ch))
-            .filter(ch -> ch.getLocation() != null && ch.getLocation().getRoom() != null && !ch.getLocation().getRoom().getFlags().containsAll(roomFlags))
-            .forEach(ch -> sendTo(ch, message));
+                .stream()
+                .filter(ch -> !skip.contains(ch))
+                .filter(ch -> ch.getLocation() != null && ch.getLocation().getRoom() != null
+                        && !ch.getLocation().getRoom().getFlags().containsAll(roomFlags))
+                .forEach(ch -> sendTo(ch, message));
     }
 
     /**
      * Send a message to all characters in a Zone.
      *
      * @param wsContext The WebSocketContext of the sender.
-     * @param message The message to send.
-     * @param except Don't send to these characters.
+     * @param message   The message to send.
+     * @param except    Don't send to these characters.
      */
-    public void sendToZone(WebSocketContext wsContext, Long zoneId, Output message, MudCharacter ... except) {
+    public void sendToZone(WebSocketContext wsContext, Long zoneId, Output message, MudCharacter... except) {
         String zoneIdString = zoneId.toString();
         List<MudCharacter> skip = List.of(except);
 
         characterRepository.findByLocationRoomIdBetween(zoneId * 100, zoneId * 100 + 100)
-            .stream()
-            .filter(ch -> ch.getPlayer() != null)
-            .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
-            .filter(ch -> !skip.contains(ch))
-            .filter(ch -> zoneIdString.equals(ch.getLocation().getRoom().getId().toString().substring(0, zoneIdString.length())))
-            .forEach(ch -> sendTo(ch, message));
+                .stream()
+                .filter(ch -> ch.getPlayer() != null)
+                .filter(ch -> !wsContext.getSessionId().equals(ch.getPlayer().getWebSocketSession()))
+                .filter(ch -> !skip.contains(ch))
+                .filter(ch -> zoneIdString
+                        .equals(ch.getLocation().getRoom().getId().toString().substring(0, zoneIdString.length())))
+                .forEach(ch -> sendTo(ch, message));
     }
 
     /**
      * Send a message to all characters in a Room.
      *
-     * @param roomId The ID of the room to send to.
+     * @param roomId  The ID of the room to send to.
      * @param message The message to send.
-     * @param except Don't send to these characters.
+     * @param except  Don't send to these characters.
      */
-    public void sendToRoom(Long roomId, Output message, MudCharacter ... except) {
+    public void sendToRoom(Long roomId, Output message, MudCharacter... except) {
         List<MudCharacter> skip = List.of(except);
         characterRepository.findByLocationRoomId(roomId)
-            .stream()
-            .filter(ch -> ch.getPlayer() != null)
-            .filter(ch -> !skip.contains(ch))
-            .forEach(ch -> sendTo(ch, message));
+                .stream()
+                .filter(ch -> ch.getPlayer() != null)
+                .filter(ch -> !skip.contains(ch))
+                .forEach(ch -> sendTo(ch, message));
     }
 
     /**
@@ -128,13 +133,13 @@ public class CommService extends EchoService {
      */
     public void sendToTargets(List<MudCharacter> targets, Output message) {
         targets
-            .forEach(ch -> sendTo(ch, message));
+                .forEach(ch -> sendTo(ch, message));
     }
 
     /**
      * Send a message to the provided list of characters.
      *
-     * @param ch The character to send to.
+     * @param ch      The character to send to.
      * @param message The message to send.
      */
     public void sendTo(MudCharacter ch, Output message) {
@@ -142,24 +147,69 @@ public class CommService extends EchoService {
             return;
         }
 
-        Map<String, Object> attributes = sessionAttributeService.getSessionAttributes(ch.getPlayer().getWebSocketSession());
+        Map<String, Object> attributes = sessionAttributeService
+                .getSessionAttributes(ch.getPlayer().getWebSocketSession());
 
         if (!"commandQuestion".equals(attributes.get("MUD.QUESTION"))) {
             return;
         }
 
         WebSocketContext targetWsContext = WebSocketContext.build(
-            new StompPrincipal(ch.getPlayer().getUsername()),
-            ch.getPlayer().getWebSocketSession(),
-            attributes);
+                new StompPrincipal(ch.getPlayer().getUsername()),
+                ch.getPlayer().getWebSocketSession(),
+                attributes);
 
         Output messageWithPrompt = appendPrompt(targetWsContext, message);
         MessageHeaders messageHeaders = buildMessageHeaders(ch.getPlayer().getWebSocketSession());
 
         simpMessagingTemplate.convertAndSendToUser(
-            targetWsContext.getPrincipal().getName(),
-            "/queue/output",
-            messageWithPrompt,
-            messageHeaders);
+                targetWsContext.getPrincipal().getName(),
+                "/queue/output",
+                messageWithPrompt,
+                messageHeaders);
+    }
+
+    /**
+     * Send a command to be executed as the specified character.
+     *
+     * @param wsContext The original WebSocketContext (for maintaining session)
+     * @param target    The character who should execute the command
+     * @param command   The command to execute (including arguments)
+     */
+    public void sendCommand(WebSocketContext wsContext, MudCharacter target, String command) {
+        if (target.getPlayer() == null) {
+            return;
+        }
+
+        // Get the target's session attributes
+        Map<String, Object> attributes = sessionAttributeService
+                .getSessionAttributes(target.getPlayer().getWebSocketSession());
+
+        // Create a new context for the target
+        WebSocketContext targetWsContext = WebSocketContext.build(
+                new StompPrincipal(target.getPlayer().getUsername()),
+                target.getPlayer().getWebSocketSession(),
+                attributes);
+
+        // Send the command to be processed by the command system
+        simpMessagingTemplate.convertAndSendToUser(
+                targetWsContext.getPrincipal().getName(),
+                "/queue/command",
+                command,
+                buildMessageHeaders(target.getPlayer().getWebSocketSession()));
+    }
+
+    public void executeCommandAs(WebSocketContext originalContext, MudCharacter target, String command) {
+        if (target.getPlayer() == null)
+            return;
+
+        Map<String, Object> attributes = sessionAttributeService
+                .getSessionAttributes(target.getPlayer().getWebSocketSession());
+
+        WebSocketContext targContext = WebSocketContext.build(new StompPrincipal(target.getPlayer().getUsername()),
+                target.getPlayer().getWebSocketSession(), attributes);
+
+        simpMessagingTemplate.convertAndSendToUser(targContext.getPrincipal().getName(), "/queue/input",
+                new Input(command), buildMessageHeaders(target.getPlayer().getWebSocketSession()));
     }
 }

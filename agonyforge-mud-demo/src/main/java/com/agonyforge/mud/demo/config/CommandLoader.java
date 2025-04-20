@@ -90,6 +90,9 @@ public class CommandLoader {
             refs.put("PURGE", new CommandReference(30, "PURGE", "purgeCommand", "Destroy an item."));
             refs.put("SLAY", new CommandReference(30, "SLAY", "slayCommand", "Slay a character."));
 
+            //Add FORCE command
+            refs.put("FORCE", new CommandReference(30, "FORCE","forceCommand","Force another player to execute a command."));
+
             LOGGER.info("Creating command references");
             commandRepository.saveAll(refs.values());
 
@@ -139,6 +142,9 @@ public class CommandLoader {
             player.getCommands().add(refs.get("WHISPER"));
 
             player.getCommands().add(refs.get("TIME"));
+
+            //Adding FORCE to player role
+            player.getCommands().add(refs.get("FORCE"));
 
             roleRepository.saveAll(List.of(implementor, player));
         }
