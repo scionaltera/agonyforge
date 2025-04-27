@@ -1,22 +1,25 @@
 package com.agonyforge.mud.demo.cli.command;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Optional;
 
 @Component("forceCommand")
 public class ForceCommand extends AbstractCommand {
+    private static final Logger LOG = LoggerFactory.getLogger(ForceCommand.class);
     private final ApplicationContext applicationContext;
 
     @Autowired
@@ -51,33 +54,15 @@ public class ForceCommand extends AbstractCommand {
                 .replaceFirst("(?i)force\\s+" + targetName + "\\s+", "")
                 .trim();
 
-        // Check that the forced command exists as a bean
-        String[] parts = forcedCommand.split("\\s+");
-        String cmdName = parts[0].toLowerCase();
-        String beanName = cmdName + "Command";
-        if (!applicationContext.containsBean(beanName)) {
-            output.append("[default]That command does not exist: %s", cmdName);
-            return question;
-        }
-
-        // Validate forced command arguments by dry-running the command
-        List<String> forcedTokens = Tokenizer.tokenize(forcedCommand);
-        @SuppressWarnings("unchecked")
-        com.agonyforge.mud.demo.cli.command.Command cmdBean = (com.agonyforge.mud.demo.cli.command.Command) applicationContext
-                .getBean(beanName);
-
-        Output validationOutput = new Output();
-        Question cmdQuestion = applicationContext.getBean("commandQuestion", Question.class);
-        cmdBean.execute(cmdQuestion, webSocketContext, forcedTokens, new Input(forcedCommand), validationOutput);
-
-        String validationText = validationOutput.toString();
-        if (validationText.startsWith("[default]")) {
-            output.append(validationText);
+        // Check for nested force command
+        if (forcedCommand.toLowerCase().startsWith("force")) {
+            output.append("[default]You cannot force someone to force others!");
             return question;
         }
 
         // Lookup executor and target characters
         MudCharacter executor = getCurrentCharacter(webSocketContext, output);
+
         Optional<MudCharacter> targetOpt = findRoomCharacter(executor, targetName);
         if (targetOpt.isEmpty()) {
             targetOpt = findWorldCharacter(executor, targetName);
@@ -90,7 +75,7 @@ public class ForceCommand extends AbstractCommand {
 
         // Notify executor
         output.append(
-                "[yellow]You force %s to: %s",
+                "[yellow]You forced %s to '%s[yellow]'!",
                 target.getCharacter().getName(),
                 forcedCommand);
 
@@ -98,13 +83,20 @@ public class ForceCommand extends AbstractCommand {
         getCommService().sendTo(
                 target,
                 new Output(
-                        "[red]%s FORCES you to: %s",
+                        "[red]%s FORCES you to '%s[red]'.",
                         executor.getCharacter().getName(),
                         forcedCommand));
+
+        // Log the forced command usage
+        LOG.info("{} forced {} to run: {}", executor.getName(), target.getName(), forcedCommand);
 
         // Execute the forced command as the target
         getCommService().executeCommandAs(webSocketContext, target, forcedCommand);
 
         return question;
+    }
+
+    private MudCharacter getCharacter(WebSocketContext webSocketContext) {
+        return (MudCharacter) webSocketContext.getAttributes().get("character");
     }
 }

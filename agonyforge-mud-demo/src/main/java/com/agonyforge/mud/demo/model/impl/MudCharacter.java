@@ -1,8 +1,12 @@
 package com.agonyforge.mud.demo.model.impl;
 
-import jakarta.persistence.*;
+import java.util.Objects;
 
-import java.util.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class MudCharacter extends AbstractMudObject {
@@ -37,13 +41,29 @@ public class MudCharacter extends AbstractMudObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MudCharacter that)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof MudCharacter that))
+            return false;
         return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+
+    public boolean isImplementor() {
+        if (getPlayer() == null || getPlayer().getRoles() == null) {
+            return false;
+        }
+
+        return getPlayer().getRoles().stream()
+                .anyMatch(Role::isImplementor);
     }
 }
