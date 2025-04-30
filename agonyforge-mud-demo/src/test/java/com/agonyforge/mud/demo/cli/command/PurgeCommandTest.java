@@ -51,7 +51,7 @@ public class PurgeCommandTest {
     private Question question;
 
     @Mock
-    private MudCharacter ch;
+    private MudCharacter ch, target;
 
     @Mock
     private MudItem item;
@@ -66,7 +66,10 @@ public class PurgeCommandTest {
     private ItemComponent itemComponent;
 
     @Mock
-    private CharacterComponent characterComponent;
+    private CharacterComponent characterComponent, targetCharacterComponent;
+
+    @Mock
+    private PlayerComponent targetPlayerComponent;
 
     @BeforeEach
     void setUp() {
@@ -79,6 +82,9 @@ public class PurgeCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
         lenient().when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
+        lenient().when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        lenient().when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        lenient().when(target.getCharacter().getName()).thenReturn("Greedo");
     }
 
     @Test
@@ -160,5 +166,33 @@ public class PurgeCommandTest {
 
         verify(itemRepository).delete(eq(item));
         verify(commService).sendToRoom(anyLong(), any(Output.class), eq(ch));
+    }
+
+    @Test
+    void testPurgeRoomCharacter() {
+        Output output = new Output();
+        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
+
+        Question result = uut.execute(question, wsContext, List.of("PUR", "GRE"), new Input("pur gre"), output);
+
+        assertEquals(question, result);
+
+        verify(characterRepository).delete(eq(target));
+        verify(commService).sendToRoom(anyLong(), any(Output.class), eq(ch));
+    }
+
+    @Test
+    void testPurgeRoomPlayer() {
+        when(target.getPlayer()).thenReturn(targetPlayerComponent);
+
+        Output output = new Output();
+        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
+
+        Question result = uut.execute(question, wsContext, List.of("PUR", "GRE"), new Input("pur gre"), output);
+
+        assertEquals(question, result);
+
+        verify(characterRepository, never()).delete(eq(target));
+        verify(commService, never()).sendToRoom(anyLong(), any(Output.class), eq(ch));
     }
 }
