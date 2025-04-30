@@ -32,25 +32,46 @@ public class PurgeCommand extends AbstractCommand {
         }
 
         Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
+        Optional<MudCharacter> targetOptionalCh = Optional.empty();
 
         if (targetOptional.isEmpty()) {
             targetOptional = findRoomItem(ch, tokens.get(1));
         }
 
         if (targetOptional.isEmpty()) {
+            targetOptionalCh = findRoomCharacter(ch, tokens.get(1));
+        }
+
+        if (targetOptional.isEmpty() && targetOptionalCh.isEmpty()) {
             output.append("[default]You don't see anything like that.");
             return question;
         }
 
-        MudItem target = targetOptional.get();
-        getRepositoryBundle().getItemRepository().delete(target);
+        if (targetOptional.isPresent()) {
+            MudItem target = targetOptional.get();
+            getRepositoryBundle().getItemRepository().delete(target);
 
-        output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s snaps %s fingers, and %s disappears!",
-                ch.getCharacter().getName(),
-                ch.getCharacter().getPronoun().getPossessive(),
-                target.getItem().getShortDescription()), ch);
+            output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
+            getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+                new Output("[yellow]%s snaps %s fingers, and %s disappears!",
+                    ch.getCharacter().getName(),
+                    ch.getCharacter().getPronoun().getPossessive(),
+                    target.getItem().getShortDescription()), ch);
+        } else {
+            MudCharacter target = targetOptionalCh.get();
+            getRepositoryBundle().getCharacterRepository().delete(target);
+
+            if (target.getPlayer() != null) {
+                LOGGER.info("{} has PURGED {}!", ch.getCharacter().getName(), target.getCharacter().getName());
+            }
+
+            output.append("[yellow]You snap your fingers, and %s disappears!", target.getCharacter().getName());
+            getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+                new Output("[yellow]%s snaps %s fingers, and %s disappears!",
+                    ch.getCharacter().getName(),
+                    ch.getCharacter().getPronoun().getPossessive(),
+                    target.getCharacter().getName()), ch);
+        }
 
         return question;
     }
