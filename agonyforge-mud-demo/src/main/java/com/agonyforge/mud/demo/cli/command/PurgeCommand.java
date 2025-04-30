@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
+
 @Component
 public class PurgeCommand extends AbstractCommand {
     @Autowired
@@ -59,11 +61,13 @@ public class PurgeCommand extends AbstractCommand {
                     target.getItem().getShortDescription()), ch);
         } else {
             MudCharacter target = targetOptionalCh.get();
-            getRepositoryBundle().getCharacterRepository().delete(target);
 
             if (target.getPlayer() != null) {
-                LOGGER.info("{} has PURGED {}!", ch.getCharacter().getName(), target.getCharacter().getName());
+                output.append("[default]Players cannot be purged.");
+                return question;
             }
+
+            getRepositoryBundle().getCharacterRepository().delete(target);
 
             output.append("[yellow]You snap your fingers, and %s disappears!", target.getCharacter().getName());
             getCommService().sendToRoom(ch.getLocation().getRoom().getId(),

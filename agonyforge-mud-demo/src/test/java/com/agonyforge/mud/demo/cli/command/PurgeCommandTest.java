@@ -82,6 +82,9 @@ public class PurgeCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
         lenient().when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
+        lenient().when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        lenient().when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        lenient().when(target.getCharacter().getName()).thenReturn("Greedo");
     }
 
     @Test
@@ -167,10 +170,6 @@ public class PurgeCommandTest {
 
     @Test
     void testPurgeRoomCharacter() {
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
-        when(target.getCharacter()).thenReturn(targetCharacterComponent);
-        when(target.getCharacter().getName()).thenReturn("Greedo");
-
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
@@ -184,9 +183,6 @@ public class PurgeCommandTest {
 
     @Test
     void testPurgeRoomPlayer() {
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
-        when(target.getCharacter()).thenReturn(targetCharacterComponent);
-        when(target.getCharacter().getName()).thenReturn("Greedo");
         when(target.getPlayer()).thenReturn(targetPlayerComponent);
 
         Output output = new Output();
@@ -196,7 +192,7 @@ public class PurgeCommandTest {
 
         assertEquals(question, result);
 
-        verify(characterRepository).delete(eq(target));
-        verify(commService).sendToRoom(anyLong(), any(Output.class), eq(ch));
+        verify(characterRepository, never()).delete(eq(target));
+        verify(commService, never()).sendToRoom(anyLong(), any(Output.class), eq(ch));
     }
 }
