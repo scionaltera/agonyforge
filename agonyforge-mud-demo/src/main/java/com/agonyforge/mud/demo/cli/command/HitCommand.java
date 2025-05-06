@@ -136,7 +136,7 @@ public class HitCommand extends AbstractCommand {
         doHit(getRepositoryBundle(), diceService, fightRepository, output, targetOutput, roomOutput, ch, target);
 
         getCommService().sendTo(target, targetOutput);
-        getCommService().sendToRoom(ch.getLocation().getId(), roomOutput, ch, target);
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), roomOutput, ch, target);
 
         return question;
     }
