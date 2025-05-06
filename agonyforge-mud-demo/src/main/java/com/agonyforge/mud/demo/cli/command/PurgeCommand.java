@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
-
 @Component
 public class PurgeCommand extends AbstractCommand {
     @Autowired
