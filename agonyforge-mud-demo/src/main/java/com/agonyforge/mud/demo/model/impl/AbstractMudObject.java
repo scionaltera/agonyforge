@@ -60,4 +60,14 @@ public abstract class AbstractMudObject extends Persistent {
     public void setLocation(LocationComponent location) {
         this.location = location;
     }
+
+    public String getName() {
+        return character != null ? character.getName() : null;
+    }
+
+    public void setName(String name) {
+        if (character != null) {
+            character.setName(name);
+        }
+    }
 }
