@@ -96,7 +96,8 @@ public class CommServiceTest {
         lenient().when(webSocketContext.getSessionId()).thenReturn(wsSessionId);
 
         lenient().when(characterRepository.findByLocationRoomId(eq(100L))).thenReturn(List.of(ch, target));
-        lenient().when(characterRepository.findByLocationRoomIdBetween(eq(100L), eq(200L))).thenReturn(List.of(ch, target));
+        lenient().when(characterRepository.findByLocationRoomIdBetween(eq(100L), eq(200L)))
+                .thenReturn(List.of(ch, target));
         lenient().when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
 
         lenient().when(ch.getPlayer()).thenReturn(chPlayer);
@@ -135,29 +136,27 @@ public class CommServiceTest {
     @Test
     void testSendToAllWebsocket() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
         uut.sendToAll(webSocketContext, message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(targetPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(targetPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(otherPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(otherPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
     }
@@ -165,36 +164,33 @@ public class CommServiceTest {
     @Test
     void testSendToAll() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
         uut.sendToAll(message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(principal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(principal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(targetPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(targetPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(otherPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(otherPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
     }
@@ -202,36 +198,33 @@ public class CommServiceTest {
     @Test
     void testSendToAllWithoutFlags() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
         uut.sendToAllWithoutFlags(message, EnumSet.of(RoomFlag.INDOORS));
 
         verify(simpMessagingTemplate, never()).convertAndSendToUser(
-            eq(principal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(principal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate, never()).convertAndSendToUser(
-            eq(targetPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(targetPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(otherPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(otherPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
     }
@@ -239,22 +232,21 @@ public class CommServiceTest {
     @Test
     void testSendToZone() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
-        uut.sendToZone(webSocketContext,1L, message);
+        uut.sendToZone(webSocketContext, 1L, message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(targetPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(targetPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
     }
@@ -262,29 +254,27 @@ public class CommServiceTest {
     @Test
     void testSendToRoom() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
         uut.sendToRoom(100L, message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(targetPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(targetPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(principal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(principal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
     }
@@ -292,29 +282,27 @@ public class CommServiceTest {
     @Test
     void testSendToTargets() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
         uut.sendToTargets(List.of(ch, target), message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(principal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(principal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(targetPrincipal),
-            eq("/queue/output"),
-            any(Output.class),
-            any(MessageHeaders.class)
-        );
+                eq(targetPrincipal),
+                eq("/queue/output"),
+                any(Output.class),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
     }
@@ -322,22 +310,21 @@ public class CommServiceTest {
     @Test
     void testSendTo() {
         CommService uut = new CommService(
-            applicationContext,
-            simpMessagingTemplate,
-            simpUserRegistry,
-            sessionAttributeService,
-            characterRepository);
+                applicationContext,
+                simpMessagingTemplate,
+                simpUserRegistry,
+                sessionAttributeService,
+                null, characterRepository, null);
 
         Output message = new Output("message");
 
         uut.sendTo(ch, message);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
-            eq(principal),
-            eq("/queue/output"),
-            outputCaptor.capture(),
-            any(MessageHeaders.class)
-        );
+                eq(principal),
+                eq("/queue/output"),
+                outputCaptor.capture(),
+                any(MessageHeaders.class));
 
         verifyNoMoreInteractions(simpMessagingTemplate);
 
