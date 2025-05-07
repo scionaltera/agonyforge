@@ -6,6 +6,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.HitCommand;
 import com.agonyforge.mud.demo.model.impl.Fight;
+import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.FightRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,35 +51,47 @@ public class FightService {
         List<Fight> ended = new ArrayList<>();
 
         fights.forEach(fight -> {
-            Output chOutput = new Output();
-            Output targetOutput = new Output();
-            Output roomOutput = new Output();
+            MudCharacter attacker = fight.getAttacker();
+            MudCharacter defender = fight.getDefender();
 
-            LOGGER.debug("Processing fight: ({}) {} vs. {}",
-                fight.getId(),
-                fight.getAttacker().getCharacter().getName(),
-                fight.getDefender().getCharacter().getName());
-
-            // attacker attacks
-            HitCommand.doHit(repositoryBundle, diceService, fightRepository,
-                chOutput, targetOutput, roomOutput,
-                fight.getAttacker(), fight.getDefender());
-
-            // defender attacks
-            HitCommand.doHit(repositoryBundle, diceService, fightRepository,
-                targetOutput, chOutput, roomOutput,
-                fight.getDefender(), fight.getAttacker());
-
-            // send all output
-            commService.sendTo(fight.getAttacker(), chOutput);
-            commService.sendTo(fight.getDefender(), targetOutput);
-            commService.sendToRoom(fight.getAttacker().getLocation().getId(), roomOutput,
-                fight.getAttacker(), fight.getDefender());
-
-            // is the fight over?
-            if (fight.getAttacker().getCharacter().getHitPoints() <= 0 || fight.getDefender().getCharacter().getHitPoints() <= 0) {
-                LOGGER.debug("Ended fight: ({})", fight.getId());
+            if (attacker == null || defender == null) {
+                LOGGER.warn("Missing attacker or defender");
                 ended.add(fight);
+            } else if (attacker.getLocation().getRoom() != defender.getLocation().getRoom()) {
+                LOGGER.warn("Attacker and defender in different rooms");
+                ended.add(fight);
+            } else {
+                MudRoom room = attacker.getLocation().getRoom();
+                Output chOutput = new Output();
+                Output targetOutput = new Output();
+                Output roomOutput = new Output();
+
+                LOGGER.debug("Processing fight: ({}) {} vs. {}",
+                        fight.getId(),
+                        attacker.getCharacter().getName(),
+                        defender.getCharacter().getName());
+
+                // attacker attacks
+                HitCommand.doHit(repositoryBundle, diceService, fightRepository,
+                        chOutput, targetOutput, roomOutput,
+                        attacker, defender);
+
+                // defender attacks
+                HitCommand.doHit(repositoryBundle, diceService, fightRepository,
+                        targetOutput, chOutput, roomOutput,
+                        defender, attacker);
+
+                // send all output
+                commService.sendTo(attacker, chOutput);
+                commService.sendTo(defender, targetOutput);
+                commService.sendToRoom(room.getId(), roomOutput,
+                        attacker, defender);
+
+                // is the fight over?
+                if (attacker.getCharacter().getHitPoints() <= 0 || defender.getCharacter().getHitPoints() <= 0) {
+                    LOGGER.debug("Ended fight: ({})", fight.getId());
+                    ended.add(fight);
+                }
             }
         });
 
