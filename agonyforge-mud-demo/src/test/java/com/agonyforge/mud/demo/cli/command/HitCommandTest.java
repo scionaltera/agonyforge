@@ -9,6 +9,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
+import com.agonyforge.mud.demo.model.repository.FightRepository;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.service.CommService;
@@ -50,6 +51,9 @@ public class HitCommandTest {
     private WebSocketContext webSocketContext;
 
     @Mock
+    private FightRepository fightRepository;
+
+    @Mock
     private MudCharacterRepository characterRepository;
 
     @Mock
@@ -86,7 +90,7 @@ public class HitCommandTest {
     @Test
     void testHitNoArg() {
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -110,7 +114,7 @@ public class HitCommandTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -139,7 +143,7 @@ public class HitCommandTest {
         when(diceService.roll(eq(1), eq(20))).thenReturn(new DiceResult(20, 0, 11));
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -175,7 +179,7 @@ public class HitCommandTest {
         when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of());
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -214,7 +218,7 @@ public class HitCommandTest {
         when(weaponLocationComponent.getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_MAIN));
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -231,6 +235,7 @@ public class HitCommandTest {
         verify(diceService).roll(eq(1), eq(6));
         verify(diceService, never()).roll(eq(1), eq(12));
         verify(targetCharacter).setHitPoints(eq(6));
+        verify(characterRepository).save(eq(target));
     }
 
     @Test
@@ -252,7 +257,7 @@ public class HitCommandTest {
         when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of());
 
         Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, applicationContext);
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
@@ -269,5 +274,6 @@ public class HitCommandTest {
         verify(diceService).roll(eq(1), eq(4));
         verify(diceService).roll(eq(1), eq(12), anyInt());
         verify(targetCharacter).setHitPoints(eq(0));
+        verify(characterRepository).save(eq(target));
     }
 }
