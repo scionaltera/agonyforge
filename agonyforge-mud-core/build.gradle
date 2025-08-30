@@ -83,6 +83,8 @@ pitest {
         "com.agonyforge.mud.core.config.*",
         "com.agonyforge.mud.core.*.Abstract*"
     ]
+
+    jvmArgs.add("-XX:+EnableDynamicAgentLoading")
 }
 
 tasks.pitest.mustRunAfter test

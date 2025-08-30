@@ -84,6 +84,8 @@ pitest {
     excludedClasses = [
         "com.agonyforge.mud.demo.config.*"
     ]
+
+    jvmArgs.add("-XX:+EnableDynamicAgentLoading")
 }
 
 docker {
