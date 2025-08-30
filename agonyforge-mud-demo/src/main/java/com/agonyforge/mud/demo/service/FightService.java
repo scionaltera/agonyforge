@@ -76,10 +76,12 @@ public class FightService {
                         chOutput, targetOutput, roomOutput,
                         attacker, defender);
 
-                // defender attacks
-                HitCommand.doHit(repositoryBundle, diceService, fightRepository,
+                // if they survived, defender attacks
+                if (defender.getCharacter().getHitPoints() > 0) {
+                    HitCommand.doHit(repositoryBundle, diceService, fightRepository,
                         targetOutput, chOutput, roomOutput,
                         defender, attacker);
+                }
 
                 // send all output
                 commService.sendTo(attacker, chOutput);

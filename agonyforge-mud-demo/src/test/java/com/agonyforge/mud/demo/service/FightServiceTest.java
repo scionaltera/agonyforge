@@ -226,8 +226,8 @@ public class FightServiceTest {
                 any(DiceService.class),
                 any(FightRepository.class),
                 any(Output.class), any(Output.class), any(Output.class),
-                any(MudCharacter.class), any(MudCharacter.class)
-            ), times(2));
+                eq(attacker), eq(defender)
+            ), times(1));
 
             verify(commService).sendTo(eq(attacker), outputCaptor.capture());
             verify(commService).sendTo(eq(defender), outputCaptor.capture());
