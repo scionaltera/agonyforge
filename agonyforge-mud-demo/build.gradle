@@ -26,7 +26,7 @@ dependencies {
     implementation 'ch.qos.logback.access:logback-access-tomcat:2.0.6'
 
     implementation 'org.webjars:webjars-locator:0.52'
-    implementation 'org.webjars:bootstrap:5.3.7'
+    implementation 'org.webjars:bootstrap:5.3.8'
     implementation 'org.webjars:jquery:3.7.1'
     implementation 'org.webjars.npm:webstomp-client:1.2.6'
     implementation 'org.webjars.npm:sockjs-client:1.6.1'
