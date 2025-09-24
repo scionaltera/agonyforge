@@ -34,14 +34,18 @@ public class ConfigCommand extends AbstractCommand {
                 output.append("[yellow]%s: %s", flag.name(), isEnabled);
             });
         } else if (tokens.size() == 2) {
-            AdminFlag flag = AdminFlag.valueOf(tokens.get(1));
+            try {
+                AdminFlag flag = AdminFlag.valueOf(tokens.get(1));
 
-            if (ch.getPlayer().getAdminFlags().contains(flag)) {
-                ch.getPlayer().getAdminFlags().remove(flag);
-                output.append("[yellow]%s disabled.", flag.name());
-            } else {
-                ch.getPlayer().getAdminFlags().add(flag);
-                output.append("[yellow]%s enabled.", flag.name());
+                if (ch.getPlayer().getAdminFlags().contains(flag)) {
+                    ch.getPlayer().getAdminFlags().remove(flag);
+                    output.append("[yellow]%s disabled.", flag.name());
+                } else {
+                    ch.getPlayer().getAdminFlags().add(flag);
+                    output.append("[yellow]%s enabled.", flag.name());
+                }
+            } catch (IllegalArgumentException e) {
+                output.append("[red]No such config flag exists.");
             }
         }
 

@@ -75,6 +75,13 @@ public class HitCommand extends AbstractCommand {
             targetOutput.append("[default]%s hits you!", ch.getCharacter().getName());
             roomOutput.append("[default]%s hits %s!", ch.getCharacter().getName(), target.getCharacter().getName());
 
+            // report ULTIMATE damage
+            if (attempt.getRoll(0) == 20) {
+                chOutput.append("[cyan]You did ULTIMATE damage!");
+                targetOutput.append("[cyan]%s did ULTIMATE damage!", ch.getCharacter().getName());
+                roomOutput.append("[cyan]%s did ULTIMATE damage to %s!", ch.getCharacter().getName(), target.getCharacter().getName());
+            }
+
             chOutput.append("[green]You did %d damage!", damageAmount);
             targetOutput.append("[red]%s did %d damage!",  ch.getCharacter().getName(), damageAmount);
             target.getCharacter().setHitPoints(resultHitPoints);
@@ -83,6 +90,16 @@ public class HitCommand extends AbstractCommand {
             chOutput.append("[default]You miss.");
             targetOutput.append(new Output("[default]%s tries to hit you, but misses.", ch.getCharacter().getName()));
             roomOutput.append("[default]%s tries to hit %s, but misses.", ch.getCharacter().getName(), target.getCharacter().getName());
+        }
+
+        // but did you die?
+        if (target.getCharacter().getHitPoints() <= 0) {
+            chOutput.append("[black]%s has DIED!", target.getCharacter().getName());
+            targetOutput.append("[black]You have DIED!",  target.getCharacter().getName());
+            roomOutput.append("[black]%s has DIED!", target.getCharacter().getName());
+
+            // don't create a Fight if it was a one-hit kill
+            return;
         }
 
         Optional<Fight> fightOptional = fightRepository.findByAttackerAndDefender(ch, target)
