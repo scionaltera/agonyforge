@@ -97,6 +97,9 @@ public class HitCommand extends AbstractCommand {
             chOutput.append("[black]%s has DIED!", target.getCharacter().getName());
             targetOutput.append("[black]You have DIED!",  target.getCharacter().getName());
             roomOutput.append("[black]%s has DIED!", target.getCharacter().getName());
+
+            // don't create a Fight if it was a one-hit kill
+            return;
         }
 
         Optional<Fight> fightOptional = fightRepository.findByAttackerAndDefender(ch, target)

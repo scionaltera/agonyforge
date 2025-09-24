@@ -93,6 +93,18 @@ public class FightService {
                 if (attacker.getCharacter().getHitPoints() <= 0 || defender.getCharacter().getHitPoints() <= 0) {
                     LOGGER.debug("Ended fight: ({})", fight.getId());
                     ended.add(fight);
+
+                    commService.sendTo(attacker, new Output("[white]You are bathed in a white light from above..."));
+                    commService.sendTo(defender, new Output("[white]You are bathed in a white light from above..."));
+                    commService.sendToRoom(
+                        room.getId(),
+                        new Output("[white]%s and %s are bathed in a white light from above...", attacker, defender),
+                        attacker, defender);
+
+                    attacker.getCharacter().setHitPoints(attacker.getCharacter().getMaxHitPoints());
+                    defender.getCharacter().setHitPoints(defender.getCharacter().getMaxHitPoints());
+
+                    repositoryBundle.getCharacterRepository().saveAll(List.of(attacker, defender));
                 }
             }
         });

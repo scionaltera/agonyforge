@@ -7,6 +7,7 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.HitCommand;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.FightRepository;
+import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,9 @@ public class FightServiceTest {
 
     @Mock
     private DiceService diceService;
+
+    @Mock
+    private MudCharacterRepository characterRepository;
 
     @Mock
     private FightRepository fightRepository;
@@ -60,6 +64,8 @@ public class FightServiceTest {
     @BeforeEach
     void setUp() {
         Long roomId = RANDOM.nextLong();
+
+        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
 
         when(event.getFrequency()).thenReturn(TimeUnit.SECONDS);
 
@@ -202,12 +208,12 @@ public class FightServiceTest {
                 any(MudCharacter.class), any(MudCharacter.class)
             ), times(2));
 
-            verify(commService).sendTo(eq(attacker), outputCaptor.capture());
-            verify(commService).sendTo(eq(defender), outputCaptor.capture());
-            verify(commService).sendToRoom(anyLong(), outputCaptor.capture(), eq(attacker), eq(defender));
+            verify(commService, atLeast(1)).sendTo(eq(attacker), outputCaptor.capture());
+            verify(commService, atLeast(1)).sendTo(eq(defender), outputCaptor.capture());
+            verify(commService, atLeast(1)).sendToRoom(anyLong(), outputCaptor.capture(), eq(attacker), eq(defender));
             verify(fightRepository).deleteAll(anyList());
 
-            assertEquals(3, outputCaptor.getAllValues().size());
+            assertEquals(6, outputCaptor.getAllValues().size());
         }
     }
 
@@ -229,12 +235,12 @@ public class FightServiceTest {
                 eq(attacker), eq(defender)
             ), times(1));
 
-            verify(commService).sendTo(eq(attacker), outputCaptor.capture());
-            verify(commService).sendTo(eq(defender), outputCaptor.capture());
-            verify(commService).sendToRoom(anyLong(), outputCaptor.capture(), eq(attacker), eq(defender));
+            verify(commService, atLeast(1)).sendTo(eq(attacker), outputCaptor.capture());
+            verify(commService, atLeast(1)).sendTo(eq(defender), outputCaptor.capture());
+            verify(commService, atLeast(1)).sendToRoom(anyLong(), outputCaptor.capture(), eq(attacker), eq(defender));
             verify(fightRepository).deleteAll(anyList());
 
-            assertEquals(3, outputCaptor.getAllValues().size());
+            assertEquals(6, outputCaptor.getAllValues().size());
         }
     }
 }
