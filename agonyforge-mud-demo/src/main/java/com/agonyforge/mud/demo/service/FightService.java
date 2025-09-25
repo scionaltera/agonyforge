@@ -71,16 +71,18 @@ public class FightService {
                         attacker.getCharacter().getName(),
                         defender.getCharacter().getName());
 
-                // attacker attacks
+                // the fight was initiated when the attacker attacked the defender
+                // if the defender was killed, no Fight should have been created
+                // that means it's time for the defender to retaliate
                 HitCommand.doHit(repositoryBundle, diceService, fightRepository,
+                    targetOutput, chOutput, roomOutput,
+                    defender, attacker);
+
+                // if the attacker is still alive, they can attack again
+                if (attacker.getCharacter().getHitPoints() > 0) {
+                    HitCommand.doHit(repositoryBundle, diceService, fightRepository,
                         chOutput, targetOutput, roomOutput,
                         attacker, defender);
-
-                // if they survived, defender attacks
-                if (defender.getCharacter().getHitPoints() > 0) {
-                    HitCommand.doHit(repositoryBundle, diceService, fightRepository,
-                        targetOutput, chOutput, roomOutput,
-                        defender, attacker);
                 }
 
                 // send all output
