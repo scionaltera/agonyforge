@@ -42,6 +42,9 @@ public class MudCharacterTemplate extends AbstractMudObject {
         Arrays.stream(Effort.values())
             .forEach(effort -> instance.getCharacter().setBaseEffort(effort, getCharacter().getBaseEffort(effort)));
 
+        instance.getCharacter().setMaxHitPoints(getCharacter().getMaxHitPoints());
+        instance.getCharacter().setHitPoints(getCharacter().getHitPoints());
+
         return instance;
     }
 
