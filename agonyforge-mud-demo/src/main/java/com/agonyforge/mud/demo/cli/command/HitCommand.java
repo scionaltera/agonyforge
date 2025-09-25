@@ -36,8 +36,7 @@ public class HitCommand extends AbstractCommand {
                                Output chOutput, Output targetOutput, Output roomOutput,
                                MudCharacter ch, MudCharacter target) {
         // Attempt roll
-        DiceResult defense = diceService.roll(1, 20, target.getCharacter().getDefense());
-        final int attemptTarget = defense.getModifiedRoll(0);
+        final int attemptTarget = 12 + target.getCharacter().getDefense();
 
         DiceResult attempt = diceService.roll(1, 20);
         LOGGER.trace("Attempt result: {}", attempt);
