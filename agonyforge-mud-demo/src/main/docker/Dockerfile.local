@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine-jdk
+FROM public.ecr.aws/docker/library/amazoncorretto:17-alpine-jdk
 LABEL maintainer="scion@agonyforge.com"
 EXPOSE 8080
 COPY agonyforge-mud-demo-*.jar /opt/app/mud.jar
