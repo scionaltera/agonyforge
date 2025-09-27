@@ -4,7 +4,8 @@ import com.agonyforge.mud.demo.model.util.BaseEnumSetConverter;
 import com.agonyforge.mud.demo.model.util.PersistentEnum;
 
 public enum AdminFlag implements PersistentEnum {
-    HOLYLIGHT("can see everything");
+    HOLYLIGHT("can see everything"),
+    PEACEFUL("cannot be attacked");
 
     private final String description;
 
