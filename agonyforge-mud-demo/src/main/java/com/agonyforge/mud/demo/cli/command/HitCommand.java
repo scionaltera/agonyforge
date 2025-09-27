@@ -153,6 +153,12 @@ public class HitCommand extends AbstractCommand {
         }
 
         MudCharacter target = targetOptional.get();
+
+        if (fightRepository.findByAttackerAndDefender(ch, target).isPresent() || fightRepository.findByAttackerAndDefender(target, ch).isPresent()) {
+            output.append("[red]You are already fighting %s!", target.getCharacter().getName());
+            return question;
+        }
+
         Output targetOutput = new Output();
         Output roomOutput = new Output();
 
