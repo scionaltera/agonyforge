@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.timer.TimerEvent;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.HitCommand;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.Fight;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
@@ -60,6 +61,21 @@ public class FightService {
             } else if (attacker.getLocation().getRoom() != defender.getLocation().getRoom()) {
                 LOGGER.warn("Attacker and defender in different rooms");
                 ended.add(fight);
+            } else if ((attacker.getPlayer() != null && attacker.getPlayer().getAdminFlags().contains(AdminFlag.PEACEFUL))
+                    || (defender.getPlayer() != null && defender.getPlayer().getAdminFlags().contains(AdminFlag.PEACEFUL))) {
+
+                ended.add(fight);
+
+                MudRoom room = attacker.getLocation().getRoom();
+
+                commService.sendTo(attacker, new Output("[white]You grow weary of fighting..."));
+                commService.sendTo(defender, new Output("[white]You grow weary of fighting..."));
+                commService.sendToRoom(
+                    room.getId(),
+                    new Output("[white]%s and %s suddenly stop fighting.",
+                        attacker.getCharacter().getName(),
+                        defender.getCharacter().getName()),
+                    attacker, defender);
             } else {
                 MudRoom room = attacker.getLocation().getRoom();
                 Output chOutput = new Output();
@@ -71,16 +87,18 @@ public class FightService {
                         attacker.getCharacter().getName(),
                         defender.getCharacter().getName());
 
-                // attacker attacks
+                // the fight was initiated when the attacker attacked the defender
+                // if the defender was killed, no Fight should have been created
+                // that means it's time for the defender to retaliate
                 HitCommand.doHit(repositoryBundle, diceService, fightRepository,
+                    targetOutput, chOutput, roomOutput,
+                    defender, attacker);
+
+                // if the attacker is still alive, they can attack again
+                if (attacker.getCharacter().getHitPoints() > 0) {
+                    HitCommand.doHit(repositoryBundle, diceService, fightRepository,
                         chOutput, targetOutput, roomOutput,
                         attacker, defender);
-
-                // if they survived, defender attacks
-                if (defender.getCharacter().getHitPoints() > 0) {
-                    HitCommand.doHit(repositoryBundle, diceService, fightRepository,
-                        targetOutput, chOutput, roomOutput,
-                        defender, attacker);
                 }
 
                 // send all output
@@ -98,7 +116,9 @@ public class FightService {
                     commService.sendTo(defender, new Output("[white]You are bathed in a white light from above..."));
                     commService.sendToRoom(
                         room.getId(),
-                        new Output("[white]%s and %s are bathed in a white light from above...", attacker, defender),
+                        new Output("[white]%s and %s are bathed in a white light from above...",
+                            attacker.getCharacter().getName(),
+                            defender.getCharacter().getName()),
                         attacker, defender);
 
                     attacker.getCharacter().setHitPoints(attacker.getCharacter().getMaxHitPoints());

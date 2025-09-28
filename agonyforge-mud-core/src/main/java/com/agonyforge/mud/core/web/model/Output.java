@@ -56,6 +56,10 @@ public class Output {
         return new ArrayList<>(lines);
     }
 
+    public boolean isEmpty() {
+        return lines.isEmpty();
+    }
+
     @Override
     public String toString() {
         return String.join("\n", lines);

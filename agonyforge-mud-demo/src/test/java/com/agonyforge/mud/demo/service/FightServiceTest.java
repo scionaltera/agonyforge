@@ -206,7 +206,7 @@ public class FightServiceTest {
                 any(FightRepository.class),
                 any(Output.class), any(Output.class), any(Output.class),
                 any(MudCharacter.class), any(MudCharacter.class)
-            ), times(2));
+            ), times(1));
 
             verify(commService, atLeast(1)).sendTo(eq(attacker), outputCaptor.capture());
             verify(commService, atLeast(1)).sendTo(eq(defender), outputCaptor.capture());

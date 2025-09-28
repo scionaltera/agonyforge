@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.Fight;
@@ -35,9 +36,14 @@ public class HitCommand extends AbstractCommand {
                                FightRepository fightRepository,
                                Output chOutput, Output targetOutput, Output roomOutput,
                                MudCharacter ch, MudCharacter target) {
+
+        if (target.getPlayer() != null && target.getPlayer().getAdminFlags().contains(AdminFlag.PEACEFUL)) {
+            chOutput.append("[white]Somehow you just don't feel like doing that.");
+            return;
+        }
+
         // Attempt roll
-        DiceResult defense = diceService.roll(1, 20, target.getCharacter().getDefense());
-        final int attemptTarget = defense.getModifiedRoll(0);
+        final int attemptTarget = 12 + target.getCharacter().getDefense();
 
         DiceResult attempt = diceService.roll(1, 20);
         LOGGER.trace("Attempt result: {}", attempt);
@@ -147,13 +153,24 @@ public class HitCommand extends AbstractCommand {
         }
 
         MudCharacter target = targetOptional.get();
+
+        if (fightRepository.findByAttackerAndDefender(ch, target).isPresent() || fightRepository.findByAttackerAndDefender(target, ch).isPresent()) {
+            output.append("[red]You are already fighting %s!", target.getCharacter().getName());
+            return question;
+        }
+
         Output targetOutput = new Output();
         Output roomOutput = new Output();
 
         doHit(getRepositoryBundle(), diceService, fightRepository, output, targetOutput, roomOutput, ch, target);
 
-        getCommService().sendTo(target, targetOutput);
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), roomOutput, ch, target);
+        if (!targetOutput.isEmpty()) {
+            getCommService().sendTo(target, targetOutput);
+        }
+
+        if (!roomOutput.isEmpty()) {
+            getCommService().sendToRoom(ch.getLocation().getRoom().getId(), roomOutput, ch, target);
+        }
 
         return question;
     }
