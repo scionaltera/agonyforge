@@ -54,14 +54,16 @@ public class CharacterJanitor implements ApplicationListener<SessionDisconnectEv
             if (instanceOptional.isPresent()) {
                 MudCharacter instance = instanceOptional.get();
 
-                instance.setLocation(null);
-                characterRepository.save(instance);
+                if (instance.getLocation() != null) {
+                    instance.setLocation(null);
+                    characterRepository.save(instance);
 
-                LOGGER.info("{} has left the game", instance.getCharacter().getName());
+                    LOGGER.info("{} has left the game", instance.getCharacter().getName());
 
-                WebSocketContext webSocketContext = WebSocketContext.build(event.getMessage().getHeaders());
-                commService.sendToAll(webSocketContext,
-                    new Output("[yellow]%s has left the game!", instance.getCharacter().getName()), instance);
+                    WebSocketContext webSocketContext = WebSocketContext.build(event.getMessage().getHeaders());
+                    commService.sendToAll(webSocketContext,
+                        new Output("[yellow]%s has left the game!", instance.getCharacter().getName()), instance);
+                }
             }
         }
     }
