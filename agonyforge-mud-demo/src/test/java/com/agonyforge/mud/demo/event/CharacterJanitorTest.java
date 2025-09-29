@@ -84,6 +84,7 @@ public class CharacterJanitorTest {
             when(event.getMessage()).thenReturn(message);
             when(simpMessageHeaderAccessor.getSessionAttributes()).thenReturn(attributes);
             when(ch.getCharacter()).thenReturn(chChComponent);
+            when(ch.getLocation()).thenReturn(chLocationComponent);
             when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
             CharacterJanitor uut = new CharacterJanitor(sessionAttributeService, characterRepository, commService);
@@ -92,6 +93,32 @@ public class CharacterJanitorTest {
 
             verify(characterRepository).save(ch);
             verify(commService).sendToAll(any(WebSocketContext.class), any(Output.class), eq(ch));
+        }
+    }
+
+    @Test
+    void testOnApplicationEventFromMenu() {
+        Long chId = random.nextLong();
+        Map<String, Object> attributes = new HashMap<>();
+
+        attributes.put(MUD_CHARACTER, chId);
+
+        try (MockedStatic<SimpMessageHeaderAccessor> headerAccessor = mockStatic(SimpMessageHeaderAccessor.class)) {
+            headerAccessor.when(() -> SimpMessageHeaderAccessor.wrap(any())).thenReturn(simpMessageHeaderAccessor);
+            headerAccessor.when(() -> SimpMessageHeaderAccessor.getUser(any())).thenReturn(mock(Principal.class));
+            headerAccessor.when(() -> SimpMessageHeaderAccessor.getSessionId(any())).thenReturn(UUID.randomUUID().toString());
+            headerAccessor.when(() -> SimpMessageHeaderAccessor.getSessionAttributes(any())).thenReturn(attributes);
+
+            when(event.getMessage()).thenReturn(message);
+            when(simpMessageHeaderAccessor.getSessionAttributes()).thenReturn(attributes);
+            when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+
+            CharacterJanitor uut = new CharacterJanitor(sessionAttributeService, characterRepository, commService);
+
+            uut.onApplicationEvent(event);
+
+            verify(characterRepository, never()).save(ch);
+            verify(commService, never()).sendToAll(any(WebSocketContext.class), any(Output.class), eq(ch));
         }
     }
 

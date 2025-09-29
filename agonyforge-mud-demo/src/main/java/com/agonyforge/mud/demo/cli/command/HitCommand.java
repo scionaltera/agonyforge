@@ -9,6 +9,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Effort;
+import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.Fight;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -45,7 +46,7 @@ public class HitCommand extends AbstractCommand {
         // Attempt roll
         final int attemptTarget = 12 + target.getCharacter().getDefense();
 
-        DiceResult attempt = diceService.roll(1, 20);
+        DiceResult attempt = diceService.roll(1, 20, ch.getCharacter().getStat(Stat.STR));
         LOGGER.trace("Attempt result: {}", attempt);
 
         if (attempt.getModifiedRoll(0) >= attemptTarget) {
