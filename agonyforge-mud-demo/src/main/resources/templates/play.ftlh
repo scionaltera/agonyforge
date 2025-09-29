@@ -13,7 +13,7 @@
 
     <section id="input-box">
         <form id="input-form">
-            <input type="text" id="input" autocomplete="off" autofocus>
+            <input type="text" id="input" spellcheck="false" autofocus>
         </form>
     </section>
 </@secure>
