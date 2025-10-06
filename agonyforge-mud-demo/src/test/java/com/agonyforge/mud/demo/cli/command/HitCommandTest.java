@@ -7,6 +7,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.FightRepository;
@@ -58,6 +59,9 @@ public class HitCommandTest {
 
     @Mock
     private MudCharacter ch, target;
+
+    @Mock
+    private PlayerComponent targetPlayer;
 
     @Mock
     private LocationComponent chLocationComponent, weaponLocationComponent;
@@ -158,6 +162,39 @@ public class HitCommandTest {
         verify(diceService).roll(eq(1), eq(20), eq(0));
         verify(diceService, never()).roll(eq(1), eq(4));
         verify(targetCharacter, never()).setHitPoints(anyInt());
+    }
+
+    @Test
+    void testHitTargetPeaceful() {
+        Long chId = RANDOM.nextLong();
+        Long roomId = RANDOM.nextLong();
+
+        when(webSocketContext.getAttributes()).thenReturn(Map.of(
+            MUD_CHARACTER, chId
+        ));
+        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
+        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
+        when(target.getPlayer()).thenReturn(targetPlayer);
+        when(targetPlayer.getAdminFlags()).thenReturn(EnumSet.of(AdminFlag.PEACEFUL));
+
+        Output output = new Output();
+        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
+        Question result = uut.execute(
+            question,
+            webSocketContext,
+            List.of("HIT", "FRODO"),
+            new Input("hit frodo"),
+            output);
+
+        assertEquals(question, result);
+        assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("Somehow you just don't feel like doing that.")));
+
+        verify(commService, never()).sendTo(eq(target), any(Output.class));
+        verify(commService, never()).sendToRoom(eq(roomId), any(Output.class), eq(ch), eq(target));
+        verify(diceService, never()).roll(eq(1), eq(20), eq(0));
+        verify(diceService, never()).roll(eq(1), eq(4));
+        verify(diceService, never()).roll(eq(1), eq(12));
+        verify(targetCharacter, never()).setHitPoints(eq(6));
     }
 
     @Test
