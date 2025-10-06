@@ -17,8 +17,15 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_ROOM;
+import static com.agonyforge.mud.demo.cli.command.TokenType.ITEM_HELD;
+
 @Component
 public class GiveCommand extends AbstractCommand {
+    static {
+        addSyntax(ITEM_HELD, CHARACTER_IN_ROOM);
+    }
+
     @Autowired
     public GiveCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

@@ -20,6 +20,10 @@ import java.util.Optional;
 // intentionally not annotated with @Component
 // the movement commands are configured in MoveConfiguration since they all share the same class
 public class MoveCommand extends AbstractCommand {
+    static {
+        addSyntax();
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveCommand.class);
 
     private final SessionAttributeService sessionAttributeService;

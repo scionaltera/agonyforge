@@ -13,8 +13,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.QUOTED_WORDS;
+
 @Component
 public class TitleCommand extends AbstractCommand {
+    static {
+        addSyntax(QUOTED_WORDS);
+    }
+
     @Autowired
     public TitleCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

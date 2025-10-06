@@ -11,6 +11,7 @@ import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -18,6 +19,16 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 public abstract class AbstractCommand implements Command {
+    private static final List<List<TokenType>> syntaxes = new ArrayList<>();
+
+    protected static void addSyntax(TokenType... tokens) {
+        syntaxes.add(List.of(tokens));
+    }
+
+    public static List<List<TokenType>> getSyntaxes() {
+        return new ArrayList<>(syntaxes);
+    }
+
     private final RepositoryBundle repositoryBundle;
     private final CommService commService;
     private final ApplicationContext applicationContext;

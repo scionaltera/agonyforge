@@ -17,8 +17,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_WORLD;
+import static com.agonyforge.mud.demo.cli.command.TokenType.ROOM_ID;
+
 @Component
 public class GotoCommand extends AbstractCommand {
+    static {
+        addSyntax(ROOM_ID);
+        addSyntax(CHARACTER_IN_WORLD);
+    }
+
     private final SessionAttributeService sessionAttributeService;
 
     @Autowired

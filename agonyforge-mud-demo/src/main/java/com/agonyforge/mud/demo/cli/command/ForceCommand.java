@@ -19,8 +19,9 @@ import com.agonyforge.mud.demo.service.CommService;
 
 @Component("forceCommand")
 public class ForceCommand extends AbstractCommand {
-    private static final Logger LOG = LoggerFactory.getLogger(ForceCommand.class);
-    private final ApplicationContext applicationContext;
+    static {
+        addSyntax(TokenType.CHARACTER_IN_WORLD, TokenType.QUOTED_WORDS);
+    }
 
     @Autowired
     public ForceCommand(
@@ -28,7 +29,6 @@ public class ForceCommand extends AbstractCommand {
             CommService commService,
             ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
-        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -88,15 +88,11 @@ public class ForceCommand extends AbstractCommand {
                         forcedCommand));
 
         // Log the forced command usage
-        LOG.info("{} forced {} to run: {}", executor.getName(), target.getName(), forcedCommand);
+        LOGGER.info("{} forced {} to run: {}", executor.getName(), target.getName(), forcedCommand);
 
         // Execute the forced command as the target
         getCommService().executeCommandAs(webSocketContext, target, forcedCommand);
 
         return question;
-    }
-
-    private MudCharacter getCharacter(WebSocketContext webSocketContext) {
-        return (MudCharacter) webSocketContext.getAttributes().get("character");
     }
 }

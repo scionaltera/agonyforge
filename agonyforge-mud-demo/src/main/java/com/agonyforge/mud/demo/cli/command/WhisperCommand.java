@@ -16,6 +16,10 @@ import java.util.Optional;
 
 @Component
 public class WhisperCommand extends AbstractCommand {
+    static {
+        addSyntax(TokenType.CHARACTER_IN_ROOM, TokenType.QUOTED_WORDS);
+    }
+
     @Autowired
     public WhisperCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

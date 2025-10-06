@@ -17,10 +17,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.*;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQuestion.IEDIT_MODEL;
 
 @Component
 public class ItemEditorCommand extends AbstractCommand {
+    static {
+        addSyntax(ITEM_ID);
+        addSyntax(ITEM_HELD);
+        addSyntax(ITEM_GROUND);
+    }
+
     @Autowired
     public ItemEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

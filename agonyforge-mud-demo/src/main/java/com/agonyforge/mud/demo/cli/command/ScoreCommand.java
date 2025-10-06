@@ -16,6 +16,10 @@ import java.util.List;
 
 @Component
 public class ScoreCommand extends AbstractCommand {
+    static {
+        addSyntax();
+    }
+
     private final CharacterSheetFormatter characterSheetFormatter;
 
     @Autowired

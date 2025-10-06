@@ -25,8 +25,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_ROOM;
+
 @Component
 public class HitCommand extends AbstractCommand {
+    static {
+        addSyntax(CHARACTER_IN_ROOM);
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HitCommand.class);
 
     private final DiceService diceService;

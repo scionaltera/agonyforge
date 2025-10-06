@@ -13,8 +13,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.WORD;
+
 @Component
 public class QuitCommand extends AbstractCommand {
+    static {
+        addSyntax(WORD);
+    }
+
     @Autowired
     public QuitCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

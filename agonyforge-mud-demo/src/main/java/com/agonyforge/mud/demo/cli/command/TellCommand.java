@@ -14,8 +14,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_WORLD;
+
 @Component
 public class TellCommand extends AbstractCommand {
+    static {
+        addSyntax(CHARACTER_IN_WORLD, TokenType.QUOTED_WORDS);
+    }
+
     @Autowired
     public TellCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

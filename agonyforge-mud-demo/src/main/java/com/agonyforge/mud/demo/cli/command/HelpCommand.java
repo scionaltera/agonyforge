@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
 
 @Component
 public class HelpCommand extends AbstractCommand {
+    static {
+        addSyntax();
+    }
+
     private final CommandRepository commandRepository;
 
     public HelpCommand(RepositoryBundle repositoryBundle,

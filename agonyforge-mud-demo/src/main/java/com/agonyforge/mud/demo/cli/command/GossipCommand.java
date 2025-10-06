@@ -15,6 +15,10 @@ import java.util.List;
 
 @Component
 public class GossipCommand extends AbstractCommand {
+    static {
+        addSyntax(TokenType.QUOTED_WORDS);
+    }
+
     @Autowired
     public GossipCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

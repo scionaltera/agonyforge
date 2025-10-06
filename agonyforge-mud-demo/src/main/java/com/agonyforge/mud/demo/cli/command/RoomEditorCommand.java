@@ -15,10 +15,15 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.ROOM_ID;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
 
 @Component
 public class RoomEditorCommand extends AbstractCommand {
+    static {
+        addSyntax(ROOM_ID);
+    }
+
     private final ApplicationContext applicationContext;
 
     @Autowired

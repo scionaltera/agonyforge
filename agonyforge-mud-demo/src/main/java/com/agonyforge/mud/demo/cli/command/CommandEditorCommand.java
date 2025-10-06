@@ -14,13 +14,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
+
+import static com.agonyforge.mud.demo.cli.command.TokenType.*;
 
 @Component
 public class CommandEditorCommand extends AbstractCommand {
+    static {
+        addSyntax();
+        addSyntax(WORD, WORD);
+        addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS);
+    }
+
     private final CommandRepository commandRepository;
 
     @Autowired

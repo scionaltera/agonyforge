@@ -17,8 +17,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_ROOM;
+import static com.agonyforge.mud.demo.cli.command.TokenType.ROOM_ID;
+
 @Component
 public class TeleportCommand extends AbstractCommand {
+    static {
+        addSyntax(CHARACTER_IN_ROOM, ROOM_ID);
+    }
+
     private final SessionAttributeService sessionAttributeService;
 
     @Autowired

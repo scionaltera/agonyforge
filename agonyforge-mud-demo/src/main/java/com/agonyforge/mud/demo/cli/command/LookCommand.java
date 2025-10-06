@@ -24,6 +24,10 @@ import java.util.Optional;
 
 @Component
 public class LookCommand extends AbstractCommand {
+    static {
+        addSyntax();
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LookCommand.class);
 
     public static Output doLook(RepositoryBundle repositoryBundle,

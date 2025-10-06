@@ -15,6 +15,10 @@ import java.util.List;
 
 @Component
 public class ShoutCommand extends AbstractCommand {
+    static {
+        addSyntax(TokenType.QUOTED_WORDS);
+    }
+
     @Autowired
     public ShoutCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

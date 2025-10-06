@@ -19,6 +19,10 @@ import java.util.Optional;
 
 @Component
 public class GetCommand extends AbstractCommand {
+    static {
+        addSyntax(TokenType.ITEM_GROUND);
+    }
+
     @Autowired
     public GetCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

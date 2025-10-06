@@ -18,6 +18,10 @@ import static org.apache.commons.lang3.BooleanUtils.forEach;
 
 @Component
 public class InventoryCommand extends AbstractCommand {
+    static {
+        addSyntax();
+    }
+
     @Autowired
     public InventoryCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

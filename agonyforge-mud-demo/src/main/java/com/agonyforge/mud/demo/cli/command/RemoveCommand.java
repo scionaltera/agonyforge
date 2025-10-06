@@ -19,6 +19,10 @@ import java.util.Optional;
 
 @Component
 public class RemoveCommand extends AbstractCommand {
+    static {
+        addSyntax(TokenType.ITEM_WORN);
+    }
+
     @Autowired
     public RemoveCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

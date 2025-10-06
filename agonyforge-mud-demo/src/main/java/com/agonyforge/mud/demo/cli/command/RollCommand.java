@@ -18,12 +18,18 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.*;
+
 /**
  * This is just for testing and probably won't stay in the game.
  * ROLL &lt;stat&gt; &lt;effort&gt;
  */
 @Component
 public class RollCommand extends AbstractCommand {
+    static {
+        addSyntax(STAT, EFFORT);
+    }
+
     private final DiceService diceService;
 
     @Autowired

@@ -15,8 +15,16 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.*;
+
 @Component
 public class PurgeCommand extends AbstractCommand {
+    static {
+        addSyntax(ITEM_GROUND);
+        addSyntax(ITEM_HELD);
+        addSyntax(CHARACTER_IN_ROOM);
+    }
+
     @Autowired
     public PurgeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);

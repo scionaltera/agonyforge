@@ -22,10 +22,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.agonyforge.mud.demo.cli.command.TokenType.NPC_ID;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.creature.NonPlayerCreatureEditorQuestion.MEDIT_MODEL;
 
 @Component
 public class NonPlayerCreatureEditorCommand extends AbstractCommand {
+    static {
+        addSyntax(NPC_ID);
+    }
+
     @Autowired
     public NonPlayerCreatureEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
