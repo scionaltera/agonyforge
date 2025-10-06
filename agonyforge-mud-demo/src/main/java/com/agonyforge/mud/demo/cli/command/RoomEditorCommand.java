@@ -8,6 +8,8 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,9 +22,7 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQue
 
 @Component
 public class RoomEditorCommand extends AbstractCommand {
-    static {
-        addSyntax(ROOM_ID);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomEditorCommand.class);
 
     private final ApplicationContext applicationContext;
 
@@ -31,6 +31,8 @@ public class RoomEditorCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         this.applicationContext = applicationContext;
+
+        addSyntax(ROOM_ID);
     }
 
     @Override

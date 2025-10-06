@@ -27,13 +27,11 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.creature.NonPlayer
 
 @Component
 public class NonPlayerCreatureEditorCommand extends AbstractCommand {
-    static {
-        addSyntax(NPC_ID);
-    }
-
     @Autowired
     public NonPlayerCreatureEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(NPC_ID);
     }
 
     @Override

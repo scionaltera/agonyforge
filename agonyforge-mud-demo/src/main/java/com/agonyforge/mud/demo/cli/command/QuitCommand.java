@@ -7,6 +7,8 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -17,13 +19,13 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.WORD;
 
 @Component
 public class QuitCommand extends AbstractCommand {
-    static {
-        addSyntax(WORD);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuitCommand.class);
 
     @Autowired
     public QuitCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(WORD);
     }
 
     @Override

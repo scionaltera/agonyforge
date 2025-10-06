@@ -26,10 +26,6 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.*;
  */
 @Component
 public class RollCommand extends AbstractCommand {
-    static {
-        addSyntax(STAT, EFFORT);
-    }
-
     private final DiceService diceService;
 
     @Autowired
@@ -40,6 +36,8 @@ public class RollCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         this.diceService = diceService;
+
+        addSyntax(STAT, EFFORT);
     }
 
     @Override

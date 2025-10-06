@@ -19,14 +19,12 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.WORD;
 
 @Component
 public class ConfigCommand extends AbstractCommand {
-    static {
-        addSyntax();
-        addSyntax(WORD);
-    }
-
     @Autowired
     public ConfigCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax();
+        addSyntax(WORD);
     }
 
     @Override

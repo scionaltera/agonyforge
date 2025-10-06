@@ -19,9 +19,7 @@ import com.agonyforge.mud.demo.service.CommService;
 
 @Component("forceCommand")
 public class ForceCommand extends AbstractCommand {
-    static {
-        addSyntax(TokenType.CHARACTER_IN_WORLD, TokenType.QUOTED_WORDS);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForceCommand.class);
 
     @Autowired
     public ForceCommand(
@@ -29,6 +27,8 @@ public class ForceCommand extends AbstractCommand {
             CommService commService,
             ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.CHARACTER_IN_WORLD, TokenType.COMMAND, TokenType.QUOTED_WORDS);
     }
 
     @Override

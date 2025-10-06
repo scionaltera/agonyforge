@@ -22,16 +22,14 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.ROOM_ID;
 
 @Component
 public class TeleportCommand extends AbstractCommand {
-    static {
-        addSyntax(CHARACTER_IN_ROOM, ROOM_ID);
-    }
-
     private final SessionAttributeService sessionAttributeService;
 
     @Autowired
     public TeleportCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext, SessionAttributeService sessionAttributeService) {
         super(repositoryBundle, commService, applicationContext);
         this.sessionAttributeService = sessionAttributeService;
+
+        addSyntax(CHARACTER_IN_ROOM, ROOM_ID);
     }
 
     @Override

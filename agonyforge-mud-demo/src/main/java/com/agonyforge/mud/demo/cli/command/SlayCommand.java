@@ -16,13 +16,11 @@ import java.util.Optional;
 
 @Component
 public class SlayCommand extends AbstractCommand {
-    static {
-        addSyntax(TokenType.CHARACTER_IN_ROOM);
-    }
-
     @Autowired
     public SlayCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.CHARACTER_IN_ROOM);
     }
 
     @Override

@@ -22,13 +22,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class EquipmentCommand extends AbstractCommand {
-    static {
-        addSyntax();
-    }
-
     @Autowired
     public EquipmentCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax();
     }
 
     @Override

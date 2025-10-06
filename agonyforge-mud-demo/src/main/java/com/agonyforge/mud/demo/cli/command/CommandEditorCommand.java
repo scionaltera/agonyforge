@@ -20,12 +20,6 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.*;
 
 @Component
 public class CommandEditorCommand extends AbstractCommand {
-    static {
-        addSyntax();
-        addSyntax(WORD, WORD);
-        addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS);
-    }
-
     private final CommandRepository commandRepository;
 
     @Autowired
@@ -35,6 +29,10 @@ public class CommandEditorCommand extends AbstractCommand {
                                 ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
         this.commandRepository = commandRepository;
+
+        addSyntax();
+        addSyntax(WORD, WORD);
+        addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS);
     }
 
     @Override

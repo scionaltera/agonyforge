@@ -29,10 +29,6 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_ROOM;
 
 @Component
 public class HitCommand extends AbstractCommand {
-    static {
-        addSyntax(CHARACTER_IN_ROOM);
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HitCommand.class);
 
     private final DiceService diceService;
@@ -142,6 +138,8 @@ public class HitCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
         this.diceService = diceService;
         this.fightRepository = fightRepository;
+
+        addSyntax(CHARACTER_IN_ROOM);
     }
 
     @Override

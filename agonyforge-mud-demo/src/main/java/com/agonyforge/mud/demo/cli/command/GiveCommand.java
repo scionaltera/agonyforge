@@ -9,6 +9,8 @@ import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -22,13 +24,13 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.ITEM_HELD;
 
 @Component
 public class GiveCommand extends AbstractCommand {
-    static {
-        addSyntax(ITEM_HELD, CHARACTER_IN_ROOM);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(GiveCommand.class);
 
     @Autowired
     public GiveCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(ITEM_HELD, CHARACTER_IN_ROOM);
     }
 
     @Override

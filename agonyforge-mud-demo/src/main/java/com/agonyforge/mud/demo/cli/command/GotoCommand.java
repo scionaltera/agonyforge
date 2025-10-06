@@ -22,17 +22,15 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.ROOM_ID;
 
 @Component
 public class GotoCommand extends AbstractCommand {
-    static {
-        addSyntax(ROOM_ID);
-        addSyntax(CHARACTER_IN_WORLD);
-    }
-
     private final SessionAttributeService sessionAttributeService;
 
     @Autowired
     public GotoCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext, SessionAttributeService sessionAttributeService) {
         super(repositoryBundle, commService, applicationContext);
         this.sessionAttributeService = sessionAttributeService;
+
+        addSyntax(ROOM_ID);
+        addSyntax(CHARACTER_IN_WORLD);
     }
 
     @Override

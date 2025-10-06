@@ -22,15 +22,13 @@ import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQue
 
 @Component
 public class ItemEditorCommand extends AbstractCommand {
-    static {
-        addSyntax(ITEM_ID);
-        addSyntax(ITEM_HELD);
-        addSyntax(ITEM_GROUND);
-    }
-
     @Autowired
     public ItemEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(ITEM_ID);
+        addSyntax(ITEM_HELD);
+        addSyntax(ITEM_GROUND);
     }
 
     @Override

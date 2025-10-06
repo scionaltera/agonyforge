@@ -22,13 +22,11 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.ITEM_ID;
 
 @Component
 public class CreateCommand extends AbstractCommand {
-    static {
-        addSyntax(ITEM_ID);
-    }
-
     @Autowired
     public CreateCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(ITEM_ID);
     }
 
     @Override

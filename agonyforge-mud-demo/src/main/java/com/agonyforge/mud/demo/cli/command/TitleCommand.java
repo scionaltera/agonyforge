@@ -17,13 +17,11 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.QUOTED_WORDS;
 
 @Component
 public class TitleCommand extends AbstractCommand {
-    static {
-        addSyntax(QUOTED_WORDS);
-    }
-
     @Autowired
     public TitleCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(QUOTED_WORDS);
     }
 
     @Override

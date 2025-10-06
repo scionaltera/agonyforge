@@ -15,14 +15,11 @@ import java.util.List;
 
 @Component
 public class SayCommand extends AbstractCommand {
-    static {
-        addSyntax(TokenType.QUOTED_WORDS);
-    }
-
     @Autowired
     public SayCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
-
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.QUOTED_WORDS);
     }
 
     @Override

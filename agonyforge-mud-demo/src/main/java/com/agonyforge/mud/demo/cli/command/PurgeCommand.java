@@ -19,15 +19,13 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.*;
 
 @Component
 public class PurgeCommand extends AbstractCommand {
-    static {
-        addSyntax(ITEM_GROUND);
-        addSyntax(ITEM_HELD);
-        addSyntax(CHARACTER_IN_ROOM);
-    }
-
     @Autowired
     public PurgeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(ITEM_GROUND);
+        addSyntax(ITEM_HELD);
+        addSyntax(CHARACTER_IN_ROOM);
     }
 
     @Override

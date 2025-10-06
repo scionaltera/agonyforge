@@ -16,13 +16,11 @@ import java.util.List;
 
 @Component
 public class WhoCommand extends AbstractCommand {
-    static {
-        addSyntax();
-    }
-
     @Autowired
     public WhoCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax();
     }
 
     @Override

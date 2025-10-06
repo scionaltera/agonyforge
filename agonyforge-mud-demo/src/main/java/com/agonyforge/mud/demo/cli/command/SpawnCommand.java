@@ -19,13 +19,11 @@ import static com.agonyforge.mud.demo.cli.command.TokenType.NPC_ID;
 
 @Component
 public class SpawnCommand extends AbstractCommand {
-    static {
-        addSyntax(NPC_ID);
-    }
-
     @Autowired
     public SpawnCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(NPC_ID);
     }
 
     @Override

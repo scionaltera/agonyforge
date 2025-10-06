@@ -17,13 +17,11 @@ import static com.agonyforge.mud.demo.event.WeatherListener.PROPERTY_HOUR;
 
 @Component
 public class TimeCommand extends AbstractCommand {
-    static {
-        addSyntax();
-    }
-
     @Autowired
     public TimeCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax();
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
@@ -19,16 +21,9 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 public abstract class AbstractCommand implements Command {
-    private static final List<List<TokenType>> syntaxes = new ArrayList<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCommand.class);
 
-    protected static void addSyntax(TokenType... tokens) {
-        syntaxes.add(List.of(tokens));
-    }
-
-    public static List<List<TokenType>> getSyntaxes() {
-        return new ArrayList<>(syntaxes);
-    }
-
+    private final List<List<TokenType>> syntaxes = new ArrayList<>();
     private final RepositoryBundle repositoryBundle;
     private final CommService commService;
     private final ApplicationContext applicationContext;
@@ -39,6 +34,14 @@ public abstract class AbstractCommand implements Command {
         this.repositoryBundle = repositoryBundle;
         this.commService = commService;
         this.applicationContext = applicationContext;
+    }
+
+    protected void addSyntax(TokenType... tokens) {
+        syntaxes.add(List.of(tokens));
+    }
+
+    public List<List<TokenType>> getSyntaxes() {
+        return new ArrayList<>(syntaxes);
     }
 
     protected RepositoryBundle getRepositoryBundle() {

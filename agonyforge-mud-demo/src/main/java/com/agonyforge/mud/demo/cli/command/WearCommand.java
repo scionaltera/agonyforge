@@ -10,6 +10,8 @@ import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -21,13 +23,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class WearCommand extends AbstractCommand {
-    static {
-        addSyntax(TokenType.ITEM_HELD);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(WearCommand.class);
 
     @Autowired
     public WearCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.ITEM_HELD);
     }
 
     @Override

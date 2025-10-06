@@ -7,7 +7,9 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.command.AbstractCommand;
 import com.agonyforge.mud.demo.cli.command.Command;
+import com.agonyforge.mud.demo.cli.command.TokenType;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
@@ -80,10 +82,12 @@ public class CommandQuestion extends BaseQuestion {
         CommandReference ref = refOptional.get();
 
         try {
-            Command command = applicationContext.getBean(ref.getBeanName(), Command.class);
+            AbstractCommand command = applicationContext.getBean(ref.getBeanName(), AbstractCommand.class);
             MudCharacter ch = getCharacter(webSocketContext, output).orElseThrow();
 
             if (ch.getPlayer() != null && (ch.getPlayer().getRoles().stream().anyMatch(role -> role.getCommands().contains(ref)) || ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor))) {
+                List<List<TokenType>> syntaxes = command.getSyntaxes();
+
                 Question next = command.execute(this, webSocketContext, tokens, input, output);
                 return new Response(next, output);
             }
