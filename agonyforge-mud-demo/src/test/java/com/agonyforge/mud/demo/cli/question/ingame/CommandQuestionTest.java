@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.command.AbstractCommand;
 import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -68,7 +69,7 @@ public class CommandQuestionTest {
     private WebSocketContext webSocketContext;
 
     @Mock
-    private Command command;
+    private AbstractCommand command;
 
     @Mock
     private Question question;
@@ -121,7 +122,7 @@ public class CommandQuestionTest {
         when(ch.getPlayer().getRoles()).thenReturn(Set.of(role));
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
-        when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
+        when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
@@ -132,7 +133,7 @@ public class CommandQuestionTest {
         assertNotNull(output);
 
         verify(commandRepository).findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))));
-        verify(applicationContext).getBean(eq("testCommand"), eq(Command.class));
+        verify(applicationContext).getBean(eq("testCommand"), eq(AbstractCommand.class));
     }
 
     @Test
@@ -145,7 +146,7 @@ public class CommandQuestionTest {
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
-        when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
+        when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
@@ -156,7 +157,7 @@ public class CommandQuestionTest {
         assertEquals("[default]Huh?", output.getOutput().get(0));
 
         verify(commandRepository).findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))));
-        verify(applicationContext).getBean(any(), eq(Command.class));
+        verify(applicationContext).getBean(any(), eq(AbstractCommand.class));
         verify(command, never()).execute(any(), any(), anyList(), any(), any());
     }
 
@@ -167,7 +168,7 @@ public class CommandQuestionTest {
         when(commandReference.getBeanName()).thenReturn("testCommand");
 
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
-        when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenThrow(new CommandException("oops!"));
+        when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenThrow(new CommandException("oops!"));
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
@@ -178,7 +179,7 @@ public class CommandQuestionTest {
         assertTrue(output.getOutput().get(0).contains("[red]"));
 
         verify(commandRepository).findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))));
-        verify(applicationContext).getBean(eq("testCommand"), eq(Command.class));
+        verify(applicationContext).getBean(eq("testCommand"), eq(AbstractCommand.class));
     }
 
     @Test
@@ -240,7 +241,7 @@ public class CommandQuestionTest {
         when(ch.getPlayer().getRoles()).thenReturn(Set.of(role));
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
-        when(applicationContext.getBean(eq("testCommand"), eq(Command.class))).thenReturn(command);
+        when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
@@ -251,6 +252,6 @@ public class CommandQuestionTest {
         assertNotNull(output);
 
         verify(commandRepository).findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))));
-        verify(applicationContext).getBean(eq("testCommand"), eq(Command.class));
+        verify(applicationContext).getBean(eq("testCommand"), eq(AbstractCommand.class));
     }
 }

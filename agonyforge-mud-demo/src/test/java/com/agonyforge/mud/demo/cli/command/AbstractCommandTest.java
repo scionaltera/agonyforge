@@ -180,7 +180,8 @@ public class AbstractCommandTest {
         };
 
         assertTrue(uut.findRoomCharacter(ch, "Scion").isEmpty()); // can't find yourself
-        assertTrue(uut.findRoomCharacter(ch, "Morgan").isPresent()); // case-insensitive match
+        assertTrue(uut.findRoomCharacter(ch, "Morgan").isPresent());
+        assertTrue(uut.findRoomCharacter(ch, "morg").isPresent());
     }
 
     @Test
@@ -198,6 +199,7 @@ public class AbstractCommandTest {
         };
 
         assertTrue(uut.findWorldCharacter(ch, "Scion").isEmpty()); // can't find yourself
-        assertFalse(uut.findWorldCharacter(ch, "Morgan").isEmpty());
+        assertTrue(uut.findWorldCharacter(ch, "Morgan").isPresent());
+        assertTrue(uut.findWorldCharacter(ch, "morg").isPresent());
     }
 }

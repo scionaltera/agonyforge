@@ -122,8 +122,8 @@ public abstract class AbstractCommand implements Command {
             .stream()
             .filter(tch -> !tch.equals(ch))
             .filter(tch -> Tokenizer.tokenize(tch.getCharacter().getName()).stream()
-                .filter(nameToken -> !nameToken.equals("A") && !nameToken.equals("AN") && !nameToken.equals("THE"))
-                .anyMatch(nameToken -> nameToken.startsWith(token.toUpperCase(Locale.ROOT))))
+                .filter(nameToken -> !nameToken.equalsIgnoreCase("A") && !nameToken.equalsIgnoreCase("AN") && !nameToken.equalsIgnoreCase("THE"))
+                .anyMatch(nameToken -> nameToken.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 
@@ -135,8 +135,8 @@ public abstract class AbstractCommand implements Command {
             .filter(tch -> !tch.equals(ch))
             .filter(tch -> tch.getLocation() != null)
             .filter(tch -> Tokenizer.tokenize(tch.getCharacter().getName()).stream()
-                .filter(nameToken -> !nameToken.equals("A") && !nameToken.equals("AN") && !nameToken.equals("THE"))
-                .anyMatch(nameToken -> nameToken.startsWith(token.toUpperCase(Locale.ROOT))))
+                .filter(nameToken -> !nameToken.equalsIgnoreCase("A") && !nameToken.equalsIgnoreCase("AN") && !nameToken.equalsIgnoreCase("THE"))
+                .anyMatch(nameToken -> nameToken.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 }
