@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -76,7 +75,7 @@ public class QuitCommandTest {
     void testQuitNoArgs() {
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("QUIT"), new Input("quit"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("quit"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -89,7 +88,7 @@ public class QuitCommandTest {
     void testQuitWrongArgs() {
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("QUIT", "LATER"), new Input("quit later"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("quit", "later"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -102,7 +101,7 @@ public class QuitCommandTest {
     void testQuitNotFullyTyped() {
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("Q"), new Input("q"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("q"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -115,7 +114,7 @@ public class QuitCommandTest {
     void testQuitNotFullyTypedWithArgs() {
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("Q", "NOW"), new Input("q now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("q", "now"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -135,7 +134,7 @@ public class QuitCommandTest {
 
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("QUIT", "NOW"), new Input("quit now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("quit", "now"), output);
 
         assertEquals(menuQuestion, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("Goodbye!")));

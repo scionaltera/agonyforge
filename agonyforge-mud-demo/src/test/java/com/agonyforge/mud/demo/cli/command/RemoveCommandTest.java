@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -100,8 +99,7 @@ public class RemoveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("REMOVE"),
-            new Input("rem"),
+            List.of("rem"),
             output);
 
         assertEquals(question, result);
@@ -124,8 +122,7 @@ public class RemoveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("REMOVE", "HAT"),
-            new Input("rem hat"),
+            List.of("rem", "hat"),
             output);
 
         assertEquals(question, result);
@@ -157,8 +154,7 @@ public class RemoveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("REMOVE", "HAT"),
-            new Input("rem hat"),
+            List.of("rem", "hat"),
             output);
 
         verify(targetLocationComponent).setHeld(eq(ch));

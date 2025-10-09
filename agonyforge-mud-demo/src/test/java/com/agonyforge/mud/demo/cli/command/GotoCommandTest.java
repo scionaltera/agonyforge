@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -108,7 +107,7 @@ public class GotoCommandTest {
 
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
 
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO"), new Input("goto"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("goto"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to go to?")));
@@ -120,7 +119,7 @@ public class GotoCommandTest {
 
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
 
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "TEST", "PLACE", "NOW"), new Input("goto test place now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("goto", "test", "place", "now"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to go to?")));
@@ -132,7 +131,7 @@ public class GotoCommandTest {
 
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "CARMEN"), new Input("goto carmen"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("goto", "carmen"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find anything like that.")));
@@ -145,7 +144,7 @@ public class GotoCommandTest {
 
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "TARGET"), new Input("goto target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("goto", "target"), output);
 
         assertEquals(question, result);
         verify(chLocation).setRoom(eq(destination));
@@ -155,7 +154,7 @@ public class GotoCommandTest {
     void testGotoRoomNotFound() {
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "2000"), new Input("goto 2000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("goto", "2000"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find anything like that.")));
@@ -166,7 +165,7 @@ public class GotoCommandTest {
     void testGotoRoom() {
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "3000"), new Input("goto 3000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("goto", "3000"), output);
 
         assertEquals(question, result);
         verify(chLocation).setRoom(eq(destination));

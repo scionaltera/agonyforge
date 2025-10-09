@@ -110,7 +110,7 @@ public class TeleportCommandTest {
     void testTeleportNoArgs() {
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TELEPORT"), new Input("teleport"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("teleport"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Whom do you wish to teleport?")));
@@ -120,7 +120,7 @@ public class TeleportCommandTest {
     void testTeleportOneArgs() {
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TELEPORT", "CARMEN"), new Input("teleport carmen"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("teleport", "carmen"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to send them?")));
@@ -130,7 +130,7 @@ public class TeleportCommandTest {
     void testTeleportTooManyArgs() {
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TELEPORT", "CARMEN", "SANDIEGO", "NOW"), new Input("teleport carmen sandiego now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("teleport", "carmen", "sandiego", "now"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("TELEPORT &lt;victim&gt; &lt;destination&gt;")));
@@ -142,7 +142,7 @@ public class TeleportCommandTest {
 
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TELEPORT", "CARMEN", "3000"), new Input("teleport carmen 3000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("teleport", "carmen", "3000"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No such player exists.")));
@@ -155,7 +155,7 @@ public class TeleportCommandTest {
 
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TELEPORT", "TARGET", "9000"), new Input("teleport target 9000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("teleport", "target", "9000"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No such room exists.")));
@@ -168,7 +168,7 @@ public class TeleportCommandTest {
 
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TELEPORT", "TARGET", "3000"), new Input("teleport target 3000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("teleport", "target", "3000"), output);
 
         assertEquals(question, result);
         verify(targetLocation).setRoom(eq(destination));

@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -85,7 +84,7 @@ public class WhoCommandTest {
         when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("who"), output);
 
         assertEquals(question, result);
 
@@ -112,7 +111,7 @@ public class WhoCommandTest {
         when(characterRepository.findAll()).thenReturn(characters);
 
         WhoCommand uut = new WhoCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("WHO"), new Input("who"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("who"), output);
 
         assertEquals(question, result);
 

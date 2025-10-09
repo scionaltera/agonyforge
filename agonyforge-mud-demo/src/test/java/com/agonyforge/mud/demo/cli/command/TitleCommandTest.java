@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -77,7 +76,7 @@ public class TitleCommandTest {
     @Test
     void testEmpty() {
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, wsContext, List.of("TITLE"), new Input("title"), new Output());
+        Question result = uut.execute(question, wsContext, List.of("title"), new Output());
 
         assertEquals(question, result);
         verify(playerComponent).setTitle(eq(""));
@@ -86,7 +85,7 @@ public class TitleCommandTest {
     @Test
     void testNormal() {
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, wsContext, List.of("TITLE", "THE", "AMAZING"), new Input("title the Amazing"), new Output());
+        Question result = uut.execute(question, wsContext, List.of("TITLE", "the Amazing"), new Output());
 
         assertEquals(question, result);
         verify(playerComponent).setTitle(eq("the Amazing"));
@@ -96,8 +95,7 @@ public class TitleCommandTest {
     void testLongWithColors() {
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, wsContext,
-            List.of("TITLE", "THE", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING"),
-            new Input("title the [red]Amazing [dyellow]Amazing [yellow]Amazing [green]Amazing [blue]Amazing [magenta]Amazing"),
+            List.of("TITLE", "the [red]Amazing [dyellow]Amazing [yellow]Amazing [green]Amazing [blue]Amazing [magenta]Amazing"),
             new Output());
 
         assertEquals(question, result);
@@ -108,8 +106,7 @@ public class TitleCommandTest {
     void testTooLong() {
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, wsContext,
-            List.of("TITLE", "THE", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING"),
-            new Input("title the Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing"),
+            List.of("TITLE", "the Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing"),
             new Output());
 
         assertEquals(question, result);

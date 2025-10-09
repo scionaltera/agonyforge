@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -12,7 +11,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -36,7 +34,7 @@ public class CommandEditorCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
         if (tokens.size() <= 1) {
             output.append("[white]%-4s [white]%-12s [white]%-20s [white]%s", "Pri", "Command", "Bean Name", "Description");
 
@@ -53,17 +51,16 @@ public class CommandEditorCommand extends AbstractCommand {
 
         String subCommand = tokens.get(1);
 
-        if ("CREATE".equals(subCommand)) {
+        if ("CREATE".equalsIgnoreCase(subCommand)) {
             // CEDIT CREATE <name> <priority> <beanName> <description>
             if (tokens.size() <= 5) {
                 output.append("[yellow]CEDIT CREATE &lt;name&gt; &lt;priority&gt; &lt;beanName&gt; &lt;description&gt;");
             } else {
                 try {
-                    String[] rawTokens = StringUtils.tokenizeToStringArray(input.getInput(), " ", true, true);
                     String name = tokens.get(2);
                     int priority = Integer.parseInt(tokens.get(3));
-                    String beanName = rawTokens[4];
-                    String description = Command.stripFirstWords(input.getInput(), 5);
+                    String beanName = tokens.get(4);
+                    String description = tokens.get(5);
                     CommandReference command = new CommandReference();
 
                     // throws exception if bean cannot be found
@@ -83,12 +80,12 @@ public class CommandEditorCommand extends AbstractCommand {
                     output.append("[red]No command bean could be found with that name.");
                 }
             }
-        } else if ("DELETE".equals(subCommand)) {
+        } else if ("DELETE".equalsIgnoreCase(subCommand)) {
             // CEDIT DELETE <name>
             if (tokens.size() != 3) {
                 output.append("[yellow]CEDIT DELETE &lt;name&gt;");
             } else {
-                String name = Command.stripFirstWords(input.getInput(), 2);
+                String name = tokens.get(2);
                 Optional<CommandReference> commandOptional = commandRepository.findByNameIgnoreCase(name);
 
                 if (commandOptional.isPresent()) {

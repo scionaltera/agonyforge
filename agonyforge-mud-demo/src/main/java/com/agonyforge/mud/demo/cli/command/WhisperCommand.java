@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -27,7 +26,6 @@ public class WhisperCommand extends AbstractCommand {
     public Question execute(Question question,
                             WebSocketContext webSocketContext,
                             List<String> tokens,
-                            Input input,
                             Output output) {
 
         if (tokens.size() == 1) {
@@ -40,7 +38,7 @@ public class WhisperCommand extends AbstractCommand {
             return question;
         }
 
-        String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
+        String message = tokens.get(2);
         String targetName = tokens.get(1);
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudCharacter> targetOptional = findRoomCharacter(ch, targetName);

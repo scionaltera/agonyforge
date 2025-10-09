@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -101,7 +100,7 @@ public class HelpCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
 
         HelpCommand uut = new HelpCommand(repositoryBundle, commService, applicationContext, commandRepository);
-        Question result = uut.execute(question, wsContext, List.of("HELP"), new Input("help"), new Output());
+        Question result = uut.execute(question, wsContext, List.of("help"), new Output());
 
         verify(testCommandRefA).getPriority();
         verify(testCommandRefA).getDescription();
@@ -119,7 +118,7 @@ public class HelpCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
 
         HelpCommand uut = new HelpCommand(repositoryBundle, commService, applicationContext, commandRepository);
-        Question result = uut.execute(question, wsContext, List.of("HELP"), new Input("help"), new Output());
+        Question result = uut.execute(question, wsContext, List.of("help"), new Output());
 
         verify(testCommandRefA).getDescription();
 

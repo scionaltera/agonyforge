@@ -25,7 +25,6 @@ import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -62,7 +61,7 @@ public class AbstractCommandTest {
     private MudCharacter target;
 
     @Mock
-    private CharacterComponent chCharacterComponent, targetCharacterComponent;
+    private CharacterComponent targetCharacterComponent;
 
     @Mock
     private LocationComponent chLocationComponent, targetLocationComponent;
@@ -94,7 +93,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -103,8 +102,7 @@ public class AbstractCommandTest {
         assertThrows(CommandException.class, () -> uut.execute(
             question,
             webSocketContext,
-            List.of("TEST"),
-            new Input("test"),
+            List.of("test"),
             output));
     }
 
@@ -122,7 +120,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -131,8 +129,7 @@ public class AbstractCommandTest {
         assertThrows(CommandException.class, () -> uut.execute(
             question,
             webSocketContext,
-            List.of("TEST"),
-            new Input("test"),
+            List.of("test"),
             output));
     }
 
@@ -150,7 +147,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -159,8 +156,7 @@ public class AbstractCommandTest {
         assertEquals(question, uut.execute(
             question,
             webSocketContext,
-            List.of("TEST"),
-            new Input("test"),
+            List.of("test"),
             output));
     }
 
@@ -174,7 +170,7 @@ public class AbstractCommandTest {
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
                 return question;
             }
         };
@@ -193,7 +189,7 @@ public class AbstractCommandTest {
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
                 return question;
             }
         };

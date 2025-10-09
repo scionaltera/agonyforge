@@ -3,7 +3,6 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -94,8 +93,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT"),
-            new Input("hit"),
+            List.of("hit"),
             output);
 
         assertEquals(question, result);
@@ -118,8 +116,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of("hit", "frodo"),
             output);
 
         assertEquals(question, result);
@@ -146,8 +143,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of("hit", "frodo"),
             output);
 
         assertEquals(question, result);
@@ -181,8 +177,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of("hit", "frodo"),
             output);
 
         assertEquals(question, result);
@@ -219,8 +214,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of("hit", "frodo"),
             output);
 
         assertEquals(question, result);
@@ -257,8 +251,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of("hit", "frodo"),
             output);
 
         assertEquals(question, result);

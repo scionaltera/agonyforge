@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -94,7 +93,7 @@ public class CreateCommandTest {
         Output output = new Output();
         CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
 
-        Question response = uut.execute(question, wsContext, List.of("CRE"), new Input("cre"), output);
+        Question response = uut.execute(question, wsContext, List.of("cre"), output);
 
         assertEquals(question, response);
 
@@ -112,7 +111,7 @@ public class CreateCommandTest {
         Output output = new Output();
         CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
 
-        Question response = uut.execute(question, wsContext, List.of("CRE", "404"), new Input("cre 404"), output);
+        Question response = uut.execute(question, wsContext, List.of("cre", "404"), output);
 
         assertEquals(question, response);
 
@@ -139,7 +138,7 @@ public class CreateCommandTest {
         Output output = new Output();
         CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
 
-        Question response = uut.execute(question, wsContext, List.of("CRE", "200"), new Input("cre 200"), output);
+        Question response = uut.execute(question, wsContext, List.of("cre", "200"), output);
 
         assertEquals(question, response);
 

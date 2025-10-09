@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -96,8 +95,7 @@ public class EquipmentCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("EQUIPMENT"),
-            new Input("eq"),
+            List.of("eq"),
             output);
 
         assertEquals(question, result);
@@ -126,8 +124,7 @@ public class EquipmentCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("EQUIPMENT"),
-            new Input("eq"),
+            List.of("eq"),
             output);
 
         assertEquals(question, result);

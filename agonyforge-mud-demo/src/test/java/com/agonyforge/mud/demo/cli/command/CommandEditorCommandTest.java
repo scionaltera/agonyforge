@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -80,7 +79,7 @@ public class CommandEditorCommandTest {
     void testNoArgs() {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("CEDIT"), new Input("cedit"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("cedit"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Pri")));
@@ -97,7 +96,7 @@ public class CommandEditorCommandTest {
     void testInvalidSubcommand() {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("CEDIT", "TEST"), new Input("cedit test"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("cedit", "test"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Invalid subcommand.")));
@@ -111,8 +110,7 @@ public class CommandEditorCommandTest {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "CREATE", "TEST", "50", "TESTCOMMAND", "TESTS", "STUFF"),
-            new Input("cedit create test 50 testCommand Tests stuff"),
+            List.of("cedit", "create", "TEST", "50", "testCommand", "Tests stuff"),
             output);
 
         assertEquals(question, result);
@@ -143,7 +141,6 @@ public class CommandEditorCommandTest {
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
             Arrays.stream(StringUtils.tokenizeToStringArray(input.toUpperCase(Locale.ROOT), " ", true, true)).toList(),
-            new Input(input),
             output);
 
         assertEquals(question, result);
@@ -158,8 +155,7 @@ public class CommandEditorCommandTest {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "CREATE", "TEST", "FIFTY", "TESTCOMMAND", "DESCRIPTION"),
-            new Input("cedit create test fifty testCommand description"),
+            List.of("cedit", "create", "test", "fifty", "testCommand", "description"),
             output);
 
         assertEquals(question, result);
@@ -174,8 +170,7 @@ public class CommandEditorCommandTest {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "CREATE", "TEST", "50", "MISSINGCOMMAND", "TESTS", "STUFF"),
-            new Input("cedit create test 50 missingCommand Tests stuff"),
+            List.of("cedit", "create", "test", "50", "missingCommand", "Tests stuff"),
             output);
 
         assertEquals(question, result);
@@ -190,8 +185,7 @@ public class CommandEditorCommandTest {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "DELETE", "TEST"),
-            new Input("cedit delete test"),
+            List.of("cedit", "delete", "test"),
             output);
 
         assertEquals(question, result);
@@ -205,8 +199,7 @@ public class CommandEditorCommandTest {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "DELETE", "WRONG"),
-            new Input("cedit delete wrong"),
+            List.of("cedit", "delete", "wrong"),
             output);
 
         assertEquals(question, result);
@@ -226,7 +219,6 @@ public class CommandEditorCommandTest {
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
             Arrays.stream(StringUtils.tokenizeToStringArray(input.toUpperCase(Locale.ROOT), " ", true, true)).toList(),
-            new Input(input),
             output);
 
         assertEquals(question, result);

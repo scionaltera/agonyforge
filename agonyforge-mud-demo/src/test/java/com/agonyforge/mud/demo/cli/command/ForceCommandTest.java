@@ -22,7 +22,6 @@ import org.springframework.context.ApplicationContext;
 
 import com.agonyforge.mud.core.cli.Question;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -53,8 +52,6 @@ class ForceCommandTest {
     private LocationComponent locationComponent;
     @Mock
     private MudRoom room;
-    @Mock
-    private Command dummyCommand;
 
     private ForceCommand uut;
     private final Random random = new Random();
@@ -67,7 +64,7 @@ class ForceCommandTest {
     @Test
     void testForceMissingTarget() {
         Output output = new Output();
-        Question result = uut.execute(question, webSocketContext, List.of("FORCE"), new Input("force"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("force"), output);
 
         assertSame(question, result);
         assertEquals("[default]Who would you like to force?", output.toString().trim());
@@ -76,8 +73,7 @@ class ForceCommandTest {
     @Test
     void testForceMissingCommand() {
         Output output = new Output();
-        Question result = uut.execute(question, webSocketContext, List.of("FORCE", "Bob"), new Input("force Bob"),
-                output);
+        Question result = uut.execute(question, webSocketContext, List.of("force", "bob"), output);
 
         assertSame(question, result);
         assertEquals("[default]What would you like to force them to do?", output.toString().trim());
@@ -96,10 +92,7 @@ class ForceCommandTest {
         when(executor.getLocation()).thenReturn(locationComponent); // Needed for not being in void
         when(locationComponent.getRoom()).thenReturn(room);
 
-        Question result = uut.execute(
-                question, webSocketContext,
-                List.of("FORCE", "Bob", "say", "Hello"),
-                new Input("force Bob say Hello"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("force", "Bob", "say", "Hello"), output);
 
         assertSame(question, result);
         assertEquals("[default]There isn't anyone by that name.", output.toString().trim());
@@ -135,7 +128,7 @@ class ForceCommandTest {
         // --- act ---
         Output out = new Output();
         Question res = uut.execute(question, webSocketContext,
-                List.of("FORCE", "Bob", "say", "Hello"), new Input("force Bob say Hello"), out);
+                List.of("force", "Bob", "say", "Hello"), out);
 
         // --- assert ---
         assertSame(question, res);
@@ -149,10 +142,7 @@ class ForceCommandTest {
     @Test
     void testForceCommandWithNestedForce() {
         Output output = new Output();
-        Question result = uut.execute(
-                question, webSocketContext,
-                List.of("FORCE", "Bob", "force", "Bob", "say", "Hello"),
-                new Input("force Bob force Bob say Hello"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("force", "Bob", "force", "Bob say Hello"), output);
 
         assertSame(question, result);
         assertEquals(

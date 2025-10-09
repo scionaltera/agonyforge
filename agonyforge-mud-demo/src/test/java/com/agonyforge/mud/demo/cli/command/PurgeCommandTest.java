@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -92,7 +91,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR"), new Input("pur"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur"), output);
 
         assertEquals(question, result);
 
@@ -107,7 +106,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
 
         assertEquals(question, result);
 
@@ -125,7 +124,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
 
         assertEquals(question, result);
 
@@ -143,7 +142,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
 
         assertEquals(question, result);
 
@@ -160,7 +159,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
 
         assertEquals(question, result);
 
@@ -173,7 +172,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "GRE"), new Input("pur gre"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur", "gre"), output);
 
         assertEquals(question, result);
 
@@ -188,7 +187,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "GRE"), new Input("pur gre"), output);
+        Question result = uut.execute(question, wsContext, List.of("pur", "gre"), output);
 
         assertEquals(question, result);
 

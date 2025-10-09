@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -107,8 +106,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR"),
-            new Input("wea"),
+            List.of("wea"),
             output);
 
         assertEquals(question, result);
@@ -131,8 +129,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wea", "ha"),
             output);
 
         assertEquals(question, result);
@@ -161,8 +158,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wae", "ha"),
             output);
 
         assertEquals(question, result);
@@ -188,8 +184,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wea", "ha"),
             output);
 
         assertEquals(question, result);
@@ -224,8 +219,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wea", "ha"),
             output);
 
         assertEquals(question, result);
@@ -259,8 +253,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wea", "ha"),
             output);
 
         verify(targetLocationComponent).setHeld(eq(ch));
@@ -309,8 +302,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wea", "ha"),
             output);
 
         verify(targetLocationComponent).setWorn(eq(EnumSet.of(WearSlot.HEAD)));
@@ -356,11 +348,10 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("WEAR", "HAT"),
-            new Input("wea ha"),
+            List.of("wea", "ha"),
             output);
 
-        verify(targetLocationComponent).setWorn(ArgumentMatchers.<EnumSet<WearSlot>>any());
+        verify(targetLocationComponent).setWorn(ArgumentMatchers.any());
         verify(itemRepository).save(any(MudItem.class));
         verify(commService).sendToRoom(
             anyLong(),

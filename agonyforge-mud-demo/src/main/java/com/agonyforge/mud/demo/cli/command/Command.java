@@ -1,17 +1,23 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface Command {
-    Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output);
+    Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output);
+
+    static String returnFirstWord(String input) {
+        int space = input.indexOf(' ');
+
+        if (space == -1) {
+            return input.trim();
+        }
+
+        return input.substring(0, space);
+    }
 
     static String stripFirstWord(String input) {
         int space = input.indexOf(' ');

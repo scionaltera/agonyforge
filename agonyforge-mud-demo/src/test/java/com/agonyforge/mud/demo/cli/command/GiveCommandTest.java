@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -106,8 +105,7 @@ public class GiveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GIVE"),
-            new Input("g"),
+            List.of("g"),
             output);
 
         verifyNoInteractions(itemRepository);
@@ -132,8 +130,7 @@ public class GiveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GIVE", "SPOON"),
-            new Input("g sp"),
+            List.of("g", "sp"),
             output);
 
         verifyNoInteractions(itemRepository);
@@ -162,8 +159,7 @@ public class GiveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GIVE", "SPOON", "SPOOK"),
-            new Input("g sp sp"),
+            List.of("g", "sp", "sp"),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));
@@ -176,7 +172,6 @@ public class GiveCommandTest {
     @Test
     void testGiveNoTarget() {
         Long chId = random.nextLong();
-        Long roomId = 100L;
 
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -197,8 +192,7 @@ public class GiveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GIVE", "SPOON", "SPOOK"),
-            new Input("g sp sp"),
+            List.of("g", "sp", "sp"),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));
@@ -241,8 +235,7 @@ public class GiveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GIVE", "SPOON", "SPOOK"),
-            new Input("g sp sp"),
+            List.of("g", "sp", "sp"),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));

@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,7 +28,7 @@ public class EquipmentCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)
                 .stream()

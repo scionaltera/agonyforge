@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -29,8 +28,8 @@ public class QuitCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        if (tokens.size() != 2 || !"QUIT".equals(tokens.get(0)) || !"NOW".equals(tokens.get(1))) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+        if (tokens.size() != 2 || !"quit".equalsIgnoreCase(tokens.get(0)) || !"now".equals(tokens.get(1))) {
             output.append("[red]You must type 'quit now'.");
             return question;
         }

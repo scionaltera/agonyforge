@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -25,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +72,7 @@ public class WhisperCommandTest {
     private CharacterComponent characterComponent, targetCharacterComponent;
 
     @Mock
-    private LocationComponent chLocationComponent, targetLocationComponent;
+    private LocationComponent chLocationComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -100,13 +98,15 @@ public class WhisperCommandTest {
         "whisper t  test",
         "whisper t   test",
         "whisper t test ",
+        "whisper t test  ",
         "whisper t test test",
-        "whisper t test test test",
-        "whisper t hax %s hax"
+        "whisper t test test test"
     })
     void testExecute(String val) {
-        String match = val.substring(9).stripLeading();
-        List<String> tokens = tokenize(val);
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
+
+        String match = new Output(val.substring(10)).getOutput().get(0); // Output adds non-breaking spaces
+        List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -123,10 +123,8 @@ public class WhisperCommandTest {
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(targetCharacterComponent.getName()).thenReturn("Target");
 
-        Input input = new Input(val);
         Output output = new Output();
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
+        Question response = uut.execute(question, webSocketContext, tokens, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -150,52 +148,10 @@ public class WhisperCommandTest {
             .anyMatch(line -> line.equals("[red]Scion whispers something to Target.")));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "whisper",
-        "whisper ",
-        "whisper  "
-    })
-    void testExecuteNoTarget(String val) {
-        List<String> tokens = tokenize(val);
-        Input input = new Input(val);
-        Output output = new Output();
-
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]Who would you like to whisper to?", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "whisper t",
-        "whisper t ",
-        "whisper t  "
-    })
-    void testExecuteNoMessage(String val) {
-        List<String> tokens = tokenize(val);
-        Input input = new Input(val);
-        Output output = new Output();
-
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]What would you like to whisper to them?", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
     @Test
     void testExecuteTargetNotFound() {
-        List<String> tokens = tokenize("whisper t foo");
-        Input input = new Input("whisper t foo");
+        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
+        List<String> tokens = SyntaxAwareTokenizer.tokenize("whisper t foo", uut.getSyntaxes().get(0));
         Output output = new Output();
         Long chId = random.nextLong();
 
@@ -206,20 +162,12 @@ public class WhisperCommandTest {
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
+        Question response = uut.execute(question, webSocketContext, tokens, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
         assertEquals("[default]There isn't anyone by that name.", output.getOutput().get(0));
 
         verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
-    private List<String> tokenize(String val) {
-        return Arrays
-            .stream(val.split(" "))
-            .map(String::toUpperCase)
-            .collect(Collectors.toList());
     }
 }

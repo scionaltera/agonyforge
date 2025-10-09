@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -25,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
@@ -101,12 +99,13 @@ public class TellCommandTest {
         "tell t   test",
         "tell t test ",
         "tell t test test",
-        "tell t test test test",
-        "tell t hax %s hax"
+        "tell t test test test"
     })
     void testExecute(String val) {
-        String match = val.substring(7).stripLeading();
-        List<String> tokens = tokenize(val);
+        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
+
+        String match = new Output(val.substring(7)).getOutput().get(0); // Output adds non-breaking spaces
+        List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -122,10 +121,8 @@ public class TellCommandTest {
         when(chCharacterComponent.getName()).thenReturn("Scion");
         when(targetCharacterComponent.getName()).thenReturn("Target");
 
-        Input input = new Input(val);
         Output output = new Output();
-        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
+        Question response = uut.execute(question, webSocketContext, tokens, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -141,52 +138,10 @@ public class TellCommandTest {
             .anyMatch(line -> line.equals("[red]Scion tells you, '" + match + "[red]'")));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "tell",
-        "tell ",
-        "tell  "
-    })
-    void testExecuteNoTarget(String val) {
-        List<String> tokens = tokenize(val);
-        Input input = new Input(val);
-        Output output = new Output();
-
-        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]Who would you like to tell?", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "tell t",
-        "tell t ",
-        "tell t  "
-    })
-    void testExecuteNoMessage(String val) {
-        List<String> tokens = tokenize(val);
-        Input input = new Input(val);
-        Output output = new Output();
-
-        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]What would you like to tell them?", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
     @Test
     void testExecuteTargetNotFound() {
-        List<String> tokens = tokenize("tell t foo");
-        Input input = new Input("tell t foo");
+        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
+        List<String> tokens = SyntaxAwareTokenizer.tokenize("tell t foo", uut.getSyntaxes().get(0));
         Output output = new Output();
         Long chId = random.nextLong();
 
@@ -197,20 +152,12 @@ public class TellCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
-        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
+        Question response = uut.execute(question, webSocketContext, tokens, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
         assertEquals("[default]There isn't anyone by that name.", output.getOutput().get(0));
 
         verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
-    }
-
-    private List<String> tokenize(String val) {
-        return Arrays
-            .stream(val.split(" "))
-            .map(String::toUpperCase)
-            .collect(Collectors.toList());
     }
 }

@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -112,7 +111,7 @@ public class TransferCommandTest {
 
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
 
-        Question result = uut.execute(question, webSocketContext, List.of("TRANSFER"), new Input("transfer"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("transfer"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Whom would you like to transfer?")));
@@ -124,7 +123,7 @@ public class TransferCommandTest {
 
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
 
-        Question result = uut.execute(question, webSocketContext, List.of("TRANSFER", "CARMEN", "SANDIEGO", "NOW"), new Input("transfer carmen sandiego now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("transfer", "carmen", "sandiego", "now"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Whom would you like to transfer?")));
@@ -136,7 +135,7 @@ public class TransferCommandTest {
 
         Output output = new Output();
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TRANSFER", "CARMEN"), new Input("transfer carmen"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("transfer", "carmen"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find that player.")));
@@ -150,7 +149,7 @@ public class TransferCommandTest {
 
         Output output = new Output();
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TRANSFER", "TARGET"), new Input("transfer target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("transfer", "target"), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("They are already here in the room with you.")));
@@ -163,7 +162,7 @@ public class TransferCommandTest {
 
         Output output = new Output();
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("TRANSFER", "TARGET"), new Input("transfer target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of("transfer", "target"), output);
 
         assertEquals(question, result);
         verify(targetLocation).setRoom(eq(destination));

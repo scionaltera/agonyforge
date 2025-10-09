@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -32,12 +31,7 @@ public class ForceCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(
-            Question question,
-            WebSocketContext webSocketContext,
-            List<String> tokens,
-            Input input,
-            Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
         // Validate argument count
         if (tokens.size() == 1) {
             output.append("[default]Who would you like to force?");
@@ -50,9 +44,7 @@ public class ForceCommand extends AbstractCommand {
 
         // Parse target name and forced command text
         String targetName = tokens.get(1);
-        String forcedCommand = input.getInput()
-                .replaceFirst("(?i)force\\s+" + targetName + "\\s+", "")
-                .trim();
+        String forcedCommand = String.format("%s %s", tokens.get(2), tokens.get(3));
 
         // Check for nested force command
         if (forcedCommand.toLowerCase().startsWith("force")) {

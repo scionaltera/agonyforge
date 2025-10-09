@@ -8,6 +8,8 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.AbstractCommand;
+import com.agonyforge.mud.demo.cli.command.SyntaxAwareTokenizer;
+import com.agonyforge.mud.demo.cli.command.TokenType;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
@@ -69,8 +71,8 @@ public class CommandQuestion extends BaseQuestion {
             return new Response(this, output);
         }
 
-        List<String> tokens = Tokenizer.tokenize(input.getInput());
-        Optional<CommandReference> refOptional = commandRepository.findFirstByNameStartingWith(tokens.get(0).toUpperCase(Locale.ROOT), Sort.by(Sort.Order.asc("priority")));
+        String cmdName = Tokenizer.tokenize(input.getInput()).get(0);
+        Optional<CommandReference> refOptional = commandRepository.findFirstByNameStartingWith(cmdName.toUpperCase(Locale.ROOT), Sort.by(Sort.Order.asc("priority")));
 
         if (refOptional.isEmpty()) {
             output.append("[default]Huh?");
@@ -85,7 +87,7 @@ public class CommandQuestion extends BaseQuestion {
 
             if (ch.getPlayer() != null && (ch.getPlayer().getRoles().stream().anyMatch(role -> role.getCommands().contains(ref)) || ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor))) {
                 /* TODO command refactor
-                 * 1. [DONE] tokenize() should return unmodified (not capitalized) strings broken into tokens.
+                 * 1. [DONE] tokenize() should return unmodified (not capitalized) strings broken into tokens based on the syntax of the Command.
                  * 2. For each syntax of matching length, attempt to bind objects by type.
                  *    If a bind fails and the token is on the lookahead list (e.g. "a", "an", "the", "some"), try moving to the next token.
                  *      What if an NPC is named "Theodore" and the tokens are ["THE", "GOBLIN"] and there is also a "goblin" in the room?
@@ -96,7 +98,23 @@ public class CommandQuestion extends BaseQuestion {
                  * 3. Pass only the array of bound objects to execute().
                  */
 
-                Question next = command.execute(this, webSocketContext, tokens, input, output);
+                List<String> tokens = null;
+
+                for (List<TokenType> syntax : command.getSyntaxes()) {
+                    try {
+                        tokens = SyntaxAwareTokenizer.tokenize(input.getInput(), syntax);
+                        break;
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.trace("Illegal syntax: {}", e.getMessage());
+                    }
+                }
+
+                if (tokens == null) {
+                    output.append("[red]Syntax error. Try again.");
+                    return new Response(this, output);
+                }
+
+                Question next = command.execute(this, webSocketContext, tokens, output);
                 return new Response(next, output);
             }
 

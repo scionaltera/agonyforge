@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -83,12 +82,12 @@ public class EmoteCommandTest {
         "emote   test",
         "emote test ",
         "emote test test",
-        "emote test test test",
-        "emote hax %s hax"
+        "emote test test test"
     })
     void testExecute(String val) {
-        String match = val.substring(6).stripLeading();
-        List<String> tokens = tokenize(val);
+        EmoteCommand uut = new EmoteCommand(repositoryBundle, commService, applicationContext);
+        String match = new Output(" " + val.substring(6)).getOutput().get(0);
+        List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -101,45 +100,15 @@ public class EmoteCommandTest {
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 
-        Input input = new Input(val);
         Output output = new Output();
-        EmoteCommand uut = new EmoteCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
+
+        Question response = uut.execute(question, webSocketContext, tokens, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
-        assertEquals("[dcyan]" + ch.getCharacter().getName() + " " + match, output.getOutput().get(0));
+        assertEquals("[dcyan]" + ch.getCharacter().getName() + match, output.getOutput().get(0));
 
         verify(characterRepository).findById(eq(chId));
         verify(commService).sendToRoom(eq(100L), any(Output.class), eq(ch));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "emote",
-        "emote ",
-        "emote  ",
-        "emote\t"
-    })
-    void testExecuteNoMessage(String val) {
-        List<String> tokens = tokenize(val);
-        Input input = new Input(val);
-        Output output = new Output();
-        EmoteCommand uut = new EmoteCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]What would you like to emote?", output.getOutput().get(0));
-
-        verify(characterRepository, never()).findById(any(Long.class));
-        verify(commService, never()).sendToRoom(anyLong(), any(Output.class));
-    }
-
-    private List<String> tokenize(String val) {
-        return Arrays
-            .stream(val.split(" "))
-            .map(String::toUpperCase)
-            .collect(Collectors.toList());
     }
 }

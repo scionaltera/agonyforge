@@ -123,7 +123,8 @@ public class CommandQuestionTest {
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
-        when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
+        when(command.getSyntaxes()).thenReturn(List.of(List.of()));
+        when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("test"));
@@ -158,7 +159,7 @@ public class CommandQuestionTest {
 
         verify(commandRepository).findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))));
         verify(applicationContext).getBean(any(), eq(AbstractCommand.class));
-        verify(command, never()).execute(any(), any(), anyList(), any(), any());
+        verify(command, never()).execute(any(), any(), anyList(), any());
     }
 
     @Test
@@ -242,7 +243,8 @@ public class CommandQuestionTest {
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
-        when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Input.class), any(Output.class))).thenReturn(question);
+        when(command.getSyntaxes()).thenReturn(List.of(List.of()));
+        when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository);
         Response result = uut.answer(webSocketContext, new Input("\"quoted string\""));

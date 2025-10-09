@@ -3,7 +3,6 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -41,7 +40,7 @@ public class RollCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         if (tokens.size() <= 2) {

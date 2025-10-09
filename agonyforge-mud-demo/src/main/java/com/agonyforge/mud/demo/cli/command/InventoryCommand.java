@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.BooleanUtils.forEach;
-
 @Component
 public class InventoryCommand extends AbstractCommand {
     @Autowired
@@ -26,7 +23,7 @@ public class InventoryCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         List<MudItem> items = getRepositoryBundle().getItemRepository().findByLocationHeld(ch);
 

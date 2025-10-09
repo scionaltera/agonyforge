@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -42,7 +41,6 @@ public class MoveCommand extends AbstractCommand {
     public Question execute(Question question,
                             WebSocketContext webSocketContext,
                             List<String> tokens,
-                            Input input,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());

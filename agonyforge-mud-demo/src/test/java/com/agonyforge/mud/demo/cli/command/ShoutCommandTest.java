@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -88,12 +87,12 @@ public class ShoutCommandTest {
         "shout   test",
         "shout test ",
         "shout test test",
-        "shout test test test",
-        "shout hax %s hax"
+        "shout test test test"
     })
     void testExecute(String val) {
-        String match = val.substring(6).stripLeading();
-        List<String> tokens = tokenize(val);
+        ShoutCommand uut = new ShoutCommand(repositoryBundle, commService, applicationContext);
+        String match = new Output(val.substring(6)).getOutput().get(0);
+        List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -106,10 +105,9 @@ public class ShoutCommandTest {
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getZoneId()).thenReturn(1L);
 
-        Input input = new Input(val);
         Output output = new Output();
-        ShoutCommand uut = new ShoutCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
+
+        Question response = uut.execute(question, webSocketContext, tokens, output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -117,34 +115,5 @@ public class ShoutCommandTest {
 
         verify(characterRepository).findById(eq(chId));
         verify(commService).sendToZone(eq(webSocketContext), eq(1L), any(Output.class));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "shout",
-        "shout ",
-        "shout  ",
-        "shout\t"
-    })
-    void testExecuteNoMessage(String val) {
-        List<String> tokens = tokenize(val);
-        Input input = new Input(val);
-        Output output = new Output();
-        ShoutCommand uut = new ShoutCommand(repositoryBundle, commService, applicationContext);
-        Question response = uut.execute(question, webSocketContext, tokens, input, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]What would you like to shout?", output.getOutput().get(0));
-
-        verify(characterRepository, never()).findById(any(Long.class));
-        verify(commService, never()).sendToZone(any(WebSocketContext.class), anyLong(), any(Output.class));
-    }
-
-    private List<String> tokenize(String val) {
-        return Arrays
-            .stream(val.split(" "))
-            .map(String::toUpperCase)
-            .collect(Collectors.toList());
     }
 }

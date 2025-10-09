@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -26,9 +25,8 @@ public class SayCommand extends AbstractCommand {
     public Question execute(Question question,
                             WebSocketContext webSocketContext,
                             List<String> tokens,
-                            Input input,
                             Output output) {
-        String message = Command.stripFirstWord(input.getInput());
+        String message = tokens.get(1);
 
         if (message.isBlank()) {
             output.append("[default]What would you like to say?");

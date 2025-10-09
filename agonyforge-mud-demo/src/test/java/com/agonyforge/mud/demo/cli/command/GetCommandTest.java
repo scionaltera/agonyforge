@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -101,8 +100,7 @@ public class GetCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET"),
-            new Input("g"),
+            List.of("g"),
             output);
 
         verify(itemRepository, never()).findByLocationRoom(eq(room));
@@ -115,7 +113,6 @@ public class GetCommandTest {
     @Test
     void testGetNoItem() {
         Long chId = random.nextLong();
-        Long roomId = 100L;
 
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -132,8 +129,7 @@ public class GetCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
+            List.of("g", "t"),
             output);
 
         verify(itemRepository).findByLocationRoom(eq(room));
@@ -170,8 +166,7 @@ public class GetCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("GET", "TEST"),
-            new Input("g t"),
+            List.of("g", "t"),
             output);
 
         verify(itemRepository).findByLocationRoom(eq(room));

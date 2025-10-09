@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -102,8 +101,7 @@ public class DropCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("DROP"),
-            new Input("dr"),
+            List.of("dr"),
             output);
 
         verify(itemRepository, never()).findById(eq(chId));
@@ -133,8 +131,7 @@ public class DropCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("DROP", "TEST"),
-            new Input("dr t"),
+            List.of("dr", "t"),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));
@@ -172,8 +169,7 @@ public class DropCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("DROP", "TEST"),
-            new Input("dr t"),
+            List.of("dr", "t"),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));

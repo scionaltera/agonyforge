@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -103,7 +102,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of("REDIT"), new Input("redit"), output);
+        Question result = uut.execute(originalQuestion, wsContext, List.of("redit"), output);
 
         assertEquals(roomId, attributes.get(REDIT_MODEL));
         assertEquals(reditQuestion, result);
@@ -129,7 +128,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of("REDIT", Long.toString(roomId)), new Input("redit " + roomId), output);
+        Question result = uut.execute(originalQuestion, wsContext, List.of("redit", Long.toString(roomId)), output);
 
         assertEquals(roomId, attributes.get(REDIT_MODEL));
         assertEquals(reditQuestion, result);
@@ -153,7 +152,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of("REDIT", Long.toString(roomId)), new Input("redit " + roomId), output);
+        Question result = uut.execute(originalQuestion, wsContext, List.of("redit", Long.toString(roomId)), output);
 
         verify(roomRepository).save(any(MudRoom.class));
         assertNotNull(attributes.get(REDIT_MODEL));
@@ -163,7 +162,6 @@ public class RoomEditorCommandTest {
     @Test
     void testInvalidArgument() {
         Long chId = random.nextLong();
-        long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
@@ -176,7 +174,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of("REDIT", "JUNK"), new Input("redit junk"), output);
+        Question result = uut.execute(originalQuestion, wsContext, List.of("redit", "junk"), output);
 
         verify(roomRepository, never()).save(any(MudRoom.class));
         assertNull(attributes.get(REDIT_MODEL));

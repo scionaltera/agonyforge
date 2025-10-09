@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
@@ -15,7 +14,6 @@ import com.agonyforge.mud.demo.model.impl.NonPlayerComponent;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -35,7 +33,7 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         // MEDIT <number> <-- edit a specific NPC by number (existing or new)
