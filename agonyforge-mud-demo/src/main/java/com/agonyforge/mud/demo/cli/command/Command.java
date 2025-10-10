@@ -9,34 +9,6 @@ import java.util.List;
 public interface Command {
     Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output);
 
-    static String returnFirstWord(String input) {
-        int space = input.indexOf(' ');
-
-        if (space == -1) {
-            return input.trim();
-        }
-
-        return input.substring(0, space);
-    }
-
-    static String stripFirstWord(String input) {
-        int space = input.indexOf(' ');
-
-        if (space == -1) {
-            return "";
-        }
-
-        return input.substring(space + 1).stripLeading();
-    }
-
-    static String stripFirstWords(String input, int words) {
-        for (int i = 0; i < words; i++) {
-            input = stripFirstWord(input);
-        }
-
-        return input;
-    }
-
     static String stripColors(String input) {
         boolean inColor = false;
         StringBuilder out = new StringBuilder();
