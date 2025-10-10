@@ -82,10 +82,8 @@ public class RollCommandTest {
         characterComponent.setEffort(Effort.BASIC, 5);
         
         // Mock dice service to return specific values
-        DiceResult attemptRoll = new DiceResult(20, 0);
-        attemptRoll.addRoll(20);
-        DiceResult effortRoll = new DiceResult(20, 0);
-        effortRoll.addRoll(10);
+        DiceResult attemptRoll = diceService.roll(1, 20, 10);
+        DiceResult effortRoll = diceService.roll(1, Effort.BASIC.getDie(), 5);
         
         when(diceService.roll(1, 20, 10)).thenReturn(attemptRoll);
         when(diceService.roll(1, Effort.BASIC.getDie(), 5)).thenReturn(effortRoll);
@@ -132,13 +130,10 @@ public class RollCommandTest {
         characterComponent.setStat(Stat.STR, 10);
         characterComponent.setEffort(Effort.BASIC, 5);
         
-        // Mock dice service to return 20 for the attempt roll
-        DiceResult attemptRoll = new DiceResult(20, 0);
-        attemptRoll.addRoll(20);
-        DiceResult effortRoll = new DiceResult(20, 0);
-        effortRoll.addRoll(10);
-        DiceResult ultimateRoll = new DiceResult(20, 0);
-        ultimateRoll.addRoll(15);
+        // Mock dice service to return specific values
+        DiceResult attemptRoll = diceService.roll(1, 20, 10);
+        DiceResult effortRoll = diceService.roll(1, Effort.BASIC.getDie(), 5);
+        DiceResult ultimateRoll = diceService.roll(1, Effort.ULTIMATE.getDie(), 0);
         
         when(diceService.roll(1, 20, 10)).thenReturn(attemptRoll);
         when(diceService.roll(1, Effort.BASIC.getDie(), 5)).thenReturn(effortRoll);
