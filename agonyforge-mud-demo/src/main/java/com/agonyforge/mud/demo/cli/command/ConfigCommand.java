@@ -39,7 +39,7 @@ public class ConfigCommand extends AbstractCommand {
             });
         } else if (tokens.size() == 2) {
             try {
-                AdminFlag flag = AdminFlag.valueOf(tokens.get(1));
+                AdminFlag flag = AdminFlag.valueOf(tokens.get(1).toUpperCase());
 
                 if (ch.getPlayer().getAdminFlags().contains(flag)) {
                     ch.getPlayer().getAdminFlags().remove(flag);

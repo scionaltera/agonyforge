@@ -41,3 +41,4 @@ out/
 
 ### VS Code ###
 .vscode/
+.aider*
