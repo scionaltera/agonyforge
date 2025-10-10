@@ -2,7 +2,7 @@ package com.agonyforge.mud.core.web.controller;
 
 import com.agonyforge.mud.core.cli.OutputLoader;
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.InputProcessingService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -33,15 +33,18 @@ public class WebSocketController {
 
     private final ApplicationContext applicationContext;
     private final WebSocketContextAware webSocketContextAware;
+    private final InputProcessingService inputProcessingService;
     private final Question initialQuestion;
     private Output greeting;
 
     @Autowired
     public WebSocketController(ApplicationContext applicationContext,
                                WebSocketContextAware webSocketContextAware,
+                               InputProcessingService inputProcessingService,
                                @Qualifier("initialQuestion") Question initialQuestion) {
         this.applicationContext = applicationContext;
         this.webSocketContextAware = webSocketContextAware;
+        this.inputProcessingService = inputProcessingService;
         this.initialQuestion = initialQuestion;
 
         try {
@@ -94,21 +97,6 @@ public class WebSocketController {
             return new Output("[red]Oops! Something went wrong. The error has been reported. Please try again.");
         }
 
-        String questionName = (String) wsContext.getAttributes().get(MUD_QUESTION);
-        Question currentQuestion = applicationContext.getBean(questionName, Question.class);
-        Response response = currentQuestion.answer(wsContext, input);
-        Question nextQuestion = response.getNext();
-        Output output = new Output();
-
-        // append any feedback from the last question
-        response.getFeedback().ifPresent(output::append);
-
-        // append the prompt from the next question
-        output.append(nextQuestion.prompt(wsContext));
-
-        // store the next question in the session
-        wsContext.getAttributes().put(MUD_QUESTION, nextQuestion.getBeanName());
-
-        return output;
+        return inputProcessingService.processInput(wsContext, input);
     }
 }

@@ -1,7 +1,7 @@
 package com.agonyforge.mud.core.web.controller;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.InputProcessingService;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
@@ -17,14 +17,12 @@ import org.springframework.context.ApplicationContext;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.agonyforge.mud.core.config.RemoteIpHandshakeInterceptor.SESSION_REMOTE_IP_KEY;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,10 +37,10 @@ public class WebSocketControllerTest {
     private ApplicationContext applicationContext;
 
     @Mock
-    private Question question;
+    private InputProcessingService inputProcessingService;
 
     @Mock
-    private Response response;
+    private Question question;
 
     @Mock
     private Principal principal;
@@ -75,7 +73,7 @@ public class WebSocketControllerTest {
         when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("").append("[default]> "));
         when(question.getBeanName()).thenReturn("testQuestion");
 
-        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, inputProcessingService, question);
         Output result = uut.onSubscribe(headers);
 
         assertEquals(3, result.getOutput().size());
@@ -94,7 +92,7 @@ public class WebSocketControllerTest {
     void testSubscribeMissingAttributes() {
         headers.remove(SESSION_ATTRIBUTES);
 
-        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, inputProcessingService, question);
         Output result = uut.onSubscribe(headers);
 
         assertEquals(1, result.getOutput().size());
@@ -106,27 +104,18 @@ public class WebSocketControllerTest {
 
     @Test
     void testInput() {
-        when(applicationContext.getBean(eq("testQuestion"), eq(Question.class))).thenReturn(question);
-        when(response.getNext()).thenReturn(question);
-        when(response.getFeedback()).thenReturn(Optional.of(new Output("[cyan]You say, 'Hello![cyan]'")));
-        when(question.answer(any(WebSocketContext.class), any(Input.class))).thenReturn(response);
-        when(question.prompt(any(WebSocketContext.class))).thenReturn(new Output("").append("[default]> "));
-        when(question.getBeanName()).thenReturn("nextQuestion");
+        when(inputProcessingService.processInput(any(WebSocketContext.class), any(Input.class))).thenReturn(new Output("[cyan]You say, 'Hello![cyan]'")
+                .append("")
+                .append("[default]> "));
 
         Input input = new Input("Hello!");
-        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, inputProcessingService, question);
         Output result = uut.onInput(headers, input);
 
         assertEquals("[cyan]You say, 'Hello![cyan]'", result.getOutput().get(0));
         assertEquals("", result.getOutput().get(1));
         assertEquals("[default]> ", result.getOutput().get(2));
         assertEquals(3, result.getOutput().size());
-
-        verify(question).prompt(contextCaptor.capture());
-
-        WebSocketContext ctx = contextCaptor.getValue();
-
-        assertEquals("nextQuestion", ctx.getAttributes().get(MUD_QUESTION));
     }
 
     @Test
@@ -134,7 +123,7 @@ public class WebSocketControllerTest {
         headers.remove(SESSION_ATTRIBUTES);
 
         Input input = new Input("Hello!");
-        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, question);
+        WebSocketController uut = new WebSocketController(applicationContext, webSocketContextAware, inputProcessingService, question);
         Output result = uut.onInput(headers, input);
 
         assertEquals(1, result.getOutput().size());
