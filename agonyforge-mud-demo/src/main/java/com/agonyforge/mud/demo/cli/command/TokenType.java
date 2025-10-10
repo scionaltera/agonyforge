@@ -1,30 +1,36 @@
 package com.agonyforge.mud.demo.cli.command;
 
 public enum TokenType {
-    WORD(false, false),
-    QUOTED_WORDS(true, false),
-    NUMBER(false, true),
-    DIRECTION(false, false),
-    ITEM_GROUND(false, false),
-    ITEM_HELD(false, false),
-    ITEM_WORN(false, false),
-    CHARACTER_IN_ROOM(false, false),
-    CHARACTER_IN_ZONE(false, false),
-    CHARACTER_IN_WORLD(false, false),
-    ITEM_ID(false, true),
-    NPC_ID(false, true),
-    ROOM_ID(false, true),
-    COMMAND(false, false),
-    ADMIN_FLAG(false, false),
-    STAT(false, false),
-    EFFORT(false, false);
+    WORD("a word", false, false),
+    QUOTED_WORDS("multiple words", true, false),
+    NUMBER("a number", false, true),
+    DIRECTION("a direction", false, false),
+    ITEM_GROUND("item on ground", false, false),
+    ITEM_HELD("held item", false, false),
+    ITEM_WORN("worn item", false, false),
+    CHARACTER_IN_ROOM("character in room", false, false),
+    CHARACTER_IN_ZONE("character nearby", false, false),
+    CHARACTER_IN_WORLD("character anywhere", false, false),
+    ITEM_ID("item ID", false, true),
+    NPC_ID("NPC ID", false, true),
+    ROOM_ID("room ID", false, true),
+    COMMAND("command", false, false),
+    ADMIN_FLAG("admin flag", false, false),
+    STAT("stat", false, false),
+    EFFORT("effort", false, false);
 
+    private final String readable;
     private final boolean isQuoting;
     private final boolean isNumber;
 
-    TokenType(boolean isQuoting, boolean isNumber) {
+    TokenType(String readable, boolean isQuoting, boolean isNumber) {
+        this.readable = readable;
         this.isQuoting = isQuoting;
         this.isNumber = isNumber;
+    }
+
+    public String getReadable() {
+        return readable;
     }
 
     public boolean isQuoting() {
@@ -33,5 +39,10 @@ public enum TokenType {
 
     public boolean isNumber() {
         return isNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "&lt;" + getReadable() + "&gt;";
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class CommandQuestion extends BaseQuestion {
@@ -110,7 +111,13 @@ public class CommandQuestion extends BaseQuestion {
                 }
 
                 if (tokens == null) {
-                    output.append("[red]Syntax error. Try again.");
+                    output
+                        .append("[yellow]:: [white]%s [yellow]::", ref.getName().toUpperCase(Locale.ROOT))
+                        .append("[dyellow]Description: %s", ref.getDescription())
+                        .append("[yellow]Usage:");
+                    command.getSyntaxes().forEach(syntax -> output.append("  [yellow]%s %s",
+                        ref.getName().toUpperCase(Locale.ROOT),
+                        syntax.stream().map(TokenType::toString).collect(Collectors.joining(" "))));
                     return new Response(this, output);
                 }
 

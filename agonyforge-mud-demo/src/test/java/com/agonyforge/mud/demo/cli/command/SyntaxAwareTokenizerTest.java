@@ -53,7 +53,7 @@ public class SyntaxAwareTokenizerTest {
     @Test
     void testTokenizeColorCodes() {
         String input = "[red]able baker [blue]charlie";
-        List<String> expected = List.of("able", "baker", "charlie");
+        List<String> expected = List.of("[red]able", "baker", "[blue]charlie");
 
         assertEquals(expected, SyntaxAwareTokenizer.tokenize(input, basicSyntax));
     }

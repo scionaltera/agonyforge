@@ -22,7 +22,6 @@ public class SyntaxAwareTokenizer {
         StringBuilder buf = new StringBuilder();
         TokenType currentType = defensiveSyntax.remove(0);
         boolean isQuoting = false;
-        boolean isColor = false;
 
         String input = HtmlUtils.htmlUnescape(escaped);
 
@@ -33,12 +32,6 @@ public class SyntaxAwareTokenizer {
 
             if (!currentType.isQuoting() && input.charAt(i) == '"') {
                 isQuoting = !isQuoting;
-            } else if (input.charAt(i) == '[') {
-                isColor = true;
-            } else if (input.charAt(i) == ']') {
-                isColor = false;
-            } else if (isColor) {
-                // do nothing
             } else if (!isQuoting && input.charAt(i) == ' ') {
                 if (validateAndAddToken(tokens, buf, currentType)) {
                     if (!defensiveSyntax.isEmpty()) {
