@@ -79,7 +79,9 @@ public class ConfigCommandTest {
         uut.execute(question, webSocketContext, List.of("config"), output);
 
         assertThat(output.getOutput()).anyMatch(line -> line.contains("Admin Configuration Flags:"));
-        // assert that the output contains each value in AdminFlags AI!
+        Arrays.stream(AdminFlag.values()).forEach(flag -> {
+            assertThat(output.getOutput()).anyMatch(line -> line.contains(flag.name()));
+        });
     }
     
     @Test
