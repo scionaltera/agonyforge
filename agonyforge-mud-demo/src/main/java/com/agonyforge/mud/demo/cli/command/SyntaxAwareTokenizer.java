@@ -68,14 +68,6 @@ public class SyntaxAwareTokenizer {
             return false;
         }
 
-        if (type.isNumber()) {
-            try {
-                Long.parseLong(token);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Token was supposed to be a number.");
-            }
-        }
-
         tokens.add(token);
         return true;
     }

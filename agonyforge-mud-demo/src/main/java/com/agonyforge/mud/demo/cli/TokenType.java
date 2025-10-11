@@ -43,6 +43,6 @@ public enum TokenType {
 
     @Override
     public String toString() {
-        return "&lt;" + getReadable() + "&gt;";
+        return "<" + getReadable() + ">";
     }
 }

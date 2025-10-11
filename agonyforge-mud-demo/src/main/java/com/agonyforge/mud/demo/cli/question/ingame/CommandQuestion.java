@@ -6,6 +6,8 @@ import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
+import com.agonyforge.mud.demo.cli.ObjectLookupService;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.AbstractCommand;
 import com.agonyforge.mud.demo.cli.command.SyntaxAwareTokenizer;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,14 +36,17 @@ public class CommandQuestion extends BaseQuestion {
 
     private final ApplicationContext applicationContext;
     private final CommandRepository commandRepository;
+    private final ObjectLookupService objectLookupService;
 
     @Autowired
     public CommandQuestion(ApplicationContext applicationContext,
                            RepositoryBundle repositoryBundle,
-                           CommandRepository commandRepository) {
+                           CommandRepository commandRepository,
+                           ObjectLookupService objectLookupService) {
         super(applicationContext, repositoryBundle);
         this.applicationContext = applicationContext;
         this.commandRepository = commandRepository;
+        this.objectLookupService = objectLookupService;
     }
 
     @Override
@@ -88,24 +94,28 @@ public class CommandQuestion extends BaseQuestion {
 
             if (ch.getPlayer() != null && (ch.getPlayer().getRoles().stream().anyMatch(role -> role.getCommands().contains(ref)) || ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor))) {
                 List<String> tokens = null;
+                List<TokenType> syntax = null;
 
-                for (List<TokenType> syntax : command.getSyntaxes()) {
+                for (List<TokenType> stx : command.getSyntaxes()) {
                     try {
-                        tokens = SyntaxAwareTokenizer.tokenize(input.getInput(), syntax);
+                        tokens = SyntaxAwareTokenizer.tokenize(input.getInput(), stx);
+                        syntax = new ArrayList<>();
+                        syntax.add(TokenType.COMMAND);
+                        syntax.addAll(stx);
                         break;
                     } catch (IllegalArgumentException e) {
                         LOGGER.trace("Illegal syntax: {}", e.getMessage());
                     }
                 }
 
-                if (tokens == null) { // couldn't validate tokens against a syntax, so display a help message
+                if (tokens == null || syntax == null) { // couldn't validate tokens against a syntax, so display a help message
                     output
                         .append("[yellow]:: [white]%s [yellow]::", ref.getName().toUpperCase(Locale.ROOT))
                         .append("[dyellow]Description: %s", ref.getDescription())
                         .append("[yellow]Usage:");
-                    command.getSyntaxes().forEach(syntax -> output.append("  [yellow]%s %s",
+                    command.getSyntaxes().forEach(stx -> output.append("  [yellow]%s %s",
                         ref.getName().toUpperCase(Locale.ROOT),
-                        syntax.stream().map(TokenType::toString).collect(Collectors.joining(" "))));
+                        stx.stream().map(type -> HtmlUtils.htmlEscape(type.toString())).collect(Collectors.joining(" "))));
                     return new Response(this, output);
                 }
 
@@ -131,8 +141,19 @@ public class CommandQuestion extends BaseQuestion {
 //    • Apply the same pattern to other commands as needed, updating their execute methods to use the new List<Binding> signature.
 //    • Expand ObjectBindingService to handle more TokenTypes as required by different commands.
 
+                Question next;
 
-                Question next = command.execute(this, webSocketContext, tokens, output);
+                try {
+                    List<Binding> bindings = objectLookupService.bind(ch, command, tokens, syntax);
+
+                    next = command.executeBinding(this, webSocketContext, bindings, output);
+                } catch (IllegalArgumentException e) {
+                    output.append(e.getMessage());
+                    next = this;
+                } catch (UnsupportedOperationException e) {
+                    next = command.execute(this, webSocketContext, tokens, output);
+                }
+
                 return new Response(next, output);
             }
 

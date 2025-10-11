@@ -92,21 +92,6 @@ public class SyntaxAwareTokenizerTest {
     }
 
     @Test
-    void testTokenizeNumber() {
-        String input = "edit 9000";
-        List<String> expected = List.of("edit", "9000");
-
-        assertEquals(expected, SyntaxAwareTokenizer.tokenize(input, List.of(TokenType.NUMBER)));
-    }
-
-    @Test
-    void testTokenizeNumberInvalid() {
-        String input = "edit number";
-
-        assertThrows(IllegalArgumentException.class, () -> SyntaxAwareTokenizer.tokenize(input, List.of(TokenType.NUMBER)));
-    }
-
-    @Test
     void testSyntaxMissingToken() {
         String input = "edit 9000";
 
