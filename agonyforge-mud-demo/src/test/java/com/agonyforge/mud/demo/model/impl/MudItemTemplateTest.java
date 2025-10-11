@@ -16,11 +16,29 @@ public class MudItemTemplateTest {
         // This test must call MudItemTemplate.buildInstance() and validate that the resulting MudItem's fields are populated correctly.
         MudItemTemplate template = new MudItemTemplate();
         
+        // Initialize the item component in the template to avoid null pointer
+        ItemComponent itemComponent = new ItemComponent();
+        itemComponent.setNameList(Arrays.asList("test item"));
+        itemComponent.setShortDescription("A test item");
+        itemComponent.setLongDescription("This is a long description of a test item");
+        itemComponent.setWearSlots(Collections.singleton("head"));
+        itemComponent.setWearMode("wearable"); // This will be converted to WearMode enum
+        
+        // Set the item component on the template
+        template.setItem(itemComponent);
+        
         // Test that buildInstance() creates a proper instance
         MudItem instance = template.buildInstance();
         assertNotNull(instance);
         assertNotNull(instance.getTemplate());
         assertEquals(template, instance.getTemplate());
+        
+        // Verify that the fields were copied correctly
+        assertNotNull(instance.getItem());
+        assertEquals("test item", instance.getItem().getNameList().get(0));
+        assertEquals("A test item", instance.getItem().getShortDescription());
+        assertEquals("This is a long description of a test item", instance.getItem().getLongDescription());
+        assertEquals(Collections.singleton("head"), instance.getItem().getWearSlots());
     }
 
     @Test
