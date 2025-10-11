@@ -25,7 +25,7 @@ public class MudItemTemplateTest {
         itemComponent.setShortDescription("A test item");
         itemComponent.setLongDescription("This is a long description of a test item");
         itemComponent.setWearSlots(EnumSet.of(WearSlot.HEAD));
-        itemComponent.setWearMode(WearMode.WEAR); // Using WEAR instead of WEARABLE
+        itemComponent.setWearMode(WearMode.SINGLE); // Using existing enum value
         
         // Set the item component on the template
         template.setItem(itemComponent);
@@ -42,6 +42,7 @@ public class MudItemTemplateTest {
         assertEquals("A test item", instance.getItem().getShortDescription());
         assertEquals("This is a long description of a test item", instance.getItem().getLongDescription());
         assertEquals(EnumSet.of(WearSlot.HEAD), instance.getItem().getWearSlots());
+        assertEquals(WearMode.SINGLE, instance.getItem().getWearMode());
     }
 
     @Test
