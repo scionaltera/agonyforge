@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MudItemTemplateTest {
     @Test
     void testBuildInstance() {
-        // Test that calling constructor works
+        // AI! This test must call MudItemTemplate.buildInstance() and validate that the resulting MudItem's fields are populated correctly.
         MudItemTemplate template = new MudItemTemplate();
         assertNotNull(template);
     }
