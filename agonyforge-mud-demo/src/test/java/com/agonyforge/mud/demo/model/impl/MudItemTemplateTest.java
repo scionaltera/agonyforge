@@ -10,14 +10,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MudItemTemplateTest {
     @Test
     void testBuildInstance() {
-        // AI! Create a new instance and verify it can be built
+        // AI! Test that calling buildInstance() works, not just the constructor.
         MudItemTemplate template = new MudItemTemplate();
         assertNotNull(template);
     }
 
     @Test
     void testId() {
-        // AI! Test the ID getter and setter
         MudItemTemplate template = new MudItemTemplate();
         Long id = 1L;
         template.setId(id);
@@ -26,7 +25,6 @@ public class MudItemTemplateTest {
 
     @Test
     void testEquals() {
-        // AI! Test equals and hashCode methods
         MudItemTemplate template1 = new MudItemTemplate();
         template1.setId(1L);
         
@@ -35,16 +33,15 @@ public class MudItemTemplateTest {
         
         MudItemTemplate template3 = new MudItemTemplate();
         template3.setId(2L);
-        
-        assertEquals(template1, template2);
-        assertNotEquals(template1, template3);
-        assertNotEquals(template1, null);
-        assertNotEquals(template1, new Object());
+
+        assertEquals(template2, template1);
+        assertNotEquals(template3, template1);
+        assertNotEquals(null, template1);
+        assertNotEquals(new Object(), template1);
     }
 
     @Test
     void testHashCode() {
-        // AI! Test that hashCode is consistent with equals
         MudItemTemplate template1 = new MudItemTemplate();
         template1.setId(1L);
         
