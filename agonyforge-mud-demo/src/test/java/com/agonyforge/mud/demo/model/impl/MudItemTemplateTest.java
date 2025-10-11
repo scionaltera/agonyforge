@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -13,16 +16,7 @@ public class MudItemTemplateTest {
         // This test must call MudItemTemplate.buildInstance() and validate that the resulting MudItem's fields are populated correctly.
         MudItemTemplate template = new MudItemTemplate();
         
-        // Set up some test data in the template
-        ItemComponent itemComponent = new ItemComponent();
-        itemComponent.setNameList(Arrays.asList("test item"));
-        itemComponent.setShortDescription("A test item");
-        itemComponent.setLongDescription("This is a long description of a test item");
-        itemComponent.setWearSlots(Collections.singleton("head"));
-        itemComponent.setWearMode("wearable");
-        
-        // Since we can't directly set the item component on template (it's protected), 
-        // we'll test that buildInstance() creates a proper instance
+        // Test that buildInstance() creates a proper instance
         MudItem instance = template.buildInstance();
         assertNotNull(instance);
         assertNotNull(instance.getTemplate());
