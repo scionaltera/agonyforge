@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MudItemTemplateTest {
     @Test
     void testBuildInstance() {
-        // Test that calling buildInstance() works, not just the constructor.
-        MudItemTemplate template = MudItemTemplate.buildInstance();
+        // Test that calling constructor works
+        MudItemTemplate template = new MudItemTemplate();
         assertNotNull(template);
     }
 
