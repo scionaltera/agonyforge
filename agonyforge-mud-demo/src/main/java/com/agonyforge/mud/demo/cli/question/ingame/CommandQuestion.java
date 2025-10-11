@@ -98,7 +98,7 @@ public class CommandQuestion extends BaseQuestion {
                     }
                 }
 
-                if (tokens == null) {
+                if (tokens == null) { // couldn't validate tokens against a syntax, so display a help message
                     output
                         .append("[yellow]:: [white]%s [yellow]::", ref.getName().toUpperCase(Locale.ROOT))
                         .append("[dyellow]Description: %s", ref.getDescription())
@@ -108,6 +108,29 @@ public class CommandQuestion extends BaseQuestion {
                         syntax.stream().map(TokenType::toString).collect(Collectors.joining(" "))));
                     return new Response(this, output);
                 }
+
+// 1 Create Binding Class:
+//    • Implement a simple Binding class to hold a TokenType and its resolved Object value together.
+//    • Include convenience methods like asString(), asInteger() for easy access.
+// 2 Create ObjectBindingService Interface and Implementation:
+//    • Define a class ObjectBindingService with a method List<Binding> bindTokens(List<String> tokens, List<TokenType> tokenTypes).
+// 3 Modify Command Interface:
+//    • Add a new execute method signature to the Command interface: Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output);.
+//    • Keep the existing execute method signature as a default method for backward compatibility (or modify AbstractCommand if it's the base class).
+// 4 Update SayCommand:
+//    • Modify SayCommand.execute() to use the new execute method signature that accepts List<Binding>.
+//    • Remove the old token list processing logic.
+// 5 Modify CommandQuestion:
+//    • In the answer method, after successful tokenization and command lookup:
+//       • Call ObjectBindingService.bindTokens(tokens, command.getSyntaxes().get(0)) to get resolved Binding objects.
+//       • Call the new execute method on the command, passing the List<Binding> instead of the raw List<String> tokens.
+// 6 Test:
+//    • Ensure SayCommand works correctly with the new binding mechanism.
+//    • Verify that existing commands still function as before (using the old execute method signature).
+// 7 Gradual Expansion:
+//    • Apply the same pattern to other commands as needed, updating their execute methods to use the new List<Binding> signature.
+//    • Expand ObjectBindingService to handle more TokenTypes as required by different commands.
+
 
                 Question next = command.execute(this, webSocketContext, tokens, output);
                 return new Response(next, output);
