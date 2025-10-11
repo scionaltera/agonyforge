@@ -35,10 +35,8 @@ class MudItemTest {
         assertEquals(expectedId, mudItem.getId());
     }
 
-    // this test is failing ai!
     @Test
     void testGetTemplate() {
-        when(mockTemplate.getName()).thenReturn("Test Item");
         mudItem.setTemplate(mockTemplate);
         assertEquals(mockTemplate, mudItem.getTemplate());
     }
