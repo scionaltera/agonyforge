@@ -1,5 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
+import com.agonyforge.mud.demo.cli.TokenType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

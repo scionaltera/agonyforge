@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.*;
+import static com.agonyforge.mud.demo.cli.TokenType.*;
 
 /**
  * This is just for testing and probably won't stay in the game.

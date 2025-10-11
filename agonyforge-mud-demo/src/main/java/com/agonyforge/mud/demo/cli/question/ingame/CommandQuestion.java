@@ -9,7 +9,7 @@ import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.AbstractCommand;
 import com.agonyforge.mud.demo.cli.command.SyntaxAwareTokenizer;
-import com.agonyforge.mud.demo.cli.command.TokenType;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.CommandReference;

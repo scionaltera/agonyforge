@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.CHARACTER_IN_WORLD;
+import static com.agonyforge.mud.demo.cli.TokenType.CHARACTER_IN_WORLD;
 
 @Component
 public class TransferCommand extends AbstractCommand {

@@ -1,5 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
+import com.agonyforge.mud.demo.cli.Binding;
+import com.agonyforge.mud.demo.cli.TokenType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

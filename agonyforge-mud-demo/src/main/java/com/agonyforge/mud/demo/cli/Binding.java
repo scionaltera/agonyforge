@@ -1,4 +1,6 @@
-package com.agonyforge.mud.demo.cli.command;
+package com.agonyforge.mud.demo.cli;
+
+import com.agonyforge.mud.demo.cli.command.Command;
 
 import java.util.Optional;
 

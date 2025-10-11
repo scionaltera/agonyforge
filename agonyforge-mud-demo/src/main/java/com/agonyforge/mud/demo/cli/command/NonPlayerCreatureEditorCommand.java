@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.NPC_ID;
+import static com.agonyforge.mud.demo.cli.TokenType.NPC_ID;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.creature.NonPlayerCreatureEditorQuestion.MEDIT_MODEL;
 
 @Component

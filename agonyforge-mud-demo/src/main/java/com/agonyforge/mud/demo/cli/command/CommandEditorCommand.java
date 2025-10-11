@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.*;
+import static com.agonyforge.mud.demo.cli.TokenType.*;
 
 @Component
 public class CommandEditorCommand extends AbstractCommand {

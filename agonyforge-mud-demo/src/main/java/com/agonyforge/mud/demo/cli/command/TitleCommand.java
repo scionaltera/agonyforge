@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.QUOTED_WORDS;
+import static com.agonyforge.mud.demo.cli.TokenType.QUOTED_WORDS;
 
 @Component
 public class TitleCommand extends AbstractCommand {

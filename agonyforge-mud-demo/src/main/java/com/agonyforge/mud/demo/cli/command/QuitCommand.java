@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.WORD;
+import static com.agonyforge.mud.demo.cli.TokenType.WORD;
 
 @Component
 public class QuitCommand extends AbstractCommand {

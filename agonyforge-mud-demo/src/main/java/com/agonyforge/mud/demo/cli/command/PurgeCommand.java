@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.*;
+import static com.agonyforge.mud.demo.cli.TokenType.*;
 
 @Component
 public class PurgeCommand extends AbstractCommand {

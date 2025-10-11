@@ -1,11 +1,12 @@
 package com.agonyforge.mud.demo.cli.command;
 
+import com.agonyforge.mud.demo.cli.TokenType;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.COMMAND;
+import static com.agonyforge.mud.demo.cli.TokenType.COMMAND;
 
 public class SyntaxAwareTokenizer {
     public static List<String> tokenize(String escaped, List<TokenType> syntax) throws IllegalArgumentException {

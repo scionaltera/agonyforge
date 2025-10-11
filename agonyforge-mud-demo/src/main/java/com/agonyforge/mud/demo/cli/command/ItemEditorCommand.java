@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.cli.command.TokenType.*;
+import static com.agonyforge.mud.demo.cli.TokenType.*;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.item.ItemEditorQuestion.IEDIT_MODEL;
 
 @Component

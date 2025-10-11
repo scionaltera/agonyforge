@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.cli.command;
+package com.agonyforge.mud.demo.cli;
 
 public enum TokenType {
     WORD("a word", false, false),
