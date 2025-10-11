@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,11 +19,11 @@ public class MudItemTemplateTest {
         
         // Initialize the item component in the template to avoid null pointer
         ItemComponent itemComponent = new ItemComponent();
-        itemComponent.setNameList(Arrays.asList("test item"));
+        itemComponent.setNameList(Collections.singleton("test item"));
         itemComponent.setShortDescription("A test item");
         itemComponent.setLongDescription("This is a long description of a test item");
-        itemComponent.setWearSlots(Collections.singleton("head"));
-        itemComponent.setWearMode("wearable"); // This will be converted to WearMode enum
+        itemComponent.setWearSlots(EnumSet.of(WearSlot.HEAD));
+        itemComponent.setWearMode(WearMode.WEARABLE); // This will be converted to WearMode enum
         
         // Set the item component on the template
         template.setItem(itemComponent);
@@ -35,10 +36,10 @@ public class MudItemTemplateTest {
         
         // Verify that the fields were copied correctly
         assertNotNull(instance.getItem());
-        assertEquals("test item", instance.getItem().getNameList().get(0));
+        assertTrue(instance.getItem().getNameList().contains("test item"));
         assertEquals("A test item", instance.getItem().getShortDescription());
         assertEquals("This is a long description of a test item", instance.getItem().getLongDescription());
-        assertEquals(Collections.singleton("head"), instance.getItem().getWearSlots());
+        assertEquals(EnumSet.of(WearSlot.HEAD), instance.getItem().getWearSlots());
     }
 
     @Test
