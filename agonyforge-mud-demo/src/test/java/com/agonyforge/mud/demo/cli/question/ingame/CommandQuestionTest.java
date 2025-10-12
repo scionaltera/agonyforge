@@ -128,7 +128,7 @@ public class CommandQuestionTest {
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
         when(command.getSyntaxes()).thenReturn(List.of(List.of()));
-        when(command.executeBinding(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenThrow(new UnsupportedOperationException());
+//        when(command.executeBinding(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenThrow(new UnsupportedOperationException());
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository, objectLookupService);
@@ -249,7 +249,7 @@ public class CommandQuestionTest {
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
         when(command.getSyntaxes()).thenReturn(List.of(List.of()));
-        when(command.executeBinding(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenThrow(new UnsupportedOperationException());
+//        when(command.executeBinding(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenThrow(new UnsupportedOperationException());
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository, objectLookupService);

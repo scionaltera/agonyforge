@@ -2,6 +2,9 @@ package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
+import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
+import com.agonyforge.mud.demo.model.impl.MudItem;
+import com.agonyforge.mud.demo.model.impl.MudRoom;
 
 import java.util.Optional;
 
@@ -36,11 +39,23 @@ public class Binding {
         return value.toString();
     }
 
-    public Integer asNumber() {
-        return (Integer) value;
+    public Long asNumber() {
+        return (Long) value;
     }
 
     public MudCharacter asCharacter() {
         return (MudCharacter) value;
+    }
+
+    public MudCharacterTemplate asCharacterTemplate() {
+        return (MudCharacterTemplate) value;
+    }
+
+    public MudItem asItem() {
+        return (MudItem) value;
+    }
+
+    public MudRoom asRoom() {
+        return (MudRoom) value;
     }
 }

@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -50,6 +51,26 @@ public class WhisperCommand extends AbstractCommand {
         }
 
         MudCharacter target = targetOptional.get();
+
+        output.append("[red]You whisper to %s, '%s[red]'", target.getCharacter().getName(), message);
+        getCommService().sendTo(target, new Output("[red]%s whispers to you, '%s[red]'", ch.getCharacter().getName(), message));
+        getCommService().sendToRoom(
+            ch.getLocation().getRoom().getId(),
+            new Output("[red]%s whispers something to %s.", ch.getCharacter().getName(), target.getCharacter().getName()),
+            ch, target);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question,
+                            WebSocketContext webSocketContext,
+                            List<Binding> bindings,
+                            Output output) {
+
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudCharacter target = bindings.get(1).asCharacter();
+        String message = bindings.get(2).asString();
 
         output.append("[red]You whisper to %s, '%s[red]'", target.getCharacter().getName(), message);
         getCommService().sendTo(target, new Output("[red]%s whispers to you, '%s[red]'", ch.getCharacter().getName(), message));

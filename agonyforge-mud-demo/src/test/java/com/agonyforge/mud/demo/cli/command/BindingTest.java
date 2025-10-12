@@ -43,14 +43,14 @@ public class BindingTest {
         Binding wordBinding = new Binding(TokenType.WORD, "hello", "hello");
         assertEquals("hello", wordBinding.asString());
 
-        Binding numberBinding = new Binding(TokenType.NUMBER, "42",42);
+        Binding numberBinding = new Binding(TokenType.NUMBER, "42",42L);
         assertEquals("42", numberBinding.asString());
     }
 
     @Test
     public void testAsNumber() {
-        Binding numberBinding = new Binding(TokenType.NUMBER, "42",42);
-        assertEquals(42, numberBinding.asNumber());
+        Binding numberBinding = new Binding(TokenType.NUMBER, "42",42L);
+        assertEquals(42L, numberBinding.asNumber());
 
         Binding nonNumberBinding = new Binding(TokenType.WORD, "test","test");
         assertThrows(ClassCastException.class, nonNumberBinding::asNumber);

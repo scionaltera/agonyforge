@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.cli.TokenType.CHARACTER_IN_WORLD;
+import static com.agonyforge.mud.demo.cli.TokenType.PLAYER_IN_WORLD;
 
 @Component
 public class TellCommand extends AbstractCommand {
@@ -23,7 +23,7 @@ public class TellCommand extends AbstractCommand {
     public TellCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
 
-        addSyntax(CHARACTER_IN_WORLD, TokenType.QUOTED_WORDS);
+        addSyntax(PLAYER_IN_WORLD, TokenType.QUOTED_WORDS);
     }
 
     @Override

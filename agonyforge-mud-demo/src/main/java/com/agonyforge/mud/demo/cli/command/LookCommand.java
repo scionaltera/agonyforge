@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -107,6 +108,28 @@ public class LookCommand extends AbstractCommand {
     public Question execute(Question question,
                             WebSocketContext webSocketContext,
                             List<String> tokens,
+                            Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());
+
+        if (roomOptional.isEmpty()) {
+            output.append("[black]You are floating in the void...");
+            LOGGER.error("{} is floating in the void!", ch.getCharacter().getName());
+
+            return question;
+        }
+
+        MudRoom room = roomOptional.get();
+
+        output.append(doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question,
+                            WebSocketContext webSocketContext,
+                            List<Binding> bindings,
                             Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());

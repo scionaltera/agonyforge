@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
@@ -49,6 +50,24 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         MudCharacter npc = npcTemplate.get().buildInstance();
+        npc.getLocation().setRoom(ch.getLocation().getRoom());
+        npc = getRepositoryBundle().getCharacterRepository().save(npc);
+
+        output.append("[yellow]You wave your hand, and %s appears!", npc.getCharacter().getName());
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s waves %s hand, and %s appears!",
+                ch.getCharacter().getName(),
+                ch.getCharacter().getPronoun().getPossessive(),
+                npc.getCharacter().getName()), ch);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudCharacterTemplate npcTemplate = bindings.get(1).asCharacterTemplate();
+        MudCharacter npc = npcTemplate.buildInstance();
         npc.getLocation().setRoom(ch.getLocation().getRoom());
         npc = getRepositoryBundle().getCharacterRepository().save(npc);
 
