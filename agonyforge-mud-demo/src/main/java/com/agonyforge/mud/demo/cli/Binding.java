@@ -1,12 +1,8 @@
 package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.demo.cli.command.Command;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudCharacterTemplate;
-import com.agonyforge.mud.demo.model.impl.MudItem;
-import com.agonyforge.mud.demo.model.impl.MudRoom;
-
-import java.util.Optional;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
+import com.agonyforge.mud.demo.model.impl.*;
 
 public class Binding {
     private final TokenType type;
@@ -35,6 +31,10 @@ public class Binding {
         return (Command) value;
     }
 
+    public CommandReference asCommandReference() {
+        return (CommandReference) value;
+    }
+
     public String asString() {
         return value.toString();
     }
@@ -55,7 +55,15 @@ public class Binding {
         return (MudItem) value;
     }
 
+    public MudItemTemplate asItemTemplate() {
+        return (MudItemTemplate) value;
+    }
+
     public MudRoom asRoom() {
         return (MudRoom) value;
+    }
+
+    public AdminFlag asAdminFlag() {
+        return (AdminFlag) value;
     }
 }

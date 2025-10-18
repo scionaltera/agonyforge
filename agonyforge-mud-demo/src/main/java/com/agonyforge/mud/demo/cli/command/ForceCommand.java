@@ -3,7 +3,9 @@ package com.agonyforge.mud.demo.cli.command;
 import java.util.List;
 import java.util.Optional;
 
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.TokenType;
+import com.agonyforge.mud.demo.model.impl.CommandReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,40 @@ public class ForceCommand extends AbstractCommand {
 
         // Execute the forced command as the target
         getCommService().executeCommandAs(webSocketContext, target, forcedCommand);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter target = bindings.get(1).asCharacter();
+        Command command = bindings.get(2).asCommand();
+        String args = bindings.get(3).asString();
+
+        if (command instanceof ForceCommand) {
+            output.append("[default]You cannot force someone to force others!");
+            return question;
+        }
+
+        // Notify executor
+        output.append(
+            "[yellow]You FORCE %s to '%s %s[yellow]'!",
+            target.getCharacter().getName(),
+            command, args);
+
+        // Notify target
+        getCommService().sendTo(
+            target,
+            new Output(
+                "[red]%s FORCES you to '%s %s[red]'.",
+                target.getCharacter().getName(),
+                command, args));
+
+        // Log the forced command usage
+        LOGGER.info("{} forced {} to run: {}", target.getName(), target.getName(), command);
+
+        // Execute the forced command as the target
+        getCommService().executeCommandAs(webSocketContext, target, command + " " + args);
 
         return question;
     }

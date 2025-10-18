@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.core.cli.Tokenizer;
+import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,9 @@ public class ObjectLookupService {
                     break;
                 case ROOM_ID:
                     bindings.add(bindRoom(ch, tokens.get(i), syntax.get(i)));
+                    break;
+                case ADMIN_FLAG:
+                    bindings.add(bindAdminFlag(ch, tokens.get(i), syntax.get(i)));
                     break;
                 default:
                     LOGGER.warn("No binding for token type {}", syntax.get(i));
@@ -315,5 +319,13 @@ public class ObjectLookupService {
 
         LOGGER.trace("No room found with ID {}", token);
         throw new IllegalArgumentException("There is no room with that number.");
+    }
+
+    Binding bindAdminFlag(MudCharacter ch, String token, TokenType type) {
+        try {
+            return new Binding(type, token, AdminFlag.valueOf(token));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("There is no admin flag with that name.");
+        }
     }
 }

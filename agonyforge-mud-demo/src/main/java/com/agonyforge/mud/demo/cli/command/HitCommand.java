@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Effort;
@@ -157,6 +158,32 @@ public class HitCommand extends AbstractCommand {
         }
 
         MudCharacter target = targetOptional.get();
+
+        if (fightRepository.findByAttackerAndDefender(ch, target).isPresent() || fightRepository.findByAttackerAndDefender(target, ch).isPresent()) {
+            output.append("[red]You are already fighting %s!", target.getCharacter().getName());
+            return question;
+        }
+
+        Output targetOutput = new Output();
+        Output roomOutput = new Output();
+
+        doHit(getRepositoryBundle(), diceService, fightRepository, output, targetOutput, roomOutput, ch, target);
+
+        if (!targetOutput.isEmpty()) {
+            getCommService().sendTo(target, targetOutput);
+        }
+
+        if (!roomOutput.isEmpty()) {
+            getCommService().sendToRoom(ch.getLocation().getRoom().getId(), roomOutput, ch, target);
+        }
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudCharacter target = bindings.get(1).asCharacter();
 
         if (fightRepository.findByAttackerAndDefender(ch, target).isPresent() || fightRepository.findByAttackerAndDefender(target, ch).isPresent()) {
             output.append("[red]You are already fighting %s!", target.getCharacter().getName());

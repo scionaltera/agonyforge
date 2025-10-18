@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
@@ -73,6 +74,36 @@ public class GotoCommand extends AbstractCommand {
             new Output("[yellow]%s appears in a puff of smoke!", ch.getCharacter().getName()), ch);
 
         output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destination));
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudCharacter destinationCharacter = null;
+        MudRoom destinationRoom = null;
+
+        if (CHARACTER_IN_WORLD == bindings.get(1).getType()) {
+            destinationCharacter = bindings.get(1).asCharacter();
+            destinationRoom = destinationCharacter.getLocation().getRoom();
+        } else if (ROOM_ID == bindings.get(1).getType()) {
+            destinationRoom = bindings.get(1).asRoom();
+        } else {
+            output.append("Can't find anything like that to go to.");
+            return question;
+        }
+
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s disappears in a puff of smoke!", ch.getCharacter().getName()), ch);
+
+        ch.getLocation().setRoom(destinationRoom);
+        getRepositoryBundle().getCharacterRepository().save(ch);
+
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s appears in a puff of smoke!", ch.getCharacter().getName()), ch);
+
+        output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destinationRoom));
 
         return question;
     }

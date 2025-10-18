@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.ItemComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -26,6 +27,7 @@ public class ItemEditorCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         addSyntax(ITEM_ID);
+        addSyntax(NUMBER);
         addSyntax(ITEM_HELD);
         addSyntax(ITEM_GROUND);
     }
@@ -66,6 +68,42 @@ public class ItemEditorCommand extends AbstractCommand {
         }
 
         webSocketContext.getAttributes().put(IEDIT_MODEL, itemProto.get().getId());
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), new Output(
+            "[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
+
+        return getApplicationContext().getBean("itemEditorQuestion", Question.class);
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudItemTemplate itemTemplate;
+        MudItem item ;
+
+        if (ITEM_ID == bindings.get(1).getType()) {
+            itemTemplate = bindings.get(1).asItemTemplate();
+        } else if (NUMBER == bindings.get(1).getType()) {
+            try {
+                Long id = bindings.get(1).asNumber();
+                itemTemplate = new MudItemTemplate();
+
+                itemTemplate.setId(id);
+                itemTemplate.setItem(new ItemComponent());
+
+                itemTemplate = getRepositoryBundle().getItemPrototypeRepository().save(itemTemplate);
+            } catch (NumberFormatException e) {
+                output.append("[red]Unable to create requested item prototype.");
+                return question;
+            }
+        } else if (ITEM_GROUND == bindings.get(1).getType() || ITEM_HELD == bindings.get(1).getType()) {
+            item = bindings.get(1).asItem();
+            itemTemplate = item.getTemplate();
+        } else {
+            output.append("[red]Invalid binding type.");
+            return question;
+        }
+
+        webSocketContext.getAttributes().put(IEDIT_MODEL, itemTemplate.getId());
         getCommService().sendToRoom(ch.getLocation().getRoom().getId(), new Output(
             "[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
 

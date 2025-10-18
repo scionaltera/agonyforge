@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
@@ -32,6 +33,18 @@ public class EmoteCommand extends AbstractCommand {
             return question;
         }
 
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        Output formatted = new Output("[dcyan]%s %s", ch.getCharacter().getName(), message);
+
+        output.append(formatted);
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), formatted, ch);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        String message = bindings.get(1).asString();
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Output formatted = new Output("[dcyan]%s %s", ch.getCharacter().getName(), message);
 

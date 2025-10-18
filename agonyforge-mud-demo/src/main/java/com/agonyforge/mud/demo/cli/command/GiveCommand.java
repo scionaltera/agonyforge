@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -67,6 +68,27 @@ public class GiveCommand extends AbstractCommand {
             output.append("[default]You need to remove it first.");
             return question;
         }
+
+        item.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
+        item.getLocation().setHeld(target);
+        item.getLocation().setRoom(null);
+        getRepositoryBundle().getItemRepository().save(item);
+
+        output.append("[default]You give %s[default] to %s.", item.getItem().getShortDescription(), target.getCharacter().getName());
+        getCommService().sendTo(target, new Output("[default]%s gives %s[default] to you.", ch.getCharacter().getName(), item.getItem().getShortDescription()));
+        getCommService().sendToRoom(
+            ch.getLocation().getRoom().getId(),
+            new Output("[default]%s gives %s[default] to %s.", ch.getCharacter().getName(), item.getItem().getShortDescription(), target.getCharacter().getName()),
+            ch, target);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudItem item = bindings.get(1).asItem();
+        MudCharacter target = bindings.get(2).asCharacter();
 
         item.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         item.getLocation().setHeld(target);

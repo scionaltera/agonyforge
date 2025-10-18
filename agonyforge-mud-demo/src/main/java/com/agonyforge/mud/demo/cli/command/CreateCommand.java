@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -52,6 +53,25 @@ public class CreateCommand extends AbstractCommand {
         }
 
         MudItem item = itemProto.get().buildInstance();
+        item.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
+        item.getLocation().setHeld(ch);
+        item.getLocation().setRoom(null);
+        item = getRepositoryBundle().getItemRepository().save(item);
+
+        output.append("[yellow]You wave your hand, and %s appears!", item.getItem().getShortDescription());
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), item.getItem().getShortDescription()),
+            ch);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudItemTemplate itemProto = bindings.get(1).asItemTemplate();
+
+        MudItem item = itemProto.buildInstance();
         item.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         item.getLocation().setHeld(ch);
         item.getLocation().setRoom(null);

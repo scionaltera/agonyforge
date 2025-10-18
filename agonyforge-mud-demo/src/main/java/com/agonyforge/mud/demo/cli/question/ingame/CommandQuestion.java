@@ -10,7 +10,7 @@ import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.ObjectLookupService;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.AbstractCommand;
-import com.agonyforge.mud.demo.cli.command.SyntaxAwareTokenizer;
+import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.cli.question.BaseQuestion;
 import com.agonyforge.mud.demo.cli.question.CommandException;

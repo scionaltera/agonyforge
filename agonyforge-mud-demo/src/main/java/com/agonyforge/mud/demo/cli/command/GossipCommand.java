@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -34,6 +35,20 @@ public class GossipCommand extends AbstractCommand {
             return question;
         }
 
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+
+        output.append("[green]You gossip, '%s[green]'", message);
+        getCommService().sendToAll(webSocketContext, new Output("[green]%s gossips, '%s[green]'", ch.getCharacter().getName(), message));
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question,
+                            WebSocketContext webSocketContext,
+                            List<Binding> bindings,
+                            Output output) {
+        String message = bindings.get(1).asString();
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         output.append("[green]You gossip, '%s[green]'", message);

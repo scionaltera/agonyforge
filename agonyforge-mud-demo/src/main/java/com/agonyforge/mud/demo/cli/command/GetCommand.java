@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
@@ -43,6 +44,22 @@ public class GetCommand extends AbstractCommand {
         }
 
         MudItem target = targetOptional.get();
+        target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
+        target.getLocation().setHeld(ch);
+        target.getLocation().setRoom(null);
+        getRepositoryBundle().getItemRepository().save(target);
+
+        output.append("[default]You get %s[default].", target.getItem().getShortDescription());
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[default]%s gets %s[default].", ch.getCharacter().getName(), target.getItem().getShortDescription()), ch);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudItem target = bindings.get(1).asItem();
         target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         target.getLocation().setHeld(ch);
         target.getLocation().setRoom(null);

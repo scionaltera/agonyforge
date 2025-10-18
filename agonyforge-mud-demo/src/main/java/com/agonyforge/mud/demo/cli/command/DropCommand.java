@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -49,6 +50,26 @@ public class DropCommand extends AbstractCommand {
             output.append("[default]You need to remove it first.");
             return question;
         }
+
+        target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
+        target.getLocation().setHeld(null);
+        target.getLocation().setRoom(ch.getLocation().getRoom());
+        getRepositoryBundle().getItemRepository().save(target);
+
+        output.append("[default]You drop %s[default].", target.getItem().getShortDescription());
+        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
+            new Output("[default]%s drops %s[default].",
+                ch.getCharacter().getName(),
+                target.getItem().getShortDescription()),
+            ch);
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
+        MudItem target = bindings.get(1).asItem();
 
         target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
         target.getLocation().setHeld(null);

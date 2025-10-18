@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
@@ -29,7 +30,7 @@ public class CommandEditorCommand extends AbstractCommand {
         this.commandRepository = commandRepository;
 
         addSyntax();
-        addSyntax(WORD, WORD);
+        addSyntax(WORD, COMMAND);
         addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS);
     }
 
@@ -95,6 +96,60 @@ public class CommandEditorCommand extends AbstractCommand {
                     output.append("[red]Unknown command: %s", name);
                 }
             }
+        } else {
+            output
+                .append("[yellow]Invalid subcommand.")
+                .append("[yellow]Try with no arguments, CREATE or DELETE.");
+        }
+
+        return question;
+    }
+
+    @Override
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        if (bindings.size() == 1) {
+            output.append("[white]%-4s [white]%-12s [white]%-20s [white]%s", "Pri", "Command", "Bean Name", "Description");
+
+            commandRepository.findAll().stream()
+                .sorted(Comparator.comparingInt(CommandReference::getPriority))
+                .forEachOrdered(cmd -> output.append("[green]%-4d [yellow]%-12s [dyellow]%-20s [dgreen]%s",
+                    cmd.getPriority(),
+                    cmd.getName().toUpperCase(Locale.ROOT),
+                    cmd.getBeanName(),
+                    cmd.getDescription()));
+
+            return question;
+        }
+
+        String subCommand = bindings.get(2).asString().toUpperCase(Locale.ROOT);
+
+        if ("CREATE".equalsIgnoreCase(subCommand)) {
+            String name = bindings.get(3).asString().toUpperCase(Locale.ROOT);
+            int priority = bindings.get(4).asNumber().intValue();
+            String beanName = bindings.get(5).asString();
+            String description = bindings.get(6).asString();
+            CommandReference command = new CommandReference();
+
+            try {
+                // throws exception if bean cannot be found
+                getApplicationContext().getBean(beanName, Command.class);
+
+                command.setName(name);
+                command.setPriority(priority);
+                command.setBeanName(beanName);
+                command.setDescription(description);
+
+                commandRepository.save(command);
+
+                output.append("[green]Created %s command!", command.getName());
+            } catch (BeansException e) {
+                output.append("[red]No command bean could be found with that name.");
+            }
+        } else if ("DELETE".equalsIgnoreCase(subCommand)) {
+            CommandReference command = bindings.get(3).asCommandReference();
+
+            commandRepository.delete(command);
+            output.append("[yellow]Deleted command: %s", command.getName());
         } else {
             output
                 .append("[yellow]Invalid subcommand.")

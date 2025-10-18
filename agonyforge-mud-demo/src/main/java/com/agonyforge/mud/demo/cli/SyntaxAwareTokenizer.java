@@ -1,6 +1,5 @@
-package com.agonyforge.mud.demo.cli.command;
+package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.demo.cli.TokenType;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
