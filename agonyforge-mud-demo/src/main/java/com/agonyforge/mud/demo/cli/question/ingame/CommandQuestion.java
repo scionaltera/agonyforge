@@ -96,7 +96,7 @@ public class CommandQuestion extends BaseQuestion {
                 List<String> tokens = null;
                 List<TokenType> syntax = null;
                 List<Binding> bindings;
-                Question next = null;
+                Question next;
 
                 for (List<TokenType> stx : command.getSyntaxes()) {
                     try {
@@ -110,8 +110,10 @@ public class CommandQuestion extends BaseQuestion {
                         if (!bindings.isEmpty()) {
                             try {
                                 next = command.executeBinding(this, webSocketContext, bindings, output);
-                            } catch (UnsupportedOperationException e) {
-                                next = command.execute(this, webSocketContext, tokens, output);
+                                return new Response(next, output);
+                            } catch (Exception e) {
+                                LOGGER.error("Command failed: {}", e.getMessage(), e);
+                                output.append("[red]Oops! Something went wrong... the error has been reported!");
                             }
 
                             break;
@@ -131,12 +133,6 @@ public class CommandQuestion extends BaseQuestion {
                         stx.stream().map(type -> HtmlUtils.htmlEscape(type.toString())).collect(Collectors.joining(" "))));
                     return new Response(this, output);
                 }
-
-                if (next == null) {
-                    next = command.execute(this, webSocketContext, tokens, output);
-                }
-
-                return new Response(next, output);
             }
 
             LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getPlayer().getUsername(), ch.getCharacter().getName(), ref.getName());

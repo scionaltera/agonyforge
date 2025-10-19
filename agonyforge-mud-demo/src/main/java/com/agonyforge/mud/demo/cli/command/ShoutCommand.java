@@ -24,26 +24,6 @@ public class ShoutCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-        String message = tokens.get(1);
-
-        if (message.isBlank()) {
-            output.append("[default]What would you like to shout?");
-            return question;
-        }
-
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        output.append("[dyellow]You shout, '%s[dyellow]'", message);
-        getCommService().sendToZone(webSocketContext, ch.getZoneId(), new Output("[dyellow]%s shouts, '%s[dyellow]'", ch.getCharacter().getName(), message));
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question,
                             WebSocketContext webSocketContext,
                             List<Binding> bindings,

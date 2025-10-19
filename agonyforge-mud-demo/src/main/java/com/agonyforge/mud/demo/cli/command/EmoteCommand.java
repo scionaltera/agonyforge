@@ -25,24 +25,6 @@ public class EmoteCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        String message = tokens.get(1);
-
-        if (message.isBlank()) {
-            output.append("[default]What would you like to emote?");
-            return question;
-        }
-
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Output formatted = new Output("[dcyan]%s %s", ch.getCharacter().getName(), message);
-
-        output.append(formatted);
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), formatted, ch);
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         String message = bindings.get(1).asString();
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);

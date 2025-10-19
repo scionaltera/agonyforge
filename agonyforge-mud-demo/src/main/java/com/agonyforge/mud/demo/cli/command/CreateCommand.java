@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 
 import static com.agonyforge.mud.demo.cli.TokenType.ITEM_ID;
 
@@ -27,43 +26,6 @@ public class CreateCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         addSyntax(ITEM_ID);
-    }
-
-    @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() != 2) {
-            output.append("[default]What is the ID of the item you'd like to create?");
-            return question;
-        }
-
-        Optional<MudItemTemplate> itemProto = Optional.empty();
-
-        try {
-            Long id = Long.parseLong(tokens.get(1));
-            itemProto = getRepositoryBundle().getItemPrototypeRepository().findById(id);
-        } catch (NumberFormatException e) {
-            // TODO search for item prototypes by name?
-        }
-
-        if (itemProto.isEmpty()) {
-            output.append("[red]There is no item with that ID.");
-            return question;
-        }
-
-        MudItem item = itemProto.get().buildInstance();
-        item.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
-        item.getLocation().setHeld(ch);
-        item.getLocation().setRoom(null);
-        item = getRepositoryBundle().getItemRepository().save(item);
-
-        output.append("[yellow]You wave your hand, and %s appears!", item.getItem().getShortDescription());
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s waves %s hand, and %s appears!", ch.getCharacter().getName(), ch.getCharacter().getPronoun().getPossessive(), item.getItem().getShortDescription()),
-            ch);
-
-        return question;
     }
 
     @Override

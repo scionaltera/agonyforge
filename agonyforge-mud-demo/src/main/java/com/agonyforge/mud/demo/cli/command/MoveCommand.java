@@ -39,54 +39,6 @@ public class MoveCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());
-
-        if (roomOptional.isEmpty()) {
-            output.append("[black]You are floating aimlessly in the void, unable to move.");
-            LOGGER.warn("{} is in the void!", ch.getCharacter().getName());
-
-            return question;
-        }
-
-        MudRoom room = roomOptional.get();
-        MudRoom.Exit exit = room.getExit(direction.getName());
-
-        if (exit == null) {
-            output.append("[default]Alas, you cannot go that way.");
-            return question;
-        }
-
-        Optional<MudRoom> destOptional = getRepositoryBundle().getRoomRepository().findById(exit.getDestinationId());
-
-        if (destOptional.isEmpty()) {
-            output.append("[default]Alas, you cannot go that way.");
-            LOGGER.error("Room {} exit {} leads to nonexistent room {}",
-                room.getId(), direction.getName(), exit.getDestinationId());
-            return question;
-        }
-
-        MudRoom destination = destOptional.get();
-
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("%s leaves %s.", ch.getCharacter().getName(), direction.getName()), ch);
-
-        ch.getLocation().setRoom(destination);
-        getRepositoryBundle().getCharacterRepository().save(ch);
-
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("%s arrives from %s.", ch.getCharacter().getName(), direction.getOpposite()), ch);
-
-        output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destination));
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question,
                             WebSocketContext webSocketContext,
                             List<Binding> bindings,

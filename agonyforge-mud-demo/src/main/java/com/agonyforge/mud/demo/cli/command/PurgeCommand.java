@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.agonyforge.mud.demo.cli.TokenType.*;
 
@@ -30,62 +29,6 @@ public class PurgeCommand extends AbstractCommand {
         addSyntax(ITEM_GROUND);
         addSyntax(ITEM_HELD);
         addSyntax(NPC_IN_ROOM);
-    }
-
-    @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() != 2) {
-            output.append("[default]What would you like to purge?");
-            return question;
-        }
-
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
-        Optional<MudCharacter> targetOptionalCh = Optional.empty();
-
-        if (targetOptional.isEmpty()) {
-            targetOptional = findRoomItem(ch, tokens.get(1));
-        }
-
-        if (targetOptional.isEmpty()) {
-            targetOptionalCh = findRoomCharacter(ch, tokens.get(1));
-        }
-
-        if (targetOptional.isEmpty() && targetOptionalCh.isEmpty()) {
-            output.append("[default]You don't see anything like that.");
-            return question;
-        }
-
-        if (targetOptional.isPresent()) {
-            MudItem target = targetOptional.get();
-            getRepositoryBundle().getItemRepository().delete(target);
-
-            output.append("[yellow]You snap your fingers, and %s disappears!", target.getItem().getShortDescription());
-            getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-                new Output("[yellow]%s snaps %s fingers, and %s disappears!",
-                    ch.getCharacter().getName(),
-                    ch.getCharacter().getPronoun().getPossessive(),
-                    target.getItem().getShortDescription()), ch);
-        } else {
-            MudCharacter target = targetOptionalCh.get();
-
-            if (target.getPlayer() != null) {
-                output.append("[default]Players cannot be purged.");
-                return question;
-            }
-
-            getRepositoryBundle().getCharacterRepository().delete(target);
-
-            output.append("[yellow]You snap your fingers, and %s disappears!", target.getCharacter().getName());
-            getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-                new Output("[yellow]%s snaps %s fingers, and %s disappears!",
-                    ch.getCharacter().getName(),
-                    ch.getCharacter().getPronoun().getPossessive(),
-                    target.getCharacter().getName()), ch);
-        }
-
-        return question;
     }
 
     @Override

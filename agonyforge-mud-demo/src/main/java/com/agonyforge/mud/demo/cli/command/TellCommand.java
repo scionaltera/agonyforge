@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.agonyforge.mud.demo.cli.TokenType.PLAYER_IN_WORLD;
 
@@ -24,40 +23,6 @@ public class TellCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         addSyntax(PLAYER_IN_WORLD, TokenType.QUOTED_WORDS);
-    }
-
-    @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-
-        if (tokens.size() == 1) {
-            output.append("[default]Who would you like to tell?");
-            return question;
-        }
-
-        if (tokens.size() == 2) {
-            output.append("[default]What would you like to tell them?");
-            return question;
-        }
-
-        String targetName = tokens.get(1);
-        String message = tokens.get(2);
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = findWorldCharacter(ch, targetName);
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]There isn't anyone by that name.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
-
-        output.append("[red]You tell %s, '%s[red]'", target.getCharacter().getName(), message);
-        getCommService().sendTo(target, new Output("[red]%s tells you, '%s[red]'", ch.getCharacter().getName(), message));
-
-        return question;
     }
 
     @Override

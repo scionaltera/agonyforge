@@ -29,30 +29,6 @@ public class EquipmentCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)
-                .stream()
-                .filter(item -> item.getLocation() != null && !item.getLocation().getWorn().isEmpty())
-                .flatMap(item -> item.getLocation().getWorn().stream().map(slot -> new ImmutablePair<>(slot, item)))
-                .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight));
-
-        output.append("[default]You are using:");
-
-        if (inventory.isEmpty()) {
-            output.append("Nothing.");
-        } else {
-            inventory.entrySet()
-                .stream()
-                .sorted(Comparator.comparingInt(entry -> entry.getKey().ordinal()))
-                .forEach(entry -> output.append("[default]&lt;%s&gt;\t%s",
-                    entry.getKey().getPhrase(), entry.getValue().getItem().getShortDescription()));
-        }
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Map<WearSlot, MudItem> inventory = getRepositoryBundle().getItemRepository().findByLocationHeld(ch)

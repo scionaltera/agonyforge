@@ -24,26 +24,6 @@ public class GossipCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-        String message = tokens.get(1);
-
-        if (message.isBlank()) {
-            output.append("[default]What would you like to gossip?");
-            return question;
-        }
-
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        output.append("[green]You gossip, '%s[green]'", message);
-        getCommService().sendToAll(webSocketContext, new Output("[green]%s gossips, '%s[green]'", ch.getCharacter().getName(), message));
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question,
                             WebSocketContext webSocketContext,
                             List<Binding> bindings,

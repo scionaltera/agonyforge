@@ -25,35 +25,6 @@ public class SlayCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() != 2) {
-            output.append("[default]Whom do you wish to slay?");
-            return question;
-        }
-
-        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't see anyone like that.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
-        getRepositoryBundle().getCharacterRepository().delete(target);
-
-        output.append("[black]You snap your fingers, and %s DIES!", target.getCharacter().getName());
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[black]%s snaps %s fingers, and %s DIES!",
-                ch.getCharacter().getName(),
-                ch.getCharacter().getPronoun().getPossessive(),
-                target.getCharacter().getName()), ch);
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudCharacter target = bindings.get(1).asCharacter();

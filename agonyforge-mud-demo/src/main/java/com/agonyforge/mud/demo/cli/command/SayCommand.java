@@ -24,26 +24,6 @@ public class SayCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-        String message = tokens.get(1);
-
-        if (message.isBlank()) {
-            output.append("[default]What would you like to say?");
-            return question;
-        }
-
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        output.append("[cyan]You say, '%s[cyan]'", message);
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(), new Output("[cyan]%s says, '%s[cyan]'", ch.getCharacter().getName(), message), ch);
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         String message = bindings.get(1).asString();
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);

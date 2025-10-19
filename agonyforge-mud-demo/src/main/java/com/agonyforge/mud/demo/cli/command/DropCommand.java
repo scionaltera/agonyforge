@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 
 import static com.agonyforge.mud.demo.cli.TokenType.ITEM_HELD;
 
@@ -26,44 +25,6 @@ public class DropCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         addSyntax(ITEM_HELD);
-    }
-
-    @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() == 1) {
-            output.append("[default]What would you like to drop?");
-            return question;
-        }
-
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't have anything like that.");
-            return question;
-        }
-
-        MudItem target = targetOptional.get();
-
-        if (!target.getLocation().getWorn().isEmpty()) {
-            output.append("[default]You need to remove it first.");
-            return question;
-        }
-
-        target.getLocation().setWorn(EnumSet.noneOf(WearSlot.class));
-        target.getLocation().setHeld(null);
-        target.getLocation().setRoom(ch.getLocation().getRoom());
-        getRepositoryBundle().getItemRepository().save(target);
-
-        output.append("[default]You drop %s[default].", target.getItem().getShortDescription());
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[default]%s drops %s[default].",
-                ch.getCharacter().getName(),
-                target.getItem().getShortDescription()),
-            ch);
-
-        return question;
     }
 
     @Override

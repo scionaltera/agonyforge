@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.agonyforge.mud.demo.cli.TokenType.*;
@@ -40,35 +40,10 @@ public class RollCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() <= 2) {
-            output.append("[default]ROLL &lt;stat&gt; &lt;effort&gt;");
-            return question;
-        }
-
-        Stat stat;
-        Effort effort;
-
-        try {
-            stat = Stat.valueOf(tokens.get(1));
-        } catch (IllegalArgumentException e) {
-            output.append("[red]No such Stat.");
-            return question;
-        }
-
-        try {
-            effort = Arrays
-                .stream(Effort.values())
-                .filter(eff -> tokens.get(2).equalsIgnoreCase(eff.getName()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No such Effort."));
-        } catch (IllegalArgumentException ee) {
-            output.append("[red]%s", ee.getMessage());
-            return question;
-        }
-
+        Stat stat = bindings.get(1).asStat();
+        Effort effort = bindings.get(2).asEffort();
         DiceResult attemptRoll = diceService.roll(1, 20, ch.getCharacter().getStat(stat));
 
         output.append("[cyan]ATTEMPT: [yellow]%d [dwhite]+ [cyan]%d [dwhite]= [white]%d [dwhite]for [cyan]%s[dwhite]!",

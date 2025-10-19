@@ -25,37 +25,6 @@ public class TimeCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudProperty mudHour = getRepositoryBundle()
-            .getPropertyRepository()
-            .findById(PROPERTY_HOUR)
-            .orElseThrow();
-
-        int hour = Integer.parseInt(mudHour.getValue());
-        String timeOfDay;
-
-        if (hour < 6) {
-            timeOfDay = "at night";
-        } else if (hour <= 12) {
-            timeOfDay = "in the morning";
-        } else if (hour < 18) {
-            timeOfDay = "in the afternoon";
-            hour -= 12;
-        } else {
-            timeOfDay = "in the evening";
-            hour -= 12;
-        }
-
-        switch (hour) {
-            case 0 -> output.append("[dblue]It is midnight.");
-            case 12 -> output.append("[yellow]It is noon.");
-            default -> output.append("[default]The hour is %d o'clock %s.", hour, timeOfDay);
-        }
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudProperty mudHour = getRepositoryBundle()
             .getPropertyRepository()

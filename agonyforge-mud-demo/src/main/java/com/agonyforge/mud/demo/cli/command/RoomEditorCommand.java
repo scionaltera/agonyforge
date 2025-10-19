@@ -39,59 +39,6 @@ public class RoomEditorCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        MudRoom room;
-
-        // REDIT           <-- edit the room you're standing in
-        // REDIT <number>  <-- edit an existing room by number
-        // REDIT <number>  <-- create a new room with that number
-
-        if (tokens.size() > 1) {
-            try {
-                Long roomId = Long.parseLong(tokens.get(1));
-                Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(roomId);
-
-                if (roomOptional.isEmpty()) {
-                    String roomIdString = tokens.get(1);
-                    Long zoneId = Long.parseLong(tokens.get(1).substring(0, roomIdString.length() - 2));
-
-                    LOGGER.info("Creating room {} in zone {}", roomId, zoneId);
-
-                    room = new MudRoom();
-
-                    room.setId(roomId);
-                    room.setZoneId(zoneId);
-                    room.setName("Unfinished Room");
-                    room.setDescription("A newly constructed room. It still needs a coat of paint.");
-
-                    getRepositoryBundle().getRoomRepository().save(room);
-                } else {
-                    room = roomOptional.get();
-                }
-
-                webSocketContext.getAttributes().put(REDIT_MODEL, room.getId());
-            } catch (NumberFormatException e) {
-                LOGGER.error(e.getMessage());
-                output
-                    .append("Unrecognized token: '%s'", tokens)
-                    .append("[default]Valid arguments:")
-                    .append("REDIT")
-                    .append("REDIT &lt;room number&gt;");
-                return question;
-            }
-        } else {
-            room = ch.getLocation().getRoom();
-            webSocketContext.getAttributes().put(REDIT_MODEL, room.getId());
-        }
-
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s begins editing.", ch.getCharacter().getName()), ch);
-
-        return applicationContext.getBean("roomEditorQuestion", Question.class);
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudRoom room;

@@ -25,44 +25,6 @@ public class WhisperCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-
-        if (tokens.size() == 1) {
-            output.append("[default]Who would you like to whisper to?");
-            return question;
-        }
-
-        if (tokens.size() == 2) {
-            output.append("[default]What would you like to whisper to them?");
-            return question;
-        }
-
-        String message = tokens.get(2);
-        String targetName = tokens.get(1);
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, targetName);
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]There isn't anyone by that name.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
-
-        output.append("[red]You whisper to %s, '%s[red]'", target.getCharacter().getName(), message);
-        getCommService().sendTo(target, new Output("[red]%s whispers to you, '%s[red]'", ch.getCharacter().getName(), message));
-        getCommService().sendToRoom(
-            ch.getLocation().getRoom().getId(),
-            new Output("[red]%s whispers something to %s.", ch.getCharacter().getName(), target.getCharacter().getName()),
-            ch, target);
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question,
                             WebSocketContext webSocketContext,
                             List<Binding> bindings,

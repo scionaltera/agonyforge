@@ -24,32 +24,6 @@ public class WhoCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().findAll()
-            .stream()
-            .filter(ch -> ch.getPlayer() != null)
-            .filter(ch -> ch.getLocation() != null)
-            .toList();
-
-        output
-            .append("[black]=== [white]Who is Playing [black]===")
-            .append("");
-
-        characters.forEach(ch -> output.append("[%s]%s %s",
-            ch.getPlayer().getRoles().stream().anyMatch(Role::isImplementor) ? "yellow" : "white",
-            ch.getCharacter().getName(),
-            ch.getPlayer().getTitle()));
-
-        output
-            .append("")
-            .append("[white]%d player%s online.",
-                characters.size(),
-                characters.size() == 1 ? "" : "s");
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().findAll()
             .stream()

@@ -8,11 +8,7 @@ import com.agonyforge.mud.demo.cli.Binding;
 import java.util.List;
 
 public interface Command {
-    default Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
-        throw new UnsupportedOperationException("Command does not yet support binding execution.");
-    }
-
-    Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output);
+    Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output);
 
     static String stripColors(String input) {
         boolean inColor = false;

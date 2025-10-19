@@ -14,8 +14,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static com.agonyforge.mud.demo.cli.TokenType.CHARACTER_IN_WORLD;
 import static com.agonyforge.mud.demo.cli.TokenType.ROOM_ID;
@@ -34,55 +32,10 @@ public class GotoCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() != 2) {
-            output.append("[default]Where would you like to go to?");
-            return question;
-        }
-
-        MudRoom destination = null;
-
-        try {
-            Long id = Long.parseLong(tokens.get(1));
-            destination = getRepositoryBundle().getRoomRepository().findById(id).orElseThrow();
-        } catch (NumberFormatException | NoSuchElementException e) {
-            Optional<MudCharacter> targetOptional = findWorldCharacter(ch, tokens.get(1));
-
-            if (targetOptional.isPresent()) {
-                MudCharacter target = targetOptional.get();
-
-                if (target.getLocation() != null) {
-                    destination = target.getLocation().getRoom();
-                }
-            }
-        }
-
-        if (destination == null) {
-            output.append("[red]Can't find anything like that.");
-            return question;
-        }
-
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s disappears in a puff of smoke!", ch.getCharacter().getName()), ch);
-
-        ch.getLocation().setRoom(destination);
-        getRepositoryBundle().getCharacterRepository().save(ch);
-
-        getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
-            new Output("[yellow]%s appears in a puff of smoke!", ch.getCharacter().getName()), ch);
-
-        output.append(LookCommand.doLook(getRepositoryBundle(), sessionAttributeService, ch, destination));
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        MudCharacter destinationCharacter = null;
-        MudRoom destinationRoom = null;
+        MudCharacter destinationCharacter;
+        MudRoom destinationRoom;
 
         if (CHARACTER_IN_WORLD == bindings.get(1).getType()) {
             destinationCharacter = bindings.get(1).asCharacter();

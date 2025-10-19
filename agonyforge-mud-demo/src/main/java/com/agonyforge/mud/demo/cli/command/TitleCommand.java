@@ -25,26 +25,6 @@ public class TitleCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        String title = tokens.size() > 1 ? tokens.get(1) : "";
-        String titleColorless = Command.stripColors(title);
-
-        if (titleColorless.length() > 60) {
-            output.append("[default]That title is too long, please try something shorter.");
-            return question;
-        }
-
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        ch.getPlayer().setTitle(title);
-        getRepositoryBundle().getCharacterRepository().save(ch);
-
-        output.append("[default]Changed title to: [white]%s %s", ch.getCharacter().getName(), title);
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         String title = bindings.get(1).asString();
         String titleColorless = Command.stripColors(title);

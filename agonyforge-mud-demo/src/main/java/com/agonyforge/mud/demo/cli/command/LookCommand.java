@@ -105,28 +105,6 @@ public class LookCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question,
-                            WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Output output) {
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudRoom> roomOptional = Optional.ofNullable(ch.getLocation().getRoom());
-
-        if (roomOptional.isEmpty()) {
-            output.append("[black]You are floating in the void...");
-            LOGGER.error("{} is floating in the void!", ch.getCharacter().getName());
-
-            return question;
-        }
-
-        MudRoom room = roomOptional.get();
-
-        output.append(doLook(getRepositoryBundle(), sessionAttributeService, ch, room));
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question,
                             WebSocketContext webSocketContext,
                             List<Binding> bindings,

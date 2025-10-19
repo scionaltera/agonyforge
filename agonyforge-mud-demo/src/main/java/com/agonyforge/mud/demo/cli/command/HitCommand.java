@@ -143,44 +143,6 @@ public class HitCommand extends AbstractCommand {
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
-        if (tokens.size() <= 1) {
-            output.append("[default]Who do you want to hit?");
-            return question;
-        }
-
-        MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't see anyone like that here.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
-
-        if (fightRepository.findByAttackerAndDefender(ch, target).isPresent() || fightRepository.findByAttackerAndDefender(target, ch).isPresent()) {
-            output.append("[red]You are already fighting %s!", target.getCharacter().getName());
-            return question;
-        }
-
-        Output targetOutput = new Output();
-        Output roomOutput = new Output();
-
-        doHit(getRepositoryBundle(), diceService, fightRepository, output, targetOutput, roomOutput, ch, target);
-
-        if (!targetOutput.isEmpty()) {
-            getCommService().sendTo(target, targetOutput);
-        }
-
-        if (!roomOutput.isEmpty()) {
-            getCommService().sendToRoom(ch.getLocation().getRoom().getId(), roomOutput, ch, target);
-        }
-
-        return question;
-    }
-
-    @Override
     public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudCharacter target = bindings.get(1).asCharacter();
