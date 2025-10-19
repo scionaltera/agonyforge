@@ -2,6 +2,8 @@ package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
+import com.agonyforge.mud.demo.model.constant.Effort;
+import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.*;
 
 public class Binding {
@@ -41,6 +43,14 @@ public class Binding {
 
     public Long asNumber() {
         return (Long) value;
+    }
+
+    public Stat asStat() {
+        return (Stat) value;
+    }
+
+    public Effort asEffort() {
+        return (Effort) value;
     }
 
     public MudCharacter asCharacter() {

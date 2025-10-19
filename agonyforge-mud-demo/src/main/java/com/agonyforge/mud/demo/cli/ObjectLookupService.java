@@ -2,6 +2,8 @@ package com.agonyforge.mud.demo.cli;
 
 import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
+import com.agonyforge.mud.demo.model.constant.Effort;
+import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import org.slf4j.Logger;
@@ -9,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class ObjectLookupService {
@@ -47,6 +46,12 @@ public class ObjectLookupService {
                     break;
                 case NUMBER:
                     bindings.add(bindNumber(tokens.get(i), syntax.get(i)));
+                    break;
+                case STAT:
+                    bindings.add(bindStat(tokens.get(i), syntax.get(i)));
+                    break;
+                case EFFORT:
+                    bindings.add(bindEffort(tokens.get(i), syntax.get(i)));
                     break;
                 case CHARACTER_IN_ROOM:
                     bindings.add(bindCharacterInRoom(ch, tokens.get(i), syntax.get(i)));
@@ -118,6 +123,28 @@ public class ObjectLookupService {
             LOGGER.trace("Number format exception: {}", e.getMessage());
             throw new IllegalArgumentException("That's not a number.");
         }
+    }
+
+    Binding bindStat(String token, TokenType type) {
+        Optional<Stat> statOptional = Arrays.stream(Stat.values()).filter(s -> s.name().equalsIgnoreCase(token)).findFirst();
+
+        if (statOptional.isPresent()) {
+            return new Binding(type, token, statOptional.get());
+        }
+
+        LOGGER.trace("No stat found with name {}", token);
+        throw new IllegalArgumentException("That's not a stat.");
+    }
+
+    Binding bindEffort(String token, TokenType type) {
+        Optional<Effort> effortOptional = Arrays.stream(Effort.values()).filter(e -> e.getName().equalsIgnoreCase(token)).findFirst();
+
+        if (effortOptional.isPresent()) {
+            return new Binding(type, token, effortOptional.get());
+        }
+
+        LOGGER.trace("No effort found with name {}", token);
+        throw new IllegalArgumentException("That's not an effort.");
     }
 
     Binding bindCharacterInRoom(MudCharacter ch, String token, TokenType type) {
