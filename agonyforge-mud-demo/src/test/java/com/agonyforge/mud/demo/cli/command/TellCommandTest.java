@@ -62,13 +62,10 @@ public class TellCommandTest {
     private MudCharacter target;
 
     @Mock
-    private MudCharacter other;
-
-    @Mock
     private CharacterComponent chCharacterComponent, targetCharacterComponent;
 
     @Mock
-    private LocationComponent chLocationComponent, targetLocationComponent;
+    private LocationComponent chLocationComponent;
 
     @Mock
     private WebSocketContext webSocketContext;
@@ -117,11 +114,9 @@ public class TellCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findAll()).thenReturn(List.of(ch, target, other));
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(chCharacterComponent.getName()).thenReturn("Scion");
         when(targetCharacterComponent.getName()).thenReturn("Target");

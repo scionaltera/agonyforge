@@ -97,8 +97,6 @@ public class CommandEditorCommandTest {
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, subCommandBinding), output);
 
-        when(subCommandBinding.asString()).thenReturn("test");
-
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Invalid subcommand.")));
 
@@ -138,7 +136,6 @@ public class CommandEditorCommandTest {
     void testCreateMissingBean() {
         when(subCommandBinding.asString()).thenReturn("create");
         when(commandNameBinding.asString()).thenReturn("TEST");
-        when(priorityBinding.asString()).thenReturn("50");
         when(beanNameBinding.asString()).thenReturn("missingCommand");
         when(descriptionBinding.asString()).thenReturn("Tests stuff");
 

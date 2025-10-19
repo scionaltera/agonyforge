@@ -102,9 +102,7 @@ public class RemoveCommandTest {
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(target));
         when(target.getItem()).thenReturn(itemComponent);
-        when(target.getItem().getNameList()).thenReturn(Set.of("test", "hat"));
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));

@@ -116,7 +116,6 @@ public class TransferCommandTest {
 
     @Test
     void testTransferPlayerSameRoom() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
         lenient().when(targetLocation.getRoom()).thenReturn(destination);
 
         Output output = new Output();
@@ -130,8 +129,6 @@ public class TransferCommandTest {
 
     @Test
     void testTransferPlayer() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
         Output output = new Output();
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding), output);

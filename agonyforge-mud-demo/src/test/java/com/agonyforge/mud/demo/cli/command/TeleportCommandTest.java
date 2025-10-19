@@ -113,8 +113,6 @@ public class TeleportCommandTest {
 
     @Test
     void testTeleportPlayer() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, roomBinding), output);

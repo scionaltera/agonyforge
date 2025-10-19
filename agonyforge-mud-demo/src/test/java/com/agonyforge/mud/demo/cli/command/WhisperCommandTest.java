@@ -128,7 +128,6 @@ public class WhisperCommandTest {
         ));
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target, other));
 
         when(characterComponent.getName()).thenReturn("Scion");
         when(room.getId()).thenReturn(100L);
