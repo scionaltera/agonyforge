@@ -30,8 +30,8 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
     public NonPlayerCreatureEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
 
-        addSyntax(NPC_IN_ROOM);
-        addSyntax(NPC_ID);
+        addSyntax(NPC_IN_ROOM); // edit NPC in room
+        addSyntax(NPC_ID);      // edit NPC by ID
     }
 
     @Override

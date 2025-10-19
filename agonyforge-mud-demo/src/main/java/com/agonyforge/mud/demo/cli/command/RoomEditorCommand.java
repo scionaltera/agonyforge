@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.agonyforge.mud.demo.cli.TokenType.NUMBER;
-import static com.agonyforge.mud.demo.cli.TokenType.ROOM_ID;
+import static com.agonyforge.mud.demo.cli.TokenType.*;
 import static com.agonyforge.mud.demo.cli.question.ingame.olc.room.RoomEditorQuestion.REDIT_MODEL;
 
 @Component
@@ -33,8 +32,10 @@ public class RoomEditorCommand extends AbstractCommand {
 
         this.applicationContext = applicationContext;
 
-        addSyntax(ROOM_ID);
-        addSyntax(NUMBER);
+        addSyntax();          // edit the room you're standing in
+        //addSyntax(DIRECTION); // TODO edit the room in a direction from here (create it if it doesn't exist)
+        addSyntax(ROOM_ID);   // edit room by ID
+        addSyntax(NUMBER);    // edit a new room ID
     }
 
     @Override
@@ -95,7 +96,9 @@ public class RoomEditorCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudRoom room;
 
-        if (ROOM_ID == bindings.get(1).getType()) {
+        if (bindings.size() == 1) {
+            room = ch.getLocation().getRoom();
+        } else if (ROOM_ID == bindings.get(1).getType()) {
             room = bindings.get(1).asRoom();
         } else if (NUMBER == bindings.get(1).getType()) {
             try {

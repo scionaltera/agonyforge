@@ -29,9 +29,9 @@ public class CommandEditorCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
         this.commandRepository = commandRepository;
 
-        addSyntax();
-        addSyntax(WORD, COMMAND);
-        addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS);
+        addSyntax();                                       // list all commands
+        addSyntax(WORD, COMMAND);                          // delete command
+        addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS); // create command
     }
 
     @Override

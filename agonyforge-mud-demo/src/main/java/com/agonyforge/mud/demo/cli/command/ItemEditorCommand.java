@@ -26,10 +26,10 @@ public class ItemEditorCommand extends AbstractCommand {
     public ItemEditorCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
 
-        addSyntax(ITEM_ID);
-        addSyntax(NUMBER);
-        addSyntax(ITEM_HELD);
-        addSyntax(ITEM_GROUND);
+        addSyntax(ITEM_ID);     // edit item ID
+        addSyntax(NUMBER);      // create new item with ID
+        addSyntax(ITEM_HELD);   // edit held item
+        addSyntax(ITEM_GROUND); // edit item on ground
     }
 
     @Override
