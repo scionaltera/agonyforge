@@ -121,13 +121,13 @@ public class CommandEditorCommand extends AbstractCommand {
             return question;
         }
 
-        String subCommand = bindings.get(2).asString().toUpperCase(Locale.ROOT);
+        String subCommand = bindings.get(1).asString();
 
         if ("CREATE".equalsIgnoreCase(subCommand)) {
-            String name = bindings.get(3).asString().toUpperCase(Locale.ROOT);
-            int priority = bindings.get(4).asNumber().intValue();
-            String beanName = bindings.get(5).asString();
-            String description = bindings.get(6).asString();
+            String name = bindings.get(2).asString().toUpperCase(Locale.ROOT);
+            int priority = bindings.get(3).asNumber().intValue();
+            String beanName = bindings.get(4).asString();
+            String description = bindings.get(5).asString();
             CommandReference command = new CommandReference();
 
             try {
@@ -146,7 +146,7 @@ public class CommandEditorCommand extends AbstractCommand {
                 output.append("[red]No command bean could be found with that name.");
             }
         } else if ("DELETE".equalsIgnoreCase(subCommand)) {
-            CommandReference command = bindings.get(3).asCommandReference();
+            CommandReference command = bindings.get(2).asCommandReference();
 
             commandRepository.delete(command);
             output.append("[yellow]Deleted command: %s", command.getName());

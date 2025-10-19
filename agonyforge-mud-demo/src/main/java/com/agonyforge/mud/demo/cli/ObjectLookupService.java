@@ -3,8 +3,10 @@ package com.agonyforge.mud.demo.cli;
 import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.*;
+import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,9 +19,11 @@ public class ObjectLookupService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectLookupService.class);
 
     private final RepositoryBundle repositoryBundle;
+    private final CommandRepository commandRepository;
 
-    public ObjectLookupService(RepositoryBundle repositoryBundle) {
+    public ObjectLookupService(RepositoryBundle repositoryBundle, CommandRepository commandRepository) {
         this.repositoryBundle = repositoryBundle;
+        this.commandRepository = commandRepository;
     }
 
     public List<Binding> bind(MudCharacter ch, CommandReference command, List<String> tokens, List<TokenType> syntax) {
@@ -33,7 +37,7 @@ public class ObjectLookupService {
         for (int i = 0; i < tokens.size(); i++) {
             switch (syntax.get(i)) {
                 case COMMAND:
-                    bindings.add(bindCommand(command, tokens.get(i), syntax.get(i)));
+                    bindings.add(bindCommand(tokens.get(i), syntax.get(i)));
                     break;
                 case WORD:
                     bindings.add(bindWord(tokens.get(i), syntax.get(i)));
@@ -89,8 +93,14 @@ public class ObjectLookupService {
         return bindings;
     }
 
-    Binding bindCommand(CommandReference command, String token, TokenType type) {
-        return new Binding(type, token, command);
+    Binding bindCommand(String token, TokenType type) {
+        Optional<CommandReference> ref = commandRepository.findFirstByNameStartingWith(token.toUpperCase(Locale.ROOT), Sort.by(Sort.Order.asc("priority")));
+
+        if (ref.isPresent()) {
+            return new Binding(type, token, ref.get());
+        }
+
+        throw new IllegalArgumentException("Command not found.");
     }
 
     Binding bindWord(String token, TokenType type) {
@@ -103,7 +113,7 @@ public class ObjectLookupService {
 
     Binding bindNumber(String token, TokenType type) {
         try {
-            return new Binding(type, token, Integer.parseInt(token));
+            return new Binding(type, token, Long.parseLong(token));
         } catch (NumberFormatException e) {
             LOGGER.trace("Number format exception: {}", e.getMessage());
             throw new IllegalArgumentException("That's not a number.");
