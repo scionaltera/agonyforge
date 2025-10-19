@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
@@ -72,6 +73,9 @@ public class HelpCommandTest {
     @Mock
     private CommandReference testCommandRefB;
 
+    @Mock
+    private Binding commandBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -100,7 +104,7 @@ public class HelpCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
 
         HelpCommand uut = new HelpCommand(repositoryBundle, commService, applicationContext, commandRepository);
-        Question result = uut.execute(question, wsContext, List.of("help"), new Output());
+        Question result = uut.execute(question, wsContext, List.of(commandBinding), new Output());
 
         verify(testCommandRefA).getPriority();
         verify(testCommandRefA).getDescription();
@@ -118,7 +122,7 @@ public class HelpCommandTest {
         when(ch.getLocation().getRoom()).thenReturn(room);
 
         HelpCommand uut = new HelpCommand(repositoryBundle, commService, applicationContext, commandRepository);
-        Question result = uut.execute(question, wsContext, List.of("help"), new Output());
+        Question result = uut.execute(question, wsContext, List.of(commandBinding), new Output());
 
         verify(testCommandRefA).getDescription();
 

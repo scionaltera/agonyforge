@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -73,6 +74,9 @@ public class HitCommandTest {
     @Mock
     private MudRoom room;
 
+    @Mock
+    private Binding commandBinding, targetBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -84,45 +88,8 @@ public class HitCommandTest {
         lenient().when(target.getCharacter()).thenReturn(targetCharacter);
         lenient().when(targetCharacter.getName()).thenReturn("Frodo");
         lenient().when(targetCharacter.getHitPoints()).thenReturn(10);
-    }
 
-    @Test
-    void testHitNoArg() {
-        Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("hit"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("Who do you want to hit?"));
-
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testHitNoTarget() {
-        Long chId = RANDOM.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-
-        Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("hit", "frodo"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You don't see anyone like that here."));
-
-        verifyNoInteractions(commService);
+        when(targetBinding.asCharacter()).thenReturn(target);
     }
 
     @Test
@@ -143,7 +110,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("hit", "frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -177,7 +144,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("hit", "frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -214,7 +181,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("hit", "frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -251,7 +218,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("hit", "frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);

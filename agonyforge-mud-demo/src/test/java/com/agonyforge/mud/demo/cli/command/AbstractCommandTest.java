@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
@@ -72,6 +72,9 @@ public class AbstractCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -93,7 +96,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -102,7 +105,7 @@ public class AbstractCommandTest {
         assertThrows(CommandException.class, () -> uut.execute(
             question,
             webSocketContext,
-            List.of("test"),
+            List.of(commandBinding),
             output));
     }
 
@@ -120,7 +123,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -129,7 +132,7 @@ public class AbstractCommandTest {
         assertThrows(CommandException.class, () -> uut.execute(
             question,
             webSocketContext,
-            List.of("test"),
+            List.of(commandBinding),
             output));
     }
 
@@ -147,7 +150,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -156,7 +159,7 @@ public class AbstractCommandTest {
         assertEquals(question, uut.execute(
             question,
             webSocketContext,
-            List.of("test"),
+            List.of(commandBinding),
             output));
     }
 
@@ -170,7 +173,7 @@ public class AbstractCommandTest {
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 return question;
             }
         };
@@ -189,7 +192,7 @@ public class AbstractCommandTest {
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 return question;
             }
         };

@@ -1,6 +1,5 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
@@ -27,10 +26,6 @@ public class Binding {
 
     public Object asObject() {
         return value;
-    }
-
-    public Command asCommand() {
-        return (Command) value;
     }
 
     public CommandReference asCommandReference() {

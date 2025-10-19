@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
@@ -66,6 +67,9 @@ public class EmoteCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding, messageBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -90,6 +94,7 @@ public class EmoteCommandTest {
         List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
+        when(messageBinding.asString()).thenReturn(tokens.get(1));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -102,7 +107,7 @@ public class EmoteCommandTest {
 
         Output output = new Output();
 
-        Question response = uut.execute(question, webSocketContext, tokens, output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding, messageBinding), output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());

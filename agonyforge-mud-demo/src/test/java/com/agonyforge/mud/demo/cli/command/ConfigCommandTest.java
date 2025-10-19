@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -56,6 +57,9 @@ public class ConfigCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding, adminFlagBinding;
+
     @BeforeEach
     void setUp() {
         when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -73,7 +77,7 @@ public class ConfigCommandTest {
         ConfigCommand uut = new ConfigCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        uut.execute(question, webSocketContext, List.of("config"), output);
+        uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertThat(output.getOutput()).anyMatch(line -> line.contains("Admin Configuration Flags:"));
         Arrays.stream(AdminFlag.values()).forEach(flag -> {
@@ -85,11 +89,12 @@ public class ConfigCommandTest {
     void testToggleHolylight() {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
         when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
+        when(adminFlagBinding.asAdminFlag()).thenReturn(AdminFlag.HOLYLIGHT);
 
         ConfigCommand uut = new ConfigCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
         
-        uut.execute(question, webSocketContext, List.of("config", "holylight"), output);
+        uut.execute(question, webSocketContext, List.of(commandBinding, adminFlagBinding), output);
 
         assertThat(output.getOutput()).anyMatch(line -> line.contains("HOLYLIGHT enabled."));
     }

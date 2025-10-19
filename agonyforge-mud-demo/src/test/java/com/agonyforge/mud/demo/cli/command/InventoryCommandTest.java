@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -74,6 +75,9 @@ public class InventoryCommandTest {
     @Mock
     private LocationComponent itemLocationComponent, armorLocationComponent, chLocationComponent;
 
+    @Mock
+    private Binding commandBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -109,7 +113,7 @@ public class InventoryCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("i"),
+            List.of(commandBinding),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));
@@ -136,7 +140,7 @@ public class InventoryCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("i"),
+            List.of(commandBinding),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));

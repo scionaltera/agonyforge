@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -73,6 +74,12 @@ public class TransferCommandTest {
     @Mock
     private MudRoom room, destination;
 
+    @Mock
+    private Binding commandBinding;
+
+    @Mock
+    private Binding targetBinding;
+
     @BeforeEach
     void setUp() {
         Long chId = RANDOM.nextLong();
@@ -103,43 +110,8 @@ public class TransferCommandTest {
         lenient().when(targetCharacter.getPronoun()).thenReturn(Pronoun.THEY);
         lenient().when(target.getPlayer()).thenReturn(targetPlayer);
         lenient().when(targetPlayer.getAdminFlags()).thenReturn(EnumSet.noneOf(AdminFlag.class));
-    }
 
-    @Test
-    void testTransferNoArgs() {
-        Output output = new Output();
-
-        TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-
-        Question result = uut.execute(question, webSocketContext, List.of("transfer"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Whom would you like to transfer?")));
-    }
-
-    @Test
-    void testTransferTooManyArgs() {
-        Output output = new Output();
-
-        TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-
-        Question result = uut.execute(question, webSocketContext, List.of("transfer", "carmen", "sandiego", "now"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Whom would you like to transfer?")));
-    }
-
-    @Test
-    void testTransferPlayerNotFound() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
-        Output output = new Output();
-        TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("transfer", "carmen"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find that player.")));
-        verify(chLocation, never()).setRoom(eq(destination));
+        when(targetBinding.asCharacter()).thenReturn(target);
     }
 
     @Test
@@ -149,7 +121,7 @@ public class TransferCommandTest {
 
         Output output = new Output();
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("transfer", "target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("They are already here in the room with you.")));
@@ -162,7 +134,7 @@ public class TransferCommandTest {
 
         Output output = new Output();
         TransferCommand uut = new TransferCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("transfer", "target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding), output);
 
         assertEquals(question, result);
         verify(targetLocation).setRoom(eq(destination));

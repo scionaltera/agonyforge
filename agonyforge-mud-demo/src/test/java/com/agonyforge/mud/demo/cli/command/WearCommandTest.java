@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearMode;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
@@ -79,6 +80,12 @@ public class WearCommandTest {
     @Mock
     private MudRoom room;
 
+    @Mock
+    private Binding commandBinding;
+
+    @Mock
+    private Binding itemBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -88,52 +95,6 @@ public class WearCommandTest {
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
         lenient().when(itemItemComponent.getWearMode()).thenReturn(WearMode.ALL);
         lenient().when(targetItemComponent.getWearMode()).thenReturn(WearMode.ALL);
-    }
-
-    @Test
-    void testWearNoArg() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-
-        Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("wea"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("What would you like to wear?"));
-    }
-
-    @Test
-    void testWearNoInventoryItem() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-
-        Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("wea", "ha"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You aren't carrying anything like that."));
     }
 
     @Test
@@ -158,7 +119,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("wae", "ha"),
+            List.of(commandBinding, itemBinding),
             output);
 
         assertEquals(question, result);
@@ -184,7 +145,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("wea", "ha"),
+            List.of(commandBinding, itemBinding),
             output);
 
         assertEquals(question, result);
@@ -219,7 +180,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("wea", "ha"),
+            List.of(commandBinding, itemBinding),
             output);
 
         assertEquals(question, result);
@@ -253,7 +214,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("wea", "ha"),
+            List.of(commandBinding, itemBinding),
             output);
 
         verify(targetLocationComponent).setHeld(eq(ch));
@@ -302,7 +263,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("wea", "ha"),
+            List.of(commandBinding, itemBinding),
             output);
 
         verify(targetLocationComponent).setWorn(eq(EnumSet.of(WearSlot.HEAD)));
@@ -348,7 +309,7 @@ public class WearCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("wea", "ha"),
+            List.of(commandBinding, itemBinding),
             output);
 
         verify(targetLocationComponent).setWorn(ArgumentMatchers.any());

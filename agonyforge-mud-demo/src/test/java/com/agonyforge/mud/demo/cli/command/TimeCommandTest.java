@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudProperty;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
@@ -48,6 +49,9 @@ public class TimeCommandTest {
     @Mock
     private WebSocketContext webSocketContext;
 
+    @Mock
+    private Binding commandBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getPropertyRepository()).thenReturn(propertyRepository);
@@ -61,7 +65,7 @@ public class TimeCommandTest {
         when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("time"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
 
@@ -76,7 +80,7 @@ public class TimeCommandTest {
         when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("time"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
 
@@ -92,7 +96,7 @@ public class TimeCommandTest {
         when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("time"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
 
@@ -118,7 +122,7 @@ public class TimeCommandTest {
         when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("time"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
 
@@ -144,7 +148,7 @@ public class TimeCommandTest {
         when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("time"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
 
@@ -170,7 +174,7 @@ public class TimeCommandTest {
         when(propertyRepository.findById(eq(PROPERTY_HOUR))).thenReturn(Optional.of(mudHour));
 
         TimeCommand uut = new TimeCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("time"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
 

@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -76,6 +77,9 @@ public class DropCommandTest {
     @Mock
     private MudRoom room;
 
+    @Mock
+    private Binding commandBinding, itemBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -83,62 +87,8 @@ public class DropCommandTest {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-    }
 
-    @Test
-    void testDropNoArg() {
-        Long chId = random.nextLong();
-
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        DropCommand uut = new DropCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("dr"),
-            output);
-
-        verify(itemRepository, never()).findById(eq(chId));
-        verify(itemRepository, never()).save(any(MudItem.class));
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("What would you like"));
-    }
-
-    @Test
-    void testDropNoItem() {
-        Long chId = random.nextLong();
-
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(other.getLocation()).thenReturn(otherLocationComponent);
-        when(other.getItem()).thenReturn(otherItemComponent);
-        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other));
-
-        Output output = new Output();
-        DropCommand uut = new DropCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("dr", "t"),
-            output);
-
-        verify(itemRepository).findByLocationHeld(eq(ch));
-        verify(itemRepository, never()).save(any(MudItem.class));
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("anything like that"));
+        when(itemBinding.asItem()).thenReturn(item);
     }
 
     @Test
@@ -169,7 +119,7 @@ public class DropCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("dr", "t"),
+            List.of(commandBinding, itemBinding),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));

@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
@@ -14,7 +15,6 @@ import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
 import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -30,10 +30,8 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -81,6 +79,9 @@ public class TellCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding, targetBinding, messageBinding;
+
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
 
@@ -91,6 +92,8 @@ public class TellCommandTest {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
+        when(targetBinding.asCharacter()).thenReturn(target);
     }
 
     @ParameterizedTest
@@ -109,6 +112,7 @@ public class TellCommandTest {
         List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
+        when(messageBinding.asString()).thenReturn(tokens.get(2));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -123,7 +127,7 @@ public class TellCommandTest {
         when(targetCharacterComponent.getName()).thenReturn("Target");
 
         Output output = new Output();
-        Question response = uut.execute(question, webSocketContext, tokens, output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, messageBinding), output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -137,28 +141,5 @@ public class TellCommandTest {
         assertTrue(toTarget.getOutput()
             .stream()
             .anyMatch(line -> line.equals("[red]Scion tells you, '" + match + "[red]'")));
-    }
-
-    @Test
-    void testExecuteTargetNotFound() {
-        TellCommand uut = new TellCommand(repositoryBundle, commService, applicationContext);
-        List<String> tokens = SyntaxAwareTokenizer.tokenize("tell t foo", uut.getSyntaxes().get(0));
-        Output output = new Output();
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-
-        Question response = uut.execute(question, webSocketContext, tokens, output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]There isn't anyone by that name.", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
     }
 }

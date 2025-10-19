@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -70,6 +71,9 @@ public class PurgeCommandTest {
     @Mock
     private PlayerComponent targetPlayerComponent;
 
+    @Mock
+    private Binding commandBinding, itemBinding, characterBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -80,56 +84,12 @@ public class PurgeCommandTest {
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
+        when(itemBinding.asItem()).thenReturn(item);
+        when(characterBinding.asCharacter()).thenReturn(target);
         lenient().when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
         lenient().when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
         lenient().when(target.getCharacter()).thenReturn(targetCharacterComponent);
         lenient().when(target.getCharacter().getName()).thenReturn("Greedo");
-    }
-
-    @Test
-    void testNoArgs() {
-        Output output = new Output();
-        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
-
-        Question result = uut.execute(question, wsContext, List.of("pur"), output);
-
-        assertEquals(question, result);
-
-        verifyNoInteractions(itemRepository);
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testNoTarget() {
-        when(itemRepository.findByLocationRoom(eq(room))).thenReturn(List.of());
-
-        Output output = new Output();
-        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
-
-        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
-
-        assertEquals(question, result);
-
-        verify(itemRepository, never()).delete(eq(item));
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testNoTargetWithMatchingName() {
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(item));
-        when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("dont", "purge", "me", "bro"));
-
-        Output output = new Output();
-        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
-
-        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
-
-        assertEquals(question, result);
-
-        verify(itemRepository, never()).delete(eq(item));
-        verifyNoInteractions(commService);
     }
 
     @Test
@@ -142,7 +102,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, itemBinding), output);
 
         assertEquals(question, result);
 
@@ -159,7 +119,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("pur", "test"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, itemBinding), output);
 
         assertEquals(question, result);
 
@@ -172,7 +132,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("pur", "gre"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, characterBinding), output);
 
         assertEquals(question, result);
 
@@ -187,7 +147,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("pur", "gre"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, characterBinding), output);
 
         assertEquals(question, result);
 

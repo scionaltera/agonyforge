@@ -1,7 +1,5 @@
-package com.agonyforge.mud.demo.cli.command;
+package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
-import com.agonyforge.mud.demo.cli.TokenType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

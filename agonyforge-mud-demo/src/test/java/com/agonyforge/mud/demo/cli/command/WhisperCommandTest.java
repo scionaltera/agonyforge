@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
@@ -81,6 +82,15 @@ public class WhisperCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding;
+
+    @Mock
+    private Binding targetBinding;
+
+    @Mock
+    private Binding messageBinding;
+
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
 
@@ -91,6 +101,8 @@ public class WhisperCommandTest {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
+
+        when(targetBinding.asCharacter()).thenReturn(target);
     }
 
     @ParameterizedTest
@@ -110,6 +122,7 @@ public class WhisperCommandTest {
         List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
         Long chId = random.nextLong();
 
+        when(messageBinding.asString()).thenReturn(tokens.get(2));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
@@ -125,7 +138,7 @@ public class WhisperCommandTest {
         when(targetCharacterComponent.getName()).thenReturn("Target");
 
         Output output = new Output();
-        Question response = uut.execute(question, webSocketContext, tokens, output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, messageBinding), output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());
@@ -156,6 +169,7 @@ public class WhisperCommandTest {
         Output output = new Output();
         Long chId = random.nextLong();
 
+        when(messageBinding.asString()).thenReturn(tokens.get(2));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
@@ -163,7 +177,7 @@ public class WhisperCommandTest {
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
-        Question response = uut.execute(question, webSocketContext, tokens, output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, messageBinding), output);
 
         assertEquals(question, response);
         assertEquals(1, output.getOutput().size());

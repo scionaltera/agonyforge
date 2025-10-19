@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
@@ -74,6 +75,9 @@ public class GotoCommandTest {
     @Mock
     private MudRoom room, destination;
 
+    @Mock
+    private Binding commandBinding, targetBinding, roomBinding;
+
     @BeforeEach
     void setUp() {
         Long chId = RANDOM.nextLong();
@@ -102,70 +106,25 @@ public class GotoCommandTest {
     }
 
     @Test
-    void testGotoNoArgs() {
-        Output output = new Output();
-
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-
-        Question result = uut.execute(question, webSocketContext, List.of("goto"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to go to?")));
-    }
-
-    @Test
-    void testGotoTooManyArgs() {
-        Output output = new Output();
-
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-
-        Question result = uut.execute(question, webSocketContext, List.of("goto", "test", "place", "now"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to go to?")));
-    }
-
-    @Test
-    void testGotoPlayerNotFound() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
-        Output output = new Output();
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("goto", "carmen"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find anything like that.")));
-        verify(chLocation, never()).setRoom(eq(destination));
-    }
-
-    @Test
     void testGotoPlayer() {
         when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
+        when(targetBinding.asCharacter()).thenReturn(target);
 
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("goto", "target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding), output);
 
         assertEquals(question, result);
         verify(chLocation).setRoom(eq(destination));
     }
 
     @Test
-    void testGotoRoomNotFound() {
-        Output output = new Output();
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("goto", "2000"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find anything like that.")));
-        verify(chLocation, never()).setRoom(eq(destination));
-    }
-
-    @Test
     void testGotoRoom() {
+        when(roomBinding.asRoom()).thenReturn(destination);
+
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("goto", "3000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, roomBinding), output);
 
         assertEquals(question, result);
         verify(chLocation).setRoom(eq(destination));

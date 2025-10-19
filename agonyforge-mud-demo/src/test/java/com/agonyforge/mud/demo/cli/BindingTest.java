@@ -1,13 +1,11 @@
-package com.agonyforge.mud.demo.cli.command;
+package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.TokenType;
+import com.agonyforge.mud.demo.cli.command.Command;
+import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -27,15 +25,15 @@ public class BindingTest {
     }
 
     @Test
-    public void testAsCommand() {
+    public void testAsCommandReference() {
         Command mockCommand = mock(Command.class);
         Binding binding = new Binding(TokenType.COMMAND, "mock", mockCommand);
-        Command result = binding.asCommand();
+        CommandReference result = binding.asCommandReference();
         assertNotNull(result);
         assertEquals(mockCommand, result);
 
         Binding nonCommandBinding = new Binding(TokenType.WORD, "test","test");
-        assertThrows(ClassCastException.class, nonCommandBinding::asCommand);
+        assertThrows(ClassCastException.class, nonCommandBinding::asCommandReference);
     }
 
     @Test

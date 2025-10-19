@@ -7,6 +7,9 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
+import com.agonyforge.mud.demo.cli.Binding;
+import com.agonyforge.mud.demo.model.impl.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +28,6 @@ import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.LocationComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.service.CommService;
 
@@ -36,22 +35,36 @@ import com.agonyforge.mud.demo.service.CommService;
 class ForceCommandTest {
     @Mock
     private RepositoryBundle repositoryBundle;
+
     @Mock
     private CommService commService;
+
     @Mock
     private ApplicationContext applicationContext;
+
     @Mock
     private WebSocketContext webSocketContext;
+
     @Mock
     private Question question;
+
     @Mock
     private MudCharacter executor, target;
+
     @Mock
     private CharacterComponent executorComponent, targetComponent;
+
     @Mock
     private LocationComponent locationComponent;
+
     @Mock
     private MudRoom room;
+
+    @Mock
+    private CommandReference sayRef, forceRef;
+
+    @Mock
+    private Binding commandBinding, targetBinding, forcedCommandBinding, argsBinding;
 
     private ForceCommand uut;
     private final Random random = new Random();
@@ -59,43 +72,9 @@ class ForceCommandTest {
     @BeforeEach
     void setUp() {
         uut = new ForceCommand(repositoryBundle, commService, applicationContext);
-    }
 
-    @Test
-    void testForceMissingTarget() {
-        Output output = new Output();
-        Question result = uut.execute(question, webSocketContext, List.of("force"), output);
-
-        assertSame(question, result);
-        assertEquals("[default]Who would you like to force?", output.toString().trim());
-    }
-
-    @Test
-    void testForceMissingCommand() {
-        Output output = new Output();
-        Question result = uut.execute(question, webSocketContext, List.of("force", "bob"), output);
-
-        assertSame(question, result);
-        assertEquals("[default]What would you like to force them to do?", output.toString().trim());
-    }
-
-    @Test
-    void testTargetNotFound() {
-        Output output = new Output();
-        MudCharacterRepository repo = mock(MudCharacterRepository.class);
-        when(repositoryBundle.getCharacterRepository()).thenReturn(repo);
-
-        long execId = random.nextLong();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, execId));
-        when(repo.findById(execId)).thenReturn(Optional.of(executor));
-
-        when(executor.getLocation()).thenReturn(locationComponent); // Needed for not being in void
-        when(locationComponent.getRoom()).thenReturn(room);
-
-        Question result = uut.execute(question, webSocketContext, List.of("force", "Bob", "say", "Hello"), output);
-
-        assertSame(question, result);
-        assertEquals("[default]There isn't anyone by that name.", output.toString().trim());
+        when(targetBinding.asCharacter()).thenReturn(target);
+        when(argsBinding.asString()).thenReturn("Hello");
     }
 
     @Test
@@ -103,6 +82,7 @@ class ForceCommandTest {
         // --- arrange ---
         MudCharacterRepository repo = mock(MudCharacterRepository.class);
         when(repositoryBundle.getCharacterRepository()).thenReturn(repo);
+        when(forcedCommandBinding.asCommandReference()).thenReturn(sayRef);
 
         // executor in room
         long execId = random.nextLong();
@@ -128,7 +108,7 @@ class ForceCommandTest {
         // --- act ---
         Output out = new Output();
         Question res = uut.execute(question, webSocketContext,
-                List.of("force", "Bob", "say", "Hello"), out);
+                List.of(commandBinding, targetBinding, forcedCommandBinding, argsBinding), out);
 
         // --- assert ---
         assertSame(question, res);
@@ -141,8 +121,10 @@ class ForceCommandTest {
 
     @Test
     void testForceCommandWithNestedForce() {
+        when(forcedCommandBinding.asCommandReference()).thenReturn(forceRef);
+
         Output output = new Output();
-        Question result = uut.execute(question, webSocketContext, List.of("force", "Bob", "force", "Bob say Hello"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, forcedCommandBinding, argsBinding), output);
 
         assertSame(question, result);
         assertEquals(

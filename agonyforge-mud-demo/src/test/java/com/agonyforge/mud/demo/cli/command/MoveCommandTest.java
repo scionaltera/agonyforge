@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.constant.Direction;
@@ -75,6 +76,9 @@ public class MoveCommandTest {
     @Mock
     private MudRoom destination;
 
+    @Mock
+    private Binding commandBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -101,7 +105,7 @@ public class MoveCommandTest {
 
         Output output = new Output();
         MoveCommand uut = new MoveCommand(repositoryBundle, commService, sessionAttributeService, applicationContext, Direction.WEST);
-        Question response = uut.execute(question, webSocketContext, List.of("west"), output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, response);
 
@@ -126,7 +130,7 @@ public class MoveCommandTest {
         MoveCommand uut = new MoveCommand(repositoryBundle, commService, sessionAttributeService, applicationContext, Direction.WEST);
 
         try {
-            Question response = uut.execute(question, webSocketContext, List.of("west"), output);
+            Question response = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
             assertEquals(1, output.getOutput().size());
             assertTrue(output.getOutput().get(0).contains("floating aimlessly in the void"));
@@ -156,7 +160,7 @@ public class MoveCommandTest {
 
         Output output = new Output();
         MoveCommand uut = new MoveCommand(repositoryBundle, commService, sessionAttributeService, applicationContext, Direction.WEST);
-        Question response = uut.execute(question, webSocketContext, List.of("west"), output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(1, output.getOutput().size());
         assertTrue(output.getOutput().get(0).contains("Alas, you cannot go that way."));
@@ -184,7 +188,7 @@ public class MoveCommandTest {
 
         Output output = new Output();
         MoveCommand uut = new MoveCommand(repositoryBundle, commService, sessionAttributeService, applicationContext, Direction.WEST);
-        Question response = uut.execute(question, webSocketContext, List.of("west"), output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(1, output.getOutput().size());
         assertTrue(output.getOutput().get(0).contains("Alas, you cannot go that way."));

@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
@@ -75,50 +76,17 @@ public class CreateCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding, itemTemplateBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getItemPrototypeRepository()).thenReturn(itemPrototypeRepository);
 
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-    }
 
-    @Test
-    void testNoArgs() {
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-
-        Output output = new Output();
-        CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
-
-        Question response = uut.execute(question, wsContext, List.of("cre"), output);
-
-        assertEquals(question, response);
-
-        verifyNoInteractions(itemRepository);
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testCreateInvalidItem() {
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-
-        Output output = new Output();
-        CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
-
-        Question response = uut.execute(question, wsContext, List.of("cre", "404"), output);
-
-        assertEquals(question, response);
-
-        verify(itemPrototypeRepository).findById(eq(404L));
-        verifyNoMoreInteractions(itemPrototypeRepository);
-        verifyNoInteractions(itemRepository);
-        verifyNoInteractions(commService);
+        when(itemTemplateBinding.asItemTemplate()).thenReturn(itemTemplate);
     }
 
     @Test
@@ -138,7 +106,7 @@ public class CreateCommandTest {
         Output output = new Output();
         CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
 
-        Question response = uut.execute(question, wsContext, List.of("cre", "200"), output);
+        Question response = uut.execute(question, wsContext, List.of(commandBinding, itemTemplateBinding), output);
 
         assertEquals(question, response);
 

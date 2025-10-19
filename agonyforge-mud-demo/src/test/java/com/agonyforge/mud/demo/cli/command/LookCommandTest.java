@@ -4,6 +4,7 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -79,6 +80,9 @@ public class LookCommandTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -105,7 +109,7 @@ public class LookCommandTest {
         try {
             Question result = uut.execute(question,
                 webSocketContext,
-                List.of("look"),
+                List.of(commandBinding),
                 output);
 
             assertEquals(question, result);
@@ -143,7 +147,7 @@ public class LookCommandTest {
         LookCommand uut = new LookCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
         Question result = uut.execute(question,
             webSocketContext,
-            List.of("look"),
+            List.of(commandBinding),
             output);
 
         assertEquals(question, result);

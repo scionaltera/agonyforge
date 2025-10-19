@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
@@ -21,7 +22,6 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +64,9 @@ public class RollCommandTest {
 
     @Mock
     private LocationComponent locationComponent;
+
+    @Mock
+    private Binding commandBinding, statBinding, effortBinding;
     
     @BeforeEach
     void setUp() {
@@ -73,6 +76,8 @@ public class RollCommandTest {
         lenient().when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation()).thenReturn(locationComponent);
         when(locationComponent.getRoom()).thenReturn(room);
+        when(statBinding.asStat()).thenReturn(Stat.STR);
+        when(effortBinding.asEffort()).thenReturn(Effort.BASIC);
     }
     
     @Test
@@ -91,43 +96,14 @@ public class RollCommandTest {
         when(diceService.roll(1, Effort.BASIC.getDie(), 3)).thenReturn(effortRoll);
 
         Output output = new Output();
-        List<String> tokens = Arrays.asList("roll", "STR", "Basic");
         
-        uut.execute(question, webSocketContext, tokens, output);
+        uut.execute(question, webSocketContext, List.of(commandBinding, statBinding, effortBinding), output);
         
         // Check that the output contains the expected messages
         List<String> outputLines = output.toList();
         assertThat(outputLines).anyMatch(line -> Command.stripColors(line).contains("ATTEMPT: 12 + 2 = 14 for STR"));
         assertThat(outputLines).anyMatch(line -> Command.stripColors(line).contains("EFFORT: 5 + 3 = 8 for Basic"));
         assertThat(outputLines).anyMatch(line -> Command.stripColors(line).contains("TOTAL: 8"));
-    }
-    
-    @Test
-    void testExecuteWithInvalidStat() {
-        RollCommand uut = new RollCommand(repositoryBundle, commService, applicationContext, diceService);
-
-        Output output = new Output();
-        List<String> tokens = Arrays.asList("roll", "INVALID_STAT", "Basic");
-        
-        uut.execute(question, webSocketContext, tokens, output);
-        
-        // Check that the output contains the error message
-        List<String> outputLines = output.toList();
-        assertThat(outputLines).anyMatch(line -> line.contains("No such Stat."));
-    }
-    
-    @Test
-    void testExecuteWithInvalidEffort() {
-        RollCommand uut = new RollCommand(repositoryBundle, commService, applicationContext, diceService);
-
-        Output output = new Output();
-        List<String> tokens = Arrays.asList("roll", "STR", "INVALID_EFFORT");
-        
-        uut.execute(question, webSocketContext, tokens, output);
-        
-        // Check that the output contains the error message
-        List<String> outputLines = output.toList();
-        assertThat(outputLines).anyMatch(line -> line.contains("No such Effort."));
     }
     
     @Test
@@ -148,9 +124,8 @@ public class RollCommandTest {
         when(diceService.roll(1, Effort.ULTIMATE.getDie(), 0)).thenReturn(ultimateRoll);
         
         Output output = new Output();
-        List<String> tokens = Arrays.asList("roll", "STR", "Basic");
         
-        uut.execute(question, webSocketContext, tokens, output);
+        uut.execute(question, webSocketContext, List.of(commandBinding, statBinding, effortBinding), output);
         
         // Check that the output contains the ultimate roll message
         List<String> outputLines = output.toList();

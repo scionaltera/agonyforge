@@ -2,9 +2,9 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
@@ -24,7 +24,6 @@ import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -74,6 +73,9 @@ public class TeleportCommandTest {
     @Mock
     private MudRoom room, destination;
 
+    @Mock
+    private Binding commandBinding, targetBinding, roomBinding;
+
     @BeforeEach
     void setUp() {
         Long chId = RANDOM.nextLong();
@@ -104,62 +106,9 @@ public class TeleportCommandTest {
         lenient().when(targetCharacter.getPronoun()).thenReturn(Pronoun.THEY);
         lenient().when(target.getPlayer()).thenReturn(targetPlayer);
         lenient().when(targetPlayer.getAdminFlags()).thenReturn(EnumSet.noneOf(AdminFlag.class));
-    }
 
-    @Test
-    void testTeleportNoArgs() {
-        Output output = new Output();
-        TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("teleport"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Whom do you wish to teleport?")));
-    }
-
-    @Test
-    void testTeleportOneArgs() {
-        Output output = new Output();
-        TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("teleport", "carmen"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to send them?")));
-    }
-
-    @Test
-    void testTeleportTooManyArgs() {
-        Output output = new Output();
-        TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("teleport", "carmen", "sandiego", "now"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("TELEPORT &lt;victim&gt; &lt;destination&gt;")));
-    }
-
-    @Test
-    void testTeleportPlayerNotFound() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
-        Output output = new Output();
-        TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("teleport", "carmen", "3000"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No such player exists.")));
-        verify(chLocation, never()).setRoom(eq(destination));
-    }
-
-    @Test
-    void testTeleportRoomNotFound() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
-        Output output = new Output();
-        TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("teleport", "target", "9000"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No such room exists.")));
-        verify(chLocation, never()).setRoom(eq(destination));
+        when(targetBinding.asCharacter()).thenReturn(target);
+        when(roomBinding.asRoom()).thenReturn(destination);
     }
 
     @Test
@@ -168,7 +117,7 @@ public class TeleportCommandTest {
 
         Output output = new Output();
         TeleportCommand uut = new TeleportCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("teleport", "target", "3000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, roomBinding), output);
 
         assertEquals(question, result);
         verify(targetLocation).setRoom(eq(destination));

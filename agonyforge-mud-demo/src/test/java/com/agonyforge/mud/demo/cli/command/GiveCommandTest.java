@@ -3,6 +3,7 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -25,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,6 +79,9 @@ public class GiveCommandTest {
     @Mock
     private LocationComponent itemLocationComponent, otherLocationComponent, chLocationComponent;
 
+    @Mock
+    private Binding commandBinding, itemBinding, targetBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -87,120 +89,6 @@ public class GiveCommandTest {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-    }
-
-    @Test
-    void testGiveNoArgs() {
-        Long chId = random.nextLong();
-
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("g"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("Which item"));
-    }
-
-    @Test
-    void testGiveOneArg() {
-        Long chId = random.nextLong();
-
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("g", "sp"),
-            output);
-
-        verifyNoInteractions(itemRepository);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("Who do you want"));
-    }
-
-    @Test
-    void testGiveNoItem() {
-        Long chId = random.nextLong();
-
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(other.getLocation()).thenReturn(itemLocationComponent);
-        when(other.getItem()).thenReturn(otherItemComponent);
-        when(other.getItem().getNameList()).thenReturn(Set.of("test"));
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("g", "sp", "sp"),
-            output);
-
-        verify(itemRepository).findByLocationHeld(eq(ch));
-        verify(itemRepository, never()).save(eq(item));
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You don't have anything"));
-    }
-
-    @Test
-    void testGiveNoTarget() {
-        Long chId = random.nextLong();
-
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("spoon"));
-        when(other.getLocation()).thenReturn(otherLocationComponent);
-        when(other.getItem()).thenReturn(otherItemComponent);
-        when(other.getItem().getNameList()).thenReturn(Set.of("test"));
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other, item));
-
-        Output output = new Output();
-        GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("g", "sp", "sp"),
-            output);
-
-        verify(itemRepository).findByLocationHeld(eq(ch));
-        verify(characterRepository).findByLocationRoom(eq(room));
-        verify(itemRepository, never()).save(eq(item));
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You don't see anyone"));
     }
 
     @Test
@@ -229,13 +117,15 @@ public class GiveCommandTest {
         when(other.getItem()).thenReturn(otherItemComponent);
         when(other.getItem().getNameList()).thenReturn(Set.of("test"));
         when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other, item));
+        when(itemBinding.asItem()).thenReturn(item);
+        when(targetBinding.asCharacter()).thenReturn(target);
 
         Output output = new Output();
         GiveCommand uut = new GiveCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("g", "sp", "sp"),
+            List.of(commandBinding, itemBinding, targetBinding),
             output);
 
         verify(itemRepository).findByLocationHeld(eq(ch));

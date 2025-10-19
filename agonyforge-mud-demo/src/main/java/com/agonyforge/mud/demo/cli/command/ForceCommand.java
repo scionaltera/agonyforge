@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.TokenType;
+import com.agonyforge.mud.demo.model.impl.CommandReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ public class ForceCommand extends AbstractCommand {
     @Override
     public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter target = bindings.get(1).asCharacter();
-        Command command = bindings.get(2).asCommand();
+        CommandReference command = bindings.get(2).asCommandReference();
         String args = bindings.get(3).asString();
 
-        if (command instanceof ForceCommand) {
+        if ("forceCommand".equals(command.getBeanName())) {
             output.append("[default]You cannot force someone to force others!");
             return question;
         }
@@ -57,7 +58,7 @@ public class ForceCommand extends AbstractCommand {
                 command, args));
 
         // Log the forced command usage
-        LOGGER.info("{} forced {} to run: {}", target.getName(), target.getName(), command);
+        LOGGER.info("{} forced {} to '{}'", target.getName(), target.getName(), command);
 
         // Execute the forced command as the target
         getCommService().executeCommandAs(webSocketContext, target, command + " " + args);
