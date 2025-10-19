@@ -26,7 +26,7 @@ public class SpawnCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudCharacterTemplate npcTemplate = bindings.get(1).asCharacterTemplate();
         MudCharacter npc = npcTemplate.buildInstance();

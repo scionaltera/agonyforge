@@ -30,7 +30,7 @@ public class TransferCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudCharacter target = bindings.get(1).asCharacter();
 

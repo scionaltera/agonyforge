@@ -24,7 +24,7 @@ public class GossipCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question,
+    public Question execute(Question question,
                             WebSocketContext webSocketContext,
                             List<Binding> bindings,
                             Output output) {

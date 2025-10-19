@@ -8,7 +8,7 @@ import com.agonyforge.mud.demo.cli.Binding;
 import java.util.List;
 
 public interface Command {
-    Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output);
+    Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output);
 
     static String stripColors(String input) {
         boolean inColor = false;

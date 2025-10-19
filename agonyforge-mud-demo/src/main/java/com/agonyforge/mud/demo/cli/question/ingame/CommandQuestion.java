@@ -109,7 +109,7 @@ public class CommandQuestion extends BaseQuestion {
 
                         if (!bindings.isEmpty()) {
                             try {
-                                next = command.executeBinding(this, webSocketContext, bindings, output);
+                                next = command.execute(this, webSocketContext, bindings, output);
                                 return new Response(next, output);
                             } catch (Exception e) {
                                 LOGGER.error("Command failed: {}", e.getMessage(), e);

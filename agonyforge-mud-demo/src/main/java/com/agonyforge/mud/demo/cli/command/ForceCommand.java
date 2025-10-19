@@ -32,7 +32,7 @@ public class ForceCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter target = bindings.get(1).asCharacter();
         Command command = bindings.get(2).asCommand();
         String args = bindings.get(3).asString();

@@ -24,7 +24,7 @@ public class SayCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         String message = bindings.get(1).asString();
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 

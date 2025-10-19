@@ -35,7 +35,7 @@ public class CommandEditorCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         if (bindings.size() == 1) {
             output.append("[white]%-4s [white]%-12s [white]%-20s [white]%s", "Pri", "Command", "Bean Name", "Description");
 

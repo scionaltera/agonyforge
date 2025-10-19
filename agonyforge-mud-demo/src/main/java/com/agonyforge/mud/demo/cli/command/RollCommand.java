@@ -40,7 +40,7 @@ public class RollCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Stat stat = bindings.get(1).asStat();
         Effort effort = bindings.get(2).asEffort();

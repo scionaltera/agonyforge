@@ -28,7 +28,7 @@ public class ConfigCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
 
         if (bindings.size() == 1) {

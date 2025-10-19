@@ -29,7 +29,7 @@ public class QuitCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         String now = bindings.get(1).asString();
 
         if (!now.equalsIgnoreCase("now")) {

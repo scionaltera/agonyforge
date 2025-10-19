@@ -24,7 +24,7 @@ public class WhoCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         List<MudCharacter> characters = getRepositoryBundle().getCharacterRepository().findAll()
             .stream()
             .filter(ch -> ch.getPlayer() != null)

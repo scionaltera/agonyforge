@@ -25,7 +25,7 @@ public class TitleCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         String title = bindings.get(1).asString();
         String titleColorless = Command.stripColors(title);
 

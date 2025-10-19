@@ -25,7 +25,7 @@ public class TimeCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudProperty mudHour = getRepositoryBundle()
             .getPropertyRepository()
             .findById(PROPERTY_HOUR)

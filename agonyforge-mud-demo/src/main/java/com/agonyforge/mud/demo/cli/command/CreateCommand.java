@@ -29,7 +29,7 @@ public class CreateCommand extends AbstractCommand {
     }
 
     @Override
-    public Question executeBinding(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudItemTemplate itemProto = bindings.get(1).asItemTemplate();
 
