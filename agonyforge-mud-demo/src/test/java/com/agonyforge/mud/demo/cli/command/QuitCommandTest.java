@@ -77,11 +77,11 @@ public class QuitCommandTest {
 
     @Test
     void testQuitWrongArgs() {
+        when(nowBinding.asString()).thenReturn("later");
+
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, nowBinding), output);
-
-        when(nowBinding.asString()).thenReturn("later");
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -92,11 +92,11 @@ public class QuitCommandTest {
 
     @Test
     void testQuitNotFullyTyped() {
+        when(nowBinding.asString()).thenReturn("n");
+
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, nowBinding), output);
-
-        when(nowBinding.asString()).thenReturn("n");
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));

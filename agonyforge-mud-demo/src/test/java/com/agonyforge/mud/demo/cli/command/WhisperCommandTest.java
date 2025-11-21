@@ -68,9 +68,6 @@ public class WhisperCommandTest {
     private MudCharacter target;
 
     @Mock
-    private MudCharacter other;
-
-    @Mock
     private CharacterComponent characterComponent, targetCharacterComponent;
 
     @Mock
@@ -159,29 +156,5 @@ public class WhisperCommandTest {
         assertTrue(toOther.getOutput()
             .stream()
             .anyMatch(line -> line.equals("[red]Scion whispers something to Target.")));
-    }
-
-    @Test
-    void testExecuteTargetNotFound() {
-        WhisperCommand uut = new WhisperCommand(repositoryBundle, commService, applicationContext);
-        List<String> tokens = SyntaxAwareTokenizer.tokenize("whisper t foo", uut.getSyntaxes().get(0));
-        Output output = new Output();
-        Long chId = random.nextLong();
-
-        when(messageBinding.asString()).thenReturn(tokens.get(2));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-
-        Question response = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, messageBinding), output);
-
-        assertEquals(question, response);
-        assertEquals(1, output.getOutput().size());
-        assertEquals("[default]There isn't anyone by that name.", output.getOutput().get(0));
-
-        verify(commService, never()).sendTo(any(MudCharacter.class), any(Output.class));
     }
 }

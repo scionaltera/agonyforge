@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.cli.Response;
 import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.ObjectLookupService;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.command.AbstractCommand;
@@ -78,6 +79,9 @@ public class CommandQuestionTest {
     @Mock
     private Question question;
 
+    @Mock
+    private Binding commandBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -127,8 +131,8 @@ public class CommandQuestionTest {
         when(characterRepository.findById(any())).thenReturn(Optional.of(ch));
         when(commandRepository.findFirstByNameStartingWith(eq("TEST"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
+        when(objectLookupService.bind(eq(ch), any(CommandReference.class), anyList(), anyList())).thenReturn(List.of(commandBinding));
         when(command.getSyntaxes()).thenReturn(List.of(List.of()));
-//        when(command.executeBinding(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenThrow(new UnsupportedOperationException());
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository, objectLookupService);
@@ -240,8 +244,8 @@ public class CommandQuestionTest {
     void testAnswerQuotedTokens() {
         CommandReference commandReference = mock(CommandReference.class);
 
+        when(objectLookupService.bind(eq(ch), any(CommandReference.class), anyList(), anyList())).thenReturn(List.of(commandBinding));
         when(commandReference.getBeanName()).thenReturn("testCommand");
-
         when(role.getCommands()).thenReturn(Set.of(commandReference));
         when(ch.getPlayer()).thenReturn(playerComponent);
         when(ch.getPlayer().getRoles()).thenReturn(Set.of(role));
@@ -249,7 +253,6 @@ public class CommandQuestionTest {
         when(commandRepository.findFirstByNameStartingWith(eq("QUOTED STRING"), eq(Sort.by(Sort.Order.asc("priority"))))).thenReturn(Optional.of(commandReference));
         when(applicationContext.getBean(eq("testCommand"), eq(AbstractCommand.class))).thenReturn(command);
         when(command.getSyntaxes()).thenReturn(List.of(List.of()));
-//        when(command.executeBinding(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenThrow(new UnsupportedOperationException());
         when(command.execute(any(Question.class), any(WebSocketContext.class), anyList(), any(Output.class))).thenReturn(question);
 
         CommandQuestion uut = new CommandQuestion(applicationContext, repositoryBundle, commandRepository, objectLookupService);

@@ -49,11 +49,11 @@ public class RoomEditorCommand extends AbstractCommand {
             room = bindings.get(1).asRoom();
         } else if (NUMBER == bindings.get(1).getType()) {
             try {
-                Long roomId = Long.parseLong(bindings.get(1).asString());
+                Long roomId = bindings.get(1).asNumber();
                 Optional<MudRoom> roomOptional = getRepositoryBundle().getRoomRepository().findById(roomId);
 
                 if (roomOptional.isEmpty()) {
-                    String roomIdString = bindings.get(1).asString();
+                    String roomIdString = roomId.toString();
                     Long zoneId = Long.parseLong(roomIdString.substring(0, roomIdString.length() - 2));
 
                     LOGGER.info("Creating room {} in zone {}", roomId, zoneId);

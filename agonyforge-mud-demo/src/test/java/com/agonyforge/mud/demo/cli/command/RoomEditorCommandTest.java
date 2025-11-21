@@ -5,6 +5,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -118,15 +119,14 @@ public class RoomEditorCommandTest {
 
         attributes.put(MUD_CHARACTER, chId);
 
+        when(roomBinding.getType()).thenReturn(TokenType.ROOM_ID);
         when(roomBinding.asRoom()).thenReturn(room);
-        when(numberBinding.asNumber()).thenReturn(roomId);
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(wsContext.getAttributes()).thenReturn(attributes);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(roomRepository.findById(eq(roomId))).thenReturn(Optional.of(room));
         when(room.getId()).thenReturn(roomId);
 
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
@@ -139,13 +139,14 @@ public class RoomEditorCommandTest {
     }
 
     @Test
-    void testExecuteNewRoom() {
+    void testExecuteRoomId() {
         Long chId = random.nextLong();
         long roomId = RAND.nextLong(100, 200);
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(MUD_CHARACTER, chId);
 
+        when(numberBinding.getType()).thenReturn(TokenType.NUMBER);
         when(numberBinding.asNumber()).thenReturn(roomId);
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));

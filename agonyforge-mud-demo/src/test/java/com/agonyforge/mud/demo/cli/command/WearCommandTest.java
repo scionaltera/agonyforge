@@ -105,14 +105,11 @@ public class WearCommandTest {
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
-        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(target));
-        when(target.getLocation()).thenReturn(targetLocationComponent);
-        when(target.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(target.getItem()).thenReturn(targetItemComponent);
-        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
+        when(itemBinding.asItem()).thenReturn(target);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -124,32 +121,6 @@ public class WearCommandTest {
 
         assertEquals(question, result);
         assertTrue(output.getOutput().get(0).contains("You can't wear that"));
-    }
-
-    @Test
-    void testWearTargetAlreadyWorn() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-        when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(target));
-        when(target.getLocation()).thenReturn(targetLocationComponent);
-        when(target.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
-
-        Output output = new Output();
-        WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of(commandBinding, itemBinding),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You aren't carrying anything like that."));
     }
 
     @Test
@@ -170,10 +141,11 @@ public class WearCommandTest {
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
 
         when(target.getItem()).thenReturn(targetItemComponent);
-        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
+
+        when(itemBinding.asItem()).thenReturn(target);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -203,11 +175,11 @@ public class WearCommandTest {
         when(target.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(target.getItem()).thenReturn(targetItemComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
-        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
+        when(itemBinding.asItem()).thenReturn(target);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -252,11 +224,12 @@ public class WearCommandTest {
         when(item.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_OFF));
 
         when(target.getItem()).thenReturn(targetItemComponent);
-        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
+
+        when(itemBinding.asItem()).thenReturn(target);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);
@@ -301,8 +274,9 @@ public class WearCommandTest {
         when(target.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(target.getItem()).thenReturn(targetItemComponent);
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
-        when(target.getItem().getNameList()).thenReturn(Set.of("hat"));
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
+
+        when(itemBinding.asItem()).thenReturn(target);
 
         Output output = new Output();
         WearCommand uut = new WearCommand(repositoryBundle, commService, applicationContext);

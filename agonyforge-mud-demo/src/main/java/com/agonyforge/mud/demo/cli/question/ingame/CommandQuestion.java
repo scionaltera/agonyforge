@@ -78,7 +78,7 @@ public class CommandQuestion extends BaseQuestion {
             return new Response(this, output);
         }
 
-        String cmdName = Tokenizer.tokenize(input.getInput()).get(0);
+        String cmdName = Tokenizer.tokenize(input.getInput()).get(0).toUpperCase(Locale.ROOT);
         Optional<CommandReference> refOptional = commandRepository.findFirstByNameStartingWith(cmdName.toUpperCase(Locale.ROOT), Sort.by(Sort.Order.asc("priority")));
 
         if (refOptional.isEmpty()) {
