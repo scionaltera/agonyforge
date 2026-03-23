@@ -71,13 +71,10 @@ public class GiveCommandTest {
     private MudItem item;
 
     @Mock
-    private MudItem other;
+    private ItemComponent itemComponent;
 
     @Mock
-    private ItemComponent itemComponent, otherItemComponent;
-
-    @Mock
-    private LocationComponent itemLocationComponent, otherLocationComponent, chLocationComponent;
+    private LocationComponent itemLocationComponent, chLocationComponent;
 
     @Mock
     private Binding commandBinding, itemBinding, targetBinding;
@@ -104,19 +101,12 @@ public class GiveCommandTest {
         when(target.getCharacter()).thenReturn(targetCharacterComponent);
         when(targetCharacterComponent.getName()).thenReturn("Spook");
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(target, ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
         ));
         when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("spoon"));
         when(item.getItem().getShortDescription()).thenReturn("a spoon");
-        when(other.getLocation()).thenReturn(otherLocationComponent);
-        when(other.getItem()).thenReturn(otherItemComponent);
-        when(other.getItem().getNameList()).thenReturn(Set.of("test"));
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other, item));
         when(itemBinding.asItem()).thenReturn(item);
         when(targetBinding.asCharacter()).thenReturn(target);
 
@@ -128,8 +118,6 @@ public class GiveCommandTest {
             List.of(commandBinding, itemBinding, targetBinding),
             output);
 
-        verify(itemRepository).findByLocationHeld(eq(ch));
-        verify(characterRepository).findByLocationRoom(eq(room));
         verify(itemLocationComponent).setHeld(eq(target));
         verify(itemLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemLocationComponent).setRoom(eq(null));

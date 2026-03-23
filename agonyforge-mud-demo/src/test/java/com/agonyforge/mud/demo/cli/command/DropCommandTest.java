@@ -69,10 +69,10 @@ public class DropCommandTest {
     private MudItem other;
 
     @Mock
-    private ItemComponent itemComponent, otherItemComponent;
+    private ItemComponent itemComponent;
 
     @Mock
-    private LocationComponent locationComponent, otherLocationComponent, chLocationComponent;
+    private LocationComponent locationComponent, chLocationComponent;
 
     @Mock
     private MudRoom room;
@@ -105,14 +105,8 @@ public class DropCommandTest {
         ));
         when(room.getId()).thenReturn(100L);
         when(item.getLocation()).thenReturn(locationComponent);
-        when(item.getLocation().getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("test"));
         when(item.getItem().getShortDescription()).thenReturn(itemName);
-        when(other.getLocation()).thenReturn(otherLocationComponent);
-        when(other.getItem()).thenReturn(otherItemComponent);
-        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(other, item));
 
         Output output = new Output();
         DropCommand uut = new DropCommand(repositoryBundle, commService, applicationContext);
@@ -122,7 +116,6 @@ public class DropCommandTest {
             List.of(commandBinding, itemBinding),
             output);
 
-        verify(itemRepository).findByLocationHeld(eq(ch));
         verify(locationComponent).setHeld(eq(null));
         verify(locationComponent).setRoom(eq(room));
         verify(locationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));

@@ -6,6 +6,7 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -28,7 +29,6 @@ import java.util.Random;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -107,8 +107,10 @@ public class GotoCommandTest {
 
     @Test
     void testGotoPlayer() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
+        when(targetLocation.getRoom()).thenReturn(destination);
+        when(target.getLocation()).thenReturn(targetLocation);
         when(targetBinding.asCharacter()).thenReturn(target);
+        when(targetBinding.getType()).thenReturn(TokenType.CHARACTER_IN_WORLD);
 
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
@@ -121,6 +123,7 @@ public class GotoCommandTest {
     @Test
     void testGotoRoom() {
         when(roomBinding.asRoom()).thenReturn(destination);
+        when(roomBinding.getType()).thenReturn(TokenType.ROOM_ID);
 
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);

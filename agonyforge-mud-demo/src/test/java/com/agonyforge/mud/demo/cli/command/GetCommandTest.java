@@ -71,7 +71,7 @@ public class GetCommandTest {
     private MudItem other;
 
     @Mock
-    private ItemComponent itemComponent, otherItemComponent;
+    private ItemComponent itemComponent;
 
     @Mock
     private LocationComponent itemLocationComponent, chLocationComponent;
@@ -106,11 +106,7 @@ public class GetCommandTest {
         ));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("test"));
         when(item.getItem().getShortDescription()).thenReturn(itemName);
-        when(other.getItem()).thenReturn(otherItemComponent);
-        when(other.getItem().getNameList()).thenReturn(Set.of("sword"));
-        when(itemRepository.findByLocationRoom(eq(room))).thenReturn(List.of(other, item));
 
         Output output = new Output();
         GetCommand uut = new GetCommand(repositoryBundle, commService, applicationContext);
@@ -120,7 +116,6 @@ public class GetCommandTest {
             List.of(commandBinding, itemBinding),
             output);
 
-        verify(itemRepository).findByLocationRoom(eq(room));
         verify(itemLocationComponent).setHeld(eq(ch));
         verify(itemLocationComponent).setRoom(eq(null));
         verify(itemLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));

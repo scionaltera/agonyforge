@@ -93,7 +93,6 @@ public class CreateCommandTest {
     void testCreateItem() {
         when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
         when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
-        when(itemPrototypeRepository.findById(eq(200L))).thenReturn(Optional.of(itemTemplate));
         when(itemRepository.save(eq(item))).thenReturn(item);
         when(itemTemplate.buildInstance()).thenReturn(item);
         when(item.getItem()).thenReturn(itemComponent);
@@ -110,7 +109,6 @@ public class CreateCommandTest {
 
         assertEquals(question, response);
 
-        verify(itemPrototypeRepository).findById(eq(200L));
         verify(itemLocationComponent).setWorn(eq(EnumSet.noneOf(WearSlot.class)));
         verify(itemLocationComponent).setHeld(eq(ch));
         verify(itemLocationComponent).setRoom(eq(null));

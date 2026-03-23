@@ -26,7 +26,7 @@ public class BindingTest {
 
     @Test
     public void testAsCommandReference() {
-        Command mockCommand = mock(Command.class);
+        CommandReference mockCommand = mock(CommandReference.class);
         Binding binding = new Binding(TokenType.COMMAND, "mock", mockCommand);
         CommandReference result = binding.asCommandReference();
         assertNotNull(result);

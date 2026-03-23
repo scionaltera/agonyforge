@@ -108,7 +108,7 @@ public class CommandEditorCommandTest {
     void testCreate() {
         when(subCommandBinding.asString()).thenReturn("create");
         when(commandNameBinding.asString()).thenReturn("TEST");
-        when(priorityBinding.asString()).thenReturn("50");
+        when(priorityBinding.asNumber()).thenReturn(50L);
         when(beanNameBinding.asString()).thenReturn("testCommand");
         when(descriptionBinding.asString()).thenReturn("Tests stuff");
 
@@ -172,7 +172,7 @@ public class CommandEditorCommandTest {
     @Test
     void testDeleteMissingCommand() {
         when(subCommandBinding.asString()).thenReturn("delete");
-        when(commandNameBinding.asString()).thenReturn("WRONG");
+        when(commandBinding.asCommandReference()).thenReturn(null);
 
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
