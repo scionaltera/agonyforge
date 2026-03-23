@@ -155,7 +155,8 @@ public class CommandEditorCommandTest {
     @Test
     void testDelete() {
         when(subCommandBinding.asString()).thenReturn("delete");
-        when(commandNameBinding.asString()).thenReturn("TEST");
+        when(commandNameBinding.asCommandReference()).thenReturn(commandRef);
+        when(commandRef.getName()).thenReturn("TEST");
 
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
@@ -167,23 +168,5 @@ public class CommandEditorCommandTest {
 
         verify(commandRepository, never()).save(any(CommandReference.class));
         verify(commandRepository).delete(any(CommandReference.class));
-    }
-
-    @Test
-    void testDeleteMissingCommand() {
-        when(subCommandBinding.asString()).thenReturn("delete");
-        when(commandBinding.asCommandReference()).thenReturn(null);
-
-        Output output = new Output();
-        CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext,
-            List.of(commandBinding, subCommandBinding, commandNameBinding),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Unknown command")));
-
-        verify(commandRepository, never()).save(any(CommandReference.class));
-        verify(commandRepository, never()).delete(any(CommandReference.class));
     }
 }

@@ -47,7 +47,7 @@ public class ForceCommand extends AbstractCommand {
         output.append(
             "[yellow]You FORCE %s to '%s %s[yellow]'!",
             target.getCharacter().getName(),
-            command, args);
+            command.getName(), args);
 
         // Notify target
         getCommService().sendTo(
@@ -55,13 +55,13 @@ public class ForceCommand extends AbstractCommand {
             new Output(
                 "[red]%s FORCES you to '%s %s[red]'.",
                 target.getCharacter().getName(),
-                command, args));
+                command.getName(), args));
 
         // Log the forced command usage
-        LOGGER.info("{} forced {} to '{}'", target.getName(), target.getName(), command);
+        LOGGER.info("{} forced {} to '{} {}'", target.getName(), target.getName(), command.getName(), args);
 
         // Execute the forced command as the target
-        getCommService().executeCommandAs(webSocketContext, target, command + " " + args);
+        getCommService().executeCommandAs(webSocketContext, target, command.getName() + " " + args);
 
         return question;
     }

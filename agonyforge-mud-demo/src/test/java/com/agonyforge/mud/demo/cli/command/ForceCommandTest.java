@@ -1,9 +1,6 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -16,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -24,11 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import com.agonyforge.mud.core.cli.Question;
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.service.CommService;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,16 +43,10 @@ class ForceCommandTest {
     private Question question;
 
     @Mock
-    private MudCharacter executor, target;
+    private MudCharacter target;
 
     @Mock
-    private CharacterComponent executorComponent, targetComponent;
-
-    @Mock
-    private LocationComponent locationComponent;
-
-    @Mock
-    private MudRoom room;
+    private CharacterComponent targetComponent;
 
     @Mock
     private CommandReference sayRef, forceRef;
@@ -67,7 +55,6 @@ class ForceCommandTest {
     private Binding commandBinding, targetBinding, forcedCommandBinding, argsBinding;
 
     private ForceCommand uut;
-    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -80,30 +67,11 @@ class ForceCommandTest {
     @Test
     void testForceSuccess() {
         // --- arrange ---
-        MudCharacterRepository repo = mock(MudCharacterRepository.class);
-        when(repositoryBundle.getCharacterRepository()).thenReturn(repo);
         when(forcedCommandBinding.asCommandReference()).thenReturn(sayRef);
-
-        // executor in room
-        long execId = random.nextLong();
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, execId));
-        when(repo.findById(execId)).thenReturn(Optional.of(executor));
-        when(executor.getLocation()).thenReturn(locationComponent);
-        when(locationComponent.getRoom()).thenReturn(room);
-
-        // room contains executor + target
-        when(repo.findByLocationRoom(room)).thenReturn(List.of(executor, target));
-
-        // names
-        when(executor.getCharacter()).thenReturn(executorComponent);
-        when(executorComponent.getName()).thenReturn("Executor");
+        when(sayRef.getBeanName()).thenReturn("sayCommand");
+        when(sayRef.getName()).thenReturn("SAY");
         when(target.getCharacter()).thenReturn(targetComponent);
         when(targetComponent.getName()).thenReturn("Bob");
-        // when(target.getLocation()).thenReturn(locationComponent);
-
-        // SAY command bean exists
-        // when(applicationContext.containsBean("sayCommand")).thenReturn(true);
-        // when(applicationContext.getBean("sayCommand")).thenReturn(dummyCommand);
 
         // --- act ---
         Output out = new Output();
@@ -113,15 +81,16 @@ class ForceCommandTest {
         // --- assert ---
         assertSame(question, res);
         assertEquals(
-                "[yellow]You forced Bob to 'say Hello[yellow]'!",
+                "[yellow]You FORCE Bob to 'SAY Hello[yellow]'!",
                 out.toString().trim());
         verify(commService).sendTo(eq(target), any(Output.class));
-        verify(commService).executeCommandAs(webSocketContext, target, "say Hello");
+        verify(commService).executeCommandAs(webSocketContext, target, "SAY Hello");
     }
 
     @Test
     void testForceCommandWithNestedForce() {
         when(forcedCommandBinding.asCommandReference()).thenReturn(forceRef);
+        when(forceRef.getBeanName()).thenReturn("forceCommand");
 
         Output output = new Output();
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, forcedCommandBinding, argsBinding), output);
