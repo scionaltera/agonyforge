@@ -82,14 +82,13 @@ public class GotoCommandTest {
     void setUp() {
         Long chId = RANDOM.nextLong();
         Long targetId = RANDOM.nextLong();
-        Long destinationId = 3000L;
 
         lenient().when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(mudItemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(mudRoomRepository);
 
-        lenient().when(mudRoomRepository.findById(destinationId)).thenReturn(Optional.of(destination));
+        lenient().when(mudRoomRepository.findById(3000L)).thenReturn(Optional.of(destination));
 
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(mudCharacterRepository);
         lenient().when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -117,6 +116,7 @@ public class GotoCommandTest {
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding), output);
 
         assertEquals(question, result);
+        verify(commService, times(2)).sendToRoom(anyLong(), any(Output.class), eq(ch));
         verify(chLocation).setRoom(eq(destination));
     }
 
@@ -130,6 +130,7 @@ public class GotoCommandTest {
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, roomBinding), output);
 
         assertEquals(question, result);
+        verify(commService, times(2)).sendToRoom(anyLong(), any(Output.class), eq(ch));
         verify(chLocation).setRoom(eq(destination));
     }
 }

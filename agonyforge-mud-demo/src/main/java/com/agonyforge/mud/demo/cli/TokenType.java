@@ -1,6 +1,7 @@
 package com.agonyforge.mud.demo.cli;
 
 public enum TokenType {
+    INVALID("invalid token", false, false), // used for unit tests
     WORD("a word", false, false),
     QUOTED_WORDS("multiple words", true, false),
     NUMBER("a number", false, true),

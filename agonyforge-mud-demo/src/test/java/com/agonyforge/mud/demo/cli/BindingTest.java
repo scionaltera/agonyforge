@@ -1,6 +1,5 @@
 package com.agonyforge.mud.demo.cli;
 
-import com.agonyforge.mud.demo.cli.command.Command;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.junit.jupiter.api.Test;

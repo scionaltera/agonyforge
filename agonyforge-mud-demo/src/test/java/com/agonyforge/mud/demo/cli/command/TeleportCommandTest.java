@@ -76,11 +76,13 @@ public class TeleportCommandTest {
     @Mock
     private Binding commandBinding, targetBinding, roomBinding;
 
+    private final Long originId = 101L;
+    private final Long destinationId = 3000L;
+
     @BeforeEach
     void setUp() {
         Long chId = RANDOM.nextLong();
         Long targetId = RANDOM.nextLong();
-        Long destinationId = 3000L;
 
         lenient().when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
@@ -88,6 +90,7 @@ public class TeleportCommandTest {
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(mudRoomRepository);
 
         lenient().when(mudRoomRepository.findById(destinationId)).thenReturn(Optional.of(destination));
+        lenient().when(room.getId()).thenReturn(originId, destinationId);
 
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(mudCharacterRepository);
         lenient().when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -118,6 +121,9 @@ public class TeleportCommandTest {
         Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding, roomBinding), output);
 
         assertEquals(question, result);
+        verify(commService).sendToRoom(eq(originId), any(Output.class), eq(ch), eq(target));
         verify(targetLocation).setRoom(eq(destination));
+        verify(commService).sendToRoom(eq(destinationId), any(Output.class), eq(ch), eq(target));
+        verify(commService).sendTo(eq(target), any(Output.class));
     }
 }

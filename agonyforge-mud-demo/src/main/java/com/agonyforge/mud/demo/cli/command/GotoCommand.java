@@ -9,6 +9,8 @@ import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import static com.agonyforge.mud.demo.cli.TokenType.ROOM_ID;
 
 @Component
 public class GotoCommand extends AbstractCommand {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GotoCommand.class);
+
     private final SessionAttributeService sessionAttributeService;
 
     @Autowired
@@ -35,16 +39,13 @@ public class GotoCommand extends AbstractCommand {
     public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudCharacter destinationCharacter;
-        MudRoom destinationRoom;
+        MudRoom destinationRoom = null;
 
         if (CHARACTER_IN_WORLD == bindings.get(1).getType()) {
             destinationCharacter = bindings.get(1).asCharacter();
             destinationRoom = destinationCharacter.getLocation().getRoom();
         } else if (ROOM_ID == bindings.get(1).getType()) {
             destinationRoom = bindings.get(1).asRoom();
-        } else {
-            output.append("Can't find anything like that to go to.");
-            return question;
         }
 
         getCommService().sendToRoom(ch.getLocation().getRoom().getId(),
