@@ -120,6 +120,7 @@ public class CommandQuestion extends BaseQuestion {
                         }
                     } catch (IllegalArgumentException e) {
                         LOGGER.trace("Illegal syntax: {}", e.getMessage());
+                        output.append(e.getMessage());
                     }
                 }
 
@@ -131,8 +132,9 @@ public class CommandQuestion extends BaseQuestion {
                     command.getSyntaxes().forEach(stx -> output.append("  [yellow]%s %s",
                         ref.getName().toUpperCase(Locale.ROOT),
                         stx.stream().map(type -> HtmlUtils.htmlEscape(type.toString())).collect(Collectors.joining(" "))));
-                    return new Response(this, output);
                 }
+
+                return new Response(this, output);
             }
 
             LOGGER.warn("Request by {} ({}) to use command {} denied due to missing role", ch.getPlayer().getUsername(), ch.getCharacter().getName(), ref.getName());
