@@ -1,8 +1,7 @@
 plugins {
-    id 'info.solidsoft.pitest' version '1.15.0'
+    id 'info.solidsoft.pitest' version '1.19.0-rc.2'
     id 'org.springframework.boot' version '3.5.7'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'com.palantir.docker' version '0.36.0'
     id 'java'
 }
 
@@ -90,12 +89,21 @@ pitest {
     jvmArgs.add("-XX:+EnableDynamicAgentLoading")
 }
 
-docker {
-    name "scionaltera/agonyforge-mud-demo"
-    dockerfile file('src/main/docker/Dockerfile.local')
-    files bootJar.outputs
+task buildDockerImage(type: Exec) {
+    group = 'build'
+    description = 'Builds the Docker image'
+
+    commandLine 'docker', 'buildx', 'build',
+        '--platform', 'linux/amd64,linux/arm64',
+        '--tag', 'scionaltera/agonyforge-mud-demo:latest',
+        '--output', 'type=docker',
+        '--file', 'src/main/docker/Dockerfile.local',
+        '--build-arg', 'JAR_FILE=build/libs/agonyforge-mud-demo-0.0.12-SNAPSHOT.jar',
+        '.'
+
+    workingDir = layout.getProjectDirectory()
 }
 
-build.dependsOn tasks.docker
+build.dependsOn tasks.buildDockerImage
 tasks.pitest.mustRunAfter test
 check.dependsOn tasks.pitest
