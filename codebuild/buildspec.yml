@@ -22,6 +22,7 @@ phases:
       - echo "Project version is ${PROJECT_VERSION}"
   build:
     commands:
+      - echo "Kicking off build"
       - ./gradlew clean build --info --stacktrace
   post_build:
     commands:

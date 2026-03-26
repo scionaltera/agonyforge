@@ -4,7 +4,7 @@ LABEL maintainer="scion@agonyforge.com"
 WORKDIR /opt/build
 COPY . /opt/build
 RUN cd /opt/build \
-    && ./gradlew --console=plain clean build -x docker --info --stacktrace
+    && ./gradlew --console=plain clean build -x buildDockerImage --info --stacktrace
 
 FROM public.ecr.aws/docker/library/amazoncorretto:17-alpine-jdk
 LABEL maintainer="scion@agonyforge.com"
