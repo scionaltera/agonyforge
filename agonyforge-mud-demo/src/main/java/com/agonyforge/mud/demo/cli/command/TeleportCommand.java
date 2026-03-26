@@ -2,9 +2,9 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
@@ -14,8 +14,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+
+import static com.agonyforge.mud.demo.cli.TokenType.CHARACTER_IN_ROOM;
+import static com.agonyforge.mud.demo.cli.TokenType.ROOM_ID;
 
 @Component
 public class TeleportCommand extends AbstractCommand {
@@ -25,44 +26,15 @@ public class TeleportCommand extends AbstractCommand {
     public TeleportCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext, SessionAttributeService sessionAttributeService) {
         super(repositoryBundle, commService, applicationContext);
         this.sessionAttributeService = sessionAttributeService;
+
+        addSyntax(CHARACTER_IN_ROOM, ROOM_ID);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() == 1) {
-            output.append("[default]Whom do you wish to teleport?");
-            return question;
-        }
-
-        if (tokens.size() == 2) {
-            output.append("[default]Where would you like to send them?");
-            return question;
-        }
-
-        if (tokens.size() > 3) {
-            output.append("[default]TELEPORT &lt;victim&gt; &lt;destination&gt;");
-            return question;
-        }
-
-        Optional<MudCharacter> targetOptional = findWorldCharacter(ch, tokens.get(1));
-        MudRoom destination;
-
-        if (targetOptional.isEmpty() || targetOptional.get().getPlayer() == null) {
-            output.append("[red]No such player exists.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
-
-        try {
-            Long id = Long.parseLong(tokens.get(2));
-            destination = getRepositoryBundle().getRoomRepository().findById(id).orElseThrow();
-        } catch (NumberFormatException | NoSuchElementException e) {
-            output.append("[red]No such room exists.");
-            return question;
-        }
+        MudCharacter target = bindings.get(1).asCharacter();
+        MudRoom destination = bindings.get(2).asRoom();
 
         Output targetOutput = new Output();
 

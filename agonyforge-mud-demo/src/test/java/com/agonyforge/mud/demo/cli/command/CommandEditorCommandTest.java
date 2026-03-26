@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
@@ -11,19 +11,14 @@ import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,6 +53,9 @@ public class CommandEditorCommandTest {
     @Mock
     private Command command;
 
+    @Mock
+    private Binding commandBinding, subCommandBinding, commandNameBinding, priorityBinding, beanNameBinding, descriptionBinding;
+
     @Captor
     private ArgumentCaptor<CommandReference> commandRefCaptor;
 
@@ -80,7 +78,7 @@ public class CommandEditorCommandTest {
     void testNoArgs() {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("CEDIT"), new Input("cedit"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Pri")));
@@ -97,7 +95,7 @@ public class CommandEditorCommandTest {
     void testInvalidSubcommand() {
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("CEDIT", "TEST"), new Input("cedit test"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, subCommandBinding), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Invalid subcommand.")));
@@ -108,11 +106,16 @@ public class CommandEditorCommandTest {
 
     @Test
     void testCreate() {
+        when(subCommandBinding.asString()).thenReturn("create");
+        when(commandNameBinding.asString()).thenReturn("TEST");
+        when(priorityBinding.asNumber()).thenReturn(50L);
+        when(beanNameBinding.asString()).thenReturn("testCommand");
+        when(descriptionBinding.asString()).thenReturn("Tests stuff");
+
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "CREATE", "TEST", "50", "TESTCOMMAND", "TESTS", "STUFF"),
-            new Input("cedit create test 50 testCommand Tests stuff"),
+            List.of(commandBinding, subCommandBinding, commandNameBinding, priorityBinding, beanNameBinding, descriptionBinding),
             output);
 
         assertEquals(question, result);
@@ -129,53 +132,17 @@ public class CommandEditorCommandTest {
         assertEquals("Tests stuff", capturedCommand.getDescription());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "cedit create",
-        "cedit create test",
-        "cedit create test 50",
-        "cedit create test fifty",
-        "cedit create test 50 testCommand",
-        "cedit create test fifty testCommand"
-    })
-    void testCreateWrongArgs(String input) {
-        Output output = new Output();
-        CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext,
-            Arrays.stream(StringUtils.tokenizeToStringArray(input.toUpperCase(Locale.ROOT), " ", true, true)).toList(),
-            new Input(input),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("CEDIT CREATE")));
-
-        verify(commandRepository, never()).save(any(CommandReference.class));
-        verify(commandRepository, never()).delete(any(CommandReference.class));
-    }
-
-    @Test
-    void testCreateWrongPriority() {
-        Output output = new Output();
-        CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "CREATE", "TEST", "FIFTY", "TESTCOMMAND", "DESCRIPTION"),
-            new Input("cedit create test fifty testCommand description"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Priority must be a number")));
-
-        verify(commandRepository, never()).save(any(CommandReference.class));
-        verify(commandRepository, never()).delete(any(CommandReference.class));
-    }
-
     @Test
     void testCreateMissingBean() {
+        when(subCommandBinding.asString()).thenReturn("create");
+        when(commandNameBinding.asString()).thenReturn("TEST");
+        when(beanNameBinding.asString()).thenReturn("missingCommand");
+        when(descriptionBinding.asString()).thenReturn("Tests stuff");
+
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "CREATE", "TEST", "50", "MISSINGCOMMAND", "TESTS", "STUFF"),
-            new Input("cedit create test 50 missingCommand Tests stuff"),
+            List.of(commandBinding, subCommandBinding, commandNameBinding, priorityBinding, beanNameBinding, descriptionBinding),
             output);
 
         assertEquals(question, result);
@@ -187,52 +154,19 @@ public class CommandEditorCommandTest {
 
     @Test
     void testDelete() {
+        when(subCommandBinding.asString()).thenReturn("delete");
+        when(commandNameBinding.asCommandReference()).thenReturn(commandRef);
+        when(commandRef.getName()).thenReturn("TEST");
+
         Output output = new Output();
         CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
         Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "DELETE", "TEST"),
-            new Input("cedit delete test"),
+            List.of(commandBinding, subCommandBinding, commandNameBinding),
             output);
 
         assertEquals(question, result);
 
         verify(commandRepository, never()).save(any(CommandReference.class));
         verify(commandRepository).delete(any(CommandReference.class));
-    }
-
-    @Test
-    void testDeleteMissingCommand() {
-        Output output = new Output();
-        CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext,
-            List.of("CEDIT", "DELETE", "WRONG"),
-            new Input("cedit delete wrong"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Unknown command")));
-
-        verify(commandRepository, never()).save(any(CommandReference.class));
-        verify(commandRepository, never()).delete(any(CommandReference.class));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "cedit delete",
-        "cedit delete test foo"
-    })
-    void testDeleteWrongArgs(String input) {
-        Output output = new Output();
-        CommandEditorCommand uut = new CommandEditorCommand(repositoryBundle, commandRepository, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext,
-            Arrays.stream(StringUtils.tokenizeToStringArray(input.toUpperCase(Locale.ROOT), " ", true, true)).toList(),
-            new Input(input),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("CEDIT DELETE")));
-
-        verify(commandRepository, never()).save(any(CommandReference.class));
-        verify(commandRepository, never()).delete(any(CommandReference.class));
     }
 }

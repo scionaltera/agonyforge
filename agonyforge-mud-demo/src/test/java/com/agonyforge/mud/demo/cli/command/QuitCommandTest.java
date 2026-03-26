@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
@@ -63,6 +63,9 @@ public class QuitCommandTest {
     @Mock
     private CharacterComponent characterComponent;
 
+    @Mock
+    private Binding commandBinding, nowBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(applicationContext.getBean(eq("characterMenuQuestion"), eq(Question.class))).thenReturn(menuQuestion);
@@ -73,23 +76,12 @@ public class QuitCommandTest {
     }
 
     @Test
-    void testQuitNoArgs() {
-        Output output = new Output();
-        QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("QUIT"), new Input("quit"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
-
-        verify(characterRepository, never()).save(eq(ch));
-        verify(commService, never()).sendToAll(eq(webSocketContext), any(Output.class), eq(ch));
-    }
-
-    @Test
     void testQuitWrongArgs() {
+        when(nowBinding.asString()).thenReturn("later");
+
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("QUIT", "LATER"), new Input("quit later"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, nowBinding), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -100,22 +92,11 @@ public class QuitCommandTest {
 
     @Test
     void testQuitNotFullyTyped() {
+        when(nowBinding.asString()).thenReturn("n");
+
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("Q"), new Input("q"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
-
-        verify(characterRepository, never()).save(eq(ch));
-        verify(commService, never()).sendToAll(eq(webSocketContext), any(Output.class), eq(ch));
-    }
-
-    @Test
-    void testQuitNotFullyTypedWithArgs() {
-        Output output = new Output();
-        QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("Q", "NOW"), new Input("q now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, nowBinding), output);
 
         assertEquals(question, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("You must type 'quit now'.")));
@@ -128,6 +109,7 @@ public class QuitCommandTest {
     void testQuit() {
         Long chId = RAND.nextLong();
 
+        when(nowBinding.asString()).thenReturn("now");
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
             MUD_CHARACTER, chId
@@ -135,7 +117,7 @@ public class QuitCommandTest {
 
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, webSocketContext, List.of("QUIT", "NOW"), new Input("quit now"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, nowBinding), output);
 
         assertEquals(menuQuestion, result);
         assertTrue(output.getOutput().stream().anyMatch(s -> s.contains("Goodbye!")));

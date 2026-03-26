@@ -1,28 +1,38 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.agonyforge.mud.demo.cli.TokenType.WORD;
+
 @Component
 public class QuitCommand extends AbstractCommand {
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuitCommand.class);
+
     @Autowired
     public QuitCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(WORD);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        if (tokens.size() != 2 || !"QUIT".equals(tokens.get(0)) || !"NOW".equals(tokens.get(1))) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        String now = bindings.get(1).asString();
+
+        if (!now.equalsIgnoreCase("now")) {
             output.append("[red]You must type 'quit now'.");
             return question;
         }

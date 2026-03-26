@@ -1,15 +1,13 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.model.impl.CharacterComponent;
-import com.agonyforge.mud.demo.model.impl.LocationComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
-import com.agonyforge.mud.demo.model.impl.MudRoom;
+import com.agonyforge.mud.demo.model.constant.WearSlot;
+import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemRepository;
 import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
@@ -24,10 +22,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.*;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -56,22 +51,28 @@ public class AbstractCommandTest {
     private WebSocketContext webSocketContext;
 
     @Mock
-    private MudCharacter ch;
+    private MudCharacter ch, target;
 
     @Mock
-    private MudCharacter target;
+    private CharacterComponent targetCharacterComponent;
 
     @Mock
-    private CharacterComponent chCharacterComponent, targetCharacterComponent;
+    private MudItem sword, chair;
 
     @Mock
-    private LocationComponent chLocationComponent, targetLocationComponent;
+    private ItemComponent swordComponent, chairComponent;
+
+    @Mock
+    private LocationComponent chLocationComponent, targetLocationComponent, swordLocation;
 
     @Mock
     private MudRoom room;
 
     @Mock
     private Question question;
+
+    @Mock
+    private Binding commandBinding;
 
     private final Random random = new Random();
 
@@ -94,7 +95,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -103,8 +104,7 @@ public class AbstractCommandTest {
         assertThrows(CommandException.class, () -> uut.execute(
             question,
             webSocketContext,
-            List.of("TEST"),
-            new Input("test"),
+            List.of(commandBinding),
             output));
     }
 
@@ -122,7 +122,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -131,8 +131,7 @@ public class AbstractCommandTest {
         assertThrows(CommandException.class, () -> uut.execute(
             question,
             webSocketContext,
-            List.of("TEST"),
-            new Input("test"),
+            List.of(commandBinding),
             output));
     }
 
@@ -150,7 +149,7 @@ public class AbstractCommandTest {
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 getCurrentCharacter(webSocketContext, output);
                 return question;
             }
@@ -159,9 +158,71 @@ public class AbstractCommandTest {
         assertEquals(question, uut.execute(
             question,
             webSocketContext,
-            List.of("TEST"),
-            new Input("test"),
+            List.of(commandBinding),
             output));
+    }
+
+    @Test
+    void findInventoryItem() {
+        when(sword.getItem()).thenReturn(swordComponent);
+        when(sword.getLocation()).thenReturn(swordLocation);
+        when(swordLocation.getWorn()).thenReturn(EnumSet.noneOf(WearSlot.class));
+        when(swordComponent.getNameList()).thenReturn(Set.of("sword"));
+        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(sword));
+
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+                return question;
+            }
+        };
+
+        assertTrue(uut.findInventoryItem(ch, "sword").isPresent());
+        assertTrue(uut.findInventoryItem(ch, "sw").isPresent());
+    }
+
+    @Test
+    void findWornItem() {
+        when(sword.getItem()).thenReturn(swordComponent);
+        when(sword.getLocation()).thenReturn(swordLocation);
+        when(swordLocation.getWorn()).thenReturn(EnumSet.of(WearSlot.HELD_MAIN));
+        when(swordComponent.getNameList()).thenReturn(Set.of("sword"));
+        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(sword));
+
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+                return question;
+            }
+        };
+
+        assertTrue(uut.findWornItem(ch, "sword").isPresent());
+        assertTrue(uut.findWornItem(ch, "sw").isPresent());
+        assertFalse(uut.findWornItem(ch, "chair").isPresent());
+        assertFalse(uut.findWornItem(ch, "ch").isPresent());
+    }
+
+    @Test
+    void findRoomItem() {
+        when(ch.getLocation()).thenReturn(chLocationComponent);
+        when(ch.getLocation().getRoom()).thenReturn(room);
+        when(sword.getItem()).thenReturn(swordComponent);
+        when(swordComponent.getNameList()).thenReturn(Set.of("sword"));
+        when(chair.getItem()).thenReturn(chairComponent);
+        when(chairComponent.getNameList()).thenReturn(Set.of("chair"));
+        when(itemRepository.findByLocationRoom(eq(room))).thenReturn(List.of(sword, chair));
+
+        AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
+            @Override
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+                return question;
+            }
+        };
+
+        assertTrue(uut.findRoomItem(ch, "sword").isPresent());
+        assertTrue(uut.findRoomItem(ch, "sw").isPresent());
+        assertTrue(uut.findRoomItem(ch, "chair").isPresent());
+        assertTrue(uut.findRoomItem(ch, "ch").isPresent());
     }
 
     @Test
@@ -174,13 +235,14 @@ public class AbstractCommandTest {
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 return question;
             }
         };
 
         assertTrue(uut.findRoomCharacter(ch, "Scion").isEmpty()); // can't find yourself
-        assertTrue(uut.findRoomCharacter(ch, "Morgan").isPresent()); // case-insensitive match
+        assertTrue(uut.findRoomCharacter(ch, "Morgan").isPresent());
+        assertTrue(uut.findRoomCharacter(ch, "morg").isPresent());
     }
 
     @Test
@@ -192,12 +254,13 @@ public class AbstractCommandTest {
 
         AbstractCommand uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
             @Override
-            public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+            public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
                 return question;
             }
         };
 
         assertTrue(uut.findWorldCharacter(ch, "Scion").isEmpty()); // can't find yourself
-        assertFalse(uut.findWorldCharacter(ch, "Morgan").isEmpty());
+        assertTrue(uut.findWorldCharacter(ch, "Morgan").isPresent());
+        assertTrue(uut.findWorldCharacter(ch, "morg").isPresent());
     }
 }

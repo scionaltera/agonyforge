@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.CommandReference;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
@@ -12,12 +12,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
+
+import static com.agonyforge.mud.demo.cli.TokenType.*;
 
 @Component
 public class CommandEditorCommand extends AbstractCommand {
@@ -30,11 +28,15 @@ public class CommandEditorCommand extends AbstractCommand {
                                 ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
         this.commandRepository = commandRepository;
+
+        addSyntax();                                       // list all commands
+        addSyntax(WORD, COMMAND);                          // delete command
+        addSyntax(WORD, WORD, NUMBER, WORD, QUOTED_WORDS); // create command
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        if (tokens.size() <= 1) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        if (bindings.size() == 1) {
             output.append("[white]%-4s [white]%-12s [white]%-20s [white]%s", "Pri", "Command", "Bean Name", "Description");
 
             commandRepository.findAll().stream()
@@ -48,53 +50,35 @@ public class CommandEditorCommand extends AbstractCommand {
             return question;
         }
 
-        String subCommand = tokens.get(1);
+        String subCommand = bindings.get(1).asString();
 
-        if ("CREATE".equals(subCommand)) {
-            // CEDIT CREATE <name> <priority> <beanName> <description>
-            if (tokens.size() <= 5) {
-                output.append("[yellow]CEDIT CREATE &lt;name&gt; &lt;priority&gt; &lt;beanName&gt; &lt;description&gt;");
-            } else {
-                try {
-                    String[] rawTokens = StringUtils.tokenizeToStringArray(input.getInput(), " ", true, true);
-                    String name = tokens.get(2);
-                    int priority = Integer.parseInt(tokens.get(3));
-                    String beanName = rawTokens[4];
-                    String description = Command.stripFirstWords(input.getInput(), 5);
-                    CommandReference command = new CommandReference();
+        if ("CREATE".equalsIgnoreCase(subCommand)) {
+            String name = bindings.get(2).asString().toUpperCase(Locale.ROOT);
+            int priority = bindings.get(3).asNumber().intValue();
+            String beanName = bindings.get(4).asString();
+            String description = bindings.get(5).asString();
+            CommandReference command = new CommandReference();
 
-                    // throws exception if bean cannot be found
-                    getApplicationContext().getBean(beanName, Command.class);
+            try {
+                // throws exception if bean cannot be found
+                getApplicationContext().getBean(beanName, Command.class);
 
-                    command.setName(name);
-                    command.setPriority(priority);
-                    command.setBeanName(beanName);
-                    command.setDescription(description);
+                command.setName(name);
+                command.setPriority(priority);
+                command.setBeanName(beanName);
+                command.setDescription(description);
 
-                    commandRepository.save(command);
+                commandRepository.save(command);
 
-                    output.append("[green]Created %s command!", command.getName());
-                } catch (NumberFormatException e) {
-                    output.append("[red]Priority must be a number.");
-                } catch (BeansException e) {
-                    output.append("[red]No command bean could be found with that name.");
-                }
+                output.append("[green]Created %s command!", command.getName());
+            } catch (BeansException e) {
+                output.append("[red]No command bean could be found with that name.");
             }
-        } else if ("DELETE".equals(subCommand)) {
-            // CEDIT DELETE <name>
-            if (tokens.size() != 3) {
-                output.append("[yellow]CEDIT DELETE &lt;name&gt;");
-            } else {
-                String name = Command.stripFirstWords(input.getInput(), 2);
-                Optional<CommandReference> commandOptional = commandRepository.findByNameIgnoreCase(name);
+        } else if ("DELETE".equalsIgnoreCase(subCommand)) {
+            CommandReference command = bindings.get(2).asCommandReference();
 
-                if (commandOptional.isPresent()) {
-                    commandRepository.delete(commandOptional.get());
-                    output.append("[yellow]Deleted command: %s", commandOptional.get().getName());
-                } else {
-                    output.append("[red]Unknown command: %s", name);
-                }
-            }
+            commandRepository.delete(command);
+            output.append("[yellow]Deleted command: %s", command.getName());
         } else {
             output
                 .append("[yellow]Invalid subcommand.")

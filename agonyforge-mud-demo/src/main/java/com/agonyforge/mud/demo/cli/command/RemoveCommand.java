@@ -1,10 +1,11 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
@@ -15,32 +16,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class RemoveCommand extends AbstractCommand {
     @Autowired
     public RemoveCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.ITEM_WORN);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() == 1) {
-            output.append("[default]What would you like to remove?");
-            return question;
-        }
-
-        Optional<MudItem> targetOptional = findWornItem(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You aren't wearing anything like that.");
-            return question;
-        }
-
-        MudItem target = targetOptional.get();
+        MudItem target = bindings.get(1).asItem();
 
         if (target.getLocation().getWorn().isEmpty()) {
             output.append("[default]You aren't wearing %s[default].", target.getItem().getShortDescription());

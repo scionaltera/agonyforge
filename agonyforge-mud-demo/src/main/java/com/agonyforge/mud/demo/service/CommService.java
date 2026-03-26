@@ -1,7 +1,6 @@
 package com.agonyforge.mud.demo.service;
 
-import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.cli.Response;
+import com.agonyforge.mud.core.service.InputProcessingService;
 import com.agonyforge.mud.core.web.controller.WebSocketContextAware; // ← inject this!
 import com.agonyforge.mud.core.service.EchoService;
 import com.agonyforge.mud.core.service.SessionAttributeService;
@@ -22,8 +21,6 @@ import org.springframework.stereotype.Component;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_QUESTION;
 
 @Component
 public class CommService extends EchoService {

@@ -2,9 +2,9 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -63,9 +63,6 @@ public class LookCommandTest {
     private CharacterComponent targetCharacterComponent;
 
     @Mock
-    private MudItemTemplate itemProto;
-
-    @Mock
     private MudItem item;
 
     @Mock
@@ -82,6 +79,9 @@ public class LookCommandTest {
 
     @Mock
     private Question question;
+
+    @Mock
+    private Binding commandBinding;
 
     private final Random random = new Random();
 
@@ -109,8 +109,7 @@ public class LookCommandTest {
         try {
             Question result = uut.execute(question,
                 webSocketContext,
-                List.of("LOOK"),
-                new Input("look"),
+                List.of(commandBinding),
                 output);
 
             assertEquals(question, result);
@@ -127,7 +126,6 @@ public class LookCommandTest {
     void testExecute() {
         Long chId = random.nextLong();
         String wsSessionId = UUID.randomUUID().toString();
-        long roomId = 100L;
 
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -149,8 +147,7 @@ public class LookCommandTest {
         LookCommand uut = new LookCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
         Question result = uut.execute(question,
             webSocketContext,
-            List.of("LOOK"),
-            new Input("look"),
+            List.of(commandBinding),
             output);
 
         assertEquals(question, result);

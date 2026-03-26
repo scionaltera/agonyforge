@@ -3,9 +3,9 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
@@ -78,6 +78,9 @@ public class HitCommandTest {
     @Mock
     private MudRoom room;
 
+    @Mock
+    private Binding commandBinding, targetBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
@@ -89,47 +92,8 @@ public class HitCommandTest {
         lenient().when(target.getCharacter()).thenReturn(targetCharacter);
         lenient().when(targetCharacter.getName()).thenReturn("Frodo");
         lenient().when(targetCharacter.getHitPoints()).thenReturn(10);
-    }
 
-    @Test
-    void testHitNoArg() {
-        Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("HIT"),
-            new Input("hit"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("Who do you want to hit?"));
-
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testHitNoTarget() {
-        Long chId = RANDOM.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-
-        Output output = new Output();
-        HitCommand uut = new HitCommand(repositoryBundle, commService, diceService, fightRepository, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You don't see anyone like that here."));
-
-        verifyNoInteractions(commService);
+        when(targetBinding.asCharacter()).thenReturn(target);
     }
 
     @Test
@@ -142,7 +106,6 @@ public class HitCommandTest {
         ));
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 11));
 
         Output output = new Output();
@@ -150,8 +113,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -173,7 +135,6 @@ public class HitCommandTest {
             MUD_CHARACTER, chId
         ));
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
         when(target.getPlayer()).thenReturn(targetPlayer);
         when(targetPlayer.getAdminFlags()).thenReturn(EnumSet.of(AdminFlag.PEACEFUL));
 
@@ -182,8 +143,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -207,7 +167,6 @@ public class HitCommandTest {
         ));
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
 
@@ -218,8 +177,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -243,7 +201,6 @@ public class HitCommandTest {
         ));
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(6))).thenReturn(new DiceResult(6, 0, 4));
 
@@ -256,8 +213,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);
@@ -282,7 +238,6 @@ public class HitCommandTest {
         ));
         when(room.getId()).thenReturn(roomId);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(characterRepository.findByLocationRoom(eq(room))).thenReturn(List.of(ch, target));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 20));
         when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
         when(diceService.roll(eq(1), eq(12), eq(0))).thenReturn(new DiceResult(12, 1, 8));
@@ -294,8 +249,7 @@ public class HitCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("HIT", "FRODO"),
-            new Input("hit frodo"),
+            List.of(commandBinding, targetBinding),
             output);
 
         assertEquals(question, result);

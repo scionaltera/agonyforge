@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
@@ -75,6 +75,9 @@ public class RemoveCommandTest {
     @Mock
     private MudRoom room;
 
+    @Mock
+    private Binding commandBinding, itemBinding;
+
     private final Random random = new Random();
 
     @BeforeEach
@@ -82,54 +85,8 @@ public class RemoveCommandTest {
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-    }
 
-    @Test
-    void testRemoveNoArg() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-
-        Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("REMOVE"),
-            new Input("rem"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("What would you like to remove?"));
-    }
-
-    @Test
-    void testRemoveNoTarget() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(ch.getLocation()).thenReturn(chLocationComponent);
-        when(ch.getLocation().getRoom()).thenReturn(room);
-
-        Output output = new Output();
-        RemoveCommand uut = new RemoveCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(
-            question,
-            webSocketContext,
-            List.of("REMOVE", "HAT"),
-            new Input("rem hat"),
-            output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().get(0).contains("You aren't wearing anything like that"));
+        when(itemBinding.asItem()).thenReturn(target);
     }
 
     @Test
@@ -145,9 +102,7 @@ public class RemoveCommandTest {
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(target));
         when(target.getItem()).thenReturn(itemComponent);
-        when(target.getItem().getNameList()).thenReturn(Set.of("test", "hat"));
         when(target.getItem().getShortDescription()).thenReturn("a test hat");
         when(target.getLocation()).thenReturn(targetLocationComponent);
         when(target.getLocation().getWorn()).thenReturn(EnumSet.of(WearSlot.HEAD));
@@ -157,8 +112,7 @@ public class RemoveCommandTest {
         Question result = uut.execute(
             question,
             webSocketContext,
-            List.of("REMOVE", "HAT"),
-            new Input("rem hat"),
+            List.of(commandBinding, itemBinding),
             output);
 
         verify(targetLocationComponent).setHeld(eq(ch));

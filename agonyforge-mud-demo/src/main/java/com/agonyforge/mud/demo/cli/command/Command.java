@@ -1,36 +1,14 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.agonyforge.mud.demo.cli.Binding;
 
 import java.util.List;
 
 public interface Command {
-    Logger LOGGER = LoggerFactory.getLogger(Command.class);
-
-    Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output);
-
-    static String stripFirstWord(String input) {
-        int space = input.indexOf(' ');
-
-        if (space == -1) {
-            return "";
-        }
-
-        return input.substring(space + 1).stripLeading();
-    }
-
-    static String stripFirstWords(String input, int words) {
-        for (int i = 0; i < words; i++) {
-            input = stripFirstWord(input);
-        }
-
-        return input;
-    }
+    Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output);
 
     static String stripColors(String input) {
         boolean inColor = false;

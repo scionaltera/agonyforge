@@ -1,15 +1,18 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.constant.WearMode;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -21,28 +24,19 @@ import java.util.stream.Collectors;
 
 @Component
 public class WearCommand extends AbstractCommand {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WearCommand.class);
+
     @Autowired
     public WearCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.ITEM_HELD);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() == 1) {
-            output.append("[default]What would you like to wear?");
-            return question;
-        }
-
-        Optional<MudItem> targetOptional = findInventoryItem(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You aren't carrying anything like that.");
-            return question;
-        }
-
-        MudItem target = targetOptional.get();
+        MudItem target = bindings.get(1).asItem();
 
         if (target.getItem().getWearSlots().isEmpty()) {
             output.append("[default]You can't wear that.");

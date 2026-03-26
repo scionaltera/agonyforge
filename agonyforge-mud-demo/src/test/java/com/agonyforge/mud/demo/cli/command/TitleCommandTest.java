@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -59,6 +59,12 @@ public class TitleCommandTest {
     @Mock
     private LocationComponent locationComponent;
 
+    @Mock
+    private Binding commandBinding;
+
+    @Mock
+    private Binding titleBinding;
+
     @BeforeEach
     void setUp() {
         lenient().when(ch.getPlayer()).thenReturn(playerComponent);
@@ -75,18 +81,11 @@ public class TitleCommandTest {
     }
 
     @Test
-    void testEmpty() {
-        TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, wsContext, List.of("TITLE"), new Input("title"), new Output());
-
-        assertEquals(question, result);
-        verify(playerComponent).setTitle(eq(""));
-    }
-
-    @Test
     void testNormal() {
+        when(titleBinding.asString()).thenReturn("the Amazing");
+
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
-        Question result = uut.execute(question, wsContext, List.of("TITLE", "THE", "AMAZING"), new Input("title the Amazing"), new Output());
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, titleBinding), new Output());
 
         assertEquals(question, result);
         verify(playerComponent).setTitle(eq("the Amazing"));
@@ -94,10 +93,11 @@ public class TitleCommandTest {
 
     @Test
     void testLongWithColors() {
+        when(titleBinding.asString()).thenReturn("the [red]Amazing [dyellow]Amazing [yellow]Amazing [green]Amazing [blue]Amazing [magenta]Amazing");
+
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, wsContext,
-            List.of("TITLE", "THE", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING"),
-            new Input("title the [red]Amazing [dyellow]Amazing [yellow]Amazing [green]Amazing [blue]Amazing [magenta]Amazing"),
+            List.of(commandBinding, titleBinding),
             new Output());
 
         assertEquals(question, result);
@@ -106,10 +106,11 @@ public class TitleCommandTest {
 
     @Test
     void testTooLong() {
+        when(titleBinding.asString()).thenReturn("the Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing");
+
         TitleCommand uut = new TitleCommand(repositoryBundle, commService, applicationContext);
         Question result = uut.execute(question, wsContext,
-            List.of("TITLE", "THE", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING", "AMAZING"),
-            new Input("title the Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing Amazing"),
+            List.of(commandBinding, titleBinding),
             new Output());
 
         assertEquals(question, result);

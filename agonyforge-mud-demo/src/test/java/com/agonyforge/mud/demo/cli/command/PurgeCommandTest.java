@@ -1,10 +1,11 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
@@ -20,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,7 +60,7 @@ public class PurgeCommandTest {
     private MudRoom room;
 
     @Mock
-    private LocationComponent chLocationComponent, itemLocationComponent;
+    private LocationComponent chLocationComponent;
 
     @Mock
     private ItemComponent itemComponent;
@@ -69,7 +69,7 @@ public class PurgeCommandTest {
     private CharacterComponent characterComponent, targetCharacterComponent;
 
     @Mock
-    private PlayerComponent targetPlayerComponent;
+    private Binding commandBinding, itemBinding, characterBinding;
 
     @BeforeEach
     void setUp() {
@@ -88,62 +88,15 @@ public class PurgeCommandTest {
     }
 
     @Test
-    void testNoArgs() {
-        Output output = new Output();
-        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
-
-        Question result = uut.execute(question, wsContext, List.of("PUR"), new Input("pur"), output);
-
-        assertEquals(question, result);
-
-        verifyNoInteractions(itemRepository);
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testNoTarget() {
-        when(itemRepository.findByLocationRoom(eq(room))).thenReturn(List.of());
-
-        Output output = new Output();
-        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
-
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
-
-        assertEquals(question, result);
-
-        verify(itemRepository, never()).delete(eq(item));
-        verifyNoInteractions(commService);
-    }
-
-    @Test
-    void testNoTargetWithMatchingName() {
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(item));
-        when(item.getLocation()).thenReturn(itemLocationComponent);
-        when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("dont", "purge", "me", "bro"));
-
-        Output output = new Output();
-        PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
-
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
-
-        assertEquals(question, result);
-
-        verify(itemRepository, never()).delete(eq(item));
-        verifyNoInteractions(commService);
-    }
-
-    @Test
     void testPurgeInventoryItem() {
-        when(itemRepository.findByLocationHeld(eq(ch))).thenReturn(List.of(item));
-        when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("test"));
+        when(itemBinding.getType()).thenReturn(TokenType.ITEM_HELD);
+        when(itemBinding.asItem()).thenReturn(item);
 
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, itemBinding), output);
 
         assertEquals(question, result);
 
@@ -153,14 +106,14 @@ public class PurgeCommandTest {
 
     @Test
     void testPurgeRoomItem() {
-        when(itemRepository.findByLocationRoom(eq(room))).thenReturn(List.of(item));
         when(item.getItem()).thenReturn(itemComponent);
-        when(item.getItem().getNameList()).thenReturn(Set.of("test"));
+        when(itemBinding.getType()).thenReturn(TokenType.ITEM_GROUND);
+        when(itemBinding.asItem()).thenReturn(item);
 
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "TEST"), new Input("pur test"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, itemBinding), output);
 
         assertEquals(question, result);
 
@@ -170,10 +123,14 @@ public class PurgeCommandTest {
 
     @Test
     void testPurgeRoomCharacter() {
+        when(target.getCharacter()).thenReturn(targetCharacterComponent);
+        when(characterBinding.getType()).thenReturn(TokenType.NPC_IN_ROOM);
+        when(characterBinding.asCharacter()).thenReturn(target);
+
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "GRE"), new Input("pur gre"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, characterBinding), output);
 
         assertEquals(question, result);
 
@@ -183,12 +140,12 @@ public class PurgeCommandTest {
 
     @Test
     void testPurgeRoomPlayer() {
-        when(target.getPlayer()).thenReturn(targetPlayerComponent);
+        when(characterBinding.getType()).thenReturn(TokenType.CHARACTER_IN_ROOM);
 
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of("PUR", "GRE"), new Input("pur gre"), output);
+        Question result = uut.execute(question, wsContext, List.of(commandBinding, characterBinding), output);
 
         assertEquals(question, result);
 

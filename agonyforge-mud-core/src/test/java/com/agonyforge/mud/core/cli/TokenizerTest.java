@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TokenizerTest {
     @Test
     void testTokenize() {
-        List<String> expected = List.of("ABLE", "BAKER", "CHARLIE");
+        List<String> expected = List.of("able", "baker", "charlie");
         String input = "able baker charlie";
 
         assertEquals(expected, Tokenizer.tokenize(input));
@@ -26,7 +26,7 @@ public class TokenizerTest {
     @Test
     void testTokenizeWhitespace() {
         String input = "  able baker charlie  ";
-        List<String> expected = List.of("ABLE", "BAKER", "CHARLIE");
+        List<String> expected = List.of("able", "baker", "charlie");
 
         assertEquals(expected, Tokenizer.tokenize(input));
     }
@@ -34,7 +34,7 @@ public class TokenizerTest {
     @Test
     void testTokenizeMultipleSpaces() {
         String input = "able   baker   charlie";
-        List<String> expected = List.of("ABLE", "BAKER", "CHARLIE");
+        List<String> expected = List.of("able", "baker", "charlie");
 
         assertEquals(expected, Tokenizer.tokenize(input));
     }
@@ -42,7 +42,7 @@ public class TokenizerTest {
     @Test
     void testTokenizeSpecialChars() {
         String input = "!@# Able BAKER Charlie !@#";
-        List<String> expected = List.of("!@#", "ABLE", "BAKER", "CHARLIE", "!@#");
+        List<String> expected = List.of("!@#", "Able", "BAKER", "Charlie", "!@#");
 
         assertEquals(expected, Tokenizer.tokenize(input));
     }
@@ -50,7 +50,7 @@ public class TokenizerTest {
     @Test
     void testTokenizeColorCodes() {
         String input = "[red]able baker [blue]charlie";
-        List<String> expected = List.of("ABLE", "BAKER", "CHARLIE");
+        List<String> expected = List.of("able", "baker", "charlie");
 
         assertEquals(expected, Tokenizer.tokenize(input));
     }

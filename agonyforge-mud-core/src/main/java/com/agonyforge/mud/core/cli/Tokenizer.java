@@ -4,7 +4,6 @@ import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Tokenizer {
     public static List<String> tokenize(String escaped) {
@@ -40,7 +39,7 @@ public class Tokenizer {
     }
 
     private static void addTokenIfNotBlank(List<String> tokens, StringBuilder buf) {
-        String token = buf.toString().trim().toUpperCase(Locale.ROOT);
+        String token = buf.toString().trim();
 
         if (!token.isBlank()) {
             tokens.add(token);

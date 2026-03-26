@@ -2,9 +2,9 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
+
+import static com.agonyforge.mud.demo.cli.TokenType.CHARACTER_IN_WORLD;
 
 @Component
 public class TransferCommand extends AbstractCommand {
@@ -24,25 +25,14 @@ public class TransferCommand extends AbstractCommand {
     public TransferCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext, SessionAttributeService sessionAttributeService) {
         super(repositoryBundle, commService, applicationContext);
         this.sessionAttributeService = sessionAttributeService;
+
+        addSyntax(CHARACTER_IN_WORLD);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-
-        if (tokens.size() != 2) {
-            output.append("[default]Whom would you like to transfer?");
-            return question;
-        }
-
-        Optional<MudCharacter> targetOptional = findWorldCharacter(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty() || targetOptional.get().getPlayer() == null) {
-            output.append("[red]Can't find that player.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
+        MudCharacter target = bindings.get(1).asCharacter();
 
         if (target.getLocation() != null && target.getLocation().getRoom().equals(ch.getLocation().getRoom())) {
             output.append("[red]%s %s already here in the room with you.",

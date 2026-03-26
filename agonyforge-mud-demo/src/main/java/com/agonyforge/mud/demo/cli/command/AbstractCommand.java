@@ -4,13 +4,17 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Tokenizer;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudItem;
 import com.agonyforge.mud.demo.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -18,6 +22,9 @@ import java.util.Optional;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 
 public abstract class AbstractCommand implements Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCommand.class);
+
+    private final List<List<TokenType>> syntaxes = new ArrayList<>();
     private final RepositoryBundle repositoryBundle;
     private final CommService commService;
     private final ApplicationContext applicationContext;
@@ -28,6 +35,14 @@ public abstract class AbstractCommand implements Command {
         this.repositoryBundle = repositoryBundle;
         this.commService = commService;
         this.applicationContext = applicationContext;
+    }
+
+    protected void addSyntax(TokenType... tokens) {
+        syntaxes.add(List.of(tokens));
+    }
+
+    public List<List<TokenType>> getSyntaxes() {
+        return new ArrayList<>(syntaxes);
     }
 
     protected RepositoryBundle getRepositoryBundle() {
@@ -108,8 +123,8 @@ public abstract class AbstractCommand implements Command {
             .stream()
             .filter(tch -> !tch.equals(ch))
             .filter(tch -> Tokenizer.tokenize(tch.getCharacter().getName()).stream()
-                .filter(nameToken -> !nameToken.equals("A") && !nameToken.equals("AN") && !nameToken.equals("THE"))
-                .anyMatch(nameToken -> nameToken.startsWith(token.toUpperCase(Locale.ROOT))))
+                .filter(nameToken -> !nameToken.equalsIgnoreCase("A") && !nameToken.equalsIgnoreCase("AN") && !nameToken.equalsIgnoreCase("THE"))
+                .anyMatch(nameToken -> nameToken.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 
@@ -121,8 +136,8 @@ public abstract class AbstractCommand implements Command {
             .filter(tch -> !tch.equals(ch))
             .filter(tch -> tch.getLocation() != null)
             .filter(tch -> Tokenizer.tokenize(tch.getCharacter().getName()).stream()
-                .filter(nameToken -> !nameToken.equals("A") && !nameToken.equals("AN") && !nameToken.equals("THE"))
-                .anyMatch(nameToken -> nameToken.startsWith(token.toUpperCase(Locale.ROOT))))
+                .filter(nameToken -> !nameToken.equalsIgnoreCase("A") && !nameToken.equalsIgnoreCase("AN") && !nameToken.equalsIgnoreCase("THE"))
+                .anyMatch(nameToken -> nameToken.toUpperCase(Locale.ROOT).startsWith(token.toUpperCase(Locale.ROOT))))
             .findFirst();
     }
 }

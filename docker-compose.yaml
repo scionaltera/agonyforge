@@ -1,6 +1,9 @@
 services:
   mud:
     image: scionaltera/agonyforge-mud-demo:latest
+    depends_on:
+      - postgresql
+      - rabbitmq
     tty: true
     ports:
       - "8080:8080"

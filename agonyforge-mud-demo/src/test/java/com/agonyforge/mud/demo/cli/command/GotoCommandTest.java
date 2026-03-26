@@ -2,10 +2,11 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
@@ -28,7 +29,6 @@ import java.util.Random;
 
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -75,18 +75,20 @@ public class GotoCommandTest {
     @Mock
     private MudRoom room, destination;
 
+    @Mock
+    private Binding commandBinding, targetBinding, roomBinding;
+
     @BeforeEach
     void setUp() {
         Long chId = RANDOM.nextLong();
         Long targetId = RANDOM.nextLong();
-        Long destinationId = 3000L;
 
         lenient().when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         lenient().when(repositoryBundle.getItemRepository()).thenReturn(mudItemRepository);
         lenient().when(repositoryBundle.getRoomRepository()).thenReturn(mudRoomRepository);
 
-        lenient().when(mudRoomRepository.findById(destinationId)).thenReturn(Optional.of(destination));
+        lenient().when(mudRoomRepository.findById(3000L)).thenReturn(Optional.of(destination));
 
         lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(mudCharacterRepository);
         lenient().when(mudCharacterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
@@ -103,72 +105,32 @@ public class GotoCommandTest {
     }
 
     @Test
-    void testGotoNoArgs() {
-        Output output = new Output();
-
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO"), new Input("goto"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to go to?")));
-    }
-
-    @Test
-    void testGotoTooManyArgs() {
-        Output output = new Output();
-
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "TEST", "PLACE", "NOW"), new Input("goto test place now"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Where would you like to go to?")));
-    }
-
-    @Test
-    void testGotoPlayerNotFound() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
-
-        Output output = new Output();
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "CARMEN"), new Input("goto carmen"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find anything like that.")));
-        verify(chLocation, never()).setRoom(eq(destination));
-    }
-
-    @Test
     void testGotoPlayer() {
-        when(mudCharacterRepository.findAll()).thenReturn(List.of(ch, target));
+        when(targetLocation.getRoom()).thenReturn(destination);
+        when(target.getLocation()).thenReturn(targetLocation);
+        when(targetBinding.asCharacter()).thenReturn(target);
+        when(targetBinding.getType()).thenReturn(TokenType.CHARACTER_IN_WORLD);
 
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "TARGET"), new Input("goto target"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, targetBinding), output);
 
         assertEquals(question, result);
+        verify(commService, times(2)).sendToRoom(anyLong(), any(Output.class), eq(ch));
         verify(chLocation).setRoom(eq(destination));
     }
 
     @Test
-    void testGotoRoomNotFound() {
-        Output output = new Output();
-        GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "2000"), new Input("goto 2000"), output);
-
-        assertEquals(question, result);
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Can't find anything like that.")));
-        verify(chLocation, never()).setRoom(eq(destination));
-    }
-
-    @Test
     void testGotoRoom() {
+        when(roomBinding.asRoom()).thenReturn(destination);
+        when(roomBinding.getType()).thenReturn(TokenType.ROOM_ID);
+
         Output output = new Output();
         GotoCommand uut = new GotoCommand(repositoryBundle, commService, applicationContext, sessionAttributeService);
-        Question result = uut.execute(question, webSocketContext, List.of("GOTO", "3000"), new Input("goto 3000"), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, roomBinding), output);
 
         assertEquals(question, result);
+        verify(commService, times(2)).sendToRoom(anyLong(), any(Output.class), eq(ch));
         verify(chLocation).setRoom(eq(destination));
     }
 }

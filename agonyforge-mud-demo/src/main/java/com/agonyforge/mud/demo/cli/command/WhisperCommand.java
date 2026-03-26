@@ -1,10 +1,11 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
+import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,36 +20,19 @@ public class WhisperCommand extends AbstractCommand {
     @Autowired
     public WhisperCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(TokenType.CHARACTER_IN_ROOM, TokenType.QUOTED_WORDS);
     }
 
     @Override
     public Question execute(Question question,
                             WebSocketContext webSocketContext,
-                            List<String> tokens,
-                            Input input,
+                            List<Binding> bindings,
                             Output output) {
 
-        if (tokens.size() == 1) {
-            output.append("[default]Who would you like to whisper to?");
-            return question;
-        }
-
-        if (tokens.size() == 2) {
-            output.append("[default]What would you like to whisper to them?");
-            return question;
-        }
-
-        String message = Command.stripFirstWord(Command.stripFirstWord(input.getInput()));
-        String targetName = tokens.get(1);
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, targetName);
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]There isn't anyone by that name.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
+        MudCharacter target = bindings.get(1).asCharacter();
+        String message = bindings.get(2).asString();
 
         output.append("[red]You whisper to %s, '%s[red]'", target.getCharacter().getName(), message);
         getCommService().sendTo(target, new Output("[red]%s whispers to you, '%s[red]'", ch.getCharacter().getName(), message));

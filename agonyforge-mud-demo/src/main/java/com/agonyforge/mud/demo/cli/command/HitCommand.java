@@ -3,9 +3,9 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.Effort;
@@ -24,6 +24,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.agonyforge.mud.demo.cli.TokenType.CHARACTER_IN_ROOM;
 
 @Component
 public class HitCommand extends AbstractCommand {
@@ -136,24 +138,14 @@ public class HitCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
         this.diceService = diceService;
         this.fightRepository = fightRepository;
+
+        addSyntax(CHARACTER_IN_ROOM);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        if (tokens.size() <= 1) {
-            output.append("[default]Who do you want to hit?");
-            return question;
-        }
-
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
-        Optional<MudCharacter> targetOptional = findRoomCharacter(ch, tokens.get(1));
-
-        if (targetOptional.isEmpty()) {
-            output.append("[default]You don't see anyone like that here.");
-            return question;
-        }
-
-        MudCharacter target = targetOptional.get();
+        MudCharacter target = bindings.get(1).asCharacter();
 
         if (fightRepository.findByAttackerAndDefender(ch, target).isPresent() || fightRepository.findByAttackerAndDefender(target, ch).isPresent()) {
             output.append("[red]You are already fighting %s!", target.getCharacter().getName());

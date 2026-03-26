@@ -1,9 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
-import com.agonyforge.mud.core.web.model.Input;
 import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.core.web.model.WebSocketContext;
+import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.service.CommService;
@@ -13,22 +13,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.agonyforge.mud.demo.cli.TokenType.QUOTED_WORDS;
+
 @Component
 public class EmoteCommand extends AbstractCommand {
     @Autowired
     public EmoteCommand(RepositoryBundle repositoryBundle, CommService commService, ApplicationContext applicationContext) {
         super(repositoryBundle, commService, applicationContext);
+
+        addSyntax(QUOTED_WORDS);
     }
 
     @Override
-    public Question execute(Question question, WebSocketContext webSocketContext, List<String> tokens, Input input, Output output) {
-        String message = Command.stripFirstWord(input.getInput());
-
-        if (message.isBlank()) {
-            output.append("[default]What would you like to emote?");
-            return question;
-        }
-
+    public Question execute(Question question, WebSocketContext webSocketContext, List<Binding> bindings, Output output) {
+        String message = bindings.get(1).asString();
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         Output formatted = new Output("[dcyan]%s %s", ch.getCharacter().getName(), message);
 

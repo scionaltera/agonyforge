@@ -1,4 +1,4 @@
-package com.agonyforge.mud.demo.service;
+package com.agonyforge.mud.core.service;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.cli.Response;
@@ -23,14 +23,17 @@ public class InputProcessingService {
     public Output processInput(WebSocketContext wsContext, Input input) {
         String questionName = (String) wsContext.getAttributes().get(MUD_QUESTION);
         Question currentQuestion = applicationContext.getBean(questionName, Question.class);
-
         Response response = currentQuestion.answer(wsContext, input);
         Question nextQuestion = response.getNext();
-
         Output output = new Output();
+
+        // append any feedback from the last question
         response.getFeedback().ifPresent(output::append);
+
+        // append the prompt from the next question
         output.append(nextQuestion.prompt(wsContext));
 
+        // store the next question in the session
         wsContext.getAttributes().put(MUD_QUESTION, nextQuestion.getBeanName());
 
         return output;
