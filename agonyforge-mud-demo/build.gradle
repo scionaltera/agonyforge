@@ -96,7 +96,6 @@ task buildDockerImage(type: Exec) {
     commandLine 'docker', 'buildx', 'build',
         '--platform', 'linux/amd64,linux/arm64',
         '--tag', 'scionaltera/agonyforge-mud-demo:latest',
-        '--output', 'type=docker',
         '--file', 'src/main/docker/Dockerfile.local',
         '--build-arg', 'JAR_FILE=build/libs/agonyforge-mud-demo-0.0.12-SNAPSHOT.jar',
         '.'
