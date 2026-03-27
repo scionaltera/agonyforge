@@ -83,6 +83,9 @@ public class ObjectLookupService {
                 case NPC_ID:
                     bindings.add(bindNpc(ch, tokens.get(i), syntax.get(i)));
                     break;
+                case ITEM_ID:
+                    bindings.add(bindItem(ch, tokens.get(i), syntax.get(i)));
+                    break;
                 case ROOM_ID:
                     bindings.add(bindRoom(ch, tokens.get(i), syntax.get(i)));
                     break;
@@ -345,6 +348,17 @@ public class ObjectLookupService {
 
         LOGGER.trace("No NPC found with ID {}", token);
         throw new IllegalArgumentException("There is no NPC with that number.");
+    }
+
+    Binding bindItem(MudCharacter ch, String token, TokenType type) {
+        Optional<MudItemTemplate> item = repositoryBundle.getItemPrototypeRepository().findById(Long.parseLong(token));
+
+        if (item.isPresent()) {
+            return new Binding(type, token, item.get());
+        }
+
+        LOGGER.trace("No item found with ID {}", token);
+        throw new IllegalArgumentException("There is no item with that number.");
     }
 
     Binding bindRoom(MudCharacter ch, String token, TokenType type) {
