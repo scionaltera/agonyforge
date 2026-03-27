@@ -360,7 +360,7 @@ public class ObjectLookupService {
 
     Binding bindAdminFlag(MudCharacter ch, String token, TokenType type) {
         try {
-            return new Binding(type, token, AdminFlag.valueOf(token));
+            return new Binding(type, token, AdminFlag.valueOf(token.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("There is no admin flag with that name.");
         }
