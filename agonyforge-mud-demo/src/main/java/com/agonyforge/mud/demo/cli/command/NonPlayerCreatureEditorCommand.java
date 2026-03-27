@@ -31,6 +31,7 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
 
         addSyntax(NPC_IN_ROOM); // edit NPC in room
         addSyntax(NPC_ID);      // edit NPC by ID
+        addSyntax(NUMBER);      // create a new NPC with this number
     }
 
     @Override
@@ -38,8 +39,10 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
         MudCharacter ch = getCurrentCharacter(webSocketContext, output);
         MudCharacterTemplate npcTemplate;
 
-        if (NPC_ID.equals(bindings.get(1).getType())) {
+        if (NUMBER.equals(bindings.get(1).getType())) {
             Long id = bindings.get(1).asNumber();
+
+            // either load an existing template or create a new one
             npcTemplate = getRepositoryBundle().getCharacterPrototypeRepository().findById(id).orElseGet(() -> {
                 MudCharacterTemplate template = new MudCharacterTemplate();
 
@@ -59,6 +62,8 @@ public class NonPlayerCreatureEditorCommand extends AbstractCommand {
 
                 return getRepositoryBundle().getCharacterPrototypeRepository().save(template);
             });
+        } else if (NPC_ID.equals(bindings.get(1).getType())) {
+            npcTemplate = bindings.get(1).asCharacterTemplate();
         } else if (NPC_IN_ROOM.equals(bindings.get(1).getType())) {
             MudCharacter npc = bindings.get(1).asCharacter();
             npcTemplate = npc.getTemplate();
