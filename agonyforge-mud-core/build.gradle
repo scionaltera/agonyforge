@@ -25,6 +25,7 @@ dependencies {
     implementation 'ch.qos.logback.access:logback-access-tomcat:2.0.12'
     implementation 'ch.qos.logback:logback-classic:1.5.32'
     implementation 'ch.qos.logback:logback-core:1.5.32'
+    implementation 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'
@@ -34,7 +35,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-oauth2-client'
     implementation 'org.springframework.security:spring-security-oauth2-jose'
-    implementation 'org.springframework.session:spring-session-hazelcast'
     implementation 'org.springframework.integration:spring-integration-stomp'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

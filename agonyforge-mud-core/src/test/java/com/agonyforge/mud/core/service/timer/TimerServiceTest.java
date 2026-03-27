@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.broker.BrokerAvailabilityEvent;
 import org.springframework.messaging.simp.stomp.ReactorNettyTcpStompClient;
@@ -87,7 +87,7 @@ public class TimerServiceTest {
 
         uut.onApplicationEvent(brokerAvailabilityEvent);
 
-        verify(stompClient).setMessageConverter(any(MappingJackson2MessageConverter.class));
+        verify(stompClient).setMessageConverter(any(JacksonJsonMessageConverter.class));
         verify(stompClient).connectAsync(headersCaptor.capture(), eq(uut));
 
         StompHeaders headers = headersCaptor.getValue();
