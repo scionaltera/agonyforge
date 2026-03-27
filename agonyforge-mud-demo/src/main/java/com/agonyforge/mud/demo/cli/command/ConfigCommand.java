@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.agonyforge.mud.demo.cli.TokenType.WORD;
+import static com.agonyforge.mud.demo.cli.TokenType.ADMIN_FLAG;
 
 @Component
 public class ConfigCommand extends AbstractCommand {
@@ -24,7 +24,7 @@ public class ConfigCommand extends AbstractCommand {
         super(repositoryBundle, commService, applicationContext);
 
         addSyntax();
-        addSyntax(WORD);
+        addSyntax(ADMIN_FLAG);
     }
 
     @Override
