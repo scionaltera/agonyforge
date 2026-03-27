@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.broker.BrokerAvailabilityEvent;
@@ -74,7 +74,7 @@ public class TimerService implements StompSessionHandler {
     public void onApplicationEvent(BrokerAvailabilityEvent event) {
         setBrokerAvailability(event.isBrokerAvailable());
 
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        stompClient.setMessageConverter(new JacksonJsonMessageConverter());
 
         StompHeaders stompHeaders = new StompHeaders();
 

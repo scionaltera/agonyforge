@@ -2,38 +2,35 @@ package com.agonyforge.mud.demo.model.impl;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.Clock;
+import java.time.Instant;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Persistent {
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created = new Date();
+    private Instant created = Instant.now(Clock.systemUTC());
 
     @CreatedBy
     private String createdBy;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModified = new Date();
+    private Instant lastModified = Instant.now(Clock.systemUTC());
 
     @LastModifiedBy
     private String lastModifiedBy;
 
-    public Date getCreated() {
+    public Instant getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Instant created) {
         this.created = created;
     }
 
@@ -45,11 +42,11 @@ public abstract class Persistent {
         this.createdBy = createdBy;
     }
 
-    public Date getLastModified() {
+    public Instant getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(Instant lastModified) {
         this.lastModified = lastModified;
     }
 
