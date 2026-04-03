@@ -2,15 +2,12 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
-import com.agonyforge.mud.demo.service.CommService;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
-import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -31,24 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RollCommandTest {
-    @Mock
-    private RepositoryBundle repositoryBundle;
-    
-    @Mock
-    private MudCharacterRepository characterRepository;
-    
-    @Mock
-    private CommService commService;
-    
-    @Mock
-    private WebSocketContext webSocketContext;
-    
+public class RollCommandTest extends CommandTestBoilerplate {
     @Mock
     private Question question;
-    
-    @Mock
-    private ApplicationContext applicationContext;
     
     @Mock
     private DiceService diceService;
@@ -70,7 +50,6 @@ public class RollCommandTest {
     
     @BeforeEach
     void setUp() {
-        when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
         when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
         when(characterRepository.findById(1L)).thenReturn(Optional.of(ch));
         lenient().when(ch.getCharacter()).thenReturn(characterComponent);

@@ -2,25 +2,17 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
-import com.agonyforge.mud.demo.service.CommService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
@@ -30,27 +22,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EmoteCommandTest {
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private MudCharacterRepository characterRepository;
-
-    @Mock
-    private MudItemRepository itemRepository;
-
-    @Mock
-    private MudRoomRepository roomRepository;
-
+public class EmoteCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudRoom room;
-
-    @Mock
-    private CommService commService;
 
     @Mock
     private MudCharacter ch;
@@ -62,22 +36,12 @@ public class EmoteCommandTest {
     private LocationComponent chLocationComponent;
 
     @Mock
-    private WebSocketContext webSocketContext;
-
-    @Mock
     private Question question;
 
     @Mock
     private Binding commandBinding, messageBinding;
 
     private final Random random = new Random();
-
-    @BeforeEach
-    void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-    }
 
     @ParameterizedTest
     @ValueSource(strings = {

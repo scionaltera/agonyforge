@@ -4,22 +4,16 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.FightRepository;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
@@ -30,32 +24,17 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class HitCommandTest {
+public class HitCommandTest extends CommandTestBoilerplate {
     private static final Random RANDOM = new Random();
-
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private CommService commService;
 
     @Mock
     private DiceService diceService;
 
     @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
     private Question question;
 
     @Mock
-    private WebSocketContext webSocketContext;
-
-    @Mock
     private FightRepository fightRepository;
-
-    @Mock
-    private MudCharacterRepository characterRepository;
 
     @Mock
     private MudCharacter ch, target;
@@ -70,9 +49,6 @@ public class HitCommandTest {
     private CharacterComponent chCharacter, targetCharacter;
 
     @Mock
-    private MudItemRepository itemRepository;
-
-    @Mock
     private MudItem weapon;
 
     @Mock
@@ -83,8 +59,6 @@ public class HitCommandTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(ch.getLocation()).thenReturn(chLocationComponent);
         lenient().when(chLocationComponent.getRoom()).thenReturn(room);
         lenient().when(ch.getCharacter()).thenReturn(chCharacter);

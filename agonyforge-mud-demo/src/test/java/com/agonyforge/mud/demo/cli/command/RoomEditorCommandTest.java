@@ -2,23 +2,16 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudRoomRepository;
-import com.agonyforge.mud.demo.service.CommService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,36 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RoomEditorCommandTest {
+public class RoomEditorCommandTest extends CommandTestBoilerplate {
     private static final Random RAND = new Random();
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private MudCharacterRepository characterRepository;
-
-    @Mock
-    private MudRoomRepository roomRepository;
-
-    @Mock
-    private CommService commService;
 
     @Mock
     private Question originalQuestion;
 
     @Mock
     private Question reditQuestion;
-
-    @Mock
-    private WebSocketContext wsContext;
 
     @Mock
     private MudCharacter ch;
@@ -80,12 +55,6 @@ public class RoomEditorCommandTest {
 
     private final Random random = new Random();
 
-    @BeforeEach
-    void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-    }
-
     @Test
     void testExecuteNoArgs() {
         Long chId = random.nextLong();
@@ -96,7 +65,7 @@ public class RoomEditorCommandTest {
 
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(wsContext.getAttributes()).thenReturn(attributes);
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(room.getId()).thenReturn(roomId);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getCharacter()).thenReturn(characterComponent);
@@ -105,7 +74,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of(commandBinding), output);
+        Question result = uut.execute(originalQuestion, webSocketContext, List.of(commandBinding), output);
 
         assertEquals(roomId, attributes.get(REDIT_MODEL));
         assertEquals(reditQuestion, result);
@@ -123,7 +92,7 @@ public class RoomEditorCommandTest {
         when(roomBinding.asRoom()).thenReturn(room);
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(wsContext.getAttributes()).thenReturn(attributes);
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -132,7 +101,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of(commandBinding, roomBinding), output);
+        Question result = uut.execute(originalQuestion, webSocketContext, List.of(commandBinding, roomBinding), output);
 
         assertEquals(roomId, attributes.get(REDIT_MODEL));
         assertEquals(reditQuestion, result);
@@ -150,7 +119,7 @@ public class RoomEditorCommandTest {
         when(numberBinding.asNumber()).thenReturn(roomId);
         when(applicationContext.getBean(eq("roomEditorQuestion"), eq(Question.class))).thenReturn(reditQuestion);
         when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(wsContext.getAttributes()).thenReturn(attributes);
+        when(webSocketContext.getAttributes()).thenReturn(attributes);
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -158,7 +127,7 @@ public class RoomEditorCommandTest {
         RoomEditorCommand uut = new RoomEditorCommand(repositoryBundle, commService, applicationContext);
         Output output = new Output();
 
-        Question result = uut.execute(originalQuestion, wsContext, List.of(commandBinding, numberBinding), output);
+        Question result = uut.execute(originalQuestion, webSocketContext, List.of(commandBinding, numberBinding), output);
 
         verify(roomRepository).save(any(MudRoom.class));
         assertNotNull(attributes.get(REDIT_MODEL));
