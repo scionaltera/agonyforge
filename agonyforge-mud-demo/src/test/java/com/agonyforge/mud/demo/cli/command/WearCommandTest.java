@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,12 +27,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WearCommandTest extends CommandTestBoilerplate {
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch;
-
     @Mock
     private CharacterComponent characterComponent;
 
@@ -53,12 +46,7 @@ public class WearCommandTest extends CommandTestBoilerplate {
     private MudRoom room;
 
     @Mock
-    private Binding commandBinding;
-
-    @Mock
     private Binding itemBinding;
-
-    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -68,12 +56,6 @@ public class WearCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testWearTargetNotWearable() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(target.getItem()).thenReturn(targetItemComponent);
         when(target.getItem().getWearSlots()).thenReturn(EnumSet.noneOf(WearSlot.class));
         when(ch.getLocation()).thenReturn(chLocationComponent);
@@ -94,16 +76,10 @@ public class WearCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testWearTargetNoAvailableSlot() {
-        Long chId = random.nextLong();
-
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.allOf(WearSlot.class));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
 
         when(item.getLocation()).thenReturn(itemLocationComponent);
@@ -130,13 +106,7 @@ public class WearCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testWearTarget() {
-        Long chId = random.nextLong();
-
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(target));
         when(ch.getCharacter().getWearSlots()).thenReturn(EnumSet.of(WearSlot.HEAD));
         when(ch.getCharacter().getPronoun()).thenReturn(Pronoun.SHE);
@@ -173,14 +143,7 @@ public class WearCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testWearTargetSecondMatch() {
-        Long chId = random.nextLong();
-
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-
         when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
         when(room.getId()).thenReturn(100L);
 
@@ -221,13 +184,7 @@ public class WearCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testWearTargetWithOtherItem() {
-        Long chId = random.nextLong();
-
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(itemRepository.findByLocationHeld(ch)).thenReturn(List.of(item, target));
         when(room.getId()).thenReturn(100L);
 

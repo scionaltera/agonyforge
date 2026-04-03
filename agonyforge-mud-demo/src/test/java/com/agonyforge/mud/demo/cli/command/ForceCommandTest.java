@@ -24,9 +24,6 @@ import com.agonyforge.mud.core.web.model.Output;
 @ExtendWith(MockitoExtension.class)
 class ForceCommandTest extends CommandTestBoilerplate {
     @Mock
-    private Question question;
-
-    @Mock
     private MudCharacter target;
 
     @Mock
@@ -36,7 +33,7 @@ class ForceCommandTest extends CommandTestBoilerplate {
     private CommandReference sayRef, forceRef;
 
     @Mock
-    private Binding commandBinding, targetBinding, forcedCommandBinding, argsBinding;
+    private Binding targetBinding, forcedCommandBinding, argsBinding;
 
     private ForceCommand uut;
 

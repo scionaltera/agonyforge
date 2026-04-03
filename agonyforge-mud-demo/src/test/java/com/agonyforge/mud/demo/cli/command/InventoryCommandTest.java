@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,12 +19,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class InventoryCommandTest extends CommandTestBoilerplate {
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch;
-
     @Mock
     private MudItemTemplate itemProto;
 
@@ -45,20 +37,10 @@ public class InventoryCommandTest extends CommandTestBoilerplate {
     @Mock
     private LocationComponent itemLocationComponent, armorLocationComponent, chLocationComponent;
 
-    @Mock
-    private Binding commandBinding;
-
-    private final Random random = new Random();
-
     @Test
     void testInventory() {
-        Long chId = random.nextLong();
         String itemName = "a scurrilous test";
 
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(itemProto.getId()).thenReturn(102L);
@@ -89,12 +71,6 @@ public class InventoryCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testInventoryEmpty() {
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 

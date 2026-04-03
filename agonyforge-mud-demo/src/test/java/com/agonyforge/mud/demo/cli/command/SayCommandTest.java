@@ -7,7 +7,6 @@ import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,21 +27,13 @@ public class SayCommandTest extends CommandTestBoilerplate {
     private MudRoom room;
 
     @Mock
-    private MudCharacter ch;
-
-    @Mock
     private CharacterComponent characterComponent;
 
     @Mock
     private LocationComponent chLocationComponent;
 
     @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding, messageBinding;
-
-    private final Random random = new Random();
+    private Binding messageBinding;
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -58,15 +48,10 @@ public class SayCommandTest extends CommandTestBoilerplate {
         SayCommand uut = new SayCommand(repositoryBundle, commService, applicationContext);
         String match = new Output(val.substring(4)).getOutput().get(0);
         List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
-        Long chId = random.nextLong();
 
         when(messageBinding.asString()).thenReturn(tokens.get(1));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(room.getId()).thenReturn(100L);
         when(characterComponent.getName()).thenReturn("Name");
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -79,7 +64,7 @@ public class SayCommandTest extends CommandTestBoilerplate {
         assertEquals(1, output.getOutput().size());
         assertEquals("[cyan]You say, '" + match + "[cyan]'", output.getOutput().get(0));
 
-        verify(characterRepository).findById(eq(chId));
+        verify(characterRepository).findById(eq(CH_ID));
         verify(commService).sendToRoom(eq(100L), any(Output.class), eq(ch));
     }
 }

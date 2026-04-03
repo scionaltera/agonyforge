@@ -25,19 +25,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SpawnCommandTest extends CommandTestBoilerplate {
     @Mock
-    private Question question;
-
-    @Mock
     private Output output;
-
-    @Mock
-    private Binding cmdBinding;
 
     @Mock
     private MudCharacterTemplate npcTemplate;
 
     @Mock
-    private MudCharacter ch, npc;
+    private MudCharacter npc;
 
     @Mock
     private LocationComponent chLocation, npcLocation;
@@ -50,7 +44,6 @@ public class SpawnCommandTest extends CommandTestBoilerplate {
 
     @Test
     public void testSpawn() {
-        long chId = 75L;
         long roomId = 300L;
         when(room.getId()).thenReturn(roomId);
 
@@ -65,13 +58,11 @@ public class SpawnCommandTest extends CommandTestBoilerplate {
         when(npc.getCharacter()).thenReturn(npcCharacter);
         when(npcCharacter.getName()).thenReturn("Noob");
 
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterRepository.save(eq(npc))).thenReturn(npc);
 
         SpawnCommand uut = new SpawnCommand(repositoryBundle, commService, applicationContext);
         Binding npcBinding = new Binding(TokenType.NPC_ID, "target", npcTemplate);
-        Question result = uut.execute(question, webSocketContext, List.of(cmdBinding, npcBinding), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, npcBinding), output);
 
         assertEquals(question, result);
 

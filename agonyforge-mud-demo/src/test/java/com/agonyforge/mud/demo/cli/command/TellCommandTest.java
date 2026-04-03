@@ -19,8 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,9 +28,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TellCommandTest extends CommandTestBoilerplate {
-    @Mock
-    private MudCharacter ch;
-
     @Mock
     private MudCharacter target;
 
@@ -46,15 +41,10 @@ public class TellCommandTest extends CommandTestBoilerplate {
     private MudRoom room;
 
     @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding, targetBinding, messageBinding;
+    private Binding targetBinding, messageBinding;
 
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
-
-    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -75,13 +65,8 @@ public class TellCommandTest extends CommandTestBoilerplate {
 
         String match = new Output(val.substring(7)).getOutput().get(0); // Output adds non-breaking spaces
         List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
-        Long chId = random.nextLong();
 
         when(messageBinding.asString()).thenReturn(tokens.get(2));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getCharacter()).thenReturn(chCharacterComponent);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
@@ -96,7 +81,7 @@ public class TellCommandTest extends CommandTestBoilerplate {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]You tell Target, '" + match + "[red]'", output.getOutput().get(0));
 
-        verify(characterRepository).findById(eq(chId));
+        verify(characterRepository).findById(eq(CH_ID));
         verify(commService).sendTo(eq(target), outputCaptor.capture());
         verifyNoMoreInteractions(commService);
 

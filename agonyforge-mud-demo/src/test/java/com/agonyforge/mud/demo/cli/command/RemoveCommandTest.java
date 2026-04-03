@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,12 +24,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class RemoveCommandTest extends CommandTestBoilerplate {
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch;
-
     @Mock
     private CharacterComponent characterComponent;
 
@@ -47,9 +40,7 @@ public class RemoveCommandTest extends CommandTestBoilerplate {
     private MudRoom room;
 
     @Mock
-    private Binding commandBinding, itemBinding;
-
-    private final Random random = new Random();
+    private Binding itemBinding;
 
     @BeforeEach
     void setUp() {
@@ -58,12 +49,6 @@ public class RemoveCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testRemoveTarget() {
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(characterComponent.getPronoun()).thenReturn(Pronoun.SHE);
         when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);

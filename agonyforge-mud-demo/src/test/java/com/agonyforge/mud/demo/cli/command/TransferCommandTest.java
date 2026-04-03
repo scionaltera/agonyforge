@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,16 +22,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TransferCommandTest extends CommandTestBoilerplate {
-    private static final Random RANDOM = new Random();
-
     @Mock
     private SessionAttributeService sessionAttributeService;
 
     @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch, target;
+    private MudCharacter target;
 
     @Mock
     private LocationComponent chLocation, targetLocation;
@@ -47,22 +41,15 @@ public class TransferCommandTest extends CommandTestBoilerplate {
     private MudRoom room, destination;
 
     @Mock
-    private Binding commandBinding;
-
-    @Mock
     private Binding targetBinding;
 
     @BeforeEach
     void setUp() {
-        Long chId = RANDOM.nextLong();
-        Long targetId = RANDOM.nextLong();
+        Long targetId = getRandom().nextLong();
         Long destinationId = 3000L;
-
-        lenient().when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
 
         lenient().when(roomRepository.findById(destinationId)).thenReturn(Optional.of(destination));
 
-        lenient().when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         lenient().when(ch.getLocation()).thenReturn(chLocation);
         lenient().when(chLocation.getRoom()).thenReturn(destination);
         lenient().when(ch.getCharacter()).thenReturn(chCharacter);

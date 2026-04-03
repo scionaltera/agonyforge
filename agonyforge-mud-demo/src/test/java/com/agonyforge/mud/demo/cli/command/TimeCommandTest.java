@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.impl.MudProperty;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,12 +28,6 @@ import static org.mockito.Mockito.when;
 public class TimeCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudPropertyRepository propertyRepository;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding;
 
     @BeforeEach
     void setUp() {

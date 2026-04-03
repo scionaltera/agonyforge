@@ -1,11 +1,9 @@
 package com.agonyforge.mud.demo.cli.command;
 
-import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.constant.Effort;
 import com.agonyforge.mud.demo.model.constant.Stat;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,23 +16,14 @@ import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RollCommandTest extends CommandTestBoilerplate {
     @Mock
-    private Question question;
-    
-    @Mock
     private DiceService diceService;
-
-    @Mock
-    private MudCharacter ch;
 
     @Mock
     private MudRoom room;
@@ -46,12 +35,10 @@ public class RollCommandTest extends CommandTestBoilerplate {
     private LocationComponent locationComponent;
 
     @Mock
-    private Binding commandBinding, statBinding, effortBinding;
+    private Binding statBinding, effortBinding;
     
     @BeforeEach
     void setUp() {
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        when(characterRepository.findById(1L)).thenReturn(Optional.of(ch));
         lenient().when(ch.getCharacter()).thenReturn(characterComponent);
         when(ch.getLocation()).thenReturn(locationComponent);
         when(locationComponent.getRoom()).thenReturn(room);

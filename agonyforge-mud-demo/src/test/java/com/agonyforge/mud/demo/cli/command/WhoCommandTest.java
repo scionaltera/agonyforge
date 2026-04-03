@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.impl.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +17,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class WhoCommandTest extends CommandTestBoilerplate {
     @Mock
-    private MudCharacter ch;
-
-    @Mock
     private MudCharacter other;
 
     @Mock
@@ -31,12 +27,6 @@ public class WhoCommandTest extends CommandTestBoilerplate {
 
     @Mock
     private LocationComponent chLocationComponent, otherLocationComponent;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding;
 
     @Test
     void testExecuteOnePlayer() {

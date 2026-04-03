@@ -13,11 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,13 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class GetCommandTest extends CommandTestBoilerplate {
     @Mock
-    private Question question;
-
-    @Mock
     private MudRoom room;
-
-    @Mock
-    private MudCharacter ch;
 
     @Mock
     private CharacterComponent characterComponent;
@@ -49,22 +41,15 @@ public class GetCommandTest extends CommandTestBoilerplate {
     private LocationComponent itemLocationComponent, chLocationComponent;
 
     @Mock
-    private Binding commandBinding, itemBinding;
-
-    private final Random random = new Random();
+    private Binding itemBinding;
 
     @BeforeEach
     void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-        lenient().when(repositoryBundle.getRoomRepository()).thenReturn(roomRepository);
-
         when(itemBinding.asItem()).thenReturn(item);
     }
 
     @Test
     void testGet() {
-        Long chId = random.nextLong();
         Long roomId = 100L;
         String itemName = "a scurrilous test";
 
@@ -72,10 +57,6 @@ public class GetCommandTest extends CommandTestBoilerplate {
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(item.getLocation()).thenReturn(itemLocationComponent);
         when(item.getItem()).thenReturn(itemComponent);
         when(item.getItem().getShortDescription()).thenReturn(itemName);

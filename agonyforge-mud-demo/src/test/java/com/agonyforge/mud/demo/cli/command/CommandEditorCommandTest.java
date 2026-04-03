@@ -29,16 +29,13 @@ public class CommandEditorCommandTest extends CommandTestBoilerplate {
     private CommandRepository commandRepository;
 
     @Mock
-    private Question question;
-
-    @Mock
     private CommandReference commandRef;
 
     @Mock
     private Command command;
 
     @Mock
-    private Binding commandBinding, subCommandBinding, commandNameBinding, priorityBinding, beanNameBinding, descriptionBinding;
+    private Binding subCommandBinding, commandNameBinding, priorityBinding, beanNameBinding, descriptionBinding;
 
     @Captor
     private ArgumentCaptor<CommandReference> commandRefCaptor;

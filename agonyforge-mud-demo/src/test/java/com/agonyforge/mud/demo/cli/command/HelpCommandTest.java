@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.CommandRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,25 +11,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HelpCommandTest extends CommandTestBoilerplate {
     @Mock
     private CommandRepository commandRepository;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch;
 
     @Mock
     private LocationComponent chLocationComponent;
@@ -47,15 +36,8 @@ public class HelpCommandTest extends CommandTestBoilerplate {
     @Mock
     private CommandReference testCommandRefA, testCommandRefB;
 
-    @Mock
-    private Binding commandBinding;
-
     @BeforeEach
     void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        lenient().when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
-
         lenient().when(testCommandRefA.getName()).thenReturn("TEST_A");
         lenient().when(testCommandRefA.getPriority()).thenReturn(10);
         lenient().when(testCommandRefA.getDescription()).thenReturn("Test Command A");

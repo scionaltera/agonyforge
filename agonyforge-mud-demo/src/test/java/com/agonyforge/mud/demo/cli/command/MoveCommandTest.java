@@ -3,7 +3,6 @@ package com.agonyforge.mud.demo.cli.command;
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.SessionAttributeService;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.question.CommandException;
 import com.agonyforge.mud.demo.model.constant.Direction;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
@@ -17,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -28,12 +26,6 @@ import static org.mockito.Mockito.*;
 public class MoveCommandTest extends CommandTestBoilerplate {
     @Mock
     private SessionAttributeService sessionAttributeService;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch;
 
     @Mock
     private CharacterComponent characterComponent;
@@ -47,19 +39,8 @@ public class MoveCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudRoom destination;
 
-    @Mock
-    private Binding commandBinding;
-
-    private final Random random = new Random();
-
     @Test
     void testExecute() {
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getCharacter()).thenReturn(characterComponent);
         when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
@@ -81,12 +62,6 @@ public class MoveCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testExecuteNoRoom() {
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(null);
 
@@ -113,12 +88,6 @@ public class MoveCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testExecuteNoExit() {
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
 
@@ -138,12 +107,6 @@ public class MoveCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testExecuteBrokenExit() {
-        Long chId = random.nextLong();
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);

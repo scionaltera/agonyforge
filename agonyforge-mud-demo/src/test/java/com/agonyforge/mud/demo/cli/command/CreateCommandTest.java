@@ -15,19 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateCommandTest extends CommandTestBoilerplate {
-    @Mock
-    private MudCharacter ch;
-
     @Mock
     private LocationComponent chLocationComponent, itemLocationComponent;
 
@@ -50,10 +44,7 @@ public class CreateCommandTest extends CommandTestBoilerplate {
     private MudRoom room;
 
     @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding, itemTemplateBinding;
+    private Binding itemTemplateBinding;
 
     @BeforeEach
     void setUp() {
@@ -64,8 +55,6 @@ public class CreateCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testCreateItem() {
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
         when(itemRepository.save(eq(item))).thenReturn(item);
         when(itemTemplate.buildInstance()).thenReturn(item);
         when(item.getItem()).thenReturn(itemComponent);

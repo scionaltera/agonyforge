@@ -5,7 +5,6 @@ import com.agonyforge.mud.core.web.model.Output;
 import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
 import com.agonyforge.mud.demo.model.impl.LocationComponent;
-import com.agonyforge.mud.demo.model.impl.MudCharacter;
 import com.agonyforge.mud.demo.model.impl.MudRoom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,16 +21,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class QuitCommandTest extends CommandTestBoilerplate {
-    private static final Random RAND = new Random();
-
     @Mock
-    private Question question, menuQuestion;
+    private Question menuQuestion;
 
     @Mock
     private MudRoom room;
-
-    @Mock
-    private MudCharacter ch;
 
     @Mock
     private LocationComponent locationComponent;
@@ -44,7 +34,7 @@ public class QuitCommandTest extends CommandTestBoilerplate {
     private CharacterComponent characterComponent;
 
     @Mock
-    private Binding commandBinding, nowBinding;
+    private Binding nowBinding;
 
     @BeforeEach
     void setUp() {
@@ -86,13 +76,7 @@ public class QuitCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testQuit() {
-        Long chId = RAND.nextLong();
-
         when(nowBinding.asString()).thenReturn("now");
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
 
         Output output = new Output();
         QuitCommand uut = new QuitCommand(repositoryBundle, commService, applicationContext);

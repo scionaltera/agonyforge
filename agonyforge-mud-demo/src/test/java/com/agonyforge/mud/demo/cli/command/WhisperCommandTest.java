@@ -2,7 +2,6 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
 import com.agonyforge.mud.demo.cli.SyntaxAwareTokenizer;
 import com.agonyforge.mud.demo.model.impl.CharacterComponent;
@@ -20,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,9 +32,6 @@ public class WhisperCommandTest extends CommandTestBoilerplate {
     private MudRoom room;
 
     @Mock
-    private MudCharacter ch;
-
-    @Mock
     private MudCharacter target;
 
     @Mock
@@ -46,24 +41,10 @@ public class WhisperCommandTest extends CommandTestBoilerplate {
     private LocationComponent chLocationComponent;
 
     @Mock
-    private WebSocketContext webSocketContext;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding;
-
-    @Mock
-    private Binding targetBinding;
-
-    @Mock
-    private Binding messageBinding;
+    private Binding targetBinding, messageBinding;
 
     @Captor
     private ArgumentCaptor<Output> outputCaptor;
-
-    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -85,14 +66,9 @@ public class WhisperCommandTest extends CommandTestBoilerplate {
 
         String match = new Output(val.substring(10)).getOutput().get(0); // Output adds non-breaking spaces
         List<String> tokens = SyntaxAwareTokenizer.tokenize(val, uut.getSyntaxes().get(0));
-        Long chId = random.nextLong();
 
         when(messageBinding.asString()).thenReturn(tokens.get(2));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
 
         when(characterComponent.getName()).thenReturn("Scion");
         when(room.getId()).thenReturn(100L);
@@ -108,7 +84,7 @@ public class WhisperCommandTest extends CommandTestBoilerplate {
         assertEquals(1, output.getOutput().size());
         assertEquals("[red]You whisper to Target, '" + match + "[red]'", output.getOutput().get(0));
 
-        verify(characterRepository).findById(eq(chId));
+        verify(characterRepository).findById(eq(CH_ID));
         verify(commService).sendTo(eq(target), outputCaptor.capture());
         verify(commService).sendToRoom(eq(100L), outputCaptor.capture(), eq(ch), eq(target));
         verifyNoMoreInteractions(commService);

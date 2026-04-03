@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class AbstractCommandTest extends CommandTestBoilerplate {
     @Mock
-    private MudCharacter ch, target;
+    private MudCharacter target;
 
     @Mock
     private CharacterComponent targetCharacterComponent;
@@ -39,21 +39,11 @@ public class AbstractCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudRoom room;
 
-    @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding;
-
-    private final Random random = new Random();
-
     @Test
     void testGetCharacterNotFound() {
-        Long chId = random.nextLong();
-
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.empty());
+        when(characterRepository.findById(eq(CH_ID))).thenReturn(Optional.empty());
         when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
+            MUD_CHARACTER, CH_ID
         ));
 
         Output output = new Output();
@@ -74,14 +64,8 @@ public class AbstractCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testGetCharacterInVoid() {
-        Long chId = random.nextLong();
-
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(null);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
 
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {
@@ -101,14 +85,8 @@ public class AbstractCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testGetCharacterValid() {
-        Long chId = random.nextLong();
-
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
 
         Output output = new Output();
         Command uut = new AbstractCommand(repositoryBundle, commService, applicationContext) {

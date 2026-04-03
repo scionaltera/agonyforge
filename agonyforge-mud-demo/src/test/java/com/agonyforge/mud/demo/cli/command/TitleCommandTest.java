@@ -11,22 +11,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TitleCommandTest extends CommandTestBoilerplate {
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch;
-
     @Mock
     private MudRoom room;
 
@@ -40,9 +31,6 @@ public class TitleCommandTest extends CommandTestBoilerplate {
     private LocationComponent locationComponent;
 
     @Mock
-    private Binding commandBinding;
-
-    @Mock
     private Binding titleBinding;
 
     @BeforeEach
@@ -52,10 +40,6 @@ public class TitleCommandTest extends CommandTestBoilerplate {
         lenient().when(ch.getLocation()).thenReturn(locationComponent);
 
         lenient().when(locationComponent.getRoom()).thenReturn(room);
-
-        lenient().when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 3L));
-
-        lenient().when(characterRepository.findById(eq(3L))).thenReturn(Optional.of(ch));
     }
 
     @Test

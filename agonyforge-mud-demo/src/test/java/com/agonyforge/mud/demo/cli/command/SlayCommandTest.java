@@ -13,30 +13,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SlayCommandTest extends CommandTestBoilerplate {
-    private static final Random RANDOM = new Random();
-
-    @Mock
-    private Question question;
-
     @Mock
     private Output output;
 
     @Mock
-    private CommandReference commandRef;
-
-    @Mock
-    private MudCharacter ch, target;
+    private MudCharacter target;
 
     @Mock
     private LocationComponent chLocation;
@@ -47,8 +35,7 @@ public class SlayCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudRoom room;
 
-    private final long chId = RANDOM.nextLong();
-    private final long roomId = RANDOM.nextLong();
+    private final long roomId = getRandom().nextLong();
 
     @BeforeEach
     void setUp() {
@@ -62,17 +49,13 @@ public class SlayCommandTest extends CommandTestBoilerplate {
         when(targetComponent.getName()).thenReturn("Target");
 
         when(room.getId()).thenReturn(roomId);
-
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, chId));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
     }
 
     @Test
     public void testSlay() {
         SlayCommand uut = new SlayCommand(repositoryBundle, commService, applicationContext);
-        Binding command = new Binding(TokenType.COMMAND, "slay", commandRef);
         Binding binding = new Binding(TokenType.NPC_IN_ROOM, "target", target);
-        Question result = uut.execute(question, webSocketContext, List.of(command, binding), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, binding), output);
 
         assertEquals(question, result);
 
