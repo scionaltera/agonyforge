@@ -17,31 +17,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
-import com.agonyforge.mud.demo.service.CommService;
 
 @ExtendWith(MockitoExtension.class)
-class ForceCommandTest {
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private CommService commService;
-
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private WebSocketContext webSocketContext;
-
-    @Mock
-    private Question question;
-
+class ForceCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudCharacter target;
 
@@ -52,7 +33,7 @@ class ForceCommandTest {
     private CommandReference sayRef, forceRef;
 
     @Mock
-    private Binding commandBinding, targetBinding, forcedCommandBinding, argsBinding;
+    private Binding targetBinding, forcedCommandBinding, argsBinding;
 
     private ForceCommand uut;
 

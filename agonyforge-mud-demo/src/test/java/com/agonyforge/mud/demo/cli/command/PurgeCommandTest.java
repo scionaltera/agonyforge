@@ -2,56 +2,26 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.cli.TokenType;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.impl.*;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PurgeCommandTest {
+public class PurgeCommandTest extends CommandTestBoilerplate {
     @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private MudCharacterRepository characterRepository;
-
-    @Mock
-    private MudItemRepository itemRepository;
-
-    @Mock
-    private CommService commService;
-
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private WebSocketContext wsContext;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private MudCharacter ch, target;
+    private MudCharacter target;
 
     @Mock
     private MudItem item;
@@ -69,15 +39,10 @@ public class PurgeCommandTest {
     private CharacterComponent characterComponent, targetCharacterComponent;
 
     @Mock
-    private Binding commandBinding, itemBinding, characterBinding;
+    private Binding itemBinding, characterBinding;
 
     @BeforeEach
     void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
-
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(ch.getCharacter()).thenReturn(characterComponent);
@@ -96,7 +61,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of(commandBinding, itemBinding), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, itemBinding), output);
 
         assertEquals(question, result);
 
@@ -113,7 +78,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of(commandBinding, itemBinding), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, itemBinding), output);
 
         assertEquals(question, result);
 
@@ -130,7 +95,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of(commandBinding, characterBinding), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, characterBinding), output);
 
         assertEquals(question, result);
 
@@ -145,7 +110,7 @@ public class PurgeCommandTest {
         Output output = new Output();
         PurgeCommand uut = new PurgeCommand(repositoryBundle, commService, applicationContext);
 
-        Question result = uut.execute(question, wsContext, List.of(commandBinding, characterBinding), output);
+        Question result = uut.execute(question, webSocketContext, List.of(commandBinding, characterBinding), output);
 
         assertEquals(question, result);
 

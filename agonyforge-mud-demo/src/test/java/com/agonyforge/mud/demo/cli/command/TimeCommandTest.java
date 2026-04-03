@@ -2,12 +2,8 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
-import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.impl.MudProperty;
 import com.agonyforge.mud.demo.model.repository.MudPropertyRepository;
-import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,27 +25,9 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TimeCommandTest {
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
+public class TimeCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudPropertyRepository propertyRepository;
-
-    @Mock
-    private CommService commService;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private WebSocketContext webSocketContext;
-
-    @Mock
-    private Binding commandBinding;
 
     @BeforeEach
     void setUp() {

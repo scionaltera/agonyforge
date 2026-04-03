@@ -4,61 +4,34 @@ import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.service.dice.DiceResult;
 import com.agonyforge.mud.core.service.dice.DiceService;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.AdminFlag;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
 import com.agonyforge.mud.demo.model.repository.FightRepository;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class HitCommandTest {
-    private static final Random RANDOM = new Random();
-
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private CommService commService;
-
+public class HitCommandTest extends CommandTestBoilerplate {
     @Mock
     private DiceService diceService;
-
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private WebSocketContext webSocketContext;
 
     @Mock
     private FightRepository fightRepository;
 
     @Mock
-    private MudCharacterRepository characterRepository;
-
-    @Mock
-    private MudCharacter ch, target;
+    private MudCharacter target;
 
     @Mock
     private PlayerComponent targetPlayer;
@@ -70,21 +43,16 @@ public class HitCommandTest {
     private CharacterComponent chCharacter, targetCharacter;
 
     @Mock
-    private MudItemRepository itemRepository;
-
-    @Mock
     private MudItem weapon;
 
     @Mock
     private MudRoom room;
 
     @Mock
-    private Binding commandBinding, targetBinding;
+    private Binding targetBinding;
 
     @BeforeEach
     void setUp() {
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
         lenient().when(ch.getLocation()).thenReturn(chLocationComponent);
         lenient().when(chLocationComponent.getRoom()).thenReturn(room);
         lenient().when(ch.getCharacter()).thenReturn(chCharacter);
@@ -98,14 +66,9 @@ public class HitCommandTest {
 
     @Test
     void testHitTargetMiss() {
-        Long chId = RANDOM.nextLong();
-        Long roomId = RANDOM.nextLong();
+        Long roomId = getRandom().nextLong();
 
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(room.getId()).thenReturn(roomId);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 11));
 
         Output output = new Output();
@@ -128,13 +91,8 @@ public class HitCommandTest {
 
     @Test
     void testHitTargetPeaceful() {
-        Long chId = RANDOM.nextLong();
-        Long roomId = RANDOM.nextLong();
+        Long roomId = getRandom().nextLong();
 
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(target.getPlayer()).thenReturn(targetPlayer);
         when(targetPlayer.getAdminFlags()).thenReturn(EnumSet.of(AdminFlag.PEACEFUL));
 
@@ -159,14 +117,9 @@ public class HitCommandTest {
 
     @Test
     void testHitTargetHitUnarmed() {
-        Long chId = RANDOM.nextLong();
-        Long roomId = RANDOM.nextLong();
+        Long roomId = getRandom().nextLong();
 
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(room.getId()).thenReturn(roomId);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
 
@@ -193,14 +146,9 @@ public class HitCommandTest {
 
     @Test
     void testHitTargetHitWithWeapon() {
-        Long chId = RANDOM.nextLong();
-        Long roomId = RANDOM.nextLong();
+        Long roomId = getRandom().nextLong();
 
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(room.getId()).thenReturn(roomId);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 12));
         when(diceService.roll(eq(1), eq(6))).thenReturn(new DiceResult(6, 0, 4));
 
@@ -230,14 +178,9 @@ public class HitCommandTest {
 
     @Test
     void testHitTargetHitUltimate() {
-        Long chId = RANDOM.nextLong();
-        Long roomId = RANDOM.nextLong();
+        Long roomId = getRandom().nextLong();
 
-        when(webSocketContext.getAttributes()).thenReturn(Map.of(
-            MUD_CHARACTER, chId
-        ));
         when(room.getId()).thenReturn(roomId);
-        when(characterRepository.findById(eq(chId))).thenReturn(Optional.of(ch));
         when(diceService.roll(eq(1), eq(20), eq(0))).thenReturn(new DiceResult(20, 0, 20));
         when(diceService.roll(eq(1), eq(4))).thenReturn(new DiceResult(4, 0, 4));
         when(diceService.roll(eq(1), eq(12), eq(0))).thenReturn(new DiceResult(12, 1, 8));

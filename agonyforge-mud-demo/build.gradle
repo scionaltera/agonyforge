@@ -103,6 +103,6 @@ tasks.register('buildDockerImage', Exec) {
     workingDir = layout.getProjectDirectory()
 }
 
-tasks.build.dependsOn tasks.buildDockerImage
+tasks.buildDockerImage.dependsOn tasks.build
 tasks.pitest.mustRunAfter test
 check.dependsOn tasks.pitest

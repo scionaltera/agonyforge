@@ -2,50 +2,26 @@ package com.agonyforge.mud.demo.cli.command;
 
 import com.agonyforge.mud.core.cli.Question;
 import com.agonyforge.mud.core.web.model.Output;
-import com.agonyforge.mud.core.web.model.WebSocketContext;
 import com.agonyforge.mud.demo.cli.Binding;
-import com.agonyforge.mud.demo.cli.RepositoryBundle;
 import com.agonyforge.mud.demo.model.constant.Pronoun;
 import com.agonyforge.mud.demo.model.constant.WearSlot;
 import com.agonyforge.mud.demo.model.impl.*;
-import com.agonyforge.mud.demo.model.repository.MudCharacterRepository;
 import com.agonyforge.mud.demo.model.repository.MudItemPrototypeRepository;
-import com.agonyforge.mud.demo.model.repository.MudItemRepository;
-import com.agonyforge.mud.demo.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateCommandTest {
-    @Mock
-    private ApplicationContext applicationContext;
-
-    @Mock
-    private CommService commService;
-
-    @Mock
-    private RepositoryBundle repositoryBundle;
-
-    @Mock
-    private MudCharacterRepository characterRepository;
-
-    @Mock
-    private MudCharacter ch;
-
+public class CreateCommandTest extends CommandTestBoilerplate {
     @Mock
     private LocationComponent chLocationComponent, itemLocationComponent;
 
@@ -62,37 +38,23 @@ public class CreateCommandTest {
     private MudItemTemplate itemTemplate;
 
     @Mock
-    private MudItemRepository itemRepository;
-
-    @Mock
     private MudItem item;
 
     @Mock
     private MudRoom room;
 
     @Mock
-    private WebSocketContext wsContext;
-
-    @Mock
-    private Question question;
-
-    @Mock
-    private Binding commandBinding, itemTemplateBinding;
+    private Binding itemTemplateBinding;
 
     @BeforeEach
     void setUp() {
         lenient().when(repositoryBundle.getItemPrototypeRepository()).thenReturn(itemPrototypeRepository);
-
-        lenient().when(repositoryBundle.getCharacterRepository()).thenReturn(characterRepository);
-        lenient().when(repositoryBundle.getItemRepository()).thenReturn(itemRepository);
 
         when(itemTemplateBinding.asItemTemplate()).thenReturn(itemTemplate);
     }
 
     @Test
     void testCreateItem() {
-        when(wsContext.getAttributes()).thenReturn(Map.of(MUD_CHARACTER, 1L));
-        when(characterRepository.findById(eq(1L))).thenReturn(Optional.of(ch));
         when(itemRepository.save(eq(item))).thenReturn(item);
         when(itemTemplate.buildInstance()).thenReturn(item);
         when(item.getItem()).thenReturn(itemComponent);
@@ -105,7 +67,7 @@ public class CreateCommandTest {
         Output output = new Output();
         CreateCommand uut = new CreateCommand(repositoryBundle, commService, applicationContext);
 
-        Question response = uut.execute(question, wsContext, List.of(commandBinding, itemTemplateBinding), output);
+        Question response = uut.execute(question, webSocketContext, List.of(commandBinding, itemTemplateBinding), output);
 
         assertEquals(question, response);
 
