@@ -1,5 +1,5 @@
 [![Matrix](https://img.shields.io/matrix/agony-forge%3Akeeler.world?server_fqdn=chat.keeler.world&fetchMode=summary&label=matrix
-)](https://matrix.to/#/#agony-forge:chat.keeler.world)
+)](https://matrix.to/#/#agony-forge:keeler.world)
 [![Discord](https://img.shields.io/discord/1145891199346024512?label=discord)](https://discord.gg/6DHKrMJCJE)
 
 # Agony Forge
