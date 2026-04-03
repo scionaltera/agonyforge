@@ -42,10 +42,10 @@ public class MoveCommandTest extends CommandTestBoilerplate {
     @Test
     void testExecute() {
         when(ch.getCharacter()).thenReturn(characterComponent);
-        when(room.getId()).thenReturn(100L);
         when(ch.getLocation()).thenReturn(chLocationComponent);
         when(ch.getLocation().getRoom()).thenReturn(room);
         when(roomRepository.findById(eq(101L))).thenReturn(Optional.of(destination));
+        when(room.getId()).thenReturn(100L);
         when(room.getExit(eq(Direction.WEST.getName()))).thenReturn(new MudRoom.Exit(101L));
 
         Output output = new Output();

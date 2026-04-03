@@ -51,7 +51,6 @@ public class DropCommandTest extends CommandTestBoilerplate {
 
     @Test
     void testDrop() {
-        Long chId = getRandom().nextLong();
         String itemName = "a scurrilous test";
 
         when(ch.getLocation()).thenReturn(chLocationComponent);

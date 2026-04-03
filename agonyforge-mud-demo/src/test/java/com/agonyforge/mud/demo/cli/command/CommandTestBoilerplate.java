@@ -23,7 +23,6 @@ import java.util.Random;
 import static com.agonyforge.mud.core.config.SessionConfiguration.MUD_CHARACTER;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class CommandTestBoilerplate {

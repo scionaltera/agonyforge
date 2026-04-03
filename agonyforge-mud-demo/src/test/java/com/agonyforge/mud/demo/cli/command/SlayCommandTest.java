@@ -35,7 +35,7 @@ public class SlayCommandTest extends CommandTestBoilerplate {
     @Mock
     private MudRoom room;
 
-    private final long roomId = getRandom().nextLong();
+    private final long ROOM_ID = getRandom().nextLong();
 
     @BeforeEach
     void setUp() {
@@ -48,7 +48,7 @@ public class SlayCommandTest extends CommandTestBoilerplate {
         when(target.getCharacter()).thenReturn(targetComponent);
         when(targetComponent.getName()).thenReturn("Target");
 
-        when(room.getId()).thenReturn(roomId);
+        when(room.getId()).thenReturn(ROOM_ID);
     }
 
     @Test
@@ -62,6 +62,6 @@ public class SlayCommandTest extends CommandTestBoilerplate {
         verify(characterRepository).delete(eq(target));
         verify(characterRepository, never()).delete(eq(ch));
 
-        verify(commService).sendToRoom(eq(roomId), any(Output.class), eq(ch));
+        verify(commService).sendToRoom(eq(ROOM_ID), any(Output.class), eq(ch));
     }
 }
