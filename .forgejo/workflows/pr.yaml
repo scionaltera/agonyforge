@@ -1,0 +1,6 @@
+on: [push]
+jobs:
+  test:
+    runs-on: gradle
+    steps:
+      - run: echo Hello World!
