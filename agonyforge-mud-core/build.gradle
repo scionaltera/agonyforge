@@ -23,8 +23,8 @@ dependencies {
     implementation 'com.hazelcast:hazelcast:5.6.0'
     implementation 'io.projectreactor.netty:reactor-netty:1.3.5'
     implementation 'ch.qos.logback.access:logback-access-tomcat:2.0.12'
-    implementation 'ch.qos.logback:logback-classic:1.5.32'
-    implementation 'ch.qos.logback:logback-core:1.5.32'
+    implementation 'ch.qos.logback:logback-classic:1.5.37'
+    implementation 'ch.qos.logback:logback-core:1.5.37'
     implementation 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
